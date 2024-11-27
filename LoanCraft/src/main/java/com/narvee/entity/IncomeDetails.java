@@ -19,12 +19,16 @@ public class IncomeDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long incomeid;
-	private Double householdIncome;
-	private Double householdExpenditure;
 	private Double applicantIncome;
 	private Double otherIncome1;
 	private Double otherIncome2;
 	private Double otherIncome3;
 	private Double totalIncome;
+	private Double householdTotal;
+	private Double expenditureRent;
+	private Double expenditureLoan;
+	private String education;
+	private String others;
+	private Double expenditureTotal;
 	private Double netIncome;
 }

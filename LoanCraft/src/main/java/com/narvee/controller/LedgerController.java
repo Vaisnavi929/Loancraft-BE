@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,8 @@ import com.narvee.entity.Ledger;
 import com.narvee.request.dto.LedgerDTO;
 
 @RestController
+@CrossOrigin("*")
+@RequestMapping("/api/ledger")
 public class LedgerController {
 	
 	public static final Logger logger=LoggerFactory.getLogger(LedgerController.class);

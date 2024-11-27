@@ -21,9 +21,9 @@ public class Reference {
 	private Long referenceid;
 	private String initial;
 	private String fullName;
-	private int knownForYears;  
+	private Long knownForYears;  
     private String relationship;
     private Long pincode;
-    private String mobilenumber;
+    private Long mobilenumber;
 
 }

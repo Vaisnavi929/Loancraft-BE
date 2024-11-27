@@ -21,11 +21,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.narvee.request.dto.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.narvee.filter.*;
-import com.narvee.serviceimpl.UserInfoServiceimpl;
-import com.narvee.config.UserAuthService;
+import com.narvee.filter.JwtAuthFilter;
+import com.narvee.request.dto.ErrorResponse;
+
 import jakarta.servlet.http.HttpServletResponse;
 @Configuration
 @EnableWebSecurity
@@ -37,7 +37,7 @@ public class SecurityConfig {
 	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
 			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
 			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
-			"/api/test/**", "/authenticate","/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken" };
+			"/api/test/**", "/authenticate","/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken" ,"/api/excel/upload" ,"/api/app/save" ,"/api/app/get"};
 
     @Autowired
     private JwtAuthFilter authFilter;
@@ -49,24 +49,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    	
-    	logger.info("!!! inside class : SecurityConfig, !! method : SecurityFilterChain");
+
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
             .authorizeHttpRequests(auth -> auth
-               // .requestMatchers("/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken","/swagger-ui/*").permitAll()
                 .requestMatchers(WHITE_LIST_URL).permitAll()
                 .requestMatchers("/api/auth/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN", "ROLE_EMPLOYEE")
-                .anyRequest().authenticated()
-                // Protect all other endpoints
+                .anyRequest().authenticated() // Protect all other endpoints
             )
             .sessionManagement(sess -> sess
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions
             )
             .authenticationProvider(authenticationProvider()) // Custom authentication provider
             .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-             .exceptionHandling(ex -> ex
-                  .accessDeniedHandler((request, response, accessDeniedException) -> {
+            .exceptionHandling(ex -> ex
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.setContentType("application/json");
 

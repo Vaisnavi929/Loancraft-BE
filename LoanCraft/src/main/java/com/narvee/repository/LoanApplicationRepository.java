@@ -9,5 +9,7 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
 	
 	@Query(value = "select max(amaxnum) as max from lms_loan_application", nativeQuery = true)
 	public Long appmaxNumber();
+	
+	public boolean existsByAadharNumber(String aadharNumber);
 
 }

@@ -25,3 +25,4 @@ public class PropertyDetails {
     private Double builtUpArea;
     private Double buildingAge;
 }
+

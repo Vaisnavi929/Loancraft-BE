@@ -38,7 +38,7 @@ public class LoanApplication {
 	private String maritalStatus;
 	private String mailId;
 	private String higherQualification;
-	private String noOfDependents;
+	private Long noOfDependents;
 	private String category;
 	private String religion;
 	private String panCardNumber;
@@ -74,10 +74,10 @@ public class LoanApplication {
 	@OneToMany(cascade = CascadeType.ALL)
     private List<PropertyDetails> propertyDetails;
 	
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "loanId")
+	@OneToMany(cascade = CascadeType.ALL)
     private List<Reference> references;
-    
+     
+	 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "loanId")
     private List<ExistingLoanDetails> existingLoanDetails;
@@ -86,8 +86,12 @@ public class LoanApplication {
     @JoinColumn(name = "loanId")
     @JsonIgnore
     private LoanSanction loanSanction;
+
+	
+		
+	}
     
    
     
-}
+
 

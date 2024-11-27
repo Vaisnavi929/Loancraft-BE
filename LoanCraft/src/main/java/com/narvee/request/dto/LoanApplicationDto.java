@@ -10,7 +10,6 @@ import com.narvee.entity.DetailsOfLoanAppliedFor;
 import com.narvee.entity.EmploymentDetails;
 import com.narvee.entity.ExistingLoanDetails;
 import com.narvee.entity.IncomeDetails;
-import com.narvee.entity.LoanSanction;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.PropertyDetails;
 import com.narvee.entity.Reference;

@@ -3,6 +3,7 @@ package com.narvee.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import com.narvee.request.dto.RepaymentScheduleRequest;
 
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/emi")
 public class RepaymentScheduleController {
 	
