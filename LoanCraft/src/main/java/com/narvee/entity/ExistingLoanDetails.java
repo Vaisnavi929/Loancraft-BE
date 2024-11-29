@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name="LmsExistingLoanDetails")
+@Table(name = "LmsExistingLoanDetails")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExistingLoanDetails {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long existingid;
@@ -25,6 +25,8 @@ public class ExistingLoanDetails {
 	private Double tenureOfLoan;
 	private Long monthlyInstallment;
 	private Double currentOutstanding;
-	private Long balanceTenure; 
+	private Long balanceTenure;
+
+	
 
 }

@@ -25,5 +25,7 @@ public class Reference {
     private String relationship;
     private Long pincode;
     private Long mobilenumber;
+    
+  
 
 }

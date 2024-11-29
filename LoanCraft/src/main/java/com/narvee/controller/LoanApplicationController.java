@@ -21,50 +21,54 @@ import com.narvee.serviceimpl.CustomerServiceImpl;
 @CrossOrigin("*")
 @RequestMapping("/api/app")
 public class LoanApplicationController {
-	
 	public static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
-	
+
 	@Autowired
-	 private LoanApplicationService loanApplicationService;
-	
-	
-	@RequestMapping(value="/get",method = RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> get(){
-	logger.info("!!! class :LoanApplicationController method : saveLoanApplication ");	
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully"), HttpStatus.OK);
-		
+	private LoanApplicationService loanApplicationService;
+
+	@RequestMapping(value = "/get", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> get() {
+		logger.info("!!! class :LoanApplicationController method : saveLoanApplication ");
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "saved loan Application Successfully"), HttpStatus.OK);
+
 	}
-	
-	
-	
-	
-	@RequestMapping(value="/save",method = RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> saveLoanApplication(@RequestBody LoanApplicationDto loanApplication){
-	logger.info("!!! class :LoanApplicationController method : saveLoanApplication ");	
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully", loanApplicationService.saveLoanApplication(loanApplication)), HttpStatus.OK);
-		
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> saveLoanApplication(@RequestBody LoanApplicationDto loanApplication) {
+		logger.info("!!! class :LoanApplicationController method : saveLoanApplication ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully",
+				loanApplicationService.saveLoanApplication(loanApplication)), HttpStatus.OK);
+
 	}
-		
-	@RequestMapping(value = "/getById/{loanId}",method =RequestMethod.GET,produces = "application/json")
+
+	@RequestMapping(value = "/getById/{loanId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long loanId) {
-	logger.info("!!! class :LoanApplicationController method : getById ");
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully", loanApplicationService.getById(loanId)), HttpStatus.OK);		
+		logger.info("!!! class :LoanApplicationController method : getById ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully",
+				loanApplicationService.getById(loanId)), HttpStatus.OK);
 	}
-	@RequestMapping(value ="/all",method = RequestMethod.GET,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> getAll(){		
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("succuss", "fetched all loan application details ", loanApplicationService.getAll()),HttpStatus.OK);	
+
+	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAll() {
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("succuss",
+				"fetched all loan application details ", loanApplicationService.getAll()), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value="/delete/{loanId}",method = RequestMethod.DELETE,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long loanId){
-		logger.info("!!! class :LoanApplicationController method : deleteById ");	
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "delete by id successfully",	loanApplicationService.deltedById(loanId) ),HttpStatus.OK);
+
+	@RequestMapping(value = "/delete/{loanId}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long loanId) {
+		logger.info("!!! class :LoanApplicationController method : deleteById ");
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "delete by id successfully", loanApplicationService.deltedById(loanId)),
+				HttpStatus.OK);
 	}
-	
-	@RequestMapping(value="/updateLoanApplication",method=RequestMethod.PUT,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> updateLoanApplication(@RequestBody LoanApplicationDto loanApplication ){
+
+	@RequestMapping(value = "/updateLoanApplication", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateLoanApplication(@RequestBody LoanApplicationDto loanApplication) {
 		logger.info("!!! inside class: LoanApplicationController, !! method : updateLoanApplication");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated loneapplication Successfully", 	loanApplicationService.updateLoanApplication(loanApplication)), HttpStatus.OK);
-		
-	}	
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"updated loneapplication Successfully", loanApplicationService.updateLoanApplication(loanApplication)),
+				HttpStatus.OK);
+
+	}
 }

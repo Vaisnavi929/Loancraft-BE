@@ -1,9 +1,11 @@
 package com.narvee.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,11 +13,11 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name="LmsIncomeDetails")
+@Table(name = "LmsIncomeDetails")
 @AllArgsConstructor
 @NoArgsConstructor
 public class IncomeDetails {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long incomeid;
@@ -31,4 +33,7 @@ public class IncomeDetails {
 	private String others;
 	private Double expenditureTotal;
 	private Double netIncome;
+
+	@OneToOne(cascade = CascadeType.ALL,mappedBy ="incomeDetails")
+	private LoanApplication loanAppplication;
 }

@@ -1,12 +1,10 @@
 package com.narvee.entity;
+
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoanApplication {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long loanId;
@@ -49,49 +47,49 @@ public class LoanApplication {
 	private String gstNumber;
 	private String mobileNumber;
 	private String status;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
-    private CurrentAddress currentAddress;
-	
+	@JoinColumn(name = "cAddressId")
+	private CurrentAddress currentAddress;
+
 	@OneToOne(cascade = CascadeType.ALL)
-    private PermanentAddress permanentAddress;
-	
+	@JoinColumn(name = "pAddressId")
+	private PermanentAddress permanentAddress;
+
 	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "bankid")
 	private BankingDetails bankingDetails;
-	
-	@OneToMany(cascade =CascadeType.ALL)
-	private List<Applicant> applicant;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
-    private DetailsOfLoanAppliedFor detailsOfLoanAppliedFor;
-	
+	@JoinColumn(name = "loanApplicantid")
+	private DetailsOfLoanAppliedFor detailsOfLoanAppliedFor;
+
 	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "empid")
 	private EmploymentDetails employmentDetails;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
-    private IncomeDetails incomeDetails;
-	
+	@JoinColumn(name = "incomeid")
+	private IncomeDetails incomeDetails;
+
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "loanSactionId")
+	private LoanSanction loanSanction;
+
 	@OneToMany(cascade = CascadeType.ALL)
-    private List<PropertyDetails> propertyDetails;
-	
+	@JoinColumn(name = "loanId")
+	private List<PropertyDetails> propertyDetails;
+
 	@OneToMany(cascade = CascadeType.ALL)
-    private List<Reference> references;
-     
-	 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "loanId")
-    private List<ExistingLoanDetails> existingLoanDetails;
-    
-    @OneToOne(mappedBy = "loanApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "loanId")
-    @JsonIgnore
-    private LoanSanction loanSanction;
+	@JoinColumn(name = "loanId")
+	private List<Reference> references;
 
-	
-		
-	}
-    
-   
-    
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "loanId")
+	private List<ExistingLoanDetails> existingLoanDetails;
 
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "loanId", nullable = false)
+	private List<Applicant> applicant;
 
+}

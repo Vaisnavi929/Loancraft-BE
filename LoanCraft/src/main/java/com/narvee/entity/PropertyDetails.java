@@ -24,5 +24,7 @@ public class PropertyDetails {
     private Double plotArea;
     private Double builtUpArea;
     private Double buildingAge;
+    
+ 
 }
 
