@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankingDetailsDto {
-	
+
 	private String accountHolder;
 	private String branchName;
 	private Long accountNo;
-	private Double salary;
+	private String accountType;
 	private Date dateOfOpening;
-	private String applicant;
+	private String ifscCode;
 
 }

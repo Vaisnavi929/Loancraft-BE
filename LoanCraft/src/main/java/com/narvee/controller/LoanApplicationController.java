@@ -26,19 +26,21 @@ public class LoanApplicationController {
 	@Autowired
 	private LoanApplicationService loanApplicationService;
 
-	@RequestMapping(value = "/get", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> get() {
-		logger.info("!!! class :LoanApplicationController method : saveLoanApplication ");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "saved loan Application Successfully"), HttpStatus.OK);
-
-	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveLoanApplication(@RequestBody LoanApplicationDto loanApplication) {
 		logger.info("!!! class :LoanApplicationController method : saveLoanApplication ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully",
-				loanApplicationService.saveLoanApplication(loanApplication)), HttpStatus.OK);
+		boolean isDuplicate = loanApplicationService.existsByAadharNumber(loanApplication.getAadharNumber());
+
+		if (isDuplicate) {
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed ",
+					"A loan application already exists for the provided Aadhaar number.",
+					isDuplicate), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success ", "Application Submitted Successfully",
+					loanApplicationService.saveLoanApplication(loanApplication)), HttpStatus.OK);
+
+		}
 
 	}
 
@@ -71,4 +73,22 @@ public class LoanApplicationController {
 				HttpStatus.OK);
 
 	}
+
+	@RequestMapping(value = "/duplicateCheck/{aadhar}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> duplicateCheck(@PathVariable String aadhar) {
+		logger.info("!!! inside class: LoanApplicationController, !! method : duplicateCheck");
+
+		boolean isDuplicate = loanApplicationService.existsByAadharNumber(aadhar);
+		if (isDuplicate) {
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed ",
+					"A loan application already exists for the provided Aadhaar number. above give User friendly",
+					isDuplicate), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success ", "Aadhar validated successfully", isDuplicate), HttpStatus.OK);
+
+		}
+
+	}
+
 }

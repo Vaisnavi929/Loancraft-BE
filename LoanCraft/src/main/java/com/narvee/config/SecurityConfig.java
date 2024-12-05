@@ -40,7 +40,8 @@ public class SecurityConfig {
 	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
 			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
 			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
-			"/api/test/**", "/authenticate","/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken" ,"/api/excel/upload" ,"/api/app/save" ,"/api/app/get", "/api/app/save"};
+			"/api/test/**", "/authenticate","/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken" ,"/api/excel/upload" ,"/api/app/save" ,
+			"/api/app/get", "/api/app/save","/api/**"};
 
     @Autowired
     private JwtAuthFilter authFilter;
@@ -55,7 +56,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**").permitAll() // Public endpoints
+                .requestMatchers(WHITE_LIST_URL).permitAll()
+                // Public endpoints
                 .requestMatchers("/api/auth/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN", "ROLE_EMPLOYEE")
                 .anyRequest().authenticated() // Protect all other endpoints
             )

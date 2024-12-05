@@ -74,4 +74,11 @@ public class LoanApplicationServiceImpl implements LoanApplicationService{
 	}
 
 
+	@Override
+	public boolean existsByAadharNumber(String aadharNumber) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: updateLoanApplication");
+		return loanApplicationRepository.existsByAadharNumber(aadharNumber);
+	}
+
+
 }
