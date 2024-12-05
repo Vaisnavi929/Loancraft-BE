@@ -75,10 +75,10 @@
 //		excelDTO.setEmailId1(loanApplication.getMailId());
 //		excelDTO.setCurrNewAccountNo(bankingDetails.getAccountNo());
 //		excelDTO.setDateOpenedDisbursed(bankingDetails.getDateOfOpening());
-//		excelDTO.setCurrentBalance(bankingDetails.getCurrent());
+////		excelDTO.setCurrentBalance(bankingDetails.getCurrent());
 //		excelDTO.setAddress1(permanentAddress.getAddress());
 //		excelDTO.setPinCode1(permanentAddress.getPincode());
-//		excelDTO.setStateCode1(permanentAddress.getStatecode());
+////		excelDTO.setStateCode1(permanentAddress.getStatecode());
 //		ByteArrayOutputStream out = excelExport.exportToExcel(excelDTO);
 //		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 //
@@ -112,10 +112,10 @@
 //		excelDTOs.setEmailId1(loanApplication.getMailId());
 //		excelDTOs.setCurrNewAccountNo(bankingDetails.getAccountNo());
 //		excelDTOs.setDateOpenedDisbursed(bankingDetails.getDateOfOpening());
-//		excelDTOs.setCurrentBalance(bankingDetails.getCurrent());
+////		excelDTOs.setCurrentBalance(bankingDetails.getCurrent());
 //		excelDTOs.setAddress1(permanentAddress.getAddress());
 //		excelDTOs.setPinCode1(permanentAddress.getPincode());
-//		excelDTOs.setStateCode1(permanentAddress.getStatecode());
+////		excelDTOs.setStateCode1(permanentAddress.getStatecode());
 //		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 //			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 //			Workbook workbook = new XSSFWorkbook();
@@ -285,7 +285,6 @@
 //		
 //			String fathername = getCellValue(row, columnMapping.get("father Name"));
 //			Date dateOfBirth = getDateCellValue(row, columnMapping.get("dateOfBirth"));
-//			System.err.println("dateOfBirth"+ columnMapping.get("dateOfBirth"));
 //			String gender = getCellValue(row, columnMapping.get("gender"));
 //
 //			String maritalstatus = getCellValue(row, columnMapping.get("maritalStatus"));
@@ -316,12 +315,12 @@
 //			loanApplication.setCategory(category);
 //			loanApplication.setReligion(religion);
 //			loanApplication.setPanCardNumber(panCardNumber);
-////			loanApplication.setAadharNumber(aadharNumber);
+//			loanApplication.setAadharNumber(aadharNumber);
 //			loanApplication.setPassportNumber(passportNumber);
 //			loanApplication.setVoterIdNumber(voterIdNumber);
 //			loanApplication.setDrivingLicenseNumber(drivingLicenseNumber);
 //			loanApplication.setGstNumber(gstNumber);
-////			loanApplication.setMobileNumber(mobileNumber);
+//			loanApplication.setMobileNumber(mobileNumber);
 //			loanApplication.setStatus(status);
 //
 //			String address = getCellValue(row, columnMapping.get("address"));
@@ -377,11 +376,11 @@
 //			bankingDetails.setAccountHolder(accountHolder);
 //			bankingDetails.setBranchName(branchName);
 //			bankingDetails.setAccountNo(accountNo);
-//			bankingDetails.setSalary(salary);
+////			bankingDetails.setSalary(salary);
 //			bankingDetails.setDateOfOpening(dateOfOpening);
-//			bankingDetails.setApplicant(applicant);
+////			bankingDetails.setApplicant(applicant);
 //			bankingDetails.setIfscCode(ifscCode);
-//			bankingDetails.setCurrent(current);
+////			bankingDetails.setCurrent(current);
 //			loanApplication.setBankingDetails(bankingDetails);
 //
 //			String proof = getCellValue(row, columnMapping.get("proof"));

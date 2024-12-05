@@ -27,10 +27,9 @@ public class BankingDetails {
 	private String accountHolder;
 	private String branchName;
 	private Long accountNo;
-	private Double salary;
 	private Date dateOfOpening;
 	private String ifscCode;
-	private String current;
+	private String accountType;
 
 	@OneToOne(cascade = CascadeType.ALL,mappedBy ="bankingDetails")
 	@JoinColumn(name = "loanId")

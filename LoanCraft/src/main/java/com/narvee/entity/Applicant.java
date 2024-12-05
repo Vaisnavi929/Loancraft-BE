@@ -25,7 +25,7 @@ public class Applicant {
 	private Long applicantId;
 	private String proof;
 	private String document;
-	private Long number;
+	private String number;
 	private Date issueDate;
 	private Date expDate;
 	
