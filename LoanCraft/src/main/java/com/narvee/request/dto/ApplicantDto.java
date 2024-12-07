@@ -1,6 +1,5 @@
 package com.narvee.request.dto;
 
-import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApplicantDto {
+	
+	private String firstName;
+	private String lastName;
+	private String mobileNo;
+	private String email;
+	private String emailPassword;
+	
 
-	private String proof;
-	private String document;
-	private String number;
-	private Date issueDate;
-	private Date expDate;
 }
