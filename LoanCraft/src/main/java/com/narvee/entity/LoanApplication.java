@@ -90,6 +90,6 @@ public class LoanApplication {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loanId", nullable = false)
-	private List<Applicant> applicant;
+	private List<IdentityProof> identity;
 
 }
