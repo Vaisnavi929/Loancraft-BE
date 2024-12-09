@@ -72,7 +72,7 @@ public class LoanApplication {
 	@JoinColumn(name = "incomeid")
 	private IncomeDetails incomeDetails;
 
-	@OneToOne(cascade = CascadeType.ALL) 
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loanSactionId")
 	private LoanSanction loanSanction;
 
