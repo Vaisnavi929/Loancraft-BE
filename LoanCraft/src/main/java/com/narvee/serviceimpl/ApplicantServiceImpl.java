@@ -34,9 +34,9 @@ public class ApplicantServiceImpl implements ApplicantService {
 		logger.info("!!! inside class: ApplicantServiceImpl, method: save()");
 		Applicants applicant = modelMapper.map(applicantDto, Applicants.class);
 
-		if (applicant.getEmailPassword() != null && !applicant.getEmailPassword().isEmpty()) {
-			String encodedPassword = passwordEncoder.encode(applicant.getEmailPassword());
-			applicant.setEmailPassword(encodedPassword);
+		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
+			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
+			applicant.setPassword(encodedPassword);
 		}
 		Applicants savedApplicant = applicantsRepository.save(applicant);
 
