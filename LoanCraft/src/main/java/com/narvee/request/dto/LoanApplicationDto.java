@@ -3,7 +3,6 @@ package com.narvee.request.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.narvee.entity.Applicant;
 import com.narvee.entity.BankingDetails;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.DetailsOfLoanAppliedFor;
@@ -50,8 +49,6 @@ public class LoanApplicationDto {
     private PermanentAddress permanentAddress;
     
 	private BankingDetails bankingDetails;
-	
-	private List<Applicant> applicant;
 
     private DetailsOfLoanAppliedFor detailsOfLoanAppliedFor;
 	
