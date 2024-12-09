@@ -46,6 +46,7 @@ public class LoginController {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 			logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken inside try block");
+
 			System.err.println("try blcok authentication is sucesss");
 
 			if (authentication.isAuthenticated()) {
@@ -61,6 +62,7 @@ public class LoginController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
 					.body("User with email " + authRequest.getUsername() + " not found");
 		} catch (BadCredentialsException e) {
+
 			logger.error("Invalid credentials provided for username: ", authRequest.getUsername());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
 					.body("Invalid credentials");
@@ -70,4 +72,6 @@ public class LoginController {
 					.body("An error occurred: " + e.getMessage());
 		}
 	}
+
 }
+

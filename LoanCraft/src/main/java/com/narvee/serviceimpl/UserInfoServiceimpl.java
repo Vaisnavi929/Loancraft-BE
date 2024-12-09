@@ -12,9 +12,6 @@ import com.narvee.Service.IUserInfoService;
 import com.narvee.entity.UserInfo;
 import com.narvee.repository.UserRepository;
 
-
-
-
 @Service
 public class UserInfoServiceimpl implements IUserInfoService {
    

@@ -89,3 +89,4 @@ public class LoanApplication {
 	private List<IdentityProof> applicant;
 
 }
+

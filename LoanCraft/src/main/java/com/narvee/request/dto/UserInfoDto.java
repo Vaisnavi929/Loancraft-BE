@@ -22,14 +22,12 @@ public class UserInfoDto  {
 	
 	    private int id;
 	    
-	    private String username;
+	    private String name;
 	    
 	    private String email;
 	   
 	    private String password;
+	    
 	    private List<RoleDto> roles;
-
-	   
-	 
 
 	}
