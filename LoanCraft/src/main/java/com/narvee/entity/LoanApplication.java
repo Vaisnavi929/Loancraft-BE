@@ -76,20 +76,16 @@ public class LoanApplication {
 	@JoinColumn(name = "loanSactionId")
 	private LoanSanction loanSanction;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "loanId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "loanApplication")
 	private List<PropertyDetails> propertyDetails;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "loanId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "loanApplication")
 	private List<Reference> references;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "loanId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "loanApplication")
 	private List<ExistingLoanDetails> existingLoanDetails;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "loanId", nullable = false)
-	private List<IdentityProof> identity;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "loanApplication")
+	private List<IdentityProof> applicant;
 
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.entity.AuthRequest;
+import com.narvee.repository.UserRepository;
 import com.narvee.util.JwtUtil;
 
 @RestController
@@ -26,40 +27,47 @@ import com.narvee.util.JwtUtil;
 public class LoginController {
 	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    @Autowired
-    private JwtUtil jwtUtil;
+	@Autowired
+	private JwtUtil jwtUtil;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    
-    
-	 @PostMapping("/generateToken")
-	    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-		 logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken");
-	    	
-	        try {
-	            Authentication authentication = authenticationManager.authenticate(
-	                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
-	            );
+	@Autowired
+	private UserRepository repository;
 
-	            if (authentication.isAuthenticated()) {
-	                String token = jwtUtil.generateToken(authRequest.getUsername());
-	                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(token);
-	            } else {
-	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Authentication failed!");
-	            }
-	        } catch (UsernameNotFoundException e) {
-	            logger.error("Username not found: {}", authRequest.getUsername());
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("User with email " + authRequest.getUsername() + " not found");
-	        } catch (BadCredentialsException e) {
-	            logger.error("Invalid credentials provided for username: {}", authRequest.getUsername());
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Invalid credentials");
-	        } catch (Exception e) {
-	            logger.error("An error occurred: {}", e.getMessage());
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body("An error occurred: " + e.getMessage());
-	        }
-	    }
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
+	@PostMapping("/generateToken")
+	public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+		logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken");
+		System.err.println("UserInfo---->" + repository.findByEmail(authRequest.getUsername()));
+		repository.findByEmail(authRequest.getUsername());
 
+		try {
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+			logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken inside try block");
+			System.err.println("try blcok authentication is sucesss");
 
+			if (authentication.isAuthenticated()) {
+				System.err.println("if blcok authentication is sucesss");
+				String token = jwtUtil.generateToken(authRequest.getUsername());
+				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(token);
+			} else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
+						.body("Authentication failed!");
+			}
+		} catch (UsernameNotFoundException e) {
+			logger.error("Username not found: {}", authRequest.getUsername());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
+					.body("User with email " + authRequest.getUsername() + " not found");
+		} catch (BadCredentialsException e) {
+			logger.error("Invalid credentials provided for username: ", authRequest.getUsername());
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON)
+					.body("Invalid credentials");
+		} catch (Exception e) {
+			logger.error("An error occurred: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
+					.body("An error occurred: " + e.getMessage());
+		}
+	}
 }
