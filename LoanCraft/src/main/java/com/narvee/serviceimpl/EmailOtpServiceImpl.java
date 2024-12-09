@@ -14,6 +14,7 @@ import com.narvee.entity.MailBody;
 import com.narvee.entity.OtpVerification;
 import com.narvee.repository.ApplicantsRepository;
 import com.narvee.repository.OtpRepository;
+import com.narvee.request.dto.ApplicantDto;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -25,23 +26,17 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 	private String fromEmail;
 
 	@Autowired
-	private ApplicantsRepository applicantsRepository;
-
-	@Autowired
 	private OtpRepository otpRepository;
 
 	@Autowired
 	private JavaMailSender mailSender;
 
 	@Override
-    public String sendOtp(String email) throws MessagingException {
-        Applicants applicant = applicantsRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("No applicant found with email " + email));
-
+    public String sendOtp( ApplicantDto applicant) throws MessagingException {
         String token = generateOtp();
         OtpVerification otp = new OtpVerification();
         otp.setOtp(token);
-        otp.setApplicantId(applicant.getApplicantId());
+//        otp.setApplicantId(applicant.getApplicantId());
         otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
 
         otpRepository.save(otp);
@@ -68,7 +63,7 @@ public class EmailOtpServiceImpl implements EmailOtpService {
             .append("<table>")
             .append("<tr><td>")
             .append("<h1>OTP Verification</h1>")
-            .append("<p>Hello <strong>").append(applicant.getFirstName()).append("</strong>,</p>")
+            .append("<p>Hello <strong>").append(applicant.getFirstName()+" "+applicant.getLastName()).append("</strong>,</p>")
             .append("<p>Thank you for registering. We have received a request to verify your email. Below is your one-time password (OTP):</p>")
             .append("<div class=\"otp-code\">").append(token).append("</div>")
             .append("<p>Please use the above OTP to complete your registration process. The OTP is valid for the next 5 minutes.</p>")
@@ -81,7 +76,7 @@ public class EmailOtpServiceImpl implements EmailOtpService {
             .append("</body>")
             .append("</html>");
 
-        MailBody mailBody = new MailBody(email, "Password Reset Request", emailContent.toString());
+        MailBody mailBody = new MailBody(applicant.getEmail(), "Password Reset Request", emailContent.toString());
         sendEmail(mailBody);
 
         return "OTP sent successfully.";
