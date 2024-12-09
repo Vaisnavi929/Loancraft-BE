@@ -85,4 +85,8 @@ public class LoanApplication {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "loanApplication")
 	private List<ExistingLoanDetails> existingLoanDetails;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "loanApplication")
+	private List<IdentityProof> applicant;
+
 }
+

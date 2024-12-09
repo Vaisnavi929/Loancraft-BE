@@ -8,6 +8,7 @@ import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.DetailsOfLoanAppliedFor;
 import com.narvee.entity.EmploymentDetails;
 import com.narvee.entity.ExistingLoanDetails;
+import com.narvee.entity.IdentityProof;
 import com.narvee.entity.IncomeDetails;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.PropertyDetails;
@@ -49,6 +50,8 @@ public class LoanApplicationDto {
     private PermanentAddress permanentAddress;
     
 	private BankingDetails bankingDetails;
+	
+	private List<IdentityProof> identity;
 
     private DetailsOfLoanAppliedFor detailsOfLoanAppliedFor;
 	
