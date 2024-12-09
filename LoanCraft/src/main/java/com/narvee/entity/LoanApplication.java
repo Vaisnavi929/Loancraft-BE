@@ -56,7 +56,7 @@ public class LoanApplication {
 	@JoinColumn(name = "pAddressId")
 	private PermanentAddress permanentAddress;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL) 
 	@JoinColumn(name = "bankid")
 	private BankingDetails bankingDetails;
 
