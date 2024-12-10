@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.entity.AuthRequest;
+
 import com.narvee.request.dto.LoginRequest;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;
+
+import com.narvee.repository.UserRepository;
+
 import com.narvee.util.JwtUtil;
 
 @RestController
@@ -32,14 +36,18 @@ public class LoginController {
 	private JwtUtil jwtUtil;
 
 	@Autowired
-	private AuthenticationManager authenticationManager;
+	private AuthenticationServiceImpl authenticationService;
+
+	private UserRepository repository;
 
 	@Autowired
-	private AuthenticationServiceImpl authenticationService;
+	private AuthenticationManager authenticationManager;
+
 
 	@PostMapping("/generateToken")
 	public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
 		logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken");
+
 		try {
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -85,3 +93,4 @@ public class LoginController {
 	}
 
 }
+

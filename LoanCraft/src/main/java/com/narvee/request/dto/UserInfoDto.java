@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoDto {
+public class UserInfoDto  {
+	
+	    private int id;
+	    
+	    private String name;
+	    
+	    private String email;
+	   
+	    private String password;
+	    
+	    private List<RoleDto> roles;
 
-	private int id;
-
-	private String name;
-
-	private String email;
-
-	private String password;
-
-	private List<RoleDto> roles;
-
-}
+	}

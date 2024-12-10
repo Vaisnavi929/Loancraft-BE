@@ -20,6 +20,7 @@ import com.narvee.request.dto.UserInfoDto;
 @CrossOrigin("*")
 @RequestMapping("/api/auth")
 public class UserController {
+	
 	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	
      
@@ -33,8 +34,6 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    
-    
     @GetMapping("/user/userProfile")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<String> userProfile() {

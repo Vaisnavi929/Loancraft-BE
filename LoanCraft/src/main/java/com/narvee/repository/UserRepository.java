@@ -16,3 +16,4 @@ public interface UserRepository extends JpaRepository<UserInfo,Integer> {
 	Optional<UserInfo> findByName(String name);
 }
 
+

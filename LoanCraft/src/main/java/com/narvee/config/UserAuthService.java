@@ -1,6 +1,6 @@
 package com.narvee.config;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,20 +14,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.narvee.entity.RoleEntity;
+import com.narvee.entity.Roles;
 import com.narvee.entity.UserInfo;
+import com.narvee.repository.RolesRepository;
 import com.narvee.repository.UserRepository;
-
 
 @Service
 public class UserAuthService implements UserDetailsService {
 	
 	@Autowired
 	private UserRepository repository;
-
+	
+	@Autowired
+	private RolesRepository roleRepository;
+	
 
 	public static final Logger logger = LoggerFactory.getLogger(UserAuthService.class);
-
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -35,9 +37,10 @@ public class UserAuthService implements UserDetailsService {
 	    // Find user by email
 	    UserInfo userInfo = repository.findByEmail(email)
 	            .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
-
+            
 	    // Check if roles are null and safely handle them
-	    List<RoleEntity> roles = userInfo.getRoles();
+	    Set<Roles> roles = userInfo.getRoles();
+	  
 	    if (roles == null || roles.isEmpty()) {
 	        throw new UsernameNotFoundException("User has no roles assigned");  // Or handle it in a different way
 	    }
@@ -55,8 +58,3 @@ public class UserAuthService implements UserDetailsService {
 	}
 
 	}
-
-	    
-	    
-
-
