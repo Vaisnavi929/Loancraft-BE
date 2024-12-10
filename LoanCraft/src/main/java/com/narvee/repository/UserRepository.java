@@ -10,6 +10,9 @@ import com.narvee.entity.UserInfo;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserInfo,Integer> {
+	
 	Optional<UserInfo> findByEmail(String email);
-	}
+	
+	Optional<UserInfo> findByName(String name);
+}
 

@@ -9,12 +9,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.EmailOtpService;
-import com.narvee.entity.Applicants;
 import com.narvee.entity.MailBody;
 import com.narvee.entity.OtpVerification;
-import com.narvee.repository.ApplicantsRepository;
 import com.narvee.repository.OtpRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.util.OTPGenerator;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -33,13 +32,15 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 
 	@Override
     public String sendOtp( ApplicantDto applicant) throws MessagingException {
-        String token = generateOtp();
-        OtpVerification otp = new OtpVerification();
-        otp.setOtp(token);
-//        otp.setApplicantId(applicant.getApplicantId());
-        otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
 
-        otpRepository.save(otp);
+		// Generate OTP using OTPGenerator
+		String token = OTPGenerator.generateRandomPassword(6);
+
+		// Save OTP details
+		OtpVerification otp = new OtpVerification();
+		otp.setOtp(token);
+		otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+		otpRepository.save(otp);
 
         StringBuilder emailContent = new StringBuilder();
         emailContent.append("<!DOCTYPE html>")
@@ -76,7 +77,7 @@ public class EmailOtpServiceImpl implements EmailOtpService {
             .append("</body>")
             .append("</html>");
 
-        MailBody mailBody = new MailBody(applicant.getEmail(), "Password Reset Request", emailContent.toString());
+        MailBody mailBody = new MailBody(applicant.getEmail(), "OTP Verification Code", emailContent.toString());
         sendEmail(mailBody);
 
         return "OTP sent successfully.";
@@ -105,7 +106,4 @@ public class EmailOtpServiceImpl implements EmailOtpService {
         mailSender.send(message);
     }
 
-    private String generateOtp() {
-        return String.valueOf((int) (Math.random() * 900000) + 100000); 
-    }
 }

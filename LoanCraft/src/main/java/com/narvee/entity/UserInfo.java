@@ -15,9 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -25,20 +22,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "LmsUserInfo")
 public class UserInfo {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String email;
-    private String password;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private List<RoleEntity> roles;
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	private String name;
+	private String email;
+	private String password;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id")
+	private List<RoleEntity> roles;
 
 }
-	
-	
-	
-
-
