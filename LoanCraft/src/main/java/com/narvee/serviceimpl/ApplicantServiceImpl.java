@@ -1,6 +1,7 @@
 package com.narvee.serviceimpl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -32,8 +33,12 @@ public class ApplicantServiceImpl implements ApplicantService {
 	@Override
 	public ApplicantDto save(ApplicantDto applicantDto) {
 		logger.info("!!! inside class: ApplicantServiceImpl, method: save()");
+		
+		Optional<Applicants> existingApplicant = applicantsRepository.findByEmail(applicantDto.getEmail());
+	    if (existingApplicant.isPresent()) {
+	        throw new IllegalArgumentException("Email already exists!");
+	    }
 		Applicants applicant = modelMapper.map(applicantDto, Applicants.class);
-
 		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
 			applicant.setPassword(encodedPassword);

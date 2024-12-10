@@ -1,7 +1,5 @@
 package com.narvee.config;
 
-
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +80,6 @@ public class SecurityConfig {
                     objectMapper.writeValue(response.getWriter(), errorResponse);
                 })
             );
-
         return http.build();
     }
     
@@ -102,7 +99,7 @@ public class SecurityConfig {
 
         return source;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // Password encoder used during registration and login
