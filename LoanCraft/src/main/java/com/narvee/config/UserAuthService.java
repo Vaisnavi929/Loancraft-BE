@@ -1,6 +1,5 @@
 package com.narvee.config;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.entity.Roles;
 import com.narvee.entity.UserInfo;
-import com.narvee.repository.RolesRepository;
 import com.narvee.repository.UserRepository;
 
 @Service
@@ -24,10 +22,6 @@ public class UserAuthService implements UserDetailsService {
 	
 	@Autowired
 	private UserRepository repository;
-	
-	@Autowired
-	private RolesRepository roleRepository;
-	
 
 	public static final Logger logger = LoggerFactory.getLogger(UserAuthService.class);
 
