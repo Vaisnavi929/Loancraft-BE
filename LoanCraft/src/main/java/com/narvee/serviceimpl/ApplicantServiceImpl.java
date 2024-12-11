@@ -1,13 +1,15 @@
 package com.narvee.serviceimpl;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import com.narvee.Service.ApplicantService;
 import com.narvee.entity.Applicants;
 import com.narvee.repository.ApplicantsRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.SortingDTO;
 
 @Service
 public class ApplicantServiceImpl implements ApplicantService {
@@ -56,12 +59,42 @@ public class ApplicantServiceImpl implements ApplicantService {
 	}
 
 	@Override
-	public List<ApplicantDto> getAllApplicants() {
-		logger.info("!!! inside class: ApplicantServiceImpl, method: getAllApplicants()");
-		return applicantsRepository.findAll().stream().map(applicant -> modelMapper.map(applicant, ApplicantDto.class))
-				.collect(Collectors.toList());
-	}
+	public Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO) {
+		logger.info("Inside ApplicantServiceImpl: getAllApplicants");
 
+		String sortField = sortingDTO.getSortField();
+		String sortOrder = sortingDTO.getSortOrder();
+		String keyword = sortingDTO.getKeyword();
+		Integer pageNumber = sortingDTO.getPageNumber();
+		Integer pageSize = sortingDTO.getPageSize();
+
+		if (sortField.equalsIgnoreCase("Name")) {
+			sortField = "firstName";
+		} else if (sortField.equalsIgnoreCase("Lastname")) {
+			sortField = "lastName";
+		} else if (sortField.equalsIgnoreCase("Email")) {
+			sortField = "email";
+		} else {
+			sortField = "applicantId";
+		}
+
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
+
+		Page<Applicants> applicantsPage;
+
+		if (keyword == null || keyword.isEmpty()) {
+			applicantsPage = applicantsRepository.findAllApplicants(pageable);
+		} else {
+			applicantsPage = applicantsRepository.findApplicantsByKeyword(keyword, pageable);
+		}
+		return applicantsPage.map(applicant -> modelMapper.map(applicant, ApplicantDto.class));
+	}
+	 
 	@Override
 	public boolean deleteById(Long id) {
 		logger.info("!!! inside class: ApplicantServiceImpl, method: deleteById()");

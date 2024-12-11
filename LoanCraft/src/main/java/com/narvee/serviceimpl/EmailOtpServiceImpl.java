@@ -31,7 +31,7 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 	private JavaMailSender mailSender;
 
 	@Override
-    public String sendOtp( ApplicantDto applicant) throws MessagingException {
+    public String sendOtp(ApplicantDto applicant) throws MessagingException {
 
 		// Generate OTP using OTPGenerator
 		String token = OTPGenerator.generateRandomPassword(6);
@@ -42,7 +42,7 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 		otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
 		otpRepository.save(otp);
 
-        StringBuilder emailContent = new StringBuilder();
+		StringBuilder emailContent = new StringBuilder();
         emailContent.append("<!DOCTYPE html>")
             .append("<html lang=\"en\">")
             .append("<head>")
