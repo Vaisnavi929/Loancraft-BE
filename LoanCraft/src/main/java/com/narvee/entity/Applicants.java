@@ -35,4 +35,6 @@ public class Applicants {
 
     @Column(name = "password")
     private String password;
+    
+    
 }

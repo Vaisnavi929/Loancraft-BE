@@ -9,4 +9,5 @@ public interface EmailOtpService {
 	String sendOtp(ApplicantDto applicant) throws MessagingException;
 
 	boolean verifyOtp(String otp);
+	
 }

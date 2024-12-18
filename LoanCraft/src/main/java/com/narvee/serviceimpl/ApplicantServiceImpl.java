@@ -69,13 +69,17 @@ public class ApplicantServiceImpl implements ApplicantService {
 		Integer pageSize = sortingDTO.getPageSize();
 
 		if (sortField.equalsIgnoreCase("Name")) {
-			sortField = "firstName";
+			sortField = "first_name";
 		} else if (sortField.equalsIgnoreCase("Lastname")) {
-			sortField = "lastName";
+			sortField = "last_name";
 		} else if (sortField.equalsIgnoreCase("Email")) {
 			sortField = "email";
-		} else {
-			sortField = "applicantId";
+		} else if (sortField.equalsIgnoreCase("MobileNo")) {
+			sortField = "mobile_no";
+		}else if (sortField.equalsIgnoreCase("Password")) {
+			sortField = "password";
+		}else {
+			sortField = "applicant_id";
 		}
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;

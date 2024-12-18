@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.narvee.Service.ApplicantService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
@@ -68,7 +67,7 @@ public class ApplicantsController {
 		Page<ApplicantDto> allApplicants = applicantService.getAllApplicants(sortingDTO);
 		if (allApplicants.hasContent()) {
 			logger.info("Applicants fetched successfully");
-			return ResponseEntity.ok(new RestAPIResponse("success", "Applicants fetched successfully", allApplicants));
+			return ResponseEntity.ok(new RestAPIResponse("Success", "Applicants fetched successfully", allApplicants));
 		} else {
 			logger.warn("No applicants found with the provided sorting parameters");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT)

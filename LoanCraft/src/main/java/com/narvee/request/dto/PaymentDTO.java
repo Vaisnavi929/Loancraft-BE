@@ -2,8 +2,6 @@ package com.narvee.request.dto;
 
 import java.util.Date;
 
-import com.narvee.entity.LoanSanction;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

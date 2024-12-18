@@ -14,16 +14,16 @@ public interface ApplicantsRepository extends JpaRepository<Applicants, Long>{
 
 	Optional<Applicants> findByEmail(String email);
 	
-    @Query("SELECT a FROM Applicants a")
+    @Query(value = "SELECT applicant_id,email,first_name,last_name,mobile_no,password FROM applicant ", nativeQuery = true)
     Page<Applicants> findAllApplicants(Pageable pageable);
 
-    @Query("SELECT a FROM Applicants a WHERE " +
-           "(:keyword IS NULL OR :keyword = '' OR " +
-           "LOWER(a.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(a.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(a.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(a.mobileNo) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(a.password) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    Page<Applicants> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
+	@Query(value = "SELECT applicant_id,email,first_name,last_name,mobile_no,password FROM applicant"
+			+ " WHERE applicant_id LIKE CONCAT('%', :keyword, '%') OR "
+			+ "email LIKE CONCAT('%', :keyword, '%') OR "
+			+ "first_name LIKE CONCAT('%', :keyword, '%') OR " + "last_name LIKE CONCAT('%', :keyword, '%') OR "
+			+ "mobile_no LIKE CONCAT('%', :keyword, '%') OR " + "password LIKE CONCAT('%', :keyword, '%') "
+			, nativeQuery = true)
+	Page<Applicants> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
 
 }
