@@ -31,18 +31,17 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 	private JavaMailSender mailSender;
 
 	@Override
-    public String sendOtp( ApplicantDto applicant) throws MessagingException {
+    public String sendOtp(ApplicantDto applicant) throws MessagingException {
 
 		// Generate OTP using OTPGenerator
 		String token = OTPGenerator.generateRandomPassword(6);
-
 		// Save OTP details
 		OtpVerification otp = new OtpVerification();
 		otp.setOtp(token);
 		otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
 		otpRepository.save(otp);
 
-        StringBuilder emailContent = new StringBuilder();
+		StringBuilder emailContent = new StringBuilder();
         emailContent.append("<!DOCTYPE html>")
             .append("<html lang=\"en\">")
             .append("<head>")
@@ -70,7 +69,6 @@ public class EmailOtpServiceImpl implements EmailOtpService {
             .append("<p>Please use the above OTP to complete your registration process. The OTP is valid for the next 5 minutes.</p>")
             .append("<p>If you did not request this OTP, please ignore this email or contact support.</p>")
             .append("<div class=\"footer\">")
-            .append("<p>If you have any questions, feel free to <a href=\"mailto:support@example.com\">contact us</a>.</p>")
             .append("</div>")
             .append("</td></tr>")
             .append("</table>")

@@ -1,8 +1,9 @@
 package com.narvee.Service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.SortingDTO;
 
 public interface ApplicantService {
 
@@ -10,10 +11,10 @@ public interface ApplicantService {
 
     ApplicantDto getById(Long id);
 
-    List<ApplicantDto> getAllApplicants();
-
     boolean deleteById(Long id);
 
-    ApplicantDto update(Long id, ApplicantDto updatedApplicantDto); 
+    ApplicantDto update(Long id, ApplicantDto updatedApplicantDto);
+
+	Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO); 
 
 }

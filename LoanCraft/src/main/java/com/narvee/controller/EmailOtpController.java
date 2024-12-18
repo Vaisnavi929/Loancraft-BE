@@ -3,6 +3,7 @@ package com.narvee.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,8 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.narvee.Service.EmailOtpService;
 import com.narvee.commons.RestAPIResponse;
+import com.narvee.entity.Applicants;
+import com.narvee.repository.ApplicantsRepository;
 import com.narvee.request.dto.ApplicantDto;
 
 import jakarta.mail.MessagingException;
@@ -21,21 +27,30 @@ import jakarta.mail.MessagingException;
 @CrossOrigin
 public class EmailOtpController {
 
+	private static final Logger logger = LoggerFactory.getLogger(EmailOtpController.class);
+
 	@Autowired
 	private EmailOtpService emailOtpService;
+
+	@Autowired
+	private ApplicantsRepository applicantsRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(value = "/send-otp", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> sendEmail(@RequestBody ApplicantDto applicant) {
 		try {
 			emailOtpService.sendOtp(applicant);
+			logger.info("OTP sent successfully to email: {}", applicant.getEmail());
 			return new ResponseEntity<>(new RestAPIResponse("Success", "OTP has been sent to your email."),
 					HttpStatus.OK);
-		} catch (MessagingException e) {	
-			// Handle error if there's an issue with sending the email
+		} catch (MessagingException e) {
+			logger.error("Failed to send OTP email: {}", e.getMessage());
 			return new ResponseEntity<>(new RestAPIResponse("Failed", "Something went wrong: " + e.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (IllegalArgumentException e) {
-			// Handle error if no applicant is found for the given email
+			logger.warn("Invalid request: {}", e.getMessage());
 			return new ResponseEntity<>(new RestAPIResponse("Failed", e.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -45,13 +60,35 @@ public class EmailOtpController {
 		try {
 			boolean isValid = emailOtpService.verifyOtp(otp);
 			if (isValid) {
+				logger.info("OTP verified successfully: {}", otp);
 				return new ResponseEntity<>(new RestAPIResponse("Success", "OTP is valid."), HttpStatus.OK);
 			} else {
+				logger.warn("Invalid OTP: {}", otp);
 				return new ResponseEntity<>(new RestAPIResponse("Failed", "Invalid OTP."), HttpStatus.BAD_REQUEST);
 			}
 		} catch (IllegalArgumentException e) {
-			// Handle error if OTP is invalid or expired
+			logger.error("OTP verification failed: {}", e.getMessage());
 			return new ResponseEntity<>(new RestAPIResponse("Failed", e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@RequestMapping(value = "/change_password", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> changePassword(@RequestBody ApplicantDto applicant)
+			throws MessagingException {
+		Optional<Applicants> optionalApplicant = applicantsRepository.findByEmail(applicant.getEmail());
+
+		if (!optionalApplicant.isPresent()) {
+			return new ResponseEntity<>(new RestAPIResponse("mailerror", "Email not Registered"), HttpStatus.OK);
+		} else {
+			Applicants existingApplicant = optionalApplicant.get();
+			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
+			existingApplicant.setPassword(encodedPassword);
+
+			// Save updated applicant
+			applicantsRepository.save(existingApplicant);
+
+			return new ResponseEntity<>(new RestAPIResponse("success", "Your Password has been changed"),
+					HttpStatus.OK);
 		}
 	}
 

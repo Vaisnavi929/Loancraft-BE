@@ -14,16 +14,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.narvee.Service.IlogoutService;
 import com.narvee.entity.AuthRequest;
-
 import com.narvee.request.dto.LoginRequest;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;
-
-import com.narvee.repository.UserRepository;
-
 import com.narvee.util.JwtUtil;
 
 @RestController
@@ -38,11 +35,11 @@ public class LoginController {
 	@Autowired
 	private AuthenticationServiceImpl authenticationService;
 
-	private UserRepository repository;
-
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
+	@Autowired
+	private IlogoutService ilogoutService;
 
 	@PostMapping("/generateToken")
 	public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
@@ -75,22 +72,46 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+		logger.info("Login attempt for: {}", request.getUsernameOrEmail());
+
 		try {
-			// Authenticate user or applicant based on the provided details
 			Object userOrApplicant = authenticationService.authenticate(request.getUsernameOrEmail(),
 					request.getPassword());
-			return ResponseEntity.ok(userOrApplicant); // Return authenticated details
+			logger.info("Login successful for: {}", request.getUsernameOrEmail());
+			return ResponseEntity.ok(userOrApplicant);
 		} catch (IllegalArgumentException e) {
-			// Handle invalid userType error
+			logger.warn("Invalid user type for: {}", request.getUsernameOrEmail());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
 		} catch (BadCredentialsException e) {
-			// Handle invalid credentials error
+			logger.warn("Invalid login credentials for: {}", request.getUsernameOrEmail());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/email or password");
 		} catch (Exception e) {
-			// General error handling
+			logger.error("An unexpected error occurred during login: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
 		}
 	}
 
-}
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+		logger.info("Logout attempt received");
 
+		if (token == null || !token.startsWith("Bearer ")) {
+			logger.warn("Invalid token format received");
+			return ResponseEntity.badRequest().body("Invalid token format");
+		}
+
+		String jwtToken = token.substring(7);
+		logger.info("Extracted Token: {}", jwtToken);
+
+		boolean isLoggedOut = ilogoutService.logout(jwtToken);
+
+		if (!isLoggedOut) {
+			logger.warn("Token already blacklisted: {}", jwtToken);
+			return ResponseEntity.status(409).body("Token already blacklisted");
+		}
+
+		logger.info("Logout successful for token: {}", jwtToken);
+		return ResponseEntity.ok("Successfully logged out");
+	}
+
+}
