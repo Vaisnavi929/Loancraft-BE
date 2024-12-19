@@ -31,8 +31,4 @@ public class BankingDetails {
 	private String ifscCode;
 	private String accountType;
 
-	@OneToOne(cascade = CascadeType.ALL,mappedBy ="bankingDetails")
-	@JoinColumn(name = "loanId")
-	private LoanApplication application;
-
 }

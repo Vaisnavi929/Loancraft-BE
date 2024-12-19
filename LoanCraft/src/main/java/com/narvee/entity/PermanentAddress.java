@@ -1,6 +1,8 @@
 package com.narvee.entity;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -29,10 +32,14 @@ public class PermanentAddress {
 	private String landmark;
 	private Long stayedOfYears;
 	private Long pincode;
+	
+	@OneToOne
+	@JoinColumn(name="customerId")
+	@ToString.Exclude
+	@JsonBackReference
+	private Customers customer;
 
-	@OneToOne(cascade = CascadeType.ALL,mappedBy ="permanentAddress")
-	@JoinColumn(name = "loanId")
-	private LoanApplication application;
+
 	
 }
 

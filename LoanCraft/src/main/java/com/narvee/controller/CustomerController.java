@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.narvee.Service.CustomerService;
+import com.narvee.Service.CustomerSer;
 import com.narvee.entity.CustomerDetails;
 
 @RestController
@@ -17,7 +17,7 @@ public class CustomerController {
 //	public static final Logger logger = LoggerFactory.getLogger(ApplicantesController.class);
 	
 	@Autowired
-	private CustomerService customerService;
+	private CustomerSer customerService;
 	
 	@RequestMapping(value ="/saveApplicantes",method = RequestMethod.POST,produces ="application/json")
 	public CustomerDetails saveApplicantes(@RequestBody CustomerDetails customerDetails){

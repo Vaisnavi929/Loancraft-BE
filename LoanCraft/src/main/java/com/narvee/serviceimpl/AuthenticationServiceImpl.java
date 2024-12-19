@@ -6,8 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.IAuthenticationService;
-import com.narvee.entity.Applicants;
-import com.narvee.repository.ApplicantsRepository;
+import com.narvee.entity.Customers;
+import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.AuthResponse;
 import com.narvee.util.JwtUtil;
 
@@ -15,7 +15,7 @@ import com.narvee.util.JwtUtil;
 public class AuthenticationServiceImpl implements IAuthenticationService {
 
 	@Autowired
-	private ApplicantsRepository applicantRepository;
+	private CustomersRepository customersRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -26,7 +26,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	@Override
 	public Object authenticate(String usernameOrEmail, String password) {
 		// Fetch the applicant from the repository using email
-		Applicants applicant = applicantRepository.findByEmail(usernameOrEmail)
+		Customers applicant = customersRepository.findByEmail(usernameOrEmail)
 				.orElseThrow(() -> new BadCredentialsException("Applicant not found"));
 
 		if (passwordEncoder.matches(password, applicant.getPassword())) {

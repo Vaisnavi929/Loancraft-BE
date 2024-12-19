@@ -1,0 +1,108 @@
+package com.narvee.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.narvee.Service.CustomerService;
+import com.narvee.Service.IAuthenticationService;
+import com.narvee.commons.RestAPIResponse;
+import com.narvee.entity.Customers;
+import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.SortingDTO;
+
+@RestController
+@RequestMapping("/api/customer")
+@CrossOrigin
+public class CustomersController {
+
+	private static final Logger logger = LoggerFactory.getLogger(CustomersController.class);
+
+	@Autowired
+	private CustomerService customerService;
+
+	@Autowired
+	private IAuthenticationService authenticationService;
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Object> saveApplicant(@RequestBody RegisterVO register) {
+		logger.info("Saving applicant: {}", register.getEmail());
+		try {
+			customerService.save(register);
+			Object authenticate = authenticationService.authenticate(register.getEmail(),
+					register.getPassword());
+			logger.info("customer saved and authenticated successfully: {}", register.getEmail());
+			return ResponseEntity
+					.ok(new RestAPIResponse("success", "Customer saved and authenticated successfully", authenticate));
+		} catch (Exception e) {
+			logger.error("Error saving customer: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("fail", "Error saving customer"));
+		}
+	}
+
+	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getApplicantById(@PathVariable Long id) {
+		logger.info("Fetching customer by ID: {}", id);
+		Customers customer = customerService.getById(id);
+		if (customer != null) {
+			logger.info("customer found: {}", customer.getEmail());
+			return ResponseEntity.ok(new RestAPIResponse("success", "customer fetched successfully", customer));
+		} else {
+			logger.warn("customer not found for ID: {}", id);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "customer not found"));
+		}
+	}
+
+	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
+		logger.info("Fetching all customer with sorting: {}", sortingDTO);
+		Page<ApplicantDto> allApplicants = customerService.getAllApplicants(sortingDTO);
+		if (allApplicants.hasContent()) {
+			logger.info("customer fetched successfully");
+			return ResponseEntity.ok(new RestAPIResponse("Success", "customer fetched successfully", allApplicants));
+		} else {
+			logger.warn("No customer found with the provided sorting parameters");
+			return ResponseEntity.status(HttpStatus.NO_CONTENT)
+					.body(new RestAPIResponse("fail", "No customer found"));
+		}
+	}
+
+	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> deleteApplicantById(@PathVariable Long id) {
+		logger.info("Deleting customer by ID: {}", id);
+		boolean isDeleted = customerService.deleteById(id);
+		if (isDeleted) {
+			logger.info("customer deleted successfully: {}", id);
+			return ResponseEntity.ok(new RestAPIResponse("success", "customer deleted successfully"));
+		} else {
+			logger.warn("customer not found for ID: {}", id);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "customer not found"));
+		}
+	}
+
+	@RequestMapping(value = "/updateById/{id}", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateApplicant(@PathVariable Long id,
+			@RequestBody ApplicantDto updatedApplicantDto) {
+		logger.info("Updating customer with ID: {}", id);
+		ApplicantDto updatedApplicant = customerService.update(id, updatedApplicantDto);
+		if (updatedApplicant != null) {
+			logger.info("customer updated successfully: {}", updatedApplicant.getEmail());
+			return ResponseEntity
+					.ok(new RestAPIResponse("success", "customer updated successfully", updatedApplicant));
+		} else {
+			logger.warn("customer not found for ID: {}", id);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "customer not found"));
+		}
+	}
+}

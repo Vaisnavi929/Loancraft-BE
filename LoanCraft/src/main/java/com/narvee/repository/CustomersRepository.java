@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.narvee.entity.Applicants;
+import com.narvee.entity.Customers;
 
-public interface ApplicantsRepository extends JpaRepository<Applicants, Long>{
-
-	Optional<Applicants> findByEmail(String email);
+public interface CustomersRepository extends JpaRepository<Customers, Long>{
+	
+	Optional<Customers> findByEmail(String email);
 	
     @Query(value = "SELECT applicant_id,email,first_name,last_name,mobile_no,password FROM applicant ", nativeQuery = true)
-    Page<Applicants> findAllApplicants(Pageable pageable);
+    Page<Customers> findAllApplicants(Pageable pageable);
 
 	@Query(value = "SELECT applicant_id,email,first_name,last_name,mobile_no,password FROM applicant"
 			+ " WHERE applicant_id LIKE CONCAT('%', :keyword, '%') OR "
@@ -23,7 +23,7 @@ public interface ApplicantsRepository extends JpaRepository<Applicants, Long>{
 			+ "first_name LIKE CONCAT('%', :keyword, '%') OR " + "last_name LIKE CONCAT('%', :keyword, '%') OR "
 			+ "mobile_no LIKE CONCAT('%', :keyword, '%') OR " + "password LIKE CONCAT('%', :keyword, '%') "
 			, nativeQuery = true)
-	Page<Applicants> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
+	Page<Customers> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 
 }

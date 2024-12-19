@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.LoanSanctionservice;
+import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.request.dto.LoanSanctionDTO;
 
@@ -59,6 +60,12 @@ public class LoanSactionController {
 	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long loanSactionId){
 		logger.info("!!! inside class : LoanSactionController, !! method : deleteById");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "deleted by Id Successfully", loanSanctionservice.deleteById(loanSactionId)), HttpStatus.OK);
+		
+	}
+	
+	@RequestMapping(value = "/loanSanctionSearch" ,method = RequestMethod.POST,produces ="application/json")
+	public ResponseEntity<RestAPIResponse>  getAllLoanApplicationWithSearching(@RequestBody SortingRequestDto sortingRequestDto){
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "successfully fetched laonapplication with searching", loanSanctionservice.getAllLoanSanctionWithPAgination(sortingRequestDto)), HttpStatus.OK);
 		
 	}
 }

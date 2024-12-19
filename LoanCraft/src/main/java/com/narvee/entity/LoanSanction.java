@@ -42,15 +42,12 @@ public class LoanSanction {
     private Date emiEndDate;
     private Date emiDueDate;
     private String currency;
-    private String paymentFrequency;
+    private String paymentFreqmuency;
     private Double creditLimit;
     private Double cashLimit;
     private String status;
     
-    @OneToOne(fetch = FetchType.EAGER,mappedBy ="loanSanction")
-    @JoinColumn(name = "loanId")
-    private LoanApplication loanApplication;
-    
+   
     @OneToMany(mappedBy = "loanSanction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Payment> payment;
