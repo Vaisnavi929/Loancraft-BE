@@ -27,9 +27,6 @@ public class DetailsOfLoanAppliedFor {
 	private String repaymentMode;
 	private String earlierLoanInBeacon;
 	private Long customerId;
-	
-	@OneToOne(cascade = CascadeType.ALL,mappedBy = "detailsOfLoanAppliedFor")
-	private LoanApplication application;
 
 
 }

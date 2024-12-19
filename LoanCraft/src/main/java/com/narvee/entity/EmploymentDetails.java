@@ -29,9 +29,6 @@ public class EmploymentDetails {
 	private Long pincode;
 	private String gstDetails;
 	
-	@OneToOne(cascade = CascadeType.ALL,mappedBy ="employmentDetails")
-	@JoinColumn(name = "loanId")
-	private LoanApplication application;
 	
 
 }

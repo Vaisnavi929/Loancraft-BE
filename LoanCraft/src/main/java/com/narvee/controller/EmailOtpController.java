@@ -1,5 +1,9 @@
 package com.narvee.controller;
 
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,20 +15,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.narvee.Service.EmailOtpService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.Applicants;
-import com.narvee.repository.ApplicantsRepository;
+import com.narvee.entity.Customers;
+import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
 
 import jakarta.mail.MessagingException;
 
 @RestController
 @RequestMapping("/api/otp")
-@CrossOrigin
+@CrossOrigin("*")
 public class EmailOtpController {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailOtpController.class);
@@ -33,7 +34,7 @@ public class EmailOtpController {
 	private EmailOtpService emailOtpService;
 
 	@Autowired
-	private ApplicantsRepository applicantsRepository;
+	private CustomersRepository customersRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -75,17 +76,17 @@ public class EmailOtpController {
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> changePassword(@RequestBody ApplicantDto applicant)
 			throws MessagingException {
-		Optional<Applicants> optionalApplicant = applicantsRepository.findByEmail(applicant.getEmail());
+		Optional<Customers> optionalApplicant = customersRepository.findByEmail(applicant.getEmail());
 
 		if (!optionalApplicant.isPresent()) {
 			return new ResponseEntity<>(new RestAPIResponse("mailerror", "Email not Registered"), HttpStatus.OK);
 		} else {
-			Applicants existingApplicant = optionalApplicant.get();
+			Customers existingApplicant = optionalApplicant.get();
 			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
 			existingApplicant.setPassword(encodedPassword);
 
 			// Save updated applicant
-			applicantsRepository.save(existingApplicant);
+			customersRepository.save(existingApplicant);
 
 			return new ResponseEntity<>(new RestAPIResponse("success", "Your Password has been changed"),
 					HttpStatus.OK);

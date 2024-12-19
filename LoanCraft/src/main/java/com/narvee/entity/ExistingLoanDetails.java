@@ -29,9 +29,6 @@ public class ExistingLoanDetails {
 	private Double currentOutstanding;
 	private Long balanceTenure;
 	
-	@ManyToOne
-	@JoinColumn(name = "loanId")
-	private LoanApplication loanApplication;
 	
 
 }
