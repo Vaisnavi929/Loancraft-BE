@@ -1,7 +1,6 @@
 package com.narvee.serviceimpl;
 
 import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
 import com.narvee.entity.Customers;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.CustomerUpdateDto;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
 
@@ -39,29 +38,29 @@ public class CustomerServiceImpl implements CustomerService {
 	private AccountSequenceService accountSequenceService;
 
 	@Override
-	public ApplicantDto save(RegisterVO register) {
-		logger.info("!!! inside class: ApplicantServiceImpl, method: save()");
-		
+	public Customers save(RegisterVO register) {
+		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
+
 		Optional<Customers> existingApplicant = customerRepository.findByEmail(register.getEmail());
-	    if (existingApplicant.isPresent()) {
-	        throw new IllegalArgumentException("Email already exists!");
-	    }
-	    Customers applicant = modelMapper.map(register, Customers.class);
+		if (existingApplicant.isPresent()) {
+			throw new IllegalArgumentException("Email already exists!");
+		}
+
+		Customers applicant = modelMapper.map(register, Customers.class);
 		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
 			applicant.setPassword(encodedPassword);
-		String accountNumber=	accountSequenceService.generateAccountNumber();
-			
+			String accountNumber = accountSequenceService.generateAccountNumber();
 			applicant.setAccountNumber(accountNumber);
 		}
 		Customers savedApplicant = customerRepository.save(applicant);
 
-		return modelMapper.map(savedApplicant, ApplicantDto.class);
+		return savedApplicant;
 	}
 
 	@Override
 	public Customers getById(Long id) {
-		logger.info("!!! inside class: ApplicantServiceImpl, method: getById()");		
+		logger.info("!!! inside class: CustomerServiceImpl, method: getById()");
 		return customerRepository.findById(id).orElse(null);
 	}
 
@@ -86,7 +85,7 @@ public class CustomerServiceImpl implements CustomerService {
 		} else if (sortField.equalsIgnoreCase("Password")) {
 			sortField = "password";
 		} else {
-			sortField = "applicant_id";
+			sortField = "customer_id";
 		}
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -108,7 +107,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public boolean deleteById(Long id) {
-		logger.info("!!! inside class: ApplicantServiceImpl, method: deleteById()");
+		logger.info("!!! inside class: CustomerServiceImpl, method: deleteById()");
 		if (customerRepository.existsById(id)) {
 			customerRepository.deleteById(id);
 			return true;
@@ -117,14 +116,19 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public ApplicantDto update(Long id, ApplicantDto updatedApplicantDto) {
-		logger.info("!!! inside class: ApplicantServiceImpl, method: update()");
-		return customerRepository.findById(id).map(existingApplicant -> {
-			// Update fields
-			modelMapper.map(updatedApplicantDto, existingApplicant);
-			Customers updatedApplicant = customerRepository.save(existingApplicant);
-			return modelMapper.map(updatedApplicant, ApplicantDto.class);
-		}).orElse(null);
+	public CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) {
+		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
+		Customers customers = customerRepository.findById(customerUpdateDto.getCustomerId()).get();
+		String password = customers.getPassword();
+		String accountNumber = customers.getAccountNumber();
+		if (customers != null) {
+			customers = modelMapper.map(customerUpdateDto, Customers.class);
+			customers.setPassword(password);
+			customers.setAccountNumber(accountNumber);
+			customers = customerRepository.save(customers);
+		}
+		CustomerUpdateDto updateDto = modelMapper.map(customers, CustomerUpdateDto.class);
+		return updateDto;
 	}
 
 }

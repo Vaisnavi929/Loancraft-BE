@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Customers;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.CustomerUpdateDto;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
 
@@ -91,18 +91,21 @@ public class CustomersController {
 		}
 	}
 
-	@RequestMapping(value = "/updateById/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateApplicant(@PathVariable Long id,
-			@RequestBody ApplicantDto updatedApplicantDto) {
-		logger.info("Updating customer with ID: {}", id);
-		ApplicantDto updatedApplicant = customerService.update(id, updatedApplicantDto);
-		if (updatedApplicant != null) {
-			logger.info("customer updated successfully: {}", updatedApplicant.getEmail());
-			return ResponseEntity
-					.ok(new RestAPIResponse("success", "customer updated successfully", updatedApplicant));
-		} else {
-			logger.warn("customer not found for ID: {}", id);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "customer not found"));
+	@RequestMapping(value = "/updateById", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateApplicant(@RequestBody CustomerUpdateDto customerUpdateDto) {
+		logger.info("Updating customer with ID: {}");
+
+		try {
+			CustomerUpdateDto updatedCustomer = customerService.update(customerUpdateDto);
+			logger.info("customer updated successfully: {}");
+			return ResponseEntity.ok(new RestAPIResponse("success", "customer updated successfully", updatedCustomer));
+		} catch (Exception e) {
+			logger.warn("customer not found for ID: {}");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("fail", "Error updating customer"));
 		}
 	}
+
+
+
 }
