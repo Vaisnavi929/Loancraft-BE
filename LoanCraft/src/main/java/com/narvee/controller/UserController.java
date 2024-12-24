@@ -19,6 +19,7 @@ import com.narvee.commons.RestAPIResponse;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
 import com.narvee.request.dto.UserUpdateDto;
+import com.narvee.util.EncryptionUtil;
 
 @RestController
 @CrossOrigin("*")
@@ -46,10 +47,14 @@ public class UserController {
 
 	// Get User by ID
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getUserById(@PathVariable Long userId) {
+	public ResponseEntity<RestAPIResponse> getUserById(@PathVariable String userId) throws Exception {
 		logger.info("Fetching user by ID: {}", userId);
+		
+		long decryptedUserrId = EncryptionUtil.decrypt(userId);
+	    logger.info("Decrypted User ID: {}", decryptedUserrId);
+	    
 		try {
-			UserInfoDto user = iUserInfoService.getUserById(userId);
+			UserInfoDto user = iUserInfoService.getUserById(decryptedUserrId);
 			if (user != null) {
 				logger.info("User found: {}", user.getEmail());
 				return ResponseEntity.ok(new RestAPIResponse("success", "User fetched successfully", user));
@@ -95,10 +100,15 @@ public class UserController {
 
 	// Delete User
 	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable Long userId) {
+	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable String userId) throws Exception {
 		logger.info("Deleting user with ID: {}", userId);
+		
+		// Decrypt the customerId
+	    long decryptedUserrId = EncryptionUtil.decrypt(userId);
+	    logger.info("Decrypted User ID: {}", decryptedUserrId);
+	    
 		try {
-			boolean isDeleted = iUserInfoService.deleteUserById(userId);
+			boolean isDeleted = iUserInfoService.deleteUserById(decryptedUserrId);
 			if (isDeleted) {
 				return ResponseEntity.ok(new RestAPIResponse("success", "User deleted successfully", null));
 			} else {
