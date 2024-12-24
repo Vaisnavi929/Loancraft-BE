@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.narvee.entity.UserInfo;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserInfo,Integer> {
+public interface UserRepository extends JpaRepository<UserInfo,Long> {
 	
 	Optional<UserInfo> findByEmail(String email);
 	

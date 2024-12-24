@@ -22,7 +22,7 @@ import com.narvee.request.dto.UserUpdateDto;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class UserController {
 
 	public static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -46,7 +46,7 @@ public class UserController {
 
 	// Get User by ID
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getUserById(@PathVariable Integer userId) {
+	public ResponseEntity<RestAPIResponse> getUserById(@PathVariable Long userId) {
 		logger.info("Fetching user by ID: {}", userId);
 		try {
 			UserInfoDto user = iUserInfoService.getUserById(userId);
@@ -95,7 +95,7 @@ public class UserController {
 
 	// Delete User
 	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable Integer userId) {
+	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable Long userId) {
 		logger.info("Deleting user with ID: {}", userId);
 		try {
 			boolean isDeleted = iUserInfoService.deleteUserById(userId);
