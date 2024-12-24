@@ -13,12 +13,12 @@ public interface IUserInfoService {
 
 	public UserInfoDto saveUser(UserInfoDto userinfodto);
 	
-	UserInfoDto getUserById(Integer userId);
+	UserInfoDto getUserById(Long userId);
 
 	Page<UserInfoDto> getAllUser(SortingDTO sortingDTO);
 
 	UserUpdateDto updateUser(UserUpdateDto userUpdateDto);
 
-    boolean deleteUserById(Integer userId);
+    boolean deleteUserById(Long userId);
 	
 }

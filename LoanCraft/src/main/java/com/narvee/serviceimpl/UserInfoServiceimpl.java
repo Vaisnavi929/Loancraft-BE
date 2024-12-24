@@ -16,11 +16,13 @@ import com.narvee.repository.UserRepository;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
 import com.narvee.request.dto.UserUpdateDto;
+import com.narvee.util.EncryptionUtil;
 
 @Service
 public class UserInfoServiceimpl implements IUserInfoService {
 
 	public static final Logger logger = LoggerFactory.getLogger(UserInfoServiceimpl.class);
+	
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -42,11 +44,22 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		UserInfo savedUser = userRepo.save(user);
 		logger.info("User saved successfully with ID: {}", savedUser.getUserId());
-		return modelMapper.map(savedUser, UserInfoDto.class);
+//		return modelMapper.map(savedUser, UserInfoDto.class);
+		// Map saved entity back to DTO and encrypt userId
+	    UserInfoDto responseDto = modelMapper.map(savedUser, UserInfoDto.class);
+	   
+	    try {
+	    	responseDto.setUserId(EncryptionUtil.encrypt(savedUser.getUserId()));
+	    } catch (Exception e) {
+	        logger.error("Error encrypting user ID: {}", e.getMessage(), e);
+	        throw new RuntimeException("Failed to encrypt user ID", e);
+	    }
+
+	    return responseDto;
 	}
 
 	@Override
-	public UserInfoDto getUserById(Integer userId) {
+	public UserInfoDto getUserById(Long userId) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: getUserById");
 		return userRepo.findById(userId).map(user -> modelMapper.map(user, UserInfoDto.class)).orElseThrow(null);
 	}
@@ -91,7 +104,7 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	@Override
 	public UserUpdateDto updateUser(UserUpdateDto userUpdateDto) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
-		UserInfo user = userRepo.findById(userUpdateDto.getId()).get();
+		UserInfo user = userRepo.findById(userUpdateDto.getUserId()).get();
 		String password=user.getPassword();
 		
 		if (user != null) {
@@ -106,7 +119,7 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	}
 
 	@Override
-	public boolean deleteUserById(Integer userId) {
+	public boolean deleteUserById(Long userId) {
 		logger.info("!!! inside class: UserInfoServiceimpl, method: deleteUserById()");
 		if (userRepo.existsById(userId)) {
 			userRepo.deleteById(userId);
