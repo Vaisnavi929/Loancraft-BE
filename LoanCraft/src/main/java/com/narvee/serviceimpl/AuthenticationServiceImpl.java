@@ -9,6 +9,7 @@ import com.narvee.Service.IAuthenticationService;
 import com.narvee.entity.Customers;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.AuthResponse;
+import com.narvee.util.EncryptionUtil;
 import com.narvee.util.JwtUtil;
 
 @Service
@@ -28,6 +29,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		// Fetch the applicant from the repository using email
 		Customers applicant = customersRepository.findByEmail(usernameOrEmail)
 				.orElseThrow(() -> new BadCredentialsException("Applicant not found"));
+		
 
 		if (passwordEncoder.matches(password, applicant.getPassword())) {
 			
@@ -35,6 +37,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
 			// Map the applicant information to the ResponseDto
 			AuthResponse responseDto = new AuthResponse();
+			try {
+				responseDto.setCustomerId(EncryptionUtil.encrypt(applicant.getCustomerId()));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			responseDto.setFirstName(applicant.getFirstName());
 			responseDto.setLastName(applicant.getLastName());
 			responseDto.setMobileNo(applicant.getMobileNo());
