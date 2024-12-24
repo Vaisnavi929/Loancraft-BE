@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class AuthResponse {
 	
+	private String customerId;
 	private String firstName;
 	private String lastName;
 	private String mobileNo;

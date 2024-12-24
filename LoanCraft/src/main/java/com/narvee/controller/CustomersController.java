@@ -20,6 +20,7 @@ import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerUpdateDto;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
+import com.narvee.util.EncryptionUtil;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -52,9 +53,17 @@ public class CustomersController {
 	}
 
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getApplicantById(@PathVariable Long id) {
+	public ResponseEntity<RestAPIResponse> getApplicantById(@PathVariable String  id) throws Exception {
 		logger.info("Fetching customer by ID: {}", id);
-		Customers customer = customerService.getById(id);
+		
+		// Decrypt the customerId
+	    long decryptedCustomerId = EncryptionUtil.decrypt(id);
+	    logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+
+	    // Convert the decrypted ID to the appropriate type (e.g., Long)
+	    Long customerId = Long.valueOf(decryptedCustomerId);
+	    
+		Customers customer = customerService.getById(customerId);
 		if (customer != null) {
 			logger.info("customer found: {}", customer.getEmail());
 			return ResponseEntity.ok(new RestAPIResponse("success", "customer fetched successfully", customer));
@@ -79,9 +88,14 @@ public class CustomersController {
 	}
 
 	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> deleteApplicantById(@PathVariable Long id) {
+	public ResponseEntity<RestAPIResponse> deleteApplicantById(@PathVariable String id) throws Exception {
 		logger.info("Deleting customer by ID: {}", id);
-		boolean isDeleted = customerService.deleteById(id);
+		
+		// Decrypt the customerId
+	    long decryptedCustomerId = EncryptionUtil.decrypt(id);
+	    logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+	    
+		boolean isDeleted = customerService.deleteById(decryptedCustomerId);
 		if (isDeleted) {
 			logger.info("customer deleted successfully: {}", id);
 			return ResponseEntity.ok(new RestAPIResponse("success", "customer deleted successfully"));
