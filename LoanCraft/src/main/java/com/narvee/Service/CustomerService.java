@@ -11,11 +11,11 @@ public interface CustomerService {
 
 	Customers save(RegisterVO register);
 
-	Customers getById(Long id);
+	Customers getById(String encryptedId)throws Exception ;
 
 	boolean deleteById(Long id);
 
-	CustomerUpdateDto update(CustomerUpdateDto costomerUpdateDto);
+	CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) throws Exception;
 
 	Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO);
 
