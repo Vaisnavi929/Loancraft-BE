@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.IPrivilegeService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Privilege;
+import com.narvee.request.dto.PrivilegedDTO;
 import com.narvee.vo.PrivilegeVO;
 import com.narvee.vo.RoleToPrivilegesVO;
 
 
 @RestController
-@RequestMapping("/priviliges")
-@CrossOrigin
+@CrossOrigin("*")
+@RequestMapping("/api/priviliges")
 public class PriviliagesController {
 
 	private static final Logger logger = LoggerFactory.getLogger(PriviliagesController.class);
@@ -32,10 +33,11 @@ public class PriviliagesController {
 	private IPrivilegeService privilegeService;
 	
 	@RequestMapping(value = "/savePrevileges", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> savePrevg(@RequestBody Privilege previleges) {
+	public ResponseEntity<RestAPIResponse> savePrevg(@RequestBody PrivilegedDTO previleges) {
 		logger.info("!!! inside class: PriviliagesController , !! method: savePrevg");
+		System.err.println("previleges data from ui:"+previleges.getName()+" "+previleges.getType()+" "+previleges.getCardType());
 		privilegeService.savePrevileges(previleges);
-		return new ResponseEntity<>(new RestAPIResponse("Success", "Previleges Saved"), HttpStatus.CREATED);
+		return new ResponseEntity<>(new RestAPIResponse("success", "Previleges Saved"), HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
@@ -55,6 +57,7 @@ public class PriviliagesController {
 	@RequestMapping(value = "/addprevtorole", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> addprevtorole(@RequestBody RoleToPrivilegesVO previleges) {
 		logger.info("!!! inside class: PriviliagesController , !! method: addprevtorole");
+		System.err.println("role to privileges"+ previleges.getPrivilegeIds());
 		System.err.println("roleid:"+previleges.getRoleId());
 		privilegeService.addPrivilegeToRole(previleges);
 		return new ResponseEntity<>(new RestAPIResponse("Success", "Previleges Saved"), HttpStatus.CREATED);

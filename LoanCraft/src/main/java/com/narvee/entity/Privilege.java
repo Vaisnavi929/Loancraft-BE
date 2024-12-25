@@ -34,6 +34,9 @@ public class Privilege extends AuditModel{
 	@Column(name = "type")
 	private String type;
 
+	@Column(name = "cardType")
+	private String cardType ="one";  //one/many
+	
 	@Column(name = "description")
 	private String description;
 
@@ -45,9 +48,6 @@ public class Privilege extends AuditModel{
 
 	private boolean selected;
 	
-	@Column(name = "cardType")
-	private String cardType ="one";  //one/many
-
 	public enum privilegeType {
 		USER, ROLE, DASHBOARD
 	}
