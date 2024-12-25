@@ -1,0 +1,16 @@
+package com.narvee.request.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PrivilegedDTO {
+
+	private String type;
+	private String name;
+	private String cardType;
+	
+}

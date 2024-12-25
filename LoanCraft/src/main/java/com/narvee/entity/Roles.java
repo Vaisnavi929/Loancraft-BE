@@ -45,6 +45,9 @@ public class Roles extends AuditModel {
 	@Column(name = "roleName")
 	private String roleName;
 
+	@Column(name = "description")
+	private String description;
+	
 //	@JsonBackReference
 //	@ManyToMany(mappedBy = "roles")
 //    private Set<UserInfo> users = new HashSet<>();

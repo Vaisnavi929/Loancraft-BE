@@ -15,6 +15,7 @@ import com.narvee.entity.Privilege;
 import com.narvee.entity.Roles;
 import com.narvee.repository.IPrivilegeRepository;
 import com.narvee.repository.IRolesRepository;
+import com.narvee.request.dto.PrivilegedDTO;
 import com.narvee.vo.DropdownVO;
 import com.narvee.vo.PrivilegeVO;
 import com.narvee.vo.RoleToPrivilegesVO;
@@ -29,8 +30,12 @@ public class PrivilegeSeviceImpl implements IPrivilegeService{
 	private IPrivilegeRepository privRepo;
 	
 	@Override
-	public Privilege savePrevileges(Privilege privilege) {
-		return privRepo.save(privilege);
+	public Privilege savePrevileges(PrivilegedDTO privilege) {
+		Privilege priv= new Privilege();
+		priv.setCardType(privilege.getCardType());
+        priv.setName(privilege.getName());
+        priv.setType(privilege.getType());;
+		return privRepo.save(priv);
 	}
 	
 	@Override
