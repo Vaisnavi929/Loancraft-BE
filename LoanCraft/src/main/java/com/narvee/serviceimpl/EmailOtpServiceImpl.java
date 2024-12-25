@@ -9,12 +9,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.EmailOtpService;
-import com.narvee.entity.Applicants;
 import com.narvee.entity.MailBody;
 import com.narvee.entity.OtpVerification;
-import com.narvee.repository.ApplicantsRepository;
 import com.narvee.repository.OtpRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.util.OTPGenerator;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -32,16 +31,17 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 	private JavaMailSender mailSender;
 
 	@Override
-    public String sendOtp( ApplicantDto applicant) throws MessagingException {
-        String token = generateOtp();
-        OtpVerification otp = new OtpVerification();
-        otp.setOtp(token);
-//        otp.setApplicantId(applicant.getApplicantId());
-        otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+    public String sendOtp(ApplicantDto applicant) throws MessagingException {
 
-        otpRepository.save(otp);
+		// Generate OTP using OTPGenerator
+		String token = OTPGenerator.generateRandomPassword(6);
+		// Save OTP details
+		OtpVerification otp = new OtpVerification();
+		otp.setOtp(token);
+		otp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+		otpRepository.save(otp);
 
-        StringBuilder emailContent = new StringBuilder();
+		StringBuilder emailContent = new StringBuilder();
         emailContent.append("<!DOCTYPE html>")
             .append("<html lang=\"en\">")
             .append("<head>")
@@ -69,14 +69,13 @@ public class EmailOtpServiceImpl implements EmailOtpService {
             .append("<p>Please use the above OTP to complete your registration process. The OTP is valid for the next 5 minutes.</p>")
             .append("<p>If you did not request this OTP, please ignore this email or contact support.</p>")
             .append("<div class=\"footer\">")
-            .append("<p>If you have any questions, feel free to <a href=\"mailto:support@example.com\">contact us</a>.</p>")
             .append("</div>")
             .append("</td></tr>")
             .append("</table>")
             .append("</body>")
             .append("</html>");
 
-        MailBody mailBody = new MailBody(applicant.getEmail(), "Password Reset Request", emailContent.toString());
+        MailBody mailBody = new MailBody(applicant.getEmail(), "OTP Verification Code", emailContent.toString());
         sendEmail(mailBody);
 
         return "OTP sent successfully.";
@@ -105,7 +104,4 @@ public class EmailOtpServiceImpl implements EmailOtpService {
         mailSender.send(message);
     }
 
-    private String generateOtp() {
-        return String.valueOf((int) (Math.random() * 900000) + 100000); 
-    }
 }

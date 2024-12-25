@@ -1,7 +1,5 @@
 package com.narvee.config;
 
-
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +38,7 @@ public class SecurityConfig {
 	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
 			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
 			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
-			"/api/test/**", "/authenticate","/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken" ,"/api/excel/upload" ,"/api/app/save" ,
+			"/api/test/**", "/authenticate","/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken" ,"/api/auth/login","/api/auth/logout","/api/excel/upload" ,"/api/app/save" ,
 			"/api/app/get", "/api/app/save","/api/**"};
 
     @Autowired
@@ -82,7 +80,6 @@ public class SecurityConfig {
                     objectMapper.writeValue(response.getWriter(), errorResponse);
                 })
             );
-
         return http.build();
     }
     
@@ -102,7 +99,7 @@ public class SecurityConfig {
 
         return source;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // Password encoder used during registration and login

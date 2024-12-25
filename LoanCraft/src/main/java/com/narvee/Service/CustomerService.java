@@ -1,15 +1,22 @@
 package com.narvee.Service;
 
-import java.util.List;
-import com.narvee.entity.CustomerDetails;
-
+import org.springframework.data.domain.Page;
+import com.narvee.entity.Customers;
+import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.CustomerUpdateDto;
+import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.SortingDTO;
 
 public interface CustomerService {
-	
-	public CustomerDetails save(CustomerDetails customerDetails);
 
-	public CustomerDetails getById(Long id);
-	public List<CustomerDetails> getAllApplicantes();
-	public boolean deletedById(Long id);
+	Customers save(RegisterVO register);
+
+	Customers getById(String encryptedId)throws Exception ;
+
+	boolean deleteById(Long id);
+
+	CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) throws Exception;
+
+	Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO);
 
 }

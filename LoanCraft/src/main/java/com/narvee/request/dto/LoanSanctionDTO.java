@@ -1,10 +1,6 @@
 package com.narvee.request.dto;
 
 import java.util.Date;
-import java.util.List;
-
-import com.narvee.entity.LoanApplication;
-import com.narvee.entity.Payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

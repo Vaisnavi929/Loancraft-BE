@@ -33,7 +33,6 @@ public class IncomeDetails {
 	private String others;
 	private Double expenditureTotal;
 	private Double netIncome;
+	
 
-	@OneToOne(cascade = CascadeType.ALL,mappedBy ="incomeDetails")
-	private LoanApplication loanAppplication;
 }

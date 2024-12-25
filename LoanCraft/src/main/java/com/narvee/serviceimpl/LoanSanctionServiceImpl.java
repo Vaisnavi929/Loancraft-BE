@@ -6,13 +6,19 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.LoanSanctionservice;
-import com.narvee.entity.LoanApplication;
+import com.narvee.Service.SortingRequestDto;
+import com.narvee.entity.Applications;
 import com.narvee.entity.LoanSanction;
 import com.narvee.repository.LoanSanctionRepository;
 import com.narvee.request.dto.LoanSanctionDTO;
+import com.narvee.request.dto.LoanSanctionDTOS;
 
 
 @Service
@@ -30,9 +36,8 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 	public LoanSanction saveLoanSanction(LoanSanctionDTO loanSanctionDTO) {
 		logger.info("!!! inside class : LoanSanctionServiceImpl ,!! method :saveLoanSanction");
 		LoanSanction loanSanction=	mapper.map(loanSanctionDTO, LoanSanction.class);
-		LoanApplication loanApplication=new LoanApplication();
+		Applications loanApplication=new Applications();
 		loanApplication.setLoanId(loanSanctionDTO.getLoanId());
-		loanSanction.setLoanApplication(loanApplication);
 		return loanSanctionRepository.save(loanSanction);
 	}
 
@@ -62,6 +67,65 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		logger.info("!!! inside class : LoanSanctionServiceImpl, !! method :deleteById  ");
 		loanSanctionRepository.deleteById(loanSactionId);
 		return true;
+	}
+
+
+	@Override
+	public Page<LoanSanctionDTOS> getAllLoanSanctionWithPAgination(SortingRequestDto sortingRequestDto) {
+		
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword();
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+	    if (sortField.equalsIgnoreCase("loan_requested"))
+			sortField = "loan_requested";
+		else if (sortField.equalsIgnoreCase(" "))
+			sortField = "amount_disbursed";
+		else if (sortField.equalsIgnoreCase("cash_limit"))
+	     sortField = "cash_limit";
+		else if (sortField.equalsIgnoreCase("emi_amount"))
+		     sortField = "emi_amount";
+		else if (sortField.equalsIgnoreCase("number_of_emis"))
+		     sortField = "number_of_emis";
+		else if (sortField.equalsIgnoreCase("rate_of_interest"))
+		     sortField = "rate_of_interest";
+		else if (sortField.equalsIgnoreCase("emi_due_date"))
+		     sortField = "emi_due_date";
+		else if (sortField.equalsIgnoreCase("date_of_birth"))
+		     sortField = "date_of_birth";
+		else if (sortField.equalsIgnoreCase("emi_start_date"))
+		     sortField = "emi_start_date";
+		else if (sortField.equalsIgnoreCase("currency"))
+		     sortField = "currency";
+		else if (sortField.equalsIgnoreCase("interest_type"))
+		     sortField = "interest_type";
+		else if (sortField.equalsIgnoreCase("repayment_mode"))
+		     sortField = "repayment_mode";
+		else if (sortField.equalsIgnoreCase("currency"))
+		     sortField = "currency";
+		else if (sortField.equalsIgnoreCase("interest_type"))
+		     sortField = "interest_type";
+		else if (sortField.equalsIgnoreCase("payment_freqmuency"))
+		     sortField = "payment_freqmuency";
+		else
+		sortField = "status";
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return loanSanctionRepository.getAllLoansactionWithPagination(pageable);
+		} else {
+
+			return loanSanctionRepository.getAllLoansactionWithSearching(pageable, keyword);
+
+		}
+
+
 	}
 
 }

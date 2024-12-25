@@ -30,8 +30,5 @@ public class IdentityProof {
 	private Date expDate;
 	
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	private LoanApplication loanApplication;
-	
 
 }

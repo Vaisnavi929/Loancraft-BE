@@ -13,15 +13,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="applicant")
-public class Applicants {
-
+@Table(name = "ApplicantBlockListedTokens")
+public class BlacklistedToken {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long applicantId;
-	private String firstName;
-	private String lastName;
-	private String mobileNo;
+	private Long id;
+	private String token;
+
+	private Long expiryDate;
 	private String email;
-	private String password;
 }
