@@ -19,6 +19,7 @@ import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerUpdateDto;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
+import com.narvee.util.EncryptionUtil;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -59,9 +60,23 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customers getById(Long id) {
+	public Customers getById(String encryptedId) throws Exception {
 		logger.info("!!! inside class: CustomerServiceImpl, method: getById()");
-		return customerRepository.findById(id).orElse(null);
+		
+		long decryptedCustomerId = EncryptionUtil.decrypt(encryptedId);
+		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+
+		// Fetch the customer details from the repository using the decrypted ID
+		Customers customer = customerRepository.findById(decryptedCustomerId).orElse(null);
+
+		// Log and return the result
+		if (customer != null) {
+			logger.info("Customer found: {}", customer.getEmail());
+		} else {
+			logger.warn("Customer not found for ID: {}", decryptedCustomerId);
+		}
+
+		return customer;
 	}
 
 	@Override
@@ -116,19 +131,34 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) {
+	public CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) throws Exception {
 		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
-		Customers customers = customerRepository.findById(customerUpdateDto.getCustomerId()).get();
-		String password = customers.getPassword();
-		String accountNumber = customers.getAccountNumber();
-		if (customers != null) {
-			customers = modelMapper.map(customerUpdateDto, Customers.class);
-			customers.setPassword(password);
-			customers.setAccountNumber(accountNumber);
-			customers = customerRepository.save(customers);
-		}
-		CustomerUpdateDto updateDto = modelMapper.map(customers, CustomerUpdateDto.class);
-		return updateDto;
+
+		// Decrypt the encrypted customerId
+		long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
+		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+
+		// Fetch the customer by decrypted ID
+		Customers customer = customerRepository.findById(decryptedCustomerId)
+				.orElseThrow(() -> new RuntimeException("Customer not found"));
+
+		// Retain sensitive fields
+		String password = customer.getPassword();
+		String accountNumber = customer.getAccountNumber();
+
+		// Map updated fields
+		modelMapper.map(customerUpdateDto, customer);
+		customer.setPassword(password);
+		customer.setAccountNumber(accountNumber);
+
+		// Save the updated customer
+		customer = customerRepository.save(customer);
+
+		// Map to DTO for response
+		CustomerUpdateDto updatedDto = modelMapper.map(customer, CustomerUpdateDto.class);
+
+		return updatedDto;
 	}
+
 
 }
