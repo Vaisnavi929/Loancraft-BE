@@ -2,6 +2,8 @@ package com.narvee.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +27,17 @@ import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
 
 @RestController
-@RequestMapping("/customer")
-@CrossOrigin
+@RequestMapping("/api/customer")
+@CrossOrigin("*")
 public class CustomersController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomersController.class);
 
 	@Autowired
 	private CustomerService customerService;
+
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@Autowired
 	private IAuthenticationService authenticationService;
@@ -42,8 +47,7 @@ public class CustomersController {
 		logger.info("Saving applicant: {}", register.getEmail());
 		try {
 			customerService.save(register);
-			Object authenticate = authenticationService.authenticate(register.getEmail(),
-					register.getPassword());
+			Object authenticate = authenticationService.authenticate(register.getEmail(), register.getPassword());
 			logger.info("customer saved and authenticated successfully: {}", register.getEmail());
 			return ResponseEntity
 					.ok(new RestAPIResponse("success", "Customer saved and authenticated successfully", authenticate));
@@ -55,37 +59,23 @@ public class CustomersController {
 	}
 
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<RestAPIResponse> getCustomerById(@PathVariable String id) throws Exception {
-        logger.info("Fetching customer by encrypted ID: {}", id);
+	public ResponseEntity<RestAPIResponse> getCustomerById(@PathVariable String id) throws Exception {
+		logger.info("Fetching customer by encrypted ID: {}", id);
 
-        // Call service method to fetch the customer by decrypted ID
-        Customers customer = customerService.getById(id);
+		// Call service method to fetch the customer by decrypted ID
+		Customers customer = customerService.getById(id);
 
-        if (customer != null) {
-            // If customer found, return successful response with encrypted customerId
-            Map<String, Object> responseData = new HashMap<>();
-
-            // Encrypt the customerId before sending in the response
-            String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId()); 
-
-            responseData.put("CustomerId", encryptedCustomerId);  // encrypted customerId
-            responseData.put("FirstName", customer.getFirstName());
-            responseData.put("LastName", customer.getLastName());
-            responseData.put("MobileNo", customer.getMobileNo());
-            responseData.put("Email", customer.getEmail());
-            responseData.put("AccountNumber", customer.getAccountNumber());
-            responseData.put("PermantAddress", customer.getPermantAddress());
-            responseData.put("CurrentAddress", customer.getCurrentAddress());
-            responseData.put("Password", customer.getPassword());
-
-            return ResponseEntity.ok(new RestAPIResponse("success", "Customer fetched successfully", responseData));
-        } else {
-            // If customer not found, return not found response
-            logger.warn("Customer not found for encrypted ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new RestAPIResponse("fail", "Customer not found"));
-        }
-    }
+		if (customer != null) {
+			String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId());
+			CustomerUpdateDto responseData = modelMapper.map(customer, CustomerUpdateDto.class);
+			responseData.setCustomerId(encryptedCustomerId);
+			return ResponseEntity.ok(new RestAPIResponse("success", "Customer fetched successfully", responseData));
+		} else {
+			// If customer not found, return not found response
+			logger.warn("Customer not found for encrypted ID: {}", id);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "Customer not found"));
+		}
+	}
 
 	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
@@ -96,19 +86,18 @@ public class CustomersController {
 			return ResponseEntity.ok(new RestAPIResponse("Success", "customer fetched successfully", allApplicants));
 		} else {
 			logger.warn("No customer found with the provided sorting parameters");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT)
-					.body(new RestAPIResponse("fail", "No customer found"));
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new RestAPIResponse("fail", "No customer found"));
 		}
 	}
 
 	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> deleteApplicantById(@PathVariable String id) throws Exception {
 		logger.info("Deleting customer by ID: {}", id);
-		
+
 		// Decrypt the customerId
-	    long decryptedCustomerId = EncryptionUtil.decrypt(id);
-	    logger.info("Decrypted customer ID: {}", decryptedCustomerId);
-	    
+		long decryptedCustomerId = EncryptionUtil.decrypt(id);
+		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+
 		boolean isDeleted = customerService.deleteById(decryptedCustomerId);
 		if (isDeleted) {
 			logger.info("customer deleted successfully: {}", id);
@@ -121,26 +110,26 @@ public class CustomersController {
 
 	@RequestMapping(value = "/updateById", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateApplicant(@RequestBody CustomerUpdateDto customerUpdateDto) {
-	    logger.info("Updating customer with encrypted ID: {}", customerUpdateDto.getCustomerId());
+		logger.info("Updating customer with encrypted ID: {}", customerUpdateDto.getCustomerId());
 
-	    try {
-	        // Decrypt the customer ID before passing it to the service
-	        long decryptedCustomerId = EncryptionUtil.decrypt(customerUpdateDto.getCustomerId());
-	        customerUpdateDto.setCustomerId(String.valueOf(decryptedCustomerId)); // Set the decrypted ID in the DTO
+		try {
+			// Decrypt the customer ID before passing it to the service
+			long decryptedCustomerId = EncryptionUtil.decrypt(customerUpdateDto.getCustomerId());
+			customerUpdateDto.setCustomerId(String.valueOf(decryptedCustomerId)); // Set the decrypted ID in the DTO
 
-	        // Call the service to update customer
-	        CustomerUpdateDto updatedCustomer = customerService.update(customerUpdateDto);
+			// Call the service to update customer
+			CustomerUpdateDto updatedCustomer = customerService.update(customerUpdateDto);
 
-	        // Encrypt the customerId for the response
-	        updatedCustomer.setCustomerId(EncryptionUtil.encrypt(Long.parseLong(updatedCustomer.getCustomerId())));
+			// Encrypt the customerId for the response
+			updatedCustomer.setCustomerId(EncryptionUtil.encrypt(Long.parseLong(updatedCustomer.getCustomerId())));
 
-	        logger.info("Customer updated successfully");
-	        return ResponseEntity.ok(new RestAPIResponse("success", "Customer updated successfully", updatedCustomer));
-	    } catch (Exception e) {
-	        logger.error("Error updating customer: {}", e.getMessage(), e);
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body(new RestAPIResponse("fail", "Error updating customer"));
-	    }
+			logger.info("Customer updated successfully");
+			return ResponseEntity.ok(new RestAPIResponse("success", "Customer updated successfully", updatedCustomer));
+		} catch (Exception e) {
+			logger.error("Error updating customer: {}", e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("fail", "Error updating customer"));
+		}
 	}
 
 }
