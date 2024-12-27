@@ -1,5 +1,6 @@
 package com.narvee.controller;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.narvee.Service.IUserInfoService;
 import com.narvee.commons.RestAPIResponse;
+import com.narvee.entity.UserInfo;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
 import com.narvee.request.dto.UserUpdateDto;
+import com.narvee.serviceimpl.UserInfoServiceimpl;
 import com.narvee.util.EncryptionUtil;
 
 @RestController
@@ -30,6 +34,9 @@ public class UserController {
 
 	@Autowired
 	private IUserInfoService iUserInfoService;
+
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> registerUser(@RequestBody UserInfoDto userInfoDTO) {
@@ -49,27 +56,24 @@ public class UserController {
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getUserById(@PathVariable String userId) throws Exception {
 		logger.info("Fetching user by ID: {}", userId);
+
+		UserInfo user = iUserInfoService.getUserById(userId);
+
+		if (user != null) {
 		
-		long decryptedUserrId = EncryptionUtil.decrypt(userId);
-	    logger.info("Decrypted User ID: {}", decryptedUserrId);
-	    
-		try {
-			UserInfoDto user = iUserInfoService.getUserById(decryptedUserrId);
-			if (user != null) {
-				logger.info("User found: {}", user.getEmail());
-				return ResponseEntity.ok(new RestAPIResponse("success", "User fetched successfully", user));
-			} else {
-				logger.warn("User not found for ID: {}", userId);
-				return ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body(new RestAPIResponse("fail", "User not found for ID " + userId));
-			}
-		} catch (Exception e) {
-			logger.error("Error fetching user by ID: {}", e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error fetching user"));
+			String encryptUserrId = EncryptionUtil.encrypt(user.getUserId());
+			UserInfoDto userInfoDto = modelMapper.map(user, UserInfoDto.class);
+			
+			userInfoDto.setUserId(encryptUserrId);
+			
+			return ResponseEntity.ok(new RestAPIResponse("success", "User fetched successfully", userInfoDto));
+		} else {
+			logger.warn("User not found for encrypted ID: {}", userId);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "User not found"));
+
 		}
 	}
-
+	
 	// Get All Users with Pagination and Sorting
 	@RequestMapping(value = "/users", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllUsers(@RequestBody SortingDTO sortingDTO) {
@@ -89,7 +93,13 @@ public class UserController {
 	public ResponseEntity<RestAPIResponse> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
 		logger.info("Updating user with ID: {}");
 		try {
-			UserUpdateDto updatedUser = iUserInfoService.updateUser( userUpdateDto);
+			long decryptUserId = EncryptionUtil.decrypt(userUpdateDto.getUserId());
+			userUpdateDto.setUserId(String.valueOf(decryptUserId));
+
+			UserUpdateDto updatedUser = iUserInfoService.updateUser(userUpdateDto);
+
+			updatedUser.setUserId(EncryptionUtil.encrypt(Long.parseLong(updatedUser.getUserId())));
+
 			return ResponseEntity.ok(new RestAPIResponse("success", "User updated successfully", updatedUser));
 		} catch (Exception e) {
 			logger.error("Error updating user with ID: {}", e);
@@ -102,11 +112,11 @@ public class UserController {
 	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable String userId) throws Exception {
 		logger.info("Deleting user with ID: {}", userId);
-		
+
 		// Decrypt the customerId
-	    long decryptedUserrId = EncryptionUtil.decrypt(userId);
-	    logger.info("Decrypted User ID: {}", decryptedUserrId);
-	    
+		long decryptedUserrId = EncryptionUtil.decrypt(userId);
+		logger.info("Decrypted User ID: {}", decryptedUserrId);
+
 		try {
 			boolean isDeleted = iUserInfoService.deleteUserById(decryptedUserrId);
 			if (isDeleted) {
