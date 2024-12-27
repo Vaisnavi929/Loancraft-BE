@@ -26,6 +26,7 @@ public class RolesController {
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> AddRoles(@RequestBody Roles roles) {
+		System.err.println("roles to save:"+roles.getDescription()+" "+roles.getRoleName());
 		boolean flg = Service.saveRole(roles);
 		if (flg) {
 			return new ResponseEntity<>(new RestAPIResponse("success", "Role Saved", "Success"), HttpStatus.CREATED);

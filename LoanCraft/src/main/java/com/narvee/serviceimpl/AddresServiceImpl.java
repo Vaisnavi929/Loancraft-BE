@@ -14,6 +14,7 @@ import com.narvee.repository.AddressRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.PermanentAddressRepository;
 import com.narvee.request.dto.AddressDto;
+import com.narvee.request.dto.AddressUpdateRequest;
 
 @Service
 public class AddresServiceImpl implements AddressServices {
@@ -59,10 +60,15 @@ public class AddresServiceImpl implements AddressServices {
 		return savedAddressDto;
 	}
 
-	@Override
-	public CurrentAddress updateCurrentAddress(AddressDto currentAddress) {
 
-		return currentAddressRepository.save(currentAddress);
+	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest) {
+		CurrentAddress currentAddress=mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
+		PermanentAddress permanentAddress=mapper.map(updateRequest.getParmanentAddress(),PermanentAddress.class);
+		currentAddressRepository.save(currentAddress);
+		permanentAddressRepository.save(permanentAddress);
+		
+		return updateRequest;
+
 	}
 
 	@Override
@@ -86,7 +92,6 @@ public class AddresServiceImpl implements AddressServices {
 	@Override
 	public AddressDto savePermanentAddress(AddressDto addressDto) {
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress()");
-
 		// Decrypt customerId before saving
 		long decryptedCustomerId = Long.parseLong(addressDto.getCustomerId());
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
@@ -109,11 +114,13 @@ public class AddresServiceImpl implements AddressServices {
 
 		return savedAddressDto;
 	}
+	
 
 	@Override
 	public PermanentAddress getBypermanentId(Long pAddressId) {
 
 		return permanentAddressRepository.findById(pAddressId).get();
 	}
+
 
 }

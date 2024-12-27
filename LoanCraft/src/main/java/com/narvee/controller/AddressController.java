@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.AddressServices;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.request.dto.AddressDto;
+
 import com.narvee.util.EncryptionUtil;
+
+import com.narvee.request.dto.AddressUpdateRequest;
+
 
 @RestController
 @CrossOrigin("*")
@@ -28,6 +33,7 @@ public class AddressController {
 
 	@RequestMapping(value = "/saveCurrentAddress", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveCurrentAddress(@RequestBody AddressDto currentAddress) {
+
 		logger.info("Saving address for encrypted Customer ID");
 
 		try {
@@ -48,6 +54,7 @@ public class AddressController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new RestAPIResponse("fail", "Error saving address"));
 		}
+
 	}
 
 	@PostMapping(value = "/savePermanentAddress")
@@ -74,6 +81,14 @@ public class AddressController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new RestAPIResponse("fail", "Error saving address"));
 		}
+	}
+
+
+	@PutMapping(value = "/updateaddress")
+	public ResponseEntity<RestAPIResponse> updateAddress(@RequestBody AddressUpdateRequest addressUpdateRequest) {
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated address",
+				AddressService.updateAddress(addressUpdateRequest)), HttpStatus.OK);
+
 	}
 
 }

@@ -5,12 +5,14 @@ import java.util.List;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.request.dto.AddressDto;
+import com.narvee.request.dto.AddressUpdateRequest;
 
 public interface AddressServices {
 
 	public AddressDto saveCurrentAddress(AddressDto addressDto)throws Exception;
 
-	public CurrentAddress updateCurrentAddress(AddressDto currentAddress);
+
+	public AddressUpdateRequest updateAddress(AddressUpdateRequest addressUpdateRequest);
 
 	public CurrentAddress getByID(Long cAddressId);
 

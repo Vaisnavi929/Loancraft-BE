@@ -1,6 +1,7 @@
 package com.narvee.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,7 +37,10 @@ public class PermanentAddress {
 	@ToString.Exclude
 	@JsonBackReference
 	private Customers customer;
-
+//	
+//	@OneToOne
+//    private States states;
+//
 
 	
 }

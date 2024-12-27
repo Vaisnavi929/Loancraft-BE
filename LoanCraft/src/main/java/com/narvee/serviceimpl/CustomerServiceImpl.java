@@ -1,6 +1,7 @@
 package com.narvee.serviceimpl;
 
 import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
 import com.narvee.entity.Customers;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
-import com.narvee.request.dto.CustomerUpdateDto;
+import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
@@ -102,6 +104,7 @@ public class CustomerServiceImpl implements CustomerService {
 		} else {
 			sortField = "first_name";
 		}
+
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
@@ -130,7 +133,8 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) {
+	public CustomerUpdateRequest update(CustomerUpdateRequest customerUpdateDto) throws Exception {
+
 		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
 
 		// Decrypt the encrypted customerId
@@ -154,9 +158,13 @@ public class CustomerServiceImpl implements CustomerService {
 		customer = customerRepository.save(customer);
 
 		// Map to DTO for response
-		CustomerUpdateDto updatedDto = modelMapper.map(customer, CustomerUpdateDto.class);
+		CustomerUpdateRequest updatedDto = modelMapper.map(customer, CustomerUpdateRequest.class);
 
 		return updatedDto;
 	}
+
+
+
+
 
 }
