@@ -42,5 +42,9 @@ public class CurrentAddress {
 	private Customers customer;
 
 
+	
+//	@OneToOne
+//    @JsonManagedReference
+//    private States states;
 
 }

@@ -16,7 +16,7 @@ public class ApplicantVo {
 	
 	private String firstName;
 	private String lastname;
-	private String mobileNumber;
+	private String mobileNo;
 	private String email;
 	private String password;
 

@@ -10,18 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoanApplicationDto {
-
-	private String title;
-	private String fullname;
-	private String firstName;
-	private String middileName;	
-	private String lastname;
-	private String fatherName;
-	private Date dateOfBirth;
-	private String mailId;
-	private String higherQualification;
-	private String aadharNumber;
-	private String mobileNumber;
+	private String applicationReferenceId;
+	private Long maxnumber;
 	private String status;
+
+
     
 }

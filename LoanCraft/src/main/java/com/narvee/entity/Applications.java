@@ -19,6 +19,7 @@ public class Applications {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long loanId;
 	private String applicationReferenceId;
+	private Long maxnumber;
 	private String status;
 
 }

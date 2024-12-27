@@ -19,7 +19,7 @@ public interface IRolesRepository extends JpaRepository<Roles, Serializable>{
 	public List<String> findRoleByRolName(@Param("roleName") String roleName);
 	
 	public Optional<Roles> findByRoleNameAndRoleIdNot(String rolename, Long id);
-
+	
 	public Optional<Roles> findByRoleNameIgnoreCase(String rolename);
 
 }
