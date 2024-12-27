@@ -37,9 +37,13 @@ public class Customers {
 	private String gender;
 	
 	private String fathersOrSpousesName;
+	
 	private Date dob;
+	
 	private String highestQualification;
+	
 	private String adhaarNumber;
+	
 	@Column(name = "mobile_no")
 	private String mobileNo;
 

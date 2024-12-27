@@ -22,7 +22,7 @@ import com.narvee.util.EncryptionUtil;
 public class UserInfoServiceimpl implements IUserInfoService {
 
 	public static final Logger logger = LoggerFactory.getLogger(UserInfoServiceimpl.class);
-	
+
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -44,24 +44,32 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		UserInfo savedUser = userRepo.save(user);
 		logger.info("User saved successfully with ID: {}", savedUser.getUserId());
-//		return modelMapper.map(savedUser, UserInfoDto.class);
-		// Map saved entity back to DTO and encrypt userId
-	    UserInfoDto responseDto = modelMapper.map(savedUser, UserInfoDto.class);
-	   
-	    try {
-	    	responseDto.setUserId(EncryptionUtil.encrypt(savedUser.getUserId()));
-	    } catch (Exception e) {
-	        logger.error("Error encrypting user ID: {}", e.getMessage(), e);
-	        throw new RuntimeException("Failed to encrypt user ID", e);
-	    }
 
-	    return responseDto;
+		UserInfoDto responseDto = modelMapper.map(savedUser, UserInfoDto.class);
+
+		try {
+			responseDto.setUserId(EncryptionUtil.encrypt(savedUser.getUserId()));
+		} catch (Exception e) {
+			logger.error("Error encrypting user ID: {}", e.getMessage(), e);
+			throw new RuntimeException("Failed to encrypt user ID", e);
+		}
+
+		return responseDto;
 	}
 
 	@Override
-	public UserInfoDto getUserById(Long userId) {
+	public UserInfo getUserById(String encryptedId) throws Exception {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: getUserById");
-		return userRepo.findById(userId).map(user -> modelMapper.map(user, UserInfoDto.class)).orElseThrow(null);
+		long decryptUserId = EncryptionUtil.decrypt(encryptedId);
+		logger.info("Decrypted User ID: {}", decryptUserId);
+
+		UserInfo user = userRepo.findById(decryptUserId).orElse(null);
+		if (user != null) {
+			logger.info("User found: {}", user.getEmail());
+		} else {
+			logger.info("User not found for ID: {}", decryptUserId);
+		}
+		return user;
 	}
 
 	@Override
@@ -76,12 +84,8 @@ public class UserInfoServiceimpl implements IUserInfoService {
 
 		if (sortField.equalsIgnoreCase("Name")) {
 			sortField = "name";
-		} else if (sortField.equalsIgnoreCase("Email")) {
-			sortField = "email";
-		} else if (sortField.equalsIgnoreCase("Password")) {
-			sortField = "password";
 		} else {
-			sortField = "user_id";
+			sortField = "email";
 		}
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -104,18 +108,21 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	@Override
 	public UserUpdateDto updateUser(UserUpdateDto userUpdateDto) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
-		UserInfo user = userRepo.findById(userUpdateDto.getUserId()).get();
-		String password=user.getPassword();
-		
-		if (user != null) {
-			user = modelMapper.map(userUpdateDto, UserInfo.class);
-			user.setPassword(password);
-			user = userRepo.save(user);
-		}
-		
-		UserUpdateDto users = modelMapper.map(user, UserUpdateDto.class);
-		return users;
+		Long decryptedUserId = Long.parseLong(userUpdateDto.getUserId());
+		logger.info("Decrypted customer ID: {}", decryptedUserId);
 
+		UserInfo userInfo = userRepo.findById(decryptedUserId)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+
+		String password = userInfo.getPassword();
+		modelMapper.map(userUpdateDto, userInfo);
+		userInfo.setPassword(password);
+
+		userInfo = userRepo.save(userInfo);
+
+		UserUpdateDto users = modelMapper.map(userInfo, UserUpdateDto.class);
+
+		return users;
 	}
 
 	@Override

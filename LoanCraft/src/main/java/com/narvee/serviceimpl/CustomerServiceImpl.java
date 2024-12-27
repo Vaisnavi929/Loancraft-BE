@@ -62,7 +62,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customers getById(String encryptedId) throws Exception {
 		logger.info("!!! inside class: CustomerServiceImpl, method: getById()");
-		
+
 		long decryptedCustomerId = EncryptionUtil.decrypt(encryptedId);
 		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
@@ -89,20 +89,19 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNumber = sortingDTO.getPageNumber();
 		Integer pageSize = sortingDTO.getPageSize();
 
-		if (sortField.equalsIgnoreCase("Name")) {
-			sortField = "first_name";
+		if (sortField.equalsIgnoreCase("HighestQualification")) {
+			sortField = "highest_qualification";
 		} else if (sortField.equalsIgnoreCase("Lastname")) {
 			sortField = "last_name";
 		} else if (sortField.equalsIgnoreCase("Email")) {
 			sortField = "email";
 		} else if (sortField.equalsIgnoreCase("MobileNo")) {
 			sortField = "mobile_no";
-		} else if (sortField.equalsIgnoreCase("Password")) {
-			sortField = "password";
+		} else if (sortField.equalsIgnoreCase("MiddleName")) {
+			sortField = "middle_name";
 		} else {
-			sortField = "customer_id";
+			sortField = "first_name";
 		}
-
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
@@ -131,7 +130,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) throws Exception {
+	public CustomerUpdateDto update(CustomerUpdateDto customerUpdateDto) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
 
 		// Decrypt the encrypted customerId
@@ -159,6 +158,5 @@ public class CustomerServiceImpl implements CustomerService {
 
 		return updatedDto;
 	}
-
 
 }
