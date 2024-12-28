@@ -1,8 +1,5 @@
 package com.narvee.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Customers;
 import com.narvee.request.dto.ApplicantDto;
-import com.narvee.request.dto.CustomerUpdateDto;
+import com.narvee.request.dto.CustomerUpdateRequest;
+import com.narvee.request.dto.CustomerUpdateResponse;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
@@ -64,10 +63,11 @@ public class CustomersController {
 
 		// Call service method to fetch the customer by decrypted ID
 		Customers customer = customerService.getById(id);
+		System.out.println();
 
 		if (customer != null) {
 			String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId());
-			CustomerUpdateDto responseData = modelMapper.map(customer, CustomerUpdateDto.class);
+			CustomerUpdateResponse responseData = modelMapper.map(customer, CustomerUpdateResponse.class);
 			responseData.setCustomerId(encryptedCustomerId);
 			return ResponseEntity.ok(new RestAPIResponse("success", "Customer fetched successfully", responseData));
 		} else {
@@ -108,8 +108,8 @@ public class CustomersController {
 		}
 	}
 
-	@RequestMapping(value = "/updateById", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateApplicant(@RequestBody CustomerUpdateDto customerUpdateDto) {
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateApplicant(@RequestBody CustomerUpdateRequest customerUpdateDto) {
 		logger.info("Updating customer with encrypted ID: {}", customerUpdateDto.getCustomerId());
 
 		try {
@@ -118,7 +118,7 @@ public class CustomersController {
 			customerUpdateDto.setCustomerId(String.valueOf(decryptedCustomerId)); // Set the decrypted ID in the DTO
 
 			// Call the service to update customer
-			CustomerUpdateDto updatedCustomer = customerService.update(customerUpdateDto);
+			CustomerUpdateRequest updatedCustomer = customerService.update(customerUpdateDto);
 
 			// Encrypt the customerId for the response
 			updatedCustomer.setCustomerId(EncryptionUtil.encrypt(Long.parseLong(updatedCustomer.getCustomerId())));

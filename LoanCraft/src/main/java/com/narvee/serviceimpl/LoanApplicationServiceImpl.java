@@ -38,7 +38,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Override
 	public Applications saveLoanApplication(LoanApplicationDto loanApplicationDto) {
 	    logger.info("Inside saveLoanApplication() method");
-
+	    
 	    ModelMapper modelMapper = MapperConfig.getModelMapper();  
 	    modelMapper.addConverter(new Converter<String, Long>() {
 	        public Long convert(MappingContext<String, Long> context) {
@@ -62,7 +62,8 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	    String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
 	    String value = "BEACON" + valueWithPadding;
 	    loan.setApplicationReferenceId(value);
-//	    loan.setAmaxnum(amaxnumber + 1);
+   
+    loan.setMaxnumber(amaxnumber + 1);
 
 	    return applicationRepository.save(loan); 
 	}

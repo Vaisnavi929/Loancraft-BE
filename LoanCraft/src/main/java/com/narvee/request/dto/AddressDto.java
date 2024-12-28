@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressDto {
-	
+
 	private String address;
 	private String city;
 	private String state;
@@ -18,7 +18,9 @@ public class AddressDto {
 	private Long stayedOfYears;
 	private Long pincode;
 	private Long statecode;
-	private Long customerId;
+	private String customerId;
+	private Long pAddressId;
+	private Long cAddressId;
 
-	
 }
+

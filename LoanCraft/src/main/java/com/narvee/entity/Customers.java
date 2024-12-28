@@ -1,6 +1,6 @@
 package com.narvee.entity;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -30,16 +30,20 @@ public class Customers {
 	private String firstName;
 
 	private String middleName;
-	
+
 	@Column(name = "last_name")
 	private String lastName;
-  
+
 	private String gender;
-	
+
 	private String fathersOrSpousesName;
-	private Date dob;
+
+	private LocalDate dob;
+
 	private String highestQualification;
+	
 	private String adhaarNumber;
+	
 	@Column(name = "mobile_no")
 	private String mobileNo;
 
@@ -60,7 +64,5 @@ public class Customers {
 	@OneToOne(mappedBy = "customer")
 	@JsonManagedReference
 	private CurrentAddress currentAddress;
-	
-	
 
 }

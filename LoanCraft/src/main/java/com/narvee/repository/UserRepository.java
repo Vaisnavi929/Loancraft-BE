@@ -17,14 +17,12 @@ public interface UserRepository extends JpaRepository<UserInfo,Long> {
 	
 	Optional<UserInfo> findByName(String name);
 	
-	@Query(value = "SELECT user_id,email,name,password FROM lms_user_info ", nativeQuery = true)
+	@Query(value = "SELECT email,name FROM lms_user_info ", nativeQuery = true)
     Page<UserInfo> findAllUsers(Pageable pageable);
 
-	@Query(value = "SELECT user_id,email,name,password FROM lms_user_info"
-			+ " WHERE user_id LIKE CONCAT('%', :keyword, '%') OR "
+	@Query(value = "SELECT email,name FROM lms_user_info"
 			+ "email LIKE CONCAT('%', :keyword, '%') OR "
 			+ "name LIKE CONCAT('%', :keyword, '%') OR " 
-			+ "password LIKE CONCAT('%', :keyword, '%') "
 			, nativeQuery = true)
 	Page<UserInfo> findUsersByKeyword(@Param("keyword") String keyword, Pageable pageable);
 	
