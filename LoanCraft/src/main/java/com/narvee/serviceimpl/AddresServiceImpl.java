@@ -15,6 +15,7 @@ import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.PermanentAddressRepository;
 import com.narvee.request.dto.AddressDto;
 import com.narvee.request.dto.AddressUpdateRequest;
+import com.narvee.util.EncryptionUtil;
 
 @Service
 public class AddresServiceImpl implements AddressServices {
@@ -38,7 +39,7 @@ public class AddresServiceImpl implements AddressServices {
 		logger.info("!!! inside class: AddressServiceImpl, method: saveCurrentAddress()");
 
 		// Decrypt customerId before saving
-		long decryptedCustomerId = Long.parseLong(addressDto.getCustomerId());
+		long decryptedCustomerId = 2; // Long.parseLong(addressDto.getCustomerId());
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
@@ -60,13 +61,22 @@ public class AddresServiceImpl implements AddressServices {
 		return savedAddressDto;
 	}
 
+	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception {
+		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
+		CurrentAddress currentAddress = mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
+		PermanentAddress permanentAddress = mapper.map(updateRequest.getParmanentAddress(), PermanentAddress.class);
+		Long customreId = EncryptionUtil.decrypt(customerId);
+		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 
-	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest) {
-		CurrentAddress currentAddress=mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
-		PermanentAddress permanentAddress=mapper.map(updateRequest.getParmanentAddress(),PermanentAddress.class);
+		Customers customers = new Customers();
+		customers.setCustomerId(customreId);
+
+		currentAddress.setCustomer(customers);
+		permanentAddress.setCustomer(customers);
+
 		currentAddressRepository.save(currentAddress);
 		permanentAddressRepository.save(permanentAddress);
-		
+
 		return updateRequest;
 
 	}
@@ -93,7 +103,7 @@ public class AddresServiceImpl implements AddressServices {
 	public AddressDto savePermanentAddress(AddressDto addressDto) {
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress()");
 		// Decrypt customerId before saving
-		long decryptedCustomerId = Long.parseLong(addressDto.getCustomerId());
+		long decryptedCustomerId = 2;/// Long.parseLong(addressDto.getCustomerId());
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
@@ -114,13 +124,11 @@ public class AddresServiceImpl implements AddressServices {
 
 		return savedAddressDto;
 	}
-	
 
 	@Override
 	public PermanentAddress getBypermanentId(Long pAddressId) {
-
+		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
 		return permanentAddressRepository.findById(pAddressId).get();
 	}
-
 
 }
