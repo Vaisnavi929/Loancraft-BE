@@ -11,7 +11,6 @@ public class AddressDto {
 
 	private String address;
 	private String city;
-	private String state;
 	private String country;
 	private String location;
 	private String landmark;
@@ -19,6 +18,7 @@ public class AddressDto {
 	private Long pincode;
 	private Long pAddressId;
 	private Long cAddressId;
+	private Long stateId;
 
 }
 

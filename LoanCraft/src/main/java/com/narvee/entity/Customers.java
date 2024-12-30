@@ -59,7 +59,7 @@ public class Customers {
 
 	@OneToOne(mappedBy = "customer")
 	@JsonManagedReference
-	private PermanentAddress permantAddress;
+	private PermanentAddress permanentAddress;
 
 	@OneToOne(mappedBy = "customer")
 	@JsonManagedReference

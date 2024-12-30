@@ -12,7 +12,7 @@ public class AddressUpdateRequest {
 	
 	private AddressDto parmanentAddress;
 	private AddressDto currentAddress;
-	
+
 
 
 }
