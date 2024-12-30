@@ -3,7 +3,6 @@ package com.narvee.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.narvee.Service.IlogoutService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.AuthRequest;
 import com.narvee.entity.Privilege;
@@ -36,13 +34,9 @@ import com.narvee.entity.UserInfo;
 import com.narvee.exception.InvalidUserCredentialsException;
 import com.narvee.repository.IRolesRepository;
 import com.narvee.repository.UserRepository;
-import com.narvee.response.Response;
-
-import com.narvee.Service.IlogoutService;
-import com.narvee.entity.AuthRequest;
 import com.narvee.request.dto.LoginRequest;
+import com.narvee.response.Response;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;
-
 import com.narvee.util.JwtUtil;
 
 @RestController
