@@ -9,10 +9,9 @@ import com.narvee.request.dto.AddressUpdateRequest;
 
 public interface AddressServices {
 
-	public AddressDto saveCurrentAddress(AddressDto addressDto)throws Exception;
+	public AddressDto saveCurrentAddress(AddressDto addressDto) throws Exception;
 
-
-	public AddressUpdateRequest updateAddress(AddressUpdateRequest addressUpdateRequest);
+	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception;
 
 	public CurrentAddress getByID(Long cAddressId);
 

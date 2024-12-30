@@ -17,8 +17,6 @@ public class AddressDto {
 	private String landmark;
 	private Long stayedOfYears;
 	private Long pincode;
-	private Long statecode;
-	private String customerId;
 	private Long pAddressId;
 	private Long cAddressId;
 
