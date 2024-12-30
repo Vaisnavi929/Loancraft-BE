@@ -75,7 +75,7 @@ public class AddresServiceImpl implements AddressServices {
 		customers.setCustomerId(customreId);
 		
 		States permanentState=new States();
-		permanentState.setStateId(updateRequest.getParmanentAddress().getStateId());
+		permanentState.setStateId(updateRequest.getPermanentAddress().getStateId());
 		permanentAddress.setStates(permanentState);
 		
 		States currentState=new States();
