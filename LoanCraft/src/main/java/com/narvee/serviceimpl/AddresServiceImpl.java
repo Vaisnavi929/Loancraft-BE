@@ -66,7 +66,7 @@ public class AddresServiceImpl implements AddressServices {
 	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception {
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
 		CurrentAddress currentAddress = mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
-		PermanentAddress permanentAddress = mapper.map(updateRequest.getParmanentAddress(), PermanentAddress.class);
+		PermanentAddress permanentAddress = mapper.map(updateRequest.getPermanentAddress(), PermanentAddress.class);
 		Long customreId = EncryptionUtil.decrypt(customerId);
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 

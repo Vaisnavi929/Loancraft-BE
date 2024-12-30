@@ -1,6 +1,5 @@
 package com.narvee.controller;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,6 @@ public class ApplicationsController {
 	@Autowired
 	private ApplicationsService applicationService;
 	
-	@Autowired
-	private ModelMapper modelMapper;
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveLoanApplication(@RequestBody LoanApplicationDto loanApplicationDto) {
@@ -53,6 +50,7 @@ public class ApplicationsController {
 					.body(new RestAPIResponse("fail", "Error submitting application."));
 		}
 	}
+	
 
 	@RequestMapping(value = "/getById/{loanId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long loanId) {
