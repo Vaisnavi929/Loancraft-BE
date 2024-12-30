@@ -1,8 +1,11 @@
 package com.narvee.entity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +22,25 @@ public class Applications {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long loanId;
 	private String applicationReferenceId;
-	private Long maxnumber;
+	private Long amaxnum;
 	private String status;
+	private String employmentType;
+	private Double salary;
+	private Long yearsinEmployment;
+	private String companyName;
+	private String companyAddress;
+	private String pinCode;
+	private Double loanAmount;
+	private String repaymentMode;
+	private String loanTenure;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "customerId") 
+	private Customers customers;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "referenceId") 
+	private Reference reference;
 
 }
+

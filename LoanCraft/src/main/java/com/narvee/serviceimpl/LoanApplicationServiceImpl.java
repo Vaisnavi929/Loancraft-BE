@@ -1,6 +1,7 @@
 package com.narvee.serviceimpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -18,9 +19,12 @@ import com.narvee.Service.ApplicationsService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.config.MapperConfig;
 import com.narvee.entity.Applications;
+import com.narvee.entity.Customers;
 import com.narvee.repository.ApplicationsRepository;
+import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanApplicationDto;
+import com.narvee.request.dto.LoanApplicationUpdateDto;
 
 import jakarta.transaction.Transactional;
 
@@ -32,42 +36,56 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Autowired
 	private ApplicationsRepository applicationRepository;
+	
+	@Autowired
+	private CustomersRepository customerRepository;
 
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	private static final int DIGIT_PADDING = 4;
 
 	@Override
 	public Applications saveLoanApplication(LoanApplicationDto loanApplicationDto) {
-	    logger.info("Inside saveLoanApplication() method");
+		logger.info("Inside saveLoanApplication() method");
+
+		ModelMapper modelMapper = MapperConfig.getModelMapper();
+		modelMapper.addConverter(new Converter<String, Long>() {
+			public Long convert(MappingContext<String, Long> context) {
+				try {
+					return context.getSource() != null ? Long.parseLong(context.getSource()) : null;
+				} catch (NumberFormatException e) {
+					return null;
+				}
+			}
+		});
+
+		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
+
+		 // Fetch customer using decrypted ID
+	    Optional<Customers> customerOptional = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
+	    if (customerOptional.isPresent()) {
+	    	 logger.info("Customer with ID {} found", loanApplicationDto.getCustomerId());
+	        loan.setCustomers(customerOptional.get());
+	        
+	    } else {
+	        logger.error("Customer with ID {} not found", loanApplicationDto.getCustomerId());
+	        throw new RuntimeException("Customer not found");
+	    }
 	    
-	    ModelMapper modelMapper = MapperConfig.getModelMapper();  
-	    modelMapper.addConverter(new Converter<String, Long>() {
-	        public Long convert(MappingContext<String, Long> context) {
-	            try {
-	                return context.getSource() != null ? Long.parseLong(context.getSource()) : null;
-	            } catch (NumberFormatException e) {
-	                return null;  
-	            }
-	        }
-	    });
+		Long amaxnumber = applicationRepository.appmaxNumber();
+		if (amaxnumber == null) {
+			amaxnumber = 0L;
+		}
 
-	   
-	   Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
+		String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
+		String value = "BEACON" + valueWithPadding;
+		loan.setApplicationReferenceId(value);
 
-	    
-	    Long amaxnumber = applicationRepository.appmaxNumber();
-	    if (amaxnumber == null) {
-	        amaxnumber = 0L; 	    }
+		loan.setAmaxnum(amaxnumber + 1);
 
-	  
-	    String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
-	    String value = "BEACON" + valueWithPadding;
-	    loan.setApplicationReferenceId(value);
-   
-    loan.setMaxnumber(amaxnumber + 1);
-
-	    return applicationRepository.save(loan); 
+		return applicationRepository.save(loan);
 	}
-
 
 	@Override
 	public Applications getById(Long loanId) {
@@ -89,17 +107,19 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	}
 
 	@Override
-	public Applications updateLoanApplication(LoanApplicationDto loanApplication) {
+	public LoanApplicationUpdateDto updateLoanApplication(LoanApplicationUpdateDto loanApplication) {
 		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: updateLoanApplication");
 		ModelMapper mapper = MapperConfig.getModelMapper();
 		Applications loan = mapper.map(loanApplication, Applications.class);
-		return applicationRepository.save(loan);
+		Applications applications = applicationRepository.save(loan);
+		LoanApplicationUpdateDto applicationUpdateDto = mapper.map(applications, LoanApplicationUpdateDto.class);
+		return applicationUpdateDto;
 	}
 
 	@Override
 	public boolean existsByAadharNumber(String aadharNumber) {
 		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: updateLoanApplication");
-		return false; //loanApplicationRepository.existsByAadharNumber(aadharNumber);
+		return false; // loanApplicationRepository.existsByAadharNumber(aadharNumber);
 	}
 
 	@Override
@@ -137,4 +157,5 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		}
 
 	}
+
 }
