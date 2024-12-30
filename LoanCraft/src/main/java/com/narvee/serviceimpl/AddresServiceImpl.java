@@ -12,6 +12,7 @@ import com.narvee.Service.AddressServices;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.Customers;
 import com.narvee.entity.PermanentAddress;
+import com.narvee.entity.States;
 import com.narvee.repository.AddressRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.PermanentAddressRepository;
@@ -66,15 +67,27 @@ public class AddresServiceImpl implements AddressServices {
 	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception {
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
 		CurrentAddress currentAddress = mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
-		PermanentAddress permanentAddress = mapper.map(updateRequest.getParmanentAddress(), PermanentAddress.class);
+		PermanentAddress permanentAddress = mapper.map(updateRequest.getPermanentAddress(), PermanentAddress.class);
 		Long customreId = EncryptionUtil.decrypt(customerId);
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 
 		Customers customers = new Customers();
 		customers.setCustomerId(customreId);
+		
+		States permanentState=new States();
+		permanentState.setStateId(updateRequest.getPermanentAddress().getStateId());
+		permanentAddress.setStates(permanentState);
+		
+		States currentState=new States();
+		currentState.setStateId(updateRequest.getCurrentAddress().getStateId());
+		currentAddress.setStates(permanentState);
+		
 
 		currentAddress.setCustomer(customers);
+		currentAddress.setStates(currentState);
+		
 		permanentAddress.setCustomer(customers);
+		permanentAddress.setStates(permanentState);
 
 		currentAddressRepository.save(currentAddress);
 		permanentAddressRepository.save(permanentAddress);

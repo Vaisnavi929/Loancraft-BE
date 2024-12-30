@@ -21,7 +21,7 @@ import com.narvee.request.dto.StateCodeDTO;
 @RestController
 @RequestMapping("/api/statecode")
 @CrossOrigin("*")
-public class StateCodeController {
+public class StatesController {
 	
 	
 	@Autowired

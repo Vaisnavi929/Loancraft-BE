@@ -27,7 +27,7 @@ public class CustomerUpdateResponse {
 	private LocalDate dob;
 	private String highestQualification;
 	private String adhaarNumber;
-	private PermanentAddress permantAddress;
+	private PermanentAddress permanentAddress;
 	private CurrentAddress currentAddress;
 	
 
