@@ -72,7 +72,6 @@ public class CustomersController {
 			return ResponseEntity.ok(new RestAPIResponse("success", "Customer fetched successfully", responseData));
 		} else {
 			// If customer not found, return not found response
-			logger.warn("Customer not found for encrypted ID: {}", id);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "Customer not found"));
 		}
 	}
