@@ -16,6 +16,7 @@ import com.narvee.Service.LoanSanctionservice;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.entity.Applications;
 import com.narvee.entity.LoanSanction;
+import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.LoanSanctionRepository;
 import com.narvee.request.dto.LoanSanctionDTO;
 import com.narvee.request.dto.LoanSanctionDTOS;
@@ -30,17 +31,22 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 	private LoanSanctionRepository loanSanctionRepository;
 	
 	@Autowired
+	private ApplicationsRepository applicationRepository;
+	
+	@Autowired
 	ModelMapper mapper;
 
 	@Override
 	public LoanSanction saveLoanSanction(LoanSanctionDTO loanSanctionDTO) {
 		logger.info("!!! inside class : LoanSanctionServiceImpl ,!! method :saveLoanSanction");
-		LoanSanction loanSanction=	mapper.map(loanSanctionDTO, LoanSanction.class);
-		Applications loanApplication=new Applications();
-		loanApplication.setLoanId(loanSanctionDTO.getLoanId());
+		LoanSanction loanSanction = mapper.map(loanSanctionDTO, LoanSanction.class);
+
+		// Fetch the existing Applications entity
+		Applications loanApplication = applicationRepository.findById(loanSanctionDTO.getLoanId())
+				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		
 		return loanSanctionRepository.save(loanSanction);
 	}
-
 
 	@Override
 	public LoanSanction updateLoanSanction(LoanSanctionDTO loanSanctionDTO) {

@@ -10,7 +10,7 @@ import com.narvee.entity.Applications;
 import com.narvee.request.dto.LoanApplicationDTOS;
 public interface ApplicationsRepository extends JpaRepository<Applications, Long> {
 	
-	@Query(value = "select max(amaxnum) as max from lms_loan_application", nativeQuery = true)
+	@Query(value = "select max(amaxnum) as max from lms_applications", nativeQuery = true)
 	public Long appmaxNumber();
 	
 //	public boolean existsByAadharNumber(String aadharNumber);

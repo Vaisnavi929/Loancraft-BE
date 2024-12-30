@@ -1,11 +1,13 @@
 package com.narvee.serviceimpl;
 
 import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.narvee.Service.AddressServices;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.Customers;
@@ -65,7 +67,7 @@ public class AddresServiceImpl implements AddressServices {
 	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception {
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
 		CurrentAddress currentAddress = mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
-		PermanentAddress permanentAddress = mapper.map(updateRequest.getParmanentAddress(), PermanentAddress.class);
+		PermanentAddress permanentAddress = mapper.map(updateRequest.getPermanentAddress(), PermanentAddress.class);
 		Long customreId = EncryptionUtil.decrypt(customerId);
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 
