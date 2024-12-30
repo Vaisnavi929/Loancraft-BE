@@ -18,14 +18,12 @@ public class Reference {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long referenceid;
+	private Long referenceId;
 	private String initial;
 	private String fullName;
 	private Long knownForYears;
 	private String relationship;
 	private Long pincode;
 	private Long mobilenumber;
-	
-
 
 }
