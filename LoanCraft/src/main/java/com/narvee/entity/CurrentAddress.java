@@ -27,24 +27,20 @@ public class CurrentAddress {
 	private Long cAddressId;
 	private String address;
 	private String city;
-	private String state;
 	private String country;
 	private String location;
 	private String landmark;
 	private Long stayedOfYears;
 	private Long pincode;
 
-	
-	
 	@OneToOne
-	@JoinColumn(name="customerId")
+	@JoinColumn(name = "customerId")
 	@ToString.Exclude
 	@JsonBackReference
 	private Customers customer;
 
-	
 	@ManyToOne
-    @JoinColumn(name = "stateId")
-    private States states;
+	@JoinColumn(name = "stateId")
+	private States state;
 
 }

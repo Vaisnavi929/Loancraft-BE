@@ -9,12 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface GeneratexcelService {
 	
-	   public ResponseEntity<InputStreamResource> generateExcel(Long loanId) throws IOException;
+	   public ResponseEntity<InputStreamResource> generateExcel(Long customerId) throws IOException;
 //   public ResponseEntity<InputStreamResource> generateExcelSheet(Long loanId) throws IOException;
 
-	ResponseEntity<InputStreamResource> generateExcelSheet(Long loanId) throws IOException;
+	ResponseEntity<InputStreamResource> generateExcelSheet(Long customerId) throws IOException;
 	
-	public String processExcel(MultipartFile file) throws IOException;
+//	public String processExcel(MultipartFile file) throws IOException;
 	
 	
 }
