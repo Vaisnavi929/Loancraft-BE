@@ -1,7 +1,6 @@
 package com.narvee.entity;
 
 import java.util.Set;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,6 +48,6 @@ public class Applications {
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "identityId")
-	private IdentityProof IdentityProof;
+	private IdentityProof identityProof;
 
 }

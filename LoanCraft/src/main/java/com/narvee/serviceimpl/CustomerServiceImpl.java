@@ -163,8 +163,13 @@ public class CustomerServiceImpl implements CustomerService {
 		return updatedDto;
 	}
 
+	@Override
+	public Long checkCustomerEligibility(String customerId) throws Exception {
+		logger.info("!!! inside class: CustomerServiceImpl, method: checkCustomerEligibility()");
+		long decryptedCustomerId = EncryptionUtil.decrypt(customerId);
+		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
-
-
+		return customerRepository.checkEligibility(decryptedCustomerId);
+	}
 
 }

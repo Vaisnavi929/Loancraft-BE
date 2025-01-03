@@ -35,5 +35,6 @@ public class CustomerDetails {
     private Double cqReturnCharges;
     private Double penalty;
     private String remarks;
+    
 
 }
