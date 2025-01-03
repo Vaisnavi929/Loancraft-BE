@@ -60,7 +60,6 @@ public class CustomersController {
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getCustomerById(@PathVariable String id) throws Exception {
 		logger.info("Fetching customer by encrypted ID: {}", id);
-
 		// Call service method to fetch the customer by decrypted ID
 		Customers customer = customerService.getById(id);
 		System.out.println();
@@ -144,7 +143,7 @@ public class CustomersController {
 			} else {
 				logger.warn("Customer profile is incomplete for customerId: {}. Returning forbidden response.",
 						customerId);
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+				return ResponseEntity.status(HttpStatus.OK).body(
 						new RestAPIResponse("Fail","Profile is incomplete. Please update your profile before applying."));
 			}
 		} catch (Exception e) {

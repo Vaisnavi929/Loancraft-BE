@@ -27,13 +27,11 @@ public class PermanentAddress {
 	private Long pAddressId;
 	private String address;
 	private String city;
-	private String state;
 	private String country;
 	private String location;
 	private String landmark;
 	private Long stayedOfYears;
 	private Long pincode;
-	
 	@OneToOne
 	@JoinColumn(name="customerId")
 	@ToString.Exclude
@@ -42,7 +40,7 @@ public class PermanentAddress {
 	
 	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stateId")
-    private States States;
+    private States state;
 
 
 	
