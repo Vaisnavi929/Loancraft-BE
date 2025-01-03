@@ -129,16 +129,28 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-		if (sortField.equalsIgnoreCase("fullname"))
-			sortField = "fullname";
-		else if (sortField.equalsIgnoreCase("mail_id"))
-			sortField = "mail_id";
-		else if (sortField.equalsIgnoreCase("mobile_number"))
-			sortField = "mobile_number";
+		if (sortField.equalsIgnoreCase("employment_type"))
+			sortField = "employment_type";
+		else if (sortField.equalsIgnoreCase("amaxnum"))
+			sortField = "amaxnum";
 		else if (sortField.equalsIgnoreCase("application_reference_id"))
 			sortField = "application_reference_id";
-		else if (sortField.equalsIgnoreCase("date_of_birth"))
-			sortField = "date_of_birth";
+		else if (sortField.equalsIgnoreCase("company_name"))
+			sortField = "company_name";
+		else if (sortField.equalsIgnoreCase("salary"))
+			sortField = "salary";
+		else if (sortField.equalsIgnoreCase("yearsin_employment"))
+			sortField = "yearsin_employment";
+		else if (sortField.equalsIgnoreCase("company_address"))
+			sortField = "company_address";
+		else if (sortField.equalsIgnoreCase("pin_code"))
+			sortField = "pin_code";
+		else if (sortField.equalsIgnoreCase("loan_amount"))
+			sortField = "loan_amount";
+		else if (sortField.equalsIgnoreCase("repayment_mode"))
+			sortField = "repayment_mode";
+		else if (sortField.equalsIgnoreCase("loan_tenure"))
+			sortField = "loan_tenure";
 		else
 			sortField = "status";
 		Sort.Direction sortDirection = Sort.Direction.ASC;

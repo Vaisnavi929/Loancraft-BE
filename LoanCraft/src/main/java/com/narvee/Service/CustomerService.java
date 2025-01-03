@@ -20,4 +20,6 @@ public interface CustomerService {
 
 	Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO);
 
+	Long checkCustomerEligibility(String customerId) throws Exception;
+
 }

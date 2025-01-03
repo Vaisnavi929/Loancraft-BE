@@ -16,6 +16,7 @@ import com.narvee.entity.States;
 import com.narvee.repository.AddressRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.PermanentAddressRepository;
+import com.narvee.repository.StateCodeRepository;
 import com.narvee.request.dto.AddressDto;
 import com.narvee.request.dto.AddressUpdateRequest;
 import com.narvee.util.EncryptionUtil;
@@ -30,6 +31,9 @@ public class AddresServiceImpl implements AddressServices {
 
 	@Autowired
 	private CustomersRepository customerRepository;
+
+	@Autowired
+	private StateCodeRepository stateRepository;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -73,24 +77,21 @@ public class AddresServiceImpl implements AddressServices {
 
 		Customers customers = new Customers();
 		customers.setCustomerId(customreId);
-		
-		States permanentState=new States();
-		permanentState.setStateId(updateRequest.getParmanentAddress().getStateId());
-		permanentAddress.setStates(permanentState);
-		
-		States currentState=new States();
-		currentState.setStateId(updateRequest.getCurrentAddress().getStateId());
-		currentAddress.setStates(permanentState);
-		
+
+		States permanentState = stateRepository.findById(updateRequest.getPermanentAddress().getStateId()).get(); 
+		permanentAddress.setState(permanentState);
+
+		States currentState = stateRepository.findById(updateRequest.getCurrentAddress().getStateId()).get();
+		currentAddress.setState(currentState);
 
 		currentAddress.setCustomer(customers);
-		currentAddress.setStates(currentState);
-		
-		permanentAddress.setCustomer(customers);
-		permanentAddress.setStates(permanentState);
+		currentAddress.setState(currentState);
 
-		currentAddressRepository.save(currentAddress);
+		permanentAddress.setCustomer(customers);
+		permanentAddress.setState(permanentState);
+
 		permanentAddressRepository.save(permanentAddress);
+		currentAddressRepository.save(currentAddress);
 
 		return updateRequest;
 

@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
+import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.Customers;
+import com.narvee.entity.PermanentAddress;
+import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerUpdateRequest;
@@ -43,7 +46,6 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customers save(RegisterVO register) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
-
 		Optional<Customers> existingApplicant = customerRepository.findByEmail(register.getEmail());
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
@@ -67,15 +69,23 @@ public class CustomerServiceImpl implements CustomerService {
 
 		long decryptedCustomerId = EncryptionUtil.decrypt(encryptedId);
 		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
-
 		// Fetch the customer details from the repository using the decrypted ID
 		Customers customer = customerRepository.findById(decryptedCustomerId).orElse(null);
 
-		// Log and return the result
-		if (customer != null) {
-			logger.info("Customer found: {}", customer.getEmail());
-		} else {
-			logger.warn("Customer not found for ID: {}", decryptedCustomerId);
+		if (customer.getPermanentAddress() == null) {
+			PermanentAddress permanentAddress = new PermanentAddress();
+			customer.setPermanentAddress(permanentAddress);
+			States states = new States();
+			permanentAddress.setState(states);
+
+		}
+
+		if (customer.getCurrentAddress() == null) {
+			CurrentAddress currentAddress = new CurrentAddress();
+			customer.setCurrentAddress(currentAddress);
+			States states = new States();
+			currentAddress.setState(states);
+
 		}
 
 		return customer;
@@ -163,8 +173,13 @@ public class CustomerServiceImpl implements CustomerService {
 		return updatedDto;
 	}
 
+	@Override
+	public Long checkCustomerEligibility(String customerId) throws Exception {
+		logger.info("!!! inside class: CustomerServiceImpl, method: checkCustomerEligibility()");
+		long decryptedCustomerId = EncryptionUtil.decrypt(customerId);
+		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
-
-
+		return customerRepository.checkEligibility(decryptedCustomerId);
+	}
 
 }

@@ -2,6 +2,7 @@ package com.narvee.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,22 +27,20 @@ public class PermanentAddress {
 	private Long pAddressId;
 	private String address;
 	private String city;
-	private String state;
 	private String country;
 	private String location;
 	private String landmark;
 	private Long stayedOfYears;
 	private Long pincode;
-	
 	@OneToOne
 	@JoinColumn(name="customerId")
 	@ToString.Exclude
 	@JsonBackReference
 	private Customers customer;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stateId")
-    private States States;
+    private States state;
 
 
 	

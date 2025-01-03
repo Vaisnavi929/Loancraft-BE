@@ -60,7 +60,6 @@ public class CustomersController {
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getCustomerById(@PathVariable String id) throws Exception {
 		logger.info("Fetching customer by encrypted ID: {}", id);
-
 		// Call service method to fetch the customer by decrypted ID
 		Customers customer = customerService.getById(id);
 		System.out.println();
@@ -128,6 +127,30 @@ public class CustomersController {
 			logger.error("Error updating customer: {}", e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new RestAPIResponse("fail", "Error updating customer"));
+		}
+	}
+
+	@RequestMapping(value = "/checkEligibility/{customerId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> checkAllColumnsNotNull(@PathVariable String customerId) {
+		logger.info("Starting eligibility check for customerId: {}", customerId);
+
+		try {
+			Long checkCustomerEligibility = customerService.checkCustomerEligibility(customerId);
+
+			if (checkCustomerEligibility == 1) {
+				logger.info("Customer with customerId: {} is eligible to apply.", customerId);
+				return ResponseEntity.ok(new RestAPIResponse("Sucess","Eligible to apply for the application."));
+			} else {
+				logger.warn("Customer profile is incomplete for customerId: {}. Returning forbidden response.",
+						customerId);
+				return ResponseEntity.status(HttpStatus.OK).body(
+						new RestAPIResponse("Fail","Profile is incomplete. Please update your profile before applying."));
+			}
+		} catch (Exception e) {
+			logger.error("An error occurred while checking eligibility for customerId: {}. Error: {}", customerId,
+					e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("An error occurred while checking eligibility. Please try again later."));
 		}
 	}
 

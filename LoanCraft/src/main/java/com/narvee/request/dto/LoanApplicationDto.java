@@ -1,5 +1,8 @@
 package com.narvee.request.dto;
 
+import java.util.Set;
+
+import com.narvee.entity.IdentityProof;
 import com.narvee.entity.Reference;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class LoanApplicationDto {
 
 	private String applicationReferenceId;
-	private Long amaxnum;
+//	private Long amaxnum;
 	private String status;
 	private String employmentType;
 	private Double salary;
@@ -24,7 +27,7 @@ public class LoanApplicationDto {
 	private String repaymentMode;
 	private String loanTenure;
 	private String customerId;
-	private Reference reference;
-	
-	
+	private Set<Reference> reference;
+	private IdentityProof identityProof;
+
 }
