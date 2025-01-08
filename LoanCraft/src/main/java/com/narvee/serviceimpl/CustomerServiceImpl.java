@@ -20,9 +20,9 @@ import com.narvee.entity.Customers;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
-import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
 
@@ -92,7 +92,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO) {
+	public Page<SearchingDTO> getAllCustomers(SortingDTO sortingDTO) {
 		logger.info("Inside ApplicantServiceImpl: getAllApplicants");
 
 		String sortField = sortingDTO.getSortField();
@@ -109,6 +109,14 @@ public class CustomerServiceImpl implements CustomerService {
 			sortField = "email";
 		} else if (sortField.equalsIgnoreCase("MobileNo")) {
 			sortField = "mobile_no";
+		} else if (sortField.equalsIgnoreCase("Dob")) {
+			sortField = "dob";
+		} else if (sortField.equalsIgnoreCase("FathersOrSpousesName")) {
+			sortField = "fathers_or_spouses_name";
+		} else if (sortField.equalsIgnoreCase("AdhaarNumber")) {
+			sortField = "adhaar_number";
+		} else if (sortField.equalsIgnoreCase("AccountNumber")) {
+			sortField = "account_number";
 		} else if (sortField.equalsIgnoreCase("MiddleName")) {
 			sortField = "middle_name";
 		} else {
@@ -122,14 +130,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
 
-		Page<Customers> applicantsPage;
-
 		if (keyword == null || keyword.isEmpty()) {
-			applicantsPage = customerRepository.findAllApplicants(pageable);
+			return customerRepository.findAllCustomers(pageable);
 		} else {
-			applicantsPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
+			return customerRepository.findCustomersByKeyword(keyword, pageable);
 		}
-		return applicantsPage.map(applicant -> modelMapper.map(applicant, ApplicantDto.class));
 	}
 
 	@Override

@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Customers;
-import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.CustomerUpdateResponse;
 import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -76,9 +76,9 @@ public class CustomersController {
 	}
 
 	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
+	public ResponseEntity<RestAPIResponse> getCustomers(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer with sorting: {}", sortingDTO);
-		Page<ApplicantDto> allApplicants = customerService.getAllApplicants(sortingDTO);
+		Page<SearchingDTO> allApplicants = customerService.getAllCustomers(sortingDTO);
 		if (allApplicants.hasContent()) {
 			logger.info("customer fetched successfully");
 			return ResponseEntity.ok(new RestAPIResponse("Success", "customer fetched successfully", allApplicants));
@@ -139,18 +139,18 @@ public class CustomersController {
 
 			if (checkCustomerEligibility == 1) {
 				logger.info("Customer with customerId: {} is eligible to apply.", customerId);
-				return ResponseEntity.ok(new RestAPIResponse("Sucess","Eligible to apply for the application."));
+				return ResponseEntity.ok(new RestAPIResponse("Sucess", "Eligible to apply for the application.", true));
 			} else {
 				logger.warn("Customer profile is incomplete for customerId: {}. Returning forbidden response.",
 						customerId);
-				return ResponseEntity.status(HttpStatus.OK).body(
-						new RestAPIResponse("Fail","Profile is incomplete. Please update your profile before applying."));
+				return ResponseEntity.status(HttpStatus.OK).body(new RestAPIResponse("Fail",
+						"Profile is incomplete. Please update your profile before applying.", false));
 			}
 		} catch (Exception e) {
 			logger.error("An error occurred while checking eligibility for customerId: {}. Error: {}", customerId,
 					e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("An error occurred while checking eligibility. Please try again later."));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new RestAPIResponse(
+					"An error occurred while checking eligibility. Please try again later.", e.getMessage()));
 		}
 	}
 
