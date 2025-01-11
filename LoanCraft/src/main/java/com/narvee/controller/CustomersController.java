@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.CustomerUpdateResponse;
@@ -61,7 +61,7 @@ public class CustomersController {
 	public ResponseEntity<RestAPIResponse> getCustomerById(@PathVariable String id) throws Exception {
 		logger.info("Fetching customer by encrypted ID: {}", id);
 		// Call service method to fetch the customer by decrypted ID
-		Customers customer = customerService.getById(id);
+		CustomersInfo customer = customerService.getById(id);
 		System.out.println();
 
 		if (customer != null) {
@@ -139,12 +139,12 @@ public class CustomersController {
 
 			if (checkCustomerEligibility == 1) {
 				logger.info("Customer with customerId: {} is eligible to apply.", customerId);
-				return ResponseEntity.ok(new RestAPIResponse("Sucess","Eligible to apply for the application."));
+				return ResponseEntity.ok(new RestAPIResponse("Sucess", "Eligible to apply for the application.", true));
 			} else {
 				logger.warn("Customer profile is incomplete for customerId: {}. Returning forbidden response.",
 						customerId);
-				return ResponseEntity.status(HttpStatus.OK).body(
-						new RestAPIResponse("Fail","Profile is incomplete. Please update your profile before applying."));
+				return ResponseEntity.status(HttpStatus.OK).body(new RestAPIResponse("Fail",
+						"Profile is incomplete. Please update your profile before applying.", false));
 			}
 		} catch (Exception e) {
 			logger.error("An error occurred while checking eligibility for customerId: {}. Error: {}", customerId,

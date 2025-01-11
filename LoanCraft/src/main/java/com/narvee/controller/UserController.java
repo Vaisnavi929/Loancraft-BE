@@ -22,7 +22,6 @@ import com.narvee.entity.UserInfo;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
 import com.narvee.request.dto.UserUpdateDto;
-import com.narvee.serviceimpl.UserInfoServiceimpl;
 import com.narvee.util.EncryptionUtil;
 
 @RestController

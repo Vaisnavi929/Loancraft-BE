@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 
-public interface CustomersRepository extends JpaRepository<Customers, Long> {
+public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> {
 
-	Optional<Customers> findByEmail(String email);
+	Optional<CustomersInfo> findByEmail(String email);
 
 	@Query(value = "SELECT email,first_name,last_name,mobile_no,dob,fathers_or_spouses_name,middle_name,highest_qualification FROM applicant ", nativeQuery = true)
-	Page<Customers> findAllApplicants(Pageable pageable);
+	Page<CustomersInfo> findAllApplicants(Pageable pageable);
 
 	@Query(value = "SELECT email,first_name,last_name,mobile_no,dob,fathers_or_spouses_name,middle_name,highest_qualification FROM applicant"
 			+ "email LIKE CONCAT('%', :keyword, '%') OR " + "first_name LIKE CONCAT('%', :keyword, '%') OR "
@@ -23,7 +23,7 @@ public interface CustomersRepository extends JpaRepository<Customers, Long> {
 			+ "highest_qualification LIKE CONCAT('%', :keyword, '%') OR " + "dob LIKE CONCAT('%', :keyword, '%') OR "
 			+ "fathers_or_spouses_name LIKE CONCAT('%', :keyword, '%') OR "
 			+ "middle_name LIKE CONCAT('%', :keyword, '%') OR ", nativeQuery = true)
-	Page<Customers> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
+	Page<CustomersInfo> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 	@Query(value = "SELECT CASE  WHEN c.account_number IS NOT NULL AND c.adhaar_number IS NOT NULL "
 			+ "AND c.dob IS NOT NULL " + " AND c.email IS NOT NULL " + "AND c.fathers_or_spouses_name IS NOT NULL "

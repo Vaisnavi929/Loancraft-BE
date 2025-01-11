@@ -21,10 +21,11 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.GeneratexcelService;
 import com.narvee.entity.CurrentAddress;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.GenerationExcelDTO;
+
 @Service
 public class ExcelExportServiceImpl implements GeneratexcelService {
 
@@ -36,173 +37,29 @@ public class ExcelExportServiceImpl implements GeneratexcelService {
 
 	@Override
 	public ResponseEntity<InputStreamResource> generateExcel(Long customerId) throws IOException {
-		Optional<Customers> loanAppOpt = customersRepository.findById(customerId);
+		Optional<CustomersInfo> loanAppOpt = customersRepository.findById(customerId);
 
 		if (loanAppOpt.isEmpty()) {
 			throw new IllegalArgumentException("Loan Application with ID " + customerId + " not found.");
 		}
 
-		Customers customers = loanAppOpt.get();
+		CustomersInfo customers = loanAppOpt.get();
 //		BankingDetails bankingDetails = loanApplication.getBankingDetails();
 		PermanentAddress permanentAddress = customers.getPermanentAddress();
-		CurrentAddress currentAddress=customers.getCurrentAddress();
-		
+		CurrentAddress currentAddress = customers.getCurrentAddress();
+
 		GenerationExcelDTO excelDTOs = new GenerationExcelDTO();
 		excelDTOs.setConsumerName(customers.getFirstName() + " " + customers.getLastName());
-        excelDTOs.setGender(customers.getGender());
+		excelDTOs.setGender(customers.getGender());
 //        excelDTOs.setDateOfBirth(customers.getDob());
-		excelDTOs.setTelephoneNoMobile(customers.getMobileNo());
+		excelDTOs.setTelephoneNoMobile(customers.getMobileNumber());
 		excelDTOs.setPassword(customers.getPassword());
 		excelDTOs.setEmailId1(customers.getEmail());
 		excelDTOs.setAddress1(permanentAddress.getAddress());
 		excelDTOs.setPinCode1(permanentAddress.getPincode());
 		excelDTOs.setAddress2(currentAddress.getAddress());
-	    excelDTOs.setPinCode2(currentAddress.getPincode());
-		
-		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			Workbook workbook = new XSSFWorkbook();
+		excelDTOs.setPinCode2(currentAddress.getPincode());
 
-			Sheet sheet = workbook.createSheet("Loan Application Data");
-			CellStyle boldStyle = workbook.createCellStyle();
-			Font boldFont = workbook.createFont();
-			boldFont.setBold(true);
-			boldStyle.setFont(boldFont);
-
-			String[][] data = {
-				    { "Consumer Name", excelDTOs.getConsumerName() },
-				    { "Date of Birth", excelDTOs.getDateOfBirth() != null ? excelDTOs.getDateOfBirth().toString() : "" },
-				    { "Gender", excelDTOs.getGender() },
-				    { "Passport Number", excelDTOs.getPassportNumber() },
-				    { "Passport Issue Date", excelDTOs.getPassportIssueDate() != null ? excelDTOs.getPassportIssueDate().toString() : "" },
-				    { "Voter ID Number", excelDTOs.getVoterIdNumber() },
-				    { "Driving License Number", excelDTOs.getDrivingLicenseNumber() },
-				    { "Driving License Issue Date", excelDTOs.getDrivingLicenseIssueDate() != null ? excelDTOs.getDrivingLicenseIssueDate().toString() : "" },
-				    { "Driving License Expiry Date", excelDTOs.getDrivingLicenseExpiryDate() != null ? excelDTOs.getDrivingLicenseExpiryDate().toString() : "" },
-				    { "Ration Card Number", excelDTOs.getRationCardNumber() },
-				    { "Additional ID 1", excelDTOs.getAdditionalId1() },
-				    { "Additional ID 2", excelDTOs.getAdditionalId2() },
-				    { "Mobile Number", excelDTOs.getTelephoneNoMobile() != null ? excelDTOs.getTelephoneNoMobile().toString() : " " },
-				    { "Telephone Residence", excelDTOs.getTelephoneNoResidence() },
-				    { "Telephone Office", excelDTOs.getTelephoneNoOffice() },
-				    { "Extension Office", excelDTOs.getExtensionOffice() },
-				    { "Telephone Other", excelDTOs.getTelephoneNoOther() },
-				    { "Extension Other", excelDTOs.getExtensionOther() },
-				    { "Mail ID", excelDTOs.getEmailId1() },
-				    { "Mail ID 2", excelDTOs.getEmailId2() },
-				    { "Address", excelDTOs.getAddress1() },
-				    { "State Code", excelDTOs.getStateCode1() != null ? excelDTOs.getStateCode1().toString() : "" },
-				    { "Pincode", excelDTOs.getPinCode1() != null ? excelDTOs.getPinCode1().toString() : "" },
-				    { "Address Category", excelDTOs.getAddressCategory1() },
-				    { "Residence Code", excelDTOs.getResidenceCode1() },
-				    { "Address 2", excelDTOs.getAddress2() },
-				    { "State Code 2", excelDTOs.getStateCode2() },
-				    { "Pincode 2", excelDTOs.getPinCode2() != null ? excelDTOs.getPinCode2().toString() : "" },
-				    { "Address Category 2", excelDTOs.getAddressCategory2() },
-				    { "Residence Code 2", excelDTOs.getResidenceCode2() },
-				    { "Current Member Code", excelDTOs.getCurrentNewMemberCode() },
-				    { "Member Short Name", excelDTOs.getCurrentNewMemberShortName() },
-				    { "Account No", excelDTOs.getCurrNewAccountNo() != null ? excelDTOs.getCurrNewAccountNo().toString() : "" },
-				    { "Account Type", excelDTOs.getAccountType() },
-				    { "Ownership Indicator", excelDTOs.getOwnershipIndicator() },
-				    { "Date Opened/Disbursed", excelDTOs.getDateOpenedDisbursed() != null ? excelDTOs.getDateOpenedDisbursed().toString() : "" },
-				    { "Last Payment Date", excelDTOs.getDateOfLastPayment() != null ? excelDTOs.getDateOfLastPayment().toString() : "" },
-				    { "Date Closed", excelDTOs.getDateClosed() != null ? excelDTOs.getDateClosed().toString() : "" },
-				    { "Date Reported", excelDTOs.getDateReported() != null ? excelDTOs.getDateReported().toString() : "" },
-				    { "High Credit Amount", excelDTOs.getHighCreditSanctionedAmt() != null ? excelDTOs.getHighCreditSanctionedAmt().toString() : "" },
-				    { "Current Balance", excelDTOs.getCurrentBalance() != null ? excelDTOs.getCurrentBalance().toString() : "" },
-				    { "Amount Overdue", excelDTOs.getAmtOverdue() != null ? excelDTOs.getAmtOverdue().toString() : "" },
-				    { "Days Past Due", excelDTOs.getNoOfDaysPastDue() != null ? excelDTOs.getNoOfDaysPastDue().toString() : "" },
-				    { "Old Member Code", excelDTOs.getOldMbrCode() },
-				    { "Old Member Short Name", excelDTOs.getOldMbrShortName() },
-				    { "Old Account No", excelDTOs.getOldAccNo() },
-				    { "Old Account Type", excelDTOs.getOldAccType() },
-				    { "Old Ownership Indicator", excelDTOs.getOldOwnershipIndicator() },
-				    { "Suit Filed/Wilful Default", excelDTOs.getSuitFiledWilfulDefault() },
-				    { "Credit Facility Status", excelDTOs.getCreditFacilityStatus() },
-				    { "Asset Classification", excelDTOs.getAssetClassification() },
-				    { "Collateral Value", excelDTOs.getValueOfCollateral() != null ? excelDTOs.getValueOfCollateral().toString() : "" },
-				    { "Collateral Type", excelDTOs.getTypeOfCollateral() },
-				    { "Credit Limit", excelDTOs.getCreditLimit() != null ? excelDTOs.getCreditLimit().toString() : "" },
-				    { "Cash Limit", excelDTOs.getCashLimit() != null ? excelDTOs.getCashLimit().toString() : "" },
-				    { "Interest Rate", excelDTOs.getRateOfInterest() != null ? excelDTOs.getRateOfInterest().toString() : "" },
-				    { "Repayment Tenure", excelDTOs.getRepaymentTenure() != null ? excelDTOs.getRepaymentTenure().toString() : "" },
-				    { "EMI Amount", excelDTOs.getEmiAmount() != null ? excelDTOs.getEmiAmount().toString() : "" },
-				    { "Written-Off Total Amount", excelDTOs.getWrittenOffAmountTotal() != null ? excelDTOs.getWrittenOffAmountTotal().toString() : "" },
-				    { "Written-Off Principal Amount", excelDTOs.getWrittenOffPrincipalAmount() != null ? excelDTOs.getWrittenOffPrincipalAmount().toString() : "" },
-				    { "Settlement Amount", excelDTOs.getSettlementAmt() != null ? excelDTOs.getSettlementAmt().toString() : "" },
-				    { "Payment Frequency", excelDTOs.getPaymentFrequency() },
-				    { "Actual Payment Amount", excelDTOs.getActualPaymentAmt() != null ? excelDTOs.getActualPaymentAmt().toString() : "" },
-				    { "Occupation Code", excelDTOs.getOccupationCode() },
-				    { "Monthly Income", excelDTOs.getIncome() != null ? excelDTOs.getIncome().toString() : "" },
-				    { "Net/Gross Income Indicator", excelDTOs.getNetGrossIncomeIndicator() },
-				    { "Monthly/Annual Income Indicator", excelDTOs.getMonthlyAnnualIncomeIndicator() }
-				};
-
-			// Create a CellStyle with bold font for the headers
-			CellStyle boldStylea = workbook.createCellStyle();
-			Font boldFonta = workbook.createFont();
-			boldFont.setBold(true);
-			boldStyle.setFont(boldFont);
-
-			// Create a new row for data
-			Row headerRow = sheet.createRow(0);
-			for (int i = 0; i < data.length; i++) {
-			    Cell headerCell = headerRow.createCell(i);
-			    headerCell.setCellValue(data[i][0]);  // Set header in the first row
-			    headerCell.setCellStyle(boldStyle);  // Apply bold style to the header cell
-			}
-
-			// Create another row for the values
-			Row valueRow = sheet.createRow(1);
-			for (int i = 0; i < data.length; i++) {
-			    valueRow.createCell(i).setCellValue(data[i][1]);  // Set value in the second row
-			}
-
-
-
-			workbook.write(out);
-			ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Disposition", "attachment; filename=LoanApplicationData.xlsx");
-
-			return ResponseEntity.ok().headers(headers)
-					.contentType(MediaType
-							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-					.body(new InputStreamResource(input));
-		}
-
-	}
-
-	;
-
-
-	@Override
-	public ResponseEntity<InputStreamResource> generateExcelSheet(Long customerId) throws IOException {
-		Optional<Customers> loanAppOpt = customersRepository.findById(customerId);
-
-		if (loanAppOpt.isEmpty()) {
-			throw new IllegalArgumentException("Loan Application with ID " + customerId + " not found.");
-		}
-
-		Customers customers = loanAppOpt.get();
-//		BankingDetails bankingDetails = loanApplication.getBankingDetails();
-		PermanentAddress permanentAddress = customers.getPermanentAddress();
-		CurrentAddress currentAddress=customers.getCurrentAddress();
-		
-		
-		GenerationExcelDTO excelDTOs = new GenerationExcelDTO();
-		excelDTOs.setConsumerName(customers.getFirstName() + " " + customers.getLastName());
-		excelDTOs.setAccountNumber(customers.getAccountNumber());
-		excelDTOs.setTelephoneNoMobile(customers.getMobileNo());
-		excelDTOs.setGender(customers.getGender());
-//        excelDTOs.setDateOfBirth(customers.getDob());
-		excelDTOs.setEmailId1(customers.getEmail());
-		excelDTOs.setAddress1(permanentAddress.getAddress());	
-		excelDTOs.setPinCode1(permanentAddress.getPincode());
-		excelDTOs.setAddress2(currentAddress.getAddress());
-	    excelDTOs.setPinCode2(currentAddress.getPincode());
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 			Workbook workbook = new XSSFWorkbook();
@@ -233,7 +90,176 @@ public class ExcelExportServiceImpl implements GeneratexcelService {
 					{ "Ration Card Number", excelDTOs.getRationCardNumber() },
 					{ "Additional ID 1", excelDTOs.getAdditionalId1() },
 					{ "Additional ID 2", excelDTOs.getAdditionalId2() },
-					{ "Mobile Number", excelDTOs.getTelephoneNoMobile()!=null ? excelDTOs.getTelephoneNoMobile().toString():" "},
+					{ "Mobile Number",
+							excelDTOs.getTelephoneNoMobile() != null ? excelDTOs.getTelephoneNoMobile().toString()
+									: " " },
+					{ "Telephone Residence", excelDTOs.getTelephoneNoResidence() },
+					{ "Telephone Office", excelDTOs.getTelephoneNoOffice() },
+					{ "Extension Office", excelDTOs.getExtensionOffice() },
+					{ "Telephone Other", excelDTOs.getTelephoneNoOther() },
+					{ "Extension Other", excelDTOs.getExtensionOther() }, { "Mail ID", excelDTOs.getEmailId1() },
+					{ "Mail ID 2", excelDTOs.getEmailId2() }, { "Address", excelDTOs.getAddress1() },
+					{ "State Code", excelDTOs.getStateCode1() != null ? excelDTOs.getStateCode1().toString() : "" },
+					{ "Pincode", excelDTOs.getPinCode1() != null ? excelDTOs.getPinCode1().toString() : "" },
+					{ "Address Category", excelDTOs.getAddressCategory1() },
+					{ "Residence Code", excelDTOs.getResidenceCode1() }, { "Address 2", excelDTOs.getAddress2() },
+					{ "State Code 2", excelDTOs.getStateCode2() },
+					{ "Pincode 2", excelDTOs.getPinCode2() != null ? excelDTOs.getPinCode2().toString() : "" },
+					{ "Address Category 2", excelDTOs.getAddressCategory2() },
+					{ "Residence Code 2", excelDTOs.getResidenceCode2() },
+					{ "Current Member Code", excelDTOs.getCurrentNewMemberCode() },
+					{ "Member Short Name", excelDTOs.getCurrentNewMemberShortName() },
+					{ "Account No",
+							excelDTOs.getCurrNewAccountNo() != null ? excelDTOs.getCurrNewAccountNo().toString() : "" },
+					{ "Account Type", excelDTOs.getAccountType() },
+					{ "Ownership Indicator", excelDTOs.getOwnershipIndicator() },
+					{ "Date Opened/Disbursed",
+							excelDTOs.getDateOpenedDisbursed() != null ? excelDTOs.getDateOpenedDisbursed().toString()
+									: "" },
+					{ "Last Payment Date",
+							excelDTOs.getDateOfLastPayment() != null ? excelDTOs.getDateOfLastPayment().toString()
+									: "" },
+					{ "Date Closed", excelDTOs.getDateClosed() != null ? excelDTOs.getDateClosed().toString() : "" },
+					{ "Date Reported",
+							excelDTOs.getDateReported() != null ? excelDTOs.getDateReported().toString() : "" },
+					{ "High Credit Amount",
+							excelDTOs.getHighCreditSanctionedAmt() != null
+									? excelDTOs.getHighCreditSanctionedAmt().toString()
+									: "" },
+					{ "Current Balance",
+							excelDTOs.getCurrentBalance() != null ? excelDTOs.getCurrentBalance().toString() : "" },
+					{ "Amount Overdue", excelDTOs.getAmtOverdue() != null ? excelDTOs.getAmtOverdue().toString() : "" },
+					{ "Days Past Due",
+							excelDTOs.getNoOfDaysPastDue() != null ? excelDTOs.getNoOfDaysPastDue().toString() : "" },
+					{ "Old Member Code", excelDTOs.getOldMbrCode() },
+					{ "Old Member Short Name", excelDTOs.getOldMbrShortName() },
+					{ "Old Account No", excelDTOs.getOldAccNo() }, { "Old Account Type", excelDTOs.getOldAccType() },
+					{ "Old Ownership Indicator", excelDTOs.getOldOwnershipIndicator() },
+					{ "Suit Filed/Wilful Default", excelDTOs.getSuitFiledWilfulDefault() },
+					{ "Credit Facility Status", excelDTOs.getCreditFacilityStatus() },
+					{ "Asset Classification", excelDTOs.getAssetClassification() },
+					{ "Collateral Value",
+							excelDTOs.getValueOfCollateral() != null ? excelDTOs.getValueOfCollateral().toString()
+									: "" },
+					{ "Collateral Type", excelDTOs.getTypeOfCollateral() },
+					{ "Credit Limit", excelDTOs.getCreditLimit() != null ? excelDTOs.getCreditLimit().toString() : "" },
+					{ "Cash Limit", excelDTOs.getCashLimit() != null ? excelDTOs.getCashLimit().toString() : "" },
+					{ "Interest Rate",
+							excelDTOs.getRateOfInterest() != null ? excelDTOs.getRateOfInterest().toString() : "" },
+					{ "Repayment Tenure",
+							excelDTOs.getRepaymentTenure() != null ? excelDTOs.getRepaymentTenure().toString() : "" },
+					{ "EMI Amount", excelDTOs.getEmiAmount() != null ? excelDTOs.getEmiAmount().toString() : "" },
+					{ "Written-Off Total Amount",
+							excelDTOs.getWrittenOffAmountTotal() != null
+									? excelDTOs.getWrittenOffAmountTotal().toString()
+									: "" },
+					{ "Written-Off Principal Amount",
+							excelDTOs.getWrittenOffPrincipalAmount() != null
+									? excelDTOs.getWrittenOffPrincipalAmount().toString()
+									: "" },
+					{ "Settlement Amount",
+							excelDTOs.getSettlementAmt() != null ? excelDTOs.getSettlementAmt().toString() : "" },
+					{ "Payment Frequency", excelDTOs.getPaymentFrequency() },
+					{ "Actual Payment Amount",
+							excelDTOs.getActualPaymentAmt() != null ? excelDTOs.getActualPaymentAmt().toString() : "" },
+					{ "Occupation Code", excelDTOs.getOccupationCode() },
+					{ "Monthly Income", excelDTOs.getIncome() != null ? excelDTOs.getIncome().toString() : "" },
+					{ "Net/Gross Income Indicator", excelDTOs.getNetGrossIncomeIndicator() },
+					{ "Monthly/Annual Income Indicator", excelDTOs.getMonthlyAnnualIncomeIndicator() } };
+
+			// Create a CellStyle with bold font for the headers
+			CellStyle boldStylea = workbook.createCellStyle();
+			Font boldFonta = workbook.createFont();
+			boldFont.setBold(true);
+			boldStyle.setFont(boldFont);
+
+			// Create a new row for data
+			Row headerRow = sheet.createRow(0);
+			for (int i = 0; i < data.length; i++) {
+				Cell headerCell = headerRow.createCell(i);
+				headerCell.setCellValue(data[i][0]); // Set header in the first row
+				headerCell.setCellStyle(boldStyle); // Apply bold style to the header cell
+			}
+
+			// Create another row for the values
+			Row valueRow = sheet.createRow(1);
+			for (int i = 0; i < data.length; i++) {
+				valueRow.createCell(i).setCellValue(data[i][1]); // Set value in the second row
+			}
+
+			workbook.write(out);
+			ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Disposition", "attachment; filename=LoanApplicationData.xlsx");
+
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType
+							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(new InputStreamResource(input));
+		}
+
+	}
+
+	;
+
+	@Override
+	public ResponseEntity<InputStreamResource> generateExcelSheet(Long customerId) throws IOException {
+		Optional<CustomersInfo> loanAppOpt = customersRepository.findById(customerId);
+
+		if (loanAppOpt.isEmpty()) {
+			throw new IllegalArgumentException("Loan Application with ID " + customerId + " not found.");
+		}
+
+		CustomersInfo customers = loanAppOpt.get();
+//		BankingDetails bankingDetails = loanApplication.getBankingDetails();
+		PermanentAddress permanentAddress = customers.getPermanentAddress();
+		CurrentAddress currentAddress = customers.getCurrentAddress();
+
+		GenerationExcelDTO excelDTOs = new GenerationExcelDTO();
+		excelDTOs.setConsumerName(customers.getFirstName() + " " + customers.getLastName());
+		excelDTOs.setAccountNumber(customers.getAccountNumber());
+		excelDTOs.setTelephoneNoMobile(customers.getMobileNumber());
+		excelDTOs.setGender(customers.getGender());
+//        excelDTOs.setDateOfBirth(customers.getDob());
+		excelDTOs.setEmailId1(customers.getEmail());
+		excelDTOs.setAddress1(permanentAddress.getAddress());
+		excelDTOs.setPinCode1(permanentAddress.getPincode());
+		excelDTOs.setAddress2(currentAddress.getAddress());
+		excelDTOs.setPinCode2(currentAddress.getPincode());
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+			Workbook workbook = new XSSFWorkbook();
+
+			Sheet sheet = workbook.createSheet("Loan Application Data");
+			CellStyle boldStyle = workbook.createCellStyle();
+			Font boldFont = workbook.createFont();
+			boldFont.setBold(true);
+			boldStyle.setFont(boldFont);
+
+			String[][] data = { { "Consumer Name", excelDTOs.getConsumerName() },
+					{ "Date of Birth",
+							excelDTOs.getDateOfBirth() != null ? excelDTOs.getDateOfBirth().toString() : "" },
+					{ "Gender", excelDTOs.getGender() }, { "Passport Number", excelDTOs.getPassportNumber() },
+					{ "Passport Issue Date",
+							excelDTOs.getPassportIssueDate() != null ? excelDTOs.getPassportIssueDate().toString()
+									: "" },
+					{ "Voter ID Number", excelDTOs.getVoterIdNumber() },
+					{ "Driving License Number", excelDTOs.getDrivingLicenseNumber() },
+					{ "Driving License Issue Date",
+							excelDTOs.getDrivingLicenseIssueDate() != null
+									? excelDTOs.getDrivingLicenseIssueDate().toString()
+									: "" },
+					{ "Driving License Expiry Date",
+							excelDTOs.getDrivingLicenseExpiryDate() != null
+									? excelDTOs.getDrivingLicenseExpiryDate().toString()
+									: "" },
+					{ "Ration Card Number", excelDTOs.getRationCardNumber() },
+					{ "Additional ID 1", excelDTOs.getAdditionalId1() },
+					{ "Additional ID 2", excelDTOs.getAdditionalId2() },
+					{ "Mobile Number",
+							excelDTOs.getTelephoneNoMobile() != null ? excelDTOs.getTelephoneNoMobile().toString()
+									: " " },
 					{ "Telephone Residence", excelDTOs.getTelephoneNoResidence() },
 					{ "Telephone Office", excelDTOs.getTelephoneNoOffice() },
 					{ "Extension Office", excelDTOs.getExtensionOffice() },

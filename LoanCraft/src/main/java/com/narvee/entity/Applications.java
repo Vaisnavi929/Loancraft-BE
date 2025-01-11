@@ -1,7 +1,12 @@
 package com.narvee.entity;
 
+import java.util.List;
 import java.util.Set;
+
+import com.narvee.commons.AuditModel;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +18,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -20,7 +26,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Applications {
+@EqualsAndHashCode(callSuper = true)
+public class Applications extends AuditModel {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,14 +45,17 @@ public class Applications {
 	private Double loanAmount;
 	private String repaymentMode;
 	private String loanTenure;
+	
+	@Column(name = "updatedby")
+	private String updatedBy;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "customerId")
-	private Customers customers;
+	private CustomersInfo customers;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "referenceId")
-	private Set<Reference> reference;
+	@OneToMany
+	@JoinColumn(name = "loanId")
+	private List<Reference> reference;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "identityId")
