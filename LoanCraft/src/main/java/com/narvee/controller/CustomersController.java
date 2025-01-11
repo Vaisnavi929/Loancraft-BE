@@ -42,18 +42,25 @@ public class CustomersController {
 	private IAuthenticationService authenticationService;
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Object> saveApplicant(@RequestBody RegisterVO register) {
-		logger.info("Saving applicant: {}", register.getEmail());
+	public ResponseEntity<RestAPIResponse> saveCustomers(@Valid @RequestBody RegisterVO register) {
+		logger.info("Saving customer: {}", register.getEmail());
 		try {
 			customerService.save(register);
+
 			Object authenticate = authenticationService.authenticate(register.getEmail(), register.getPassword());
 			logger.info("customer saved and authenticated successfully: {}", register.getEmail());
+
 			return ResponseEntity
 					.ok(new RestAPIResponse("success", "Customer saved and authenticated successfully", authenticate));
+
+		} catch (IllegalArgumentException e) {
+			logger.warn("Validation error: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new RestAPIResponse("fail", "Validation error", e.getMessage()));
 		} catch (Exception e) {
 			logger.error("Error saving customer: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error saving customer"));
+					.body(new RestAPIResponse("fail", "Error saving customer Please try again later", e.getMessage()));
 		}
 	}
 
@@ -107,7 +114,8 @@ public class CustomersController {
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateApplicant(@RequestBody CustomerUpdateRequest customerUpdateDto) {
+	public ResponseEntity<RestAPIResponse> updateApplicant(
+			@Valid @RequestBody CustomerUpdateRequest customerUpdateDto) {
 		logger.info("Updating customer with encrypted ID: {}", customerUpdateDto.getCustomerId());
 
 		try {
@@ -115,18 +123,30 @@ public class CustomersController {
 			long decryptedCustomerId = EncryptionUtil.decrypt(customerUpdateDto.getCustomerId());
 			customerUpdateDto.setCustomerId(String.valueOf(decryptedCustomerId)); // Set the decrypted ID in the DTO
 
-			// Call the service to update customer
-			CustomerUpdateRequest updatedCustomer = customerService.update(customerUpdateDto);
+			// Call the service to update the customer
+			Customers updatedCustomer = customerService.update(customerUpdateDto);
 
 			// Encrypt the customerId for the response
-			updatedCustomer.setCustomerId(EncryptionUtil.encrypt(Long.parseLong(updatedCustomer.getCustomerId())));
+			String encryptedCustomerId = EncryptionUtil.encrypt(decryptedCustomerId);
+			
+			CustomerUpdateResponse responseCustomer = modelMapper.map(updatedCustomer, CustomerUpdateResponse.class);
 
-			logger.info("Customer updated successfully");
-			return ResponseEntity.ok(new RestAPIResponse("success", "Customer updated successfully", updatedCustomer));
-		} catch (Exception e) {
+            // Set the encrypted customerId in the response DTO
+            responseCustomer.setCustomerId(encryptedCustomerId);
+
+			logger.info("Customer updated successfully with encrypted customerId: {}", encryptedCustomerId);
+
+			// Return the success response with updated customer data
+			return ResponseEntity.ok(new RestAPIResponse("success", "Customer updated successfully", responseCustomer));
+
+		} catch (RuntimeException e) {
 			logger.error("Error updating customer: {}", e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error updating customer"));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new RestAPIResponse("fail", "Error updating customer", e.getMessage()));
+		} catch (Exception e) {
+			logger.error("Unexpected error during update: {}", e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+					new RestAPIResponse("fail", "Unexpected error occurred during customer update", e.getMessage()));
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.narvee.serviceimpl;
 
 import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
 import com.narvee.entity.CurrentAddress;
@@ -25,6 +23,7 @@ import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -44,23 +43,28 @@ public class CustomerServiceImpl implements CustomerService {
 	private AccountSequenceService accountSequenceService;
 
 	@Override
+	@Transactional
 	public Customers save(RegisterVO register) {
-		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
+		logger.info("Saving new customer with email: {}", register.getEmail());
+
 		Optional<Customers> existingApplicant = customerRepository.findByEmail(register.getEmail());
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 
-		Customers applicant = modelMapper.map(register, Customers.class);
-		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
-			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
-			applicant.setPassword(encodedPassword);
-			String accountNumber = accountSequenceService.generateAccountNumber();
-			applicant.setAccountNumber(accountNumber);
+		Customers customer = modelMapper.map(register, Customers.class);
+		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
+			String encodedPassword = passwordEncoder.encode(customer.getPassword());
+			customer.setPassword(encodedPassword);
 		}
-		Customers savedApplicant = customerRepository.save(applicant);
 
-		return savedApplicant;
+		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
+
+		Customers savedCustomer = customerRepository.save(customer);
+
+		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
+
+		return savedCustomer;
 	}
 
 	@Override
@@ -148,34 +152,40 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerUpdateRequest update(CustomerUpdateRequest customerUpdateDto) throws Exception {
-
+	public Customers update(CustomerUpdateRequest customerUpdateDto) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
 
-		// Decrypt the encrypted customerId
-		long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
-		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+		try {
+			// Parse the customer ID from the request DTO
+			long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
+			logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
-		// Fetch the customer by decrypted ID
-		Customers customer = customerRepository.findById(decryptedCustomerId)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
+			// Fetch the customer by ID or throw an exception if not found
+			Customers customer = customerRepository.findById(decryptedCustomerId)
+					.orElseThrow(() -> new RuntimeException("Customer not found with ID: " + decryptedCustomerId));
 
-		// Retain sensitive fields
-		String password = customer.getPassword();
-		String accountNumber = customer.getAccountNumber();
+			logger.info("Fetched customer: {}", customer);
 
-		// Map updated fields
-		modelMapper.map(customerUpdateDto, customer);
-		customer.setPassword(password);
-		customer.setAccountNumber(accountNumber);
+			// Retain sensitive fields (e.g., password and account number)
+			String originalPassword = customer.getPassword();
+			String originalAccountNumber = customer.getAccountNumber();
 
-		// Save the updated customer
-		customer = customerRepository.save(customer);
+			// Map updated fields from DTO to the customer entity
+			modelMapper.map(customerUpdateDto, customer);
 
-		// Map to DTO for response
-		CustomerUpdateRequest updatedDto = modelMapper.map(customer, CustomerUpdateRequest.class);
+			// Restore sensitive fields to prevent overwriting them
+			customer.setPassword(originalPassword);
+			customer.setAccountNumber(originalAccountNumber);
 
-		return updatedDto;
+			logger.info("Updated customer object: {}", customer);
+
+			// Save and return the updated customer
+			return customerRepository.save(customer);
+
+		} catch (Exception ex) {
+			logger.error("Unexpected error during update: {}", ex.getMessage(), ex);
+			throw new RuntimeException("An unexpected error occurred during customer update: " + ex.getMessage(), ex);
+		}
 	}
 
 	@Override

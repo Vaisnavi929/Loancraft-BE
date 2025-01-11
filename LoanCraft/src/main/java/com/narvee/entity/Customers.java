@@ -1,10 +1,8 @@
 package com.narvee.entity;
 
 import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,25 +23,20 @@ public class Customers {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "customer_id")
 	private Long customerId;
 
 	@Column(name = "first_name")
 	private String firstName;
 
+	@Column(name = "middle_name")
 	private String middleName;
 
 	@Column(name = "last_name")
 	private String lastName;
 
+	@Column(name = "gender")
 	private String gender;
-
-	private String fathersOrSpousesName;
-
-	private LocalDate dob;
-
-	private String highestQualification;
-
-	private String adhaarNumber;
 
 	@Column(name = "mobile_no")
 	private String mobileNo;
@@ -51,11 +44,23 @@ public class Customers {
 	@Column(name = "email")
 	private String email;
 
-	@Column(name = "password", unique = true)
+	@Column(name = "password")
 	@JsonIgnore
 	private String password;
 
-	@Column(name = "accountNumber", unique = true)
+	@Column(name = "fathers_or_spouses_name")
+	private String fathersOrSpousesName;
+
+	@Column(name = "dob")
+	private LocalDate dob;
+
+	@Column(name = "highest_qualification")
+	private String highestQualification;
+
+	@Column(name = "adhaar_number", unique = true)
+	private String adhaarNumber;
+
+	@Column(name = "account_number", unique = true)
 	private String accountNumber;
 
 	@OneToOne(mappedBy = "customer")

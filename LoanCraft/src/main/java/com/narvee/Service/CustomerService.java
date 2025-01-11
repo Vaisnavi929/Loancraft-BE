@@ -15,7 +15,7 @@ public interface CustomerService {
 
 	boolean deleteById(Long id);
 
-	CustomerUpdateRequest update(CustomerUpdateRequest customerUpdateDto) throws Exception;
+	Customers update(CustomerUpdateRequest customerUpdateDto);
 
 	Page<SearchingDTO> getAllCustomers(SortingDTO sortingDTO);
 

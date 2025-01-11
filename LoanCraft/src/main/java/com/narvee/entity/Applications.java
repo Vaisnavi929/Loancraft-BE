@@ -43,11 +43,11 @@ public class Applications {
 	private Customers customers;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "referenceId")
+	@JoinColumn(name = "reference_id")
 	private Set<Reference> reference;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "identityId")
+	@JoinColumn(name = "identity_id")
 	private IdentityProof identityProof;
 
 }
