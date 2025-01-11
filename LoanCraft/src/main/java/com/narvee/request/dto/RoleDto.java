@@ -1,5 +1,6 @@
 package com.narvee.request.dto;
 
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoleDto {
 
-	private String roleName;
+	@NotBlank(message = "Role name cannot be empty!")
+	private String roleName;;
 
 }

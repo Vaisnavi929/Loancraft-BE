@@ -4,8 +4,10 @@ import org.springframework.data.domain.Page;
 
 import com.narvee.entity.CustomersInfo;
 import com.narvee.request.dto.ApplicantDto;
+
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 
 public interface CustomerService {
@@ -16,9 +18,9 @@ public interface CustomerService {
 
 	boolean deleteById(Long id);
 
-	CustomerUpdateRequest update(CustomerUpdateRequest customerUpdateDto) throws Exception;
+	Customers update(CustomerUpdateRequest customerUpdateDto);
 
-	Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO);
+	Page<SearchingDTO> getAllCustomers(SortingDTO sortingDTO);
 
 	Long checkCustomerEligibility(String customerId) throws Exception;
 

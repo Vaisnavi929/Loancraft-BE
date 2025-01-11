@@ -53,12 +53,14 @@ public class Applications extends AuditModel {
 	@JoinColumn(name = "customerId")
 	private CustomersInfo customers;
 
+
 	@OneToMany
 	@JoinColumn(name = "loanId")
 	private List<Reference> reference;
 
+
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "identityId")
+	@JoinColumn(name = "identity_id")
 	private IdentityProof identityProof;
 
 }

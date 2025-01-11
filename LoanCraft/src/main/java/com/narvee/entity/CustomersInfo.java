@@ -2,9 +2,14 @@ package com.narvee.entity;
 
 import java.time.LocalDate;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.narvee.commons.AuditModel;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,13 +20,17 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 import lombok.EqualsAndHashCode;
+
+
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 @Table(name = "LmsCustomers_info")
 @EqualsAndHashCode(callSuper = true)
 public class CustomersInfo extends AuditModel {
@@ -34,10 +43,12 @@ public class CustomersInfo extends AuditModel {
 	@Column(name = "firstName")
 	private String firstName;
 
+
 	private String middleName;
 
 	@Column(name = "last_name")
 	private String lastName;
+
 
 	private String gender;
 
@@ -52,8 +63,10 @@ public class CustomersInfo extends AuditModel {
 	@Column(name = "mobileNumber")
 	private String mobileNumber;
 
+
 	@Column(name = "email")
 	private String email;
+
 
 	@Column(name = "password", unique = true)
 	@JsonIgnore
@@ -67,6 +80,7 @@ public class CustomersInfo extends AuditModel {
 
 	@Column(name = "updatedby")
 	private Long updatedBy;
+
 
 	@OneToOne(mappedBy = "customer")
 	@JsonManagedReference

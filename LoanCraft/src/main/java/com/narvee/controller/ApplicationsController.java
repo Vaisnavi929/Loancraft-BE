@@ -1,5 +1,6 @@
 package com.narvee.controller;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 import com.narvee.util.EncryptionUtil;
 
+import jakarta.validation.Valid;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/app")
@@ -31,7 +34,7 @@ public class ApplicationsController {
 	
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> saveLoanApplication(@RequestBody LoanApplicationDto loanApplicationDto) {
+	public ResponseEntity<RestAPIResponse> saveLoanApplication(@Valid @RequestBody LoanApplicationDto loanApplicationDto) {
 		logger.info("!!! Class: LoanApplicationController, Method: saveLoanApplication");
 
 		try {
@@ -45,12 +48,11 @@ public class ApplicationsController {
 			logger.info("Loan application saved successfully.");
 			return ResponseEntity.ok(new RestAPIResponse("success", "Application Submitted Successfully", savedApplication));
 		} catch (Exception e) {
-			logger.error("Error saving loan application: {}", e.getMessage(), e);
+			logger.error("Error saving loan application: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error submitting application."));
+					.body(new RestAPIResponse("fail", "Error submitting application.",e.getMessage()));
 		}
 	}
-	
 
 	@RequestMapping(value = "/getById/{loanId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long loanId) {
