@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
+import com.narvee.request.dto.ApplicantDto;
+
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.CustomerUpdateResponse;
 import com.narvee.request.dto.RegisterVO;
@@ -68,7 +70,7 @@ public class CustomersController {
 	public ResponseEntity<RestAPIResponse> getCustomerById(@PathVariable String id) throws Exception {
 		logger.info("Fetching customer by encrypted ID: {}", id);
 		// Call service method to fetch the customer by decrypted ID
-		Customers customer = customerService.getById(id);
+		CustomersInfo customer = customerService.getById(id);
 		System.out.println();
 
 		if (customer != null) {

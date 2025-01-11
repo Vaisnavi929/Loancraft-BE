@@ -1,6 +1,6 @@
 package com.narvee.request.dto;
 
-import java.util.Set;
+import java.util.List;
 
 import com.narvee.entity.IdentityProof;
 import com.narvee.entity.Reference;
@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoanApplicationDto {
+
 
 	private String applicationReferenceId;
 //	private Long amaxnum;
@@ -56,13 +57,16 @@ public class LoanApplicationDto {
 	@NotBlank(message = "Customer ID cannot be blank")
 	private String customerId;
 
+
 	@NotNull(message = "Reference set is required")
 	@Size(min = 1, message = "At least one reference is required")
 	@Valid
-	private Set<Reference> reference;
+  private List<Reference> reference;
 
 	@NotNull(message = "Identity proof is required")
 	@Valid
 	private IdentityProof identityProof;
+
+
 
 }

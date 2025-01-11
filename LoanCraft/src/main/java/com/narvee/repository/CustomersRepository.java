@@ -8,15 +8,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.narvee.entity.Customers;
-import com.narvee.request.dto.SearchingDTO;
 
-public interface CustomersRepository extends JpaRepository<Customers, Long> {
+import com.narvee.entity.CustomersInfo;
 
-	Optional<Customers> findByEmail(String email);
+public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> {
 
-	@Query(value = "SELECT email,first_name,last_name,mobile_no,dob,fathers_or_spouses_name,middle_name,highest_qualification,account_number,adhaar_number FROM lms_customers ", nativeQuery = true)
-	public Page<SearchingDTO> findAllCustomers(Pageable pageable);
+	Optional<CustomersInfo> findByEmail(String email);
+
+	@Query(value = "SELECT email,first_name,last_name,mobile_no,dob,fathers_or_spouses_name,middle_name,highest_qualification FROM applicant ", nativeQuery = true)
+	Page<CustomersInfo> findAllApplicants(Pageable pageable);
+
+
 
 	@Query(value = "SELECT email, first_name, last_name, mobile_no, dob, fathers_or_spouses_name, middle_name, highest_qualification,adhaar_number,account_number"
 			+ "FROM lms_customers " + "WHERE email LIKE CONCAT('%', :keyword, '%') OR "
@@ -25,8 +27,10 @@ public interface CustomersRepository extends JpaRepository<Customers, Long> {
 			+ "highest_qualification LIKE CONCAT('%', :keyword, '%') OR " + "dob LIKE CONCAT('%', :keyword, '%') OR "
 			+ "adhaar_number LIKE CONCAT('%', :keyword, '%') OR " + "account_number LIKE CONCAT('%', :keyword, '%') OR "
 			+ "fathers_or_spouses_name LIKE CONCAT('%', :keyword, '%') OR "
-			+ "middle_name LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
-	public Page<SearchingDTO> findCustomersByKeyword(@Param("keyword") String keyword, Pageable pageable);
+			+ "middle_name LIKE CONCAT('%', :keyword, '%') OR ", nativeQuery = true)
+	Page<CustomersInfo> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+
 
 	@Query(value = "SELECT CASE  WHEN c.account_number IS NOT NULL AND c.adhaar_number IS NOT NULL "
 			+ "AND c.dob IS NOT NULL " + " AND c.email IS NOT NULL " + "AND c.fathers_or_spouses_name IS NOT NULL "

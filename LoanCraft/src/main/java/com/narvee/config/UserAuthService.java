@@ -1,7 +1,6 @@
 package com.narvee.config;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,8 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.narvee.entity.Customers;
-import com.narvee.entity.Roles;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.UserInfo;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.UserRepository;
@@ -39,9 +37,9 @@ public class UserAuthService implements UserDetailsService {
 	    logger.info("Inside UserAuthService: loadUserByUsername for email: {}", email);
 
 	    // Check if email belongs to a customer
-	    Optional<Customers> customerOptional = customerRepository.findByEmail(email);
+	    Optional<CustomersInfo> customerOptional = customerRepository.findByEmail(email);
 	    if (customerOptional.isPresent()) {
-	        Customers customer = customerOptional.get();
+	        CustomersInfo customer = customerOptional.get();
 	        logger.info("Customer found with email: {}", email);
 	        return new org.springframework.security.core.userdetails.User(
 	                customer.getEmail(),

@@ -27,9 +27,10 @@ public class CustomerUpdateRequest {
 	@Size(min = 4, message = "LastName must be min of 4 characters !!")
 	private String lastName;
 
+
 	@NotEmpty(message = "Mobile number is required")
 	@Pattern(regexp = "\\d{10}", message = "Mobile number must be 10 digits")
-	private String mobileNo;
+	private String mobileNumber;
 
 	@Email(message = "Email address is not valid !!")
 	@NotEmpty(message = "Email is required !!")
@@ -53,5 +54,12 @@ public class CustomerUpdateRequest {
 	@NotEmpty
 	@Pattern(regexp = "^\\d{12}$", message = "Aadhaar number must be 12 digits")
 	private String adhaarNumber;
+	private Long addedBy;
+	private Long updatedBy;
+	
+	
+	
+	
+
 
 }

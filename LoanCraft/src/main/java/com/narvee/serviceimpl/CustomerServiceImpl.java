@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
 import com.narvee.entity.CurrentAddress;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
@@ -43,20 +43,24 @@ public class CustomerServiceImpl implements CustomerService {
 	private AccountSequenceService accountSequenceService;
 
 	@Override
-	@Transactional
-	public Customers save(RegisterVO register) {
-		logger.info("Saving new customer with email: {}", register.getEmail());
 
-		Optional<Customers> existingApplicant = customerRepository.findByEmail(register.getEmail());
+	public CustomersInfo save(RegisterVO register) {
+		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
+		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmail(register.getEmail());
+
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
-
-		Customers customer = modelMapper.map(register, Customers.class);
-		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
-			String encodedPassword = passwordEncoder.encode(customer.getPassword());
-			customer.setPassword(encodedPassword);
+		CustomersInfo applicant = modelMapper.map(register, CustomersInfo.class);
+		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
+			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
+			applicant.setPassword(encodedPassword);
+			String accountNumber = accountSequenceService.generateAccountNumber();
+			applicant.setAccountNumber(accountNumber);
 		}
+		CustomersInfo savedApplicant = customerRepository.save(applicant);
+
+
 
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
 
@@ -68,13 +72,13 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customers getById(String encryptedId) throws Exception {
+	public CustomersInfo getById(String encryptedId) throws Exception {
 		logger.info("!!! inside class: CustomerServiceImpl, method: getById()");
 
 		long decryptedCustomerId = EncryptionUtil.decrypt(encryptedId);
 		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 		// Fetch the customer details from the repository using the decrypted ID
-		Customers customer = customerRepository.findById(decryptedCustomerId).orElse(null);
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId).orElse(null);
 
 		if (customer.getPermanentAddress() == null) {
 			PermanentAddress permanentAddress = new PermanentAddress();
@@ -134,6 +138,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
 
+		Page<CustomersInfo> applicantsPage;
+
+
 		if (keyword == null || keyword.isEmpty()) {
 			return customerRepository.findAllCustomers(pageable);
 		} else {
@@ -160,9 +167,11 @@ public class CustomerServiceImpl implements CustomerService {
 			long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
 			logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
+
 			// Fetch the customer by ID or throw an exception if not found
 			Customers customer = customerRepository.findById(decryptedCustomerId)
 					.orElseThrow(() -> new RuntimeException("Customer not found with ID: " + decryptedCustomerId));
+
 
 			logger.info("Fetched customer: {}", customer);
 

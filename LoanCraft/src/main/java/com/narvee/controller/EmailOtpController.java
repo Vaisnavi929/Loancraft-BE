@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.EmailOtpService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
 
@@ -76,12 +76,12 @@ public class EmailOtpController {
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> changePassword(@RequestBody ApplicantDto applicant)
 			throws MessagingException {
-		Optional<Customers> optionalApplicant = customersRepository.findByEmail(applicant.getEmail());
+		Optional<CustomersInfo> optionalApplicant = customersRepository.findByEmail(applicant.getEmail());
 
 		if (!optionalApplicant.isPresent()) {
 			return new ResponseEntity<>(new RestAPIResponse("mailerror", "Email not Registered"), HttpStatus.OK);
 		} else {
-			Customers existingApplicant = optionalApplicant.get();
+			CustomersInfo existingApplicant = optionalApplicant.get();
 			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
 			existingApplicant.setPassword(encodedPassword);
 

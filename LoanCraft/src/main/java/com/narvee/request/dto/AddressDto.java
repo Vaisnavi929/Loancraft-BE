@@ -20,5 +20,5 @@ public class AddressDto {
 	private long cAddressId;
 	private Long stateId;
 
-}
 
+}

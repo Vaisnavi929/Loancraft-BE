@@ -18,9 +18,10 @@ public class RegisterVO {
 	@Size(min = 4, message = "FirstName must be min of 4 characters !!")
 	private String lastName;
 
+
 	@NotEmpty(message = "Mobile number is required")
     @Pattern(regexp = "\\d{10}", message = "Mobile number must be 10 digits")
-	private String mobileNo;
+	private String mobileNumber;
 
 	@Email(message = "Email address is not valid !!")
 	@NotEmpty(message = "Email is required !!")
@@ -29,5 +30,6 @@ public class RegisterVO {
 	@NotEmpty
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
 	private String password;
+
 
 }

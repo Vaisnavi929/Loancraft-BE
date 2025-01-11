@@ -1,11 +1,8 @@
 package com.narvee.serviceimpl;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.MappingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,10 @@ import com.narvee.Service.ApplicationsService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.config.MapperConfig;
 import com.narvee.entity.Applications;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
+import com.narvee.entity.Reference;
 import com.narvee.repository.ApplicationsRepository;
-import com.narvee.repository.CustomersRepository;
+import com.narvee.repository.ReferenceRepository;
 import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
@@ -38,53 +36,42 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	private ApplicationsRepository applicationRepository;
 	
 	@Autowired
-	private CustomersRepository customerRepository;
+	private ReferenceRepository referenceRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
-	
 	private static final int DIGIT_PADDING = 4;
 
 	@Override
 	public Applications saveLoanApplication(LoanApplicationDto loanApplicationDto) {
-		logger.info("Inside saveLoanApplication() method");
+	    logger.info("Inside saveLoanApplication() method");
+	    Applications loan = DTOtoApplication(loanApplicationDto);
 
-		ModelMapper modelMapper = MapperConfig.getModelMapper();
-		modelMapper.addConverter(new Converter<String, Long>() {
-			public Long convert(MappingContext<String, Long> context) {
-				try {
-					return context.getSource() != null ? Long.parseLong(context.getSource()) : null;
-				} catch (NumberFormatException e) {
-					return null;
-				}
-			}
-		});
-
-		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
-
-		 // Fetch customer using decrypted ID
-	    Optional<Customers> customerOptional = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
-	    if (customerOptional.isPresent()) {
-	    	 logger.info("Customer with ID {} found", loanApplicationDto.getCustomerId());
-	        loan.setCustomers(customerOptional.get());
-	        
-	    } else {
-	        logger.error("Customer with ID {} not found", loanApplicationDto.getCustomerId());
-	        throw new RuntimeException("Customer not found");
-	    }
+	    CustomersInfo customersInfo = new CustomersInfo();
+	    customersInfo.setCustomerId(Long.parseLong(loanApplicationDto.getCustomerId()));
+	    loan.setCustomers(customersInfo);
 	    
-		Long amaxnumber = applicationRepository.appmaxNumber();
-		if (amaxnumber == null) {
-			amaxnumber = 0L;
-		}
+	    // Save references and add them to the loan
+	    List<Reference> references = referenceRepository.saveAll(loanApplicationDto.getReference());
+	    loan.setReference(references);  // Set the references to the loan
 
-		String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
-		String value = "BEACON" + valueWithPadding;
-		loan.setApplicationReferenceId(value);
+	    Long amaxnumber = applicationRepository.appmaxNumber();
+	    if (amaxnumber == null) {
+	        amaxnumber = 0L;
+	    }
 
-		loan.setAmaxnum(amaxnumber + 1);
+	    String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
+	    String value = "BEACON" + valueWithPadding;
+	    loan.setApplicationReferenceId(value);
+	    loan.setStatus("Applied");
 
-		return applicationRepository.save(loan);
+	    loan.setAmaxnum(amaxnumber + 1);
+
+	    // Ensuring reference is set to the loan if it's already available
+	    if (loanApplicationDto.getReference() != null && !loanApplicationDto.getReference().isEmpty()) {
+	        loan.getReference().addAll(loanApplicationDto.getReference());
+	    }
+
+	    // Save the loan application
+	    return applicationRepository.save(loan);
 	}
 
 	@Override
@@ -167,6 +154,24 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			return applicationRepository.getAllLoanApplicationWithKeyword(pageable, keyword);
 
 		}
+
+	}
+
+	public Applications DTOtoApplication(LoanApplicationDto applicationDto) {
+		Applications application = new Applications();
+		application.setStatus(applicationDto.getStatus());
+		application.setEmploymentType(applicationDto.getEmploymentType());
+		application.setSalary(applicationDto.getSalary());
+		application.setYearsinEmployment(applicationDto.getYearsinEmployment());
+		application.setCompanyName(applicationDto.getCompanyName());
+		application.setCompanyAddress(applicationDto.getCompanyAddress());
+		application.setPinCode(applicationDto.getPinCode());
+		application.setLoanAmount(applicationDto.getLoanAmount());
+		application.setRepaymentMode(applicationDto.getRepaymentMode());
+		application.setLoanTenure(applicationDto.getLoanTenure());
+		application.setReference(applicationDto.getReference());
+		application.setIdentityProof(applicationDto.getIdentityProof());
+		return application;
 
 	}
 
