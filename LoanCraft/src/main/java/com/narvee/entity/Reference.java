@@ -33,7 +33,6 @@ public class Reference {
 
 	@Column(name = "full_name")
 	@NotBlank(message = "Full name cannot be blank")
-
 	private String fullName;
 
 	@Column(name = "known_for_years")
@@ -56,7 +55,6 @@ public class Reference {
 	@NotNull(message = "Mobile number is required")
 	@Digits(integer = 10, fraction = 0, message = "Mobile number must be a 10-digit number")
 	@Min(value = 1000000000, message = "Mobile number must be a valid 10-digit number")
-  
 	private Long mobilenumber;
 
 

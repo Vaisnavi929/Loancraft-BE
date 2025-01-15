@@ -1,6 +1,5 @@
 package com.narvee.controller;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.narvee.Service.ApplicationsService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
@@ -20,7 +18,6 @@ import com.narvee.entity.Applications;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 import com.narvee.util.EncryptionUtil;
-
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,10 +28,10 @@ public class ApplicationsController {
 
 	@Autowired
 	private ApplicationsService applicationService;
-	
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> saveLoanApplication(@Valid @RequestBody LoanApplicationDto loanApplicationDto) {
+	public ResponseEntity<RestAPIResponse> saveLoanApplication(
+			@Valid @RequestBody LoanApplicationDto loanApplicationDto) {
 		logger.info("!!! Class: LoanApplicationController, Method: saveLoanApplication");
 
 		try {
@@ -45,12 +42,13 @@ public class ApplicationsController {
 			// Save the loan application
 			Applications savedApplication = applicationService.saveLoanApplication(loanApplicationDto);
 
-			logger.info("Loan application saved successfully.");
-			return ResponseEntity.ok(new RestAPIResponse("success", "Application Submitted Successfully", savedApplication));
+			logger.info("Loan application saved successfully.", savedApplication);
+			return ResponseEntity
+					.ok(new RestAPIResponse("success", "Application Submitted Successfully", savedApplication));
 		} catch (Exception e) {
 			logger.error("Error saving loan application: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error submitting application.",e.getMessage()));
+					.body(new RestAPIResponse("fail", "Error submitting application.", e.getMessage()));
 		}
 	}
 
@@ -78,13 +76,25 @@ public class ApplicationsController {
 
 	@RequestMapping(value = "/updateLoanApplication", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateLoanApplication(
-			@RequestBody LoanApplicationUpdateDto loanApplication) {
+			@Valid @RequestBody LoanApplicationUpdateDto loanApplication) {
 		logger.info("!!! inside class: LoanApplicationController, !! method : updateLoanApplication");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "updated loneapplication Successfully",
-						applicationService.updateLoanApplication(loanApplication)), // .updateLoanApplication(loanApplication)),
-				HttpStatus.OK);
 
+		try {
+			// Decrypt the customerId from the request
+			long decryptedCustomerId = EncryptionUtil.decrypt(loanApplication.getCustomerId());
+			loanApplication.setCustomerId(String.valueOf(decryptedCustomerId));
+
+			// Save the loan application
+			LoanApplicationUpdateDto updateApplication = applicationService.updateLoanApplication(loanApplication);
+
+			logger.info("Loan application Updtaed successfully.", updateApplication);
+			return ResponseEntity
+					.ok(new RestAPIResponse("success", "Application Updated Successfully", updateApplication));
+		} catch (Exception e) {
+			logger.error("Error upadte loan application: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("fail", "Error updating application.", e.getMessage()));
+		}
 	}
 
 	@RequestMapping(value = "/duplicateCheck/{aadhar}", method = RequestMethod.GET, produces = "application/json")
