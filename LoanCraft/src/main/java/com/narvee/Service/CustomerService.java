@@ -3,8 +3,6 @@ package com.narvee.Service;
 import org.springframework.data.domain.Page;
 
 import com.narvee.entity.CustomersInfo;
-import com.narvee.request.dto.ApplicantDto;
-
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SearchingDTO;
@@ -18,7 +16,7 @@ public interface CustomerService {
 
 	boolean deleteById(Long id);
 
-	Customers update(CustomerUpdateRequest customerUpdateDto);
+	CustomersInfo update(CustomerUpdateRequest customerUpdateDto);
 
 	Page<SearchingDTO> getAllCustomers(SortingDTO sortingDTO);
 

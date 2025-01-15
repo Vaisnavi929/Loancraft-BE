@@ -17,8 +17,6 @@ import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.CustomersInfo;
-import com.narvee.request.dto.ApplicantDto;
-
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.CustomerUpdateResponse;
 import com.narvee.request.dto.RegisterVO;
@@ -126,7 +124,7 @@ public class CustomersController {
 			customerUpdateDto.setCustomerId(String.valueOf(decryptedCustomerId)); // Set the decrypted ID in the DTO
 
 			// Call the service to update the customer
-			Customers updatedCustomer = customerService.update(customerUpdateDto);
+			CustomersInfo updatedCustomer = customerService.update(customerUpdateDto);
 
 			// Encrypt the customerId for the response
 			String encryptedCustomerId = EncryptionUtil.encrypt(decryptedCustomerId);
@@ -142,11 +140,11 @@ public class CustomersController {
 			return ResponseEntity.ok(new RestAPIResponse("success", "Customer updated successfully", responseCustomer));
 
 		} catch (RuntimeException e) {
-			logger.error("Error updating customer: {}", e.getMessage(), e);
+			logger.error("Error updating customer: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new RestAPIResponse("fail", "Error updating customer", e.getMessage()));
 		} catch (Exception e) {
-			logger.error("Unexpected error during update: {}", e.getMessage(), e);
+			logger.error("Unexpected error during update: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 					new RestAPIResponse("fail", "Unexpected error occurred during customer update", e.getMessage()));
 		}

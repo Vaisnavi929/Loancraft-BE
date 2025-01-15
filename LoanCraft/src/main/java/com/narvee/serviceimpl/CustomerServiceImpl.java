@@ -23,7 +23,6 @@ import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
-import jakarta.transaction.Transactional;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -51,20 +50,18 @@ public class CustomerServiceImpl implements CustomerService {
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
-		CustomersInfo applicant = modelMapper.map(register, CustomersInfo.class);
-		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
-			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
-			applicant.setPassword(encodedPassword);
+		CustomersInfo customer = modelMapper.map(register, CustomersInfo.class);
+		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
+			String encodedPassword = passwordEncoder.encode(customer.getPassword());
+			customer.setPassword(encodedPassword);
 			String accountNumber = accountSequenceService.generateAccountNumber();
-			applicant.setAccountNumber(accountNumber);
+			customer.setAccountNumber(accountNumber);
 		}
-		CustomersInfo savedApplicant = customerRepository.save(applicant);
-
-
+//		CustomersInfo saveCustomers = customerRepository.save(customer);
 
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
 
-		Customers savedCustomer = customerRepository.save(customer);
+		CustomersInfo savedCustomer = customerRepository.save(customer);
 
 		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
 
@@ -138,9 +135,6 @@ public class CustomerServiceImpl implements CustomerService {
 
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
 
-		Page<CustomersInfo> applicantsPage;
-
-
 		if (keyword == null || keyword.isEmpty()) {
 			return customerRepository.findAllCustomers(pageable);
 		} else {
@@ -159,7 +153,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customers update(CustomerUpdateRequest customerUpdateDto) {
+	public CustomersInfo update(CustomerUpdateRequest customerUpdateDto) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
 
 		try {
@@ -169,7 +163,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
 			// Fetch the customer by ID or throw an exception if not found
-			Customers customer = customerRepository.findById(decryptedCustomerId)
+			CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 					.orElseThrow(() -> new RuntimeException("Customer not found with ID: " + decryptedCustomerId));
 
 
