@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoanApplicationDto {
 
-
 	private String applicationReferenceId;
 //	private Long amaxnum;
 
@@ -57,16 +56,13 @@ public class LoanApplicationDto {
 	@NotBlank(message = "Customer ID cannot be blank")
 	private String customerId;
 
-
 	@NotNull(message = "Reference set is required")
 	@Size(min = 1, message = "At least one reference is required")
 	@Valid
-  private List<Reference> reference;
+	private List<Reference> reference;
 
 	@NotNull(message = "Identity proof is required")
 	@Valid
 	private IdentityProof identityProof;
-
-
 
 }
