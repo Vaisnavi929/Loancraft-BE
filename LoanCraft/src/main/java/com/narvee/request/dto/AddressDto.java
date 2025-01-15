@@ -19,6 +19,8 @@ public class AddressDto {
 	private long pAddressId;
 	private long cAddressId;
 	private Long stateId;
+	private Long addedBy;
 
+	private Long updatedBy;
 
 }
