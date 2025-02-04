@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.IAuthenticationService;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.AuthResponse;
 import com.narvee.util.EncryptionUtil;
@@ -27,7 +27,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	@Override
 	public Object authenticate(String usernameOrEmail, String password) {
 		// Fetch the applicant from the repository using email
-		Customers applicant = customersRepository.findByEmail(usernameOrEmail)
+		CustomersInfo applicant = customersRepository.findByEmail(usernameOrEmail)
 				.orElseThrow(() -> new BadCredentialsException("Applicant not found"));
 		
 
@@ -45,7 +45,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 			}
 			responseDto.setFirstName(applicant.getFirstName());
 			responseDto.setLastName(applicant.getLastName());
-			responseDto.setMobileNo(applicant.getMobileNo());
+			responseDto.setMobileNumber(applicant.getMobileNumber());
 			responseDto.setEmail(applicant.getEmail());
 			responseDto.setToken(token); // Set the generated token
 

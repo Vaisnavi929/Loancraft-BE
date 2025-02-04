@@ -1,11 +1,8 @@
 package com.narvee.serviceimpl;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.spi.MappingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,11 @@ import com.narvee.Service.ApplicationsService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.config.MapperConfig;
 import com.narvee.entity.Applications;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
+import com.narvee.entity.Reference;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.repository.ReferenceRepository;
 import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
@@ -36,43 +35,31 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Autowired
 	private ApplicationsRepository applicationRepository;
-	
+
+	@Autowired
+	private ReferenceRepository referenceRepository;
+
 	@Autowired
 	private CustomersRepository customerRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
-	
 	private static final int DIGIT_PADDING = 4;
 
 	@Override
 	public Applications saveLoanApplication(LoanApplicationDto loanApplicationDto) {
 		logger.info("Inside saveLoanApplication() method");
+		Applications loan = DTOtoApplication(loanApplicationDto);
 
-		ModelMapper modelMapper = MapperConfig.getModelMapper();
-		modelMapper.addConverter(new Converter<String, Long>() {
-			public Long convert(MappingContext<String, Long> context) {
-				try {
-					return context.getSource() != null ? Long.parseLong(context.getSource()) : null;
-				} catch (NumberFormatException e) {
-					return null;
-				}
-			}
-		});
+		CustomersInfo customersInfo = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()))
+				.orElseThrow(() -> new RuntimeException(
+						"Customer not found with ID: " + loanApplicationDto.getCustomerId()));
 
-		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
+		customersInfo.setCustomerId(Long.parseLong(loanApplicationDto.getCustomerId()));
+		loan.setCustomers(customersInfo);
 
-		 // Fetch customer using decrypted ID
-	    Optional<Customers> customerOptional = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
-	    if (customerOptional.isPresent()) {
-	    	 logger.info("Customer with ID {} found", loanApplicationDto.getCustomerId());
-	        loan.setCustomers(customerOptional.get());
-	        
-	    } else {
-	        logger.error("Customer with ID {} not found", loanApplicationDto.getCustomerId());
-	        throw new RuntimeException("Customer not found");
-	    }
-	    
+		// Save references and add them to the loan
+		List<Reference> references = referenceRepository.saveAll(loanApplicationDto.getReference());
+		loan.setReference(references);
+
 		Long amaxnumber = applicationRepository.appmaxNumber();
 		if (amaxnumber == null) {
 			amaxnumber = 0L;
@@ -81,9 +68,11 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
 		String value = "BEACON" + valueWithPadding;
 		loan.setApplicationReferenceId(value);
+		loan.setStatus("Applied");
 
 		loan.setAmaxnum(amaxnumber + 1);
 
+		// Save the loan application
 		return applicationRepository.save(loan);
 	}
 
@@ -110,9 +99,32 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	public LoanApplicationUpdateDto updateLoanApplication(LoanApplicationUpdateDto loanApplication) {
 		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: updateLoanApplication");
 		ModelMapper mapper = MapperConfig.getModelMapper();
-		Applications loan = mapper.map(loanApplication, Applications.class);
-		Applications applications = applicationRepository.save(loan);
-		LoanApplicationUpdateDto applicationUpdateDto = mapper.map(applications, LoanApplicationUpdateDto.class);
+
+		// Fetch the existing loan application entity using the loanId
+		Applications existingLoan = applicationRepository.findById(loanApplication.getLoanId()).orElseThrow(
+				() -> new RuntimeException("Loan Application not found with ID: " + loanApplication.getLoanId()));
+
+		mapper.map(loanApplication, existingLoan);
+
+		// If customerId is provided, validate and fetch the customer
+		if (loanApplication.getCustomerId() != null && !loanApplication.getCustomerId().isEmpty()) {
+			CustomersInfo customersInfo = customerRepository.findById(Long.parseLong(loanApplication.getCustomerId()))
+					.orElseThrow(() -> new RuntimeException(
+							"Customer not found with ID: " + loanApplication.getCustomerId()));
+			existingLoan.setCustomers(customersInfo); // Update the customer reference in the loan
+		}
+
+		// Save the updated loan application
+		Applications updatedLoan = applicationRepository.save(existingLoan);
+
+		// Convert the updated entity back to a DTO
+		LoanApplicationUpdateDto applicationUpdateDto = mapper.map(updatedLoan, LoanApplicationUpdateDto.class);
+
+		// Map customerId explicitly
+		if (updatedLoan.getCustomers() != null) {
+			applicationUpdateDto.setCustomerId(String.valueOf(updatedLoan.getCustomers().getCustomerId()));
+		}
+
 		return applicationUpdateDto;
 	}
 
@@ -167,6 +179,24 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			return applicationRepository.getAllLoanApplicationWithKeyword(pageable, keyword);
 
 		}
+
+	}
+
+	public Applications DTOtoApplication(LoanApplicationDto applicationDto) {
+		Applications application = new Applications();
+		application.setStatus(applicationDto.getStatus());
+		application.setEmploymentType(applicationDto.getEmploymentType());
+		application.setSalary(applicationDto.getSalary());
+		application.setYearsinEmployment(applicationDto.getYearsinEmployment());
+		application.setCompanyName(applicationDto.getCompanyName());
+		application.setCompanyAddress(applicationDto.getCompanyAddress());
+		application.setPinCode(applicationDto.getPinCode());
+		application.setLoanAmount(applicationDto.getLoanAmount());
+		application.setRepaymentMode(applicationDto.getRepaymentMode());
+		application.setLoanTenure(applicationDto.getLoanTenure());
+		application.setReference(applicationDto.getReference());
+		application.setIdentityProof(applicationDto.getIdentityProof());
+		return application;
 
 	}
 

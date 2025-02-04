@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.StateCodeService;
 import com.narvee.entity.CurrentAddress;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.States;
 import com.narvee.repository.StateCodeRepository;
 import com.narvee.request.dto.StateCodeDTO;

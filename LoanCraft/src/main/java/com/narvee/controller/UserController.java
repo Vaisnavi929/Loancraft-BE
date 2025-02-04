@@ -15,16 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.narvee.Service.IUserInfoService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.UserInfo;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
 import com.narvee.request.dto.UserUpdateDto;
-import com.narvee.serviceimpl.UserInfoServiceimpl;
 import com.narvee.util.EncryptionUtil;
-
+import jakarta.validation.Valid;
+                                          
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/auth")
@@ -39,7 +38,7 @@ public class UserController {
 	private ModelMapper modelMapper;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> registerUser(@RequestBody UserInfoDto userInfoDTO) {
+	public ResponseEntity<RestAPIResponse> registerUser(@Valid @RequestBody UserInfoDto userInfoDTO) {
 		logger.info("Registering user with email in UserConttoller: {}", userInfoDTO.getEmail());
 		try {
 			UserInfoDto savedUser = iUserInfoService.saveUser(userInfoDTO);
@@ -90,7 +89,7 @@ public class UserController {
 
 	// Update User
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+	public ResponseEntity<RestAPIResponse> updateUser(@Valid @RequestBody UserUpdateDto userUpdateDto) {
 		logger.info("Updating user with ID: {}");
 		try {
 			long decryptUserId = EncryptionUtil.decrypt(userUpdateDto.getUserId());
@@ -102,9 +101,9 @@ public class UserController {
 
 			return ResponseEntity.ok(new RestAPIResponse("success", "User updated successfully", updatedUser));
 		} catch (Exception e) {
-			logger.error("Error updating user with ID: {}", e);
+			logger.error("Error updating user with ID: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error updating user"));
+					.body(new RestAPIResponse("fail", "Error updating user",e.getMessage()));
 		}
 	}
 
