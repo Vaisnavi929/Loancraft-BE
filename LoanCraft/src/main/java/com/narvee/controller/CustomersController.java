@@ -78,15 +78,9 @@ public class CustomersController {
 
 	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
-		logger.info("Fetching all customer with sorting: {}", sortingDTO);
-		Page<ApplicantDto> allApplicants = customerService.getAllApplicants(sortingDTO);
-		if (allApplicants.hasContent()) {
-			logger.info("customer fetched successfully");
-			return ResponseEntity.ok(new RestAPIResponse("Success", "customer fetched successfully", allApplicants));
-		} else {
-			logger.warn("No customer found with the provided sorting parameters");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new RestAPIResponse("fail", "No customer found"));
-		}
+		logger.info("Fetching all customer with sorting: {}", sortingDTO);	
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details", customerService.getAllApplicants(sortingDTO)), HttpStatus.OK);
+		
 	}
 
 	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.DELETE, produces = "application/json")

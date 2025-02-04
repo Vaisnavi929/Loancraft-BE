@@ -18,6 +18,7 @@ import com.narvee.Service.CustomerService;
 import com.narvee.entity.Customers;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.CustomerResponseDTO;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
@@ -82,7 +83,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Page<ApplicantDto> getAllApplicants(SortingDTO sortingDTO) {
+	public Page<CustomerResponseDTO> getAllApplicants(SortingDTO sortingDTO) {
 		logger.info("Inside ApplicantServiceImpl: getAllApplicants");
 
 		String sortField = sortingDTO.getSortField();
@@ -99,8 +100,8 @@ public class CustomerServiceImpl implements CustomerService {
 			sortField = "email";
 		} else if (sortField.equalsIgnoreCase("MobileNo")) {
 			sortField = "mobile_no";
-		} else if (sortField.equalsIgnoreCase("MiddleName")) {
-			sortField = "middle_name";
+		} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
+			sortField = "account_number";
 		} else {
 			sortField = "first_name";
 		}
@@ -110,16 +111,17 @@ public class CustomerServiceImpl implements CustomerService {
 			sortDirection = Sort.Direction.DESC;
 		}
 
-		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
-
-		Page<Customers> applicantsPage;
-
-		if (keyword == null || keyword.isEmpty()) {
-			applicantsPage = customerRepository.findAllApplicants(pageable);
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return customerRepository.findAllApplicants(pageable);
 		} else {
-			applicantsPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
+
+			return customerRepository.findApplicantsByKeyword(keyword, pageable);
+
 		}
-		return applicantsPage.map(applicant -> modelMapper.map(applicant, ApplicantDto.class));
+
+		
 	}
 
 	@Override
