@@ -18,6 +18,10 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
+
+import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.CustomerResponseDTO;
+
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SearchingDTO;
@@ -97,7 +101,8 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Page<SearchingDTO> getAllCustomers(SortingDTO sortingDTO) {
+	public Page<CustomerResponseDTO> getAllCustomers(SortingDTO sortingDTO) {
+
 		logger.info("Inside ApplicantServiceImpl: getAllApplicants");
 
 		String sortField = sortingDTO.getSortField();
@@ -114,16 +119,8 @@ public class CustomerServiceImpl implements CustomerService {
 			sortField = "email";
 		} else if (sortField.equalsIgnoreCase("MobileNo")) {
 			sortField = "mobile_no";
-		} else if (sortField.equalsIgnoreCase("Dob")) {
-			sortField = "dob";
-		} else if (sortField.equalsIgnoreCase("FathersOrSpousesName")) {
-			sortField = "fathers_or_spouses_name";
-		} else if (sortField.equalsIgnoreCase("AdhaarNumber")) {
-			sortField = "adhaar_number";
-		} else if (sortField.equalsIgnoreCase("AccountNumber")) {
+		} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
 			sortField = "account_number";
-		} else if (sortField.equalsIgnoreCase("MiddleName")) {
-			sortField = "middle_name";
 		} else {
 			sortField = "first_name";
 		}
@@ -133,12 +130,12 @@ public class CustomerServiceImpl implements CustomerService {
 			sortDirection = Sort.Direction.DESC;
 		}
 
-		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
-
-		if (keyword == null || keyword.isEmpty()) {
-			return customerRepository.findAllCustomers(pageable);
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return customerRepository.findAllApplicants(pageable);
 		} else {
-			return customerRepository.findCustomersByKeyword(keyword, pageable);
+			return customerRepository.findApplicantsByKeyword(keyword, pageable)
 		}
 	}
 
