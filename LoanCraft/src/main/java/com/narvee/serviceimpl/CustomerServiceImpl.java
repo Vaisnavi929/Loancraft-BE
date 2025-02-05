@@ -1,6 +1,7 @@
 package com.narvee.serviceimpl;
 
 import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
 import com.narvee.entity.CurrentAddress;
@@ -18,13 +20,9 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
-
-import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerResponseDTO;
-
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
-import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
 
@@ -135,7 +133,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (keyword.equalsIgnoreCase("empty")) {
 			return customerRepository.findAllApplicants(pageable);
 		} else {
-			return customerRepository.findApplicantsByKeyword(keyword, pageable)
+			return customerRepository.findApplicantsByKeyword(keyword, pageable);
 		}
 	}
 

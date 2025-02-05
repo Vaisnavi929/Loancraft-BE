@@ -36,7 +36,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Autowired
 	private ApplicationsRepository applicationRepository;
 
-	@Autowired
+                 	@Autowired
 	private ReferenceRepository referenceRepository;
 
 	@Autowired

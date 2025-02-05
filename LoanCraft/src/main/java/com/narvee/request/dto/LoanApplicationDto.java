@@ -18,9 +18,7 @@ public class LoanApplicationDto {
 
 	private String applicationReferenceId;
 //	private Long amaxnum;
-
-	@NotBlank(message = "Status cannot be blank")
-	private String status;
+	private String status="Applied";
 
 	@NotBlank(message = "Employment type cannot be blank")
 	private String employmentType;

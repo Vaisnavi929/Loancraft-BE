@@ -29,22 +29,14 @@ public class IdentityProof {
 	@NotBlank(message = "Proof type cannot be blank")
 	private String proof;
 
-	@Column(name = "document")
-	@NotBlank(message = "Document name cannot be blank")
-	private String document;
-
 	@Column(name = "number")
 	@NotBlank(message = "Identity number cannot be blank")
 	private String number;
 
 	@Column(name = "issue_date")
-	@NotNull(message = "Issue date is required")
-	@PastOrPresent(message = "Issue date must be in the past or present")
 	private Date issueDate;
 
 	@Column(name = "exp_date")
-	@NotNull(message = "Expiration date is required")
-	@Future(message = "Expiration date must be in the future")
 	private Date expDate;
 
 }

@@ -7,7 +7,7 @@ public interface CustomerResponseDTO {
 	public String getaccountNumber();
 	public String getfirstName();
 	public String getlastName();
-	public String getmobileNo();
+	public String getmobileNumber();
 	
 
 }
