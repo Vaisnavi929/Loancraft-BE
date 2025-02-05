@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
@@ -20,9 +20,9 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.CustomerUpdateResponse;
 import com.narvee.request.dto.RegisterVO;
-import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -85,8 +85,9 @@ public class CustomersController {
 	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json")
 
 	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
-		logger.info("Fetching all customer with sorting: {}", sortingDTO);	
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details", customerService.getAllApplicants(sortingDTO)), HttpStatus.OK);
+		logger.info("Fetching all customer with sorting: {}", sortingDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
+				customerService.getAllCustomers(sortingDTO)), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.DELETE, produces = "application/json")
@@ -122,11 +123,11 @@ public class CustomersController {
 
 			// Encrypt the customerId for the response
 			String encryptedCustomerId = EncryptionUtil.encrypt(decryptedCustomerId);
-			
+
 			CustomerUpdateResponse responseCustomer = modelMapper.map(updatedCustomer, CustomerUpdateResponse.class);
 
-            // Set the encrypted customerId in the response DTO
-            responseCustomer.setCustomerId(encryptedCustomerId);
+			// Set the encrypted customerId in the response DTO
+			responseCustomer.setCustomerId(encryptedCustomerId);
 
 			logger.info("Customer updated successfully with encrypted customerId: {}", encryptedCustomerId);
 

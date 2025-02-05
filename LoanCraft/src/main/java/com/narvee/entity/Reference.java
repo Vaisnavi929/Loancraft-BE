@@ -44,13 +44,6 @@ public class Reference {
 	@NotBlank(message = "Relationship cannot be blank")
 	private String relationship;
 
-
-	@Column(name = "pincode")
-	@NotNull(message = "Pincode is required")
-	@Digits(integer = 6, fraction = 0, message = "Pincode must be a 6-digit number")
-	@Min(value = 100000, message = "Pincode must be a valid 6-digit number")
-	private Long pincode;
-
 	@Column(name = "mobilenumber")
 	@NotNull(message = "Mobile number is required")
 	@Digits(integer = 10, fraction = 0, message = "Mobile number must be a 10-digit number")
