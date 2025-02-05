@@ -44,22 +44,28 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		// Fetch the existing Applications entity
 		Applications loanApplication = applicationRepository.findById(loanSanctionDTO.getLoanId())
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
-		
+		loanSanction.setApplications(loanApplication);
 		return loanSanctionRepository.save(loanSanction);
 	}
 
 	@Override
 	public LoanSanction updateLoanSanction(LoanSanctionDTO loanSanctionDTO) {
 		logger.info("!!! inside class : LoanSanctionServiceImpl ,!! method :saveLoanSanction");
-		LoanSanction loanSanction=	mapper.map(loanSanctionDTO, LoanSanction.class);
+		LoanSanction loanSanction = mapper.map(loanSanctionDTO, LoanSanction.class);
+
+		
+		Applications loanApplication = applicationRepository.findById(loanSanctionDTO.getLoanId())
+				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		loanSanction.setApplications(loanApplication);
 		return loanSanctionRepository.save(loanSanction);
 	}
 
 
 	@Override
 	public LoanSanction getById(Long loanSactionId) {
-		logger.info("!!! inside class : LoanSanctionServiceImpl, !! method : getById");
-		return loanSanctionRepository.findById(loanSactionId).get();
+	logger.info("!!! inside class : LoanSanctionServiceImpl, !! method : getById");
+		
+    return loanSanctionRepository.findById(loanSactionId).get();
 	}
 
 	@Override

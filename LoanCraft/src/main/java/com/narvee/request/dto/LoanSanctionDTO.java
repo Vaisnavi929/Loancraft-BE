@@ -31,9 +31,9 @@ public class LoanSanctionDTO {
 	private Double documentationCharges;
 	private Double penaltyForLatePayment;
 	private String status;
-
+	private Long addedBy;
+	private Long updatedBy;
 	private Long loanId;
-
 	private Long payamentId;
 	
 }

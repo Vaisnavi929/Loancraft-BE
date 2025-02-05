@@ -14,5 +14,6 @@ public interface LoanApplicationDTOS {
 	public Double getLoan_amount();
 	public String getRepayment_mode();
 	public String getLoan_tenure();
+	public String getRemarks();
 
 }

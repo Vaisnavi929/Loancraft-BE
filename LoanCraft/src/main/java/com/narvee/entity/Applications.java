@@ -38,6 +38,7 @@ public class Applications {
 	private Double loanAmount;
 	private String repaymentMode;
 	private String loanTenure;
+	private String remarks;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "customerId")

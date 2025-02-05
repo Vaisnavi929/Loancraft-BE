@@ -25,6 +25,7 @@ public class LoanApplicationDto {
 	private String loanTenure;
 	private String customerId;
 	private Reference reference;
+	private String remarks;
 	
 	
 }

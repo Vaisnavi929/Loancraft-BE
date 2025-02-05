@@ -53,7 +53,8 @@ public class LoginController {
 	
 	@Autowired
 	private IRolesRepository Rolesrepository;
-
+	
+	@Autowired
 	private AuthenticationServiceImpl authenticationService;
 
 	@Autowired
