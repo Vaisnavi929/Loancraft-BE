@@ -26,56 +26,6 @@ public class AddressController {
 	@Autowired
 	private AddressServices AddressService;
 
-//	@RequestMapping(value = "/saveCurrentAddress", method = RequestMethod.POST, produces = "application/json")
-//	public ResponseEntity<RestAPIResponse> saveCurrentAddress(@RequestBody AddressDto currentAddress) {
-//		logger.info("!!! inside class: AddressServiceImpl, method: saveCurrentAddress");
-//
-//		try {
-//			// Decrypt customerId
-//			long decryptedCustomerId = EncryptionUtil.decrypt(currentAddress.getCustomerId());
-//			currentAddress.setCustomerId(String.valueOf(decryptedCustomerId));
-//
-//			// Save current address
-//			AddressDto savedAddress = AddressService.saveCurrentAddress(currentAddress);
-//
-//			// Re-encrypt customerId before sending the response
-//			savedAddress.setCustomerId(EncryptionUtil.encrypt(Long.parseLong(savedAddress.getCustomerId())));
-//			logger.info("Address saved successfully for Customer ID: {}", currentAddress.getCustomerId());
-//
-//			return ResponseEntity.ok(new RestAPIResponse("success", "Address saved successfully", savedAddress));
-//		} catch (Exception e) {
-//			logger.error("Error saving address: {}", e.getMessage(), e);
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body(new RestAPIResponse("fail", "Error saving address"));
-//		}
-//
-//	}
-//
-//	@PostMapping(value = "/savePermanentAddress")
-//	public ResponseEntity<RestAPIResponse> savePermanentAddress(@RequestBody AddressDto permanentAddress) {
-//		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
-//
-//		try {
-//			// Decrypt customerId
-//			long decryptedCustomerId = EncryptionUtil.decrypt(permanentAddress.getCustomerId());
-//			permanentAddress.setCustomerId(String.valueOf(decryptedCustomerId));
-//
-//			// Save current address
-//			AddressDto savePermanentAddress = AddressService.savePermanentAddress(permanentAddress);
-//
-//			// Re-encrypt customerId before sending the response
-//			savePermanentAddress
-//					.setCustomerId(EncryptionUtil.encrypt(Long.parseLong(savePermanentAddress.getCustomerId())));
-//			logger.info("Address saved successfully for Customer ID: {}", savePermanentAddress.getCustomerId());
-//
-//			return ResponseEntity
-//					.ok(new RestAPIResponse("success", "Address saved successfully", savePermanentAddress));
-//		} catch (Exception e) {
-//			logger.error("Error saving address: {}", e.getMessage(), e);
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body(new RestAPIResponse("fail", "Error saving address"));
-//		}
-//	}
 
 	@PutMapping(value = "/updateAddress/{customerId}")
 	public ResponseEntity<RestAPIResponse> updateAddress(@RequestBody AddressUpdateRequest addressUpdateRequest,

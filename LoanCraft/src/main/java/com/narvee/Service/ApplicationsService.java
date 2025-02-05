@@ -11,7 +11,7 @@ import com.narvee.request.dto.LoanApplicationUpdateDto;
 
 public interface ApplicationsService {
 
-	public Applications saveLoanApplication(LoanApplicationDto loanApplication);
+	public Applications saveLoanApplication(LoanApplicationDto loanApplication) throws Exception;
 
 	public LoanApplicationUpdateDto updateLoanApplication(LoanApplicationUpdateDto loanApplicationUpdateDto);
 //	public Applications updateLoanApplication(LoanApplicationUpdateDto loanApplication);

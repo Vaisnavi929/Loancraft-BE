@@ -19,7 +19,7 @@ import com.narvee.Service.ApplicationsService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.config.MapperConfig;
 import com.narvee.entity.Applications;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.LoanApplicationDTOS;
@@ -63,7 +63,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
 
 		 // Fetch customer using decrypted ID
-	    Optional<Customers> customerOptional = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
+	    Optional<CustomersInfo> customerOptional = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
 	    if (customerOptional.isPresent()) {
 	    	 logger.info("Customer with ID {} found", loanApplicationDto.getCustomerId());
 	        loan.setCustomers(customerOptional.get());

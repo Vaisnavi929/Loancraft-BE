@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.AddressServices;
 import com.narvee.entity.CurrentAddress;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.AddressRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.PermanentAddressRepository;
+import com.narvee.repository.StateCodeRepository;
 import com.narvee.request.dto.AddressDto;
 import com.narvee.request.dto.AddressUpdateRequest;
 import com.narvee.util.EncryptionUtil;
@@ -32,6 +33,9 @@ public class AddresServiceImpl implements AddressServices {
 	private CustomersRepository customerRepository;
 
 	@Autowired
+	private StateCodeRepository stateRepository;
+
+	@Autowired
 	private ModelMapper mapper;
 
 	@Autowired
@@ -46,7 +50,7 @@ public class AddresServiceImpl implements AddressServices {
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
-		Customers customer = customerRepository.findById(decryptedCustomerId)
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		// Map AddressDto to Address entity
@@ -71,26 +75,23 @@ public class AddresServiceImpl implements AddressServices {
 		Long customreId = EncryptionUtil.decrypt(customerId);
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 
-		Customers customers = new Customers();
+		CustomersInfo customers = new CustomersInfo();
 		customers.setCustomerId(customreId);
-		
-		States permanentState=new States();
-		permanentState.setStateId(updateRequest.getPermanentAddress().getStateId());
-		permanentAddress.setStates(permanentState);
-		
-		States currentState=new States();
-		currentState.setStateId(updateRequest.getCurrentAddress().getStateId());
-		currentAddress.setStates(permanentState);
-		
+
+		States permanentState = stateRepository.findById(updateRequest.getPermanentAddress().getStateId()).get(); 
+		permanentAddress.setState(permanentState);
+
+		States currentState = stateRepository.findById(updateRequest.getCurrentAddress().getStateId()).get();
+		currentAddress.setState(currentState);
 
 		currentAddress.setCustomer(customers);
-		currentAddress.setStates(currentState);
-		
-		permanentAddress.setCustomer(customers);
-		permanentAddress.setStates(permanentState);
+		currentAddress.setState(currentState);
 
-		currentAddressRepository.save(currentAddress);
+		permanentAddress.setCustomer(customers);
+		permanentAddress.setState(permanentState);
+
 		permanentAddressRepository.save(permanentAddress);
+		currentAddressRepository.save(currentAddress);
 
 		return updateRequest;
 
@@ -122,7 +123,7 @@ public class AddresServiceImpl implements AddressServices {
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
-		Customers customer = customerRepository.findById(decryptedCustomerId)
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		// Map AddressDto to Address entity

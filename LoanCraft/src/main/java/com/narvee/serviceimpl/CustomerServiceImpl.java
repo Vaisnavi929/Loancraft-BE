@@ -1,7 +1,6 @@
 package com.narvee.serviceimpl;
 
 import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,15 +11,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CurrentAddress;
+import com.narvee.entity.CustomersInfo;
+import com.narvee.entity.PermanentAddress;
+import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
+
 import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.CustomerResponseDTO;
+
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.SearchingDTO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
 
@@ -42,48 +46,63 @@ public class CustomerServiceImpl implements CustomerService {
 	private AccountSequenceService accountSequenceService;
 
 	@Override
-	public Customers save(RegisterVO register) {
-		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
 
-		Optional<Customers> existingApplicant = customerRepository.findByEmail(register.getEmail());
+	public CustomersInfo save(RegisterVO register) {
+		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
+		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmail(register.getEmail());
+
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
-
-		Customers applicant = modelMapper.map(register, Customers.class);
-		if (applicant.getPassword() != null && !applicant.getPassword().isEmpty()) {
-			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
-			applicant.setPassword(encodedPassword);
+		CustomersInfo customer = modelMapper.map(register, CustomersInfo.class);
+		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
+			String encodedPassword = passwordEncoder.encode(customer.getPassword());
+			customer.setPassword(encodedPassword);
 			String accountNumber = accountSequenceService.generateAccountNumber();
-			applicant.setAccountNumber(accountNumber);
+			customer.setAccountNumber(accountNumber);
 		}
-		Customers savedApplicant = customerRepository.save(applicant);
+//		CustomersInfo saveCustomers = customerRepository.save(customer);
 
-		return savedApplicant;
+		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
+
+		CustomersInfo savedCustomer = customerRepository.save(customer);
+
+		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
+
+		return savedCustomer;
 	}
 
 	@Override
-	public Customers getById(String encryptedId) throws Exception {
+	public CustomersInfo getById(String encryptedId) throws Exception {
 		logger.info("!!! inside class: CustomerServiceImpl, method: getById()");
 
 		long decryptedCustomerId = EncryptionUtil.decrypt(encryptedId);
 		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
-
 		// Fetch the customer details from the repository using the decrypted ID
-		Customers customer = customerRepository.findById(decryptedCustomerId).orElse(null);
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId).orElse(null);
 
-		// Log and return the result
-		if (customer != null) {
-			logger.info("Customer found: {}", customer.getEmail());
-		} else {
-			logger.warn("Customer not found for ID: {}", decryptedCustomerId);
+		if (customer.getPermanentAddress() == null) {
+			PermanentAddress permanentAddress = new PermanentAddress();
+			customer.setPermanentAddress(permanentAddress);
+			States states = new States();
+			permanentAddress.setState(states);
+
+		}
+
+		if (customer.getCurrentAddress() == null) {
+			CurrentAddress currentAddress = new CurrentAddress();
+			customer.setCurrentAddress(currentAddress);
+			States states = new States();
+			currentAddress.setState(states);
+
 		}
 
 		return customer;
 	}
 
 	@Override
-	public Page<CustomerResponseDTO> getAllApplicants(SortingDTO sortingDTO) {
+	public Page<CustomerResponseDTO> getAllCustomers(SortingDTO sortingDTO) {
+
 		logger.info("Inside ApplicantServiceImpl: getAllApplicants");
 
 		String sortField = sortingDTO.getSortField();
@@ -116,12 +135,8 @@ public class CustomerServiceImpl implements CustomerService {
 		if (keyword.equalsIgnoreCase("empty")) {
 			return customerRepository.findAllApplicants(pageable);
 		} else {
-
 			return customerRepository.findApplicantsByKeyword(keyword, pageable);
-
 		}
-
-		
 	}
 
 	@Override
@@ -135,37 +150,51 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerUpdateRequest update(CustomerUpdateRequest customerUpdateDto) throws Exception {
-
+	public CustomersInfo update(CustomerUpdateRequest customerUpdateDto) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: update()");
 
-		// Decrypt the encrypted customerId
-		long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
-		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
+		try {
+			// Parse the customer ID from the request DTO
+			long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
+			logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
-		// Fetch the customer by decrypted ID
-		Customers customer = customerRepository.findById(decryptedCustomerId)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
-		// Retain sensitive fields
-		String password = customer.getPassword();
-		String accountNumber = customer.getAccountNumber();
+			// Fetch the customer by ID or throw an exception if not found
+			CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
+					.orElseThrow(() -> new RuntimeException("Customer not found with ID: " + decryptedCustomerId));
 
-		// Map updated fields
-		modelMapper.map(customerUpdateDto, customer);
-		customer.setPassword(password);
-		customer.setAccountNumber(accountNumber);
 
-		// Save the updated customer
-		customer = customerRepository.save(customer);
+			logger.info("Fetched customer: {}", customer);
 
-		// Map to DTO for response
-		CustomerUpdateRequest updatedDto = modelMapper.map(customer, CustomerUpdateRequest.class);
+			// Retain sensitive fields (e.g., password and account number)
+			String originalPassword = customer.getPassword();
+			String originalAccountNumber = customer.getAccountNumber();
 
-		return updatedDto;
+			// Map updated fields from DTO to the customer entity
+			modelMapper.map(customerUpdateDto, customer);
+
+			// Restore sensitive fields to prevent overwriting them
+			customer.setPassword(originalPassword);
+			customer.setAccountNumber(originalAccountNumber);
+
+			logger.info("Updated customer object: {}", customer);
+
+			// Save and return the updated customer
+			return customerRepository.save(customer);
+
+		} catch (Exception ex) {
+			logger.error("Unexpected error during update: {}", ex.getMessage(), ex);
+			throw new RuntimeException("An unexpected error occurred during customer update: " + ex.getMessage(), ex);
+		}
 	}
 
+	@Override
+	public Long checkCustomerEligibility(String customerId) throws Exception {
+		logger.info("!!! inside class: CustomerServiceImpl, method: checkCustomerEligibility()");
+		long decryptedCustomerId = EncryptionUtil.decrypt(customerId);
+		logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
-
+		return customerRepository.checkEligibility(decryptedCustomerId);
+	}
 
 }
