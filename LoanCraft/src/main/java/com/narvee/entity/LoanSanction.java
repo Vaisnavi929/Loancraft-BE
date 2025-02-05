@@ -9,7 +9,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,12 +40,15 @@ public class LoanSanction {
 	private Date emiDueDate;
 	private String currency;
 	private String paymentFreqmuency;
-	private Double creditLimit;
-	private Double cashLimit;
 	private String status;
+	private Long addedBy;
+	private Long updatedBy;
 
 	@OneToMany(mappedBy = "loanSanction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Payment> payment;
-
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "loanId")
+	private Applications applications;
 }

@@ -53,6 +53,8 @@ public class LoanApplicationDto {
 
 	@NotBlank(message = "Customer ID cannot be blank")
 	private String customerId;
+	
+	private String remarks;
 
 	@NotNull(message = "Reference set is required")
 	@Size(min = 1, message = "At least one reference is required")
@@ -62,5 +64,6 @@ public class LoanApplicationDto {
 	@NotNull(message = "Identity proof is required")
 	@Valid
 	private IdentityProof identityProof;
+
 
 }

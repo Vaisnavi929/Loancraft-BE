@@ -22,5 +22,7 @@ public interface LoanSanctionDTOS {
 	 public Double getDocumentationCharges();
 	 public Double getPenaltyForLatePayment();
 	 public String getStatus();
+	 public Long getAddedBy();
+	 public Long getUpdatedBy();
 
 }

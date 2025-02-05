@@ -65,6 +65,7 @@ public class Applications extends AuditModel {
 	
 	@Column(name = "loan_tenure")
 	private String loanTenure;
+	private String remarks;
 	
 	@Column(name = "updatedby")
 	private String updatedBy;

@@ -103,5 +103,42 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 
         mailSender.send(message);
     }
+    @Override
+    public void sendLoanApplicationNotification( String applicationReferenceId, String status, String firstName, String lastName, String email) {
+        String subject = "Loan Application Update";
+        String messageBody = buildEmailBody(applicationReferenceId, status, firstName, lastName, email);
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom(fromEmail);
+            helper.setTo(email);
+            helper.setSubject(subject);
+            helper.setText(messageBody, true); 
+
+            mailSender.send(message);
+            System.out.println("Email sent successfully to " + email);
+        } catch (MessagingException e) {
+            System.err.println("Error sending email: " + e.getMessage());
+        }
+    }
+
+    private String buildEmailBody(String applicationReferenceId, String status, String firstName, String lastName, String email) {
+        return "<html>" +
+                "<body style='font-family: Arial, sans-serif; color: #333;'>" +
+                "<h1 style='color: #0056B3;'>We’ve Received Your Loan Application</h1>" +
+                "<p>Dear " + firstName + " " + lastName + ",</p>" +
+                "<p>We’ve Received Your Loan Application\r\n"
+                + "We are writing to update you about the status of your loan application with Loan ID  <strong>" + applicationReferenceId + "</strong>.</p>" +
+                "<p>The current status of your application is: <strong>" + status + "</strong>.</p>" +
+                "<p>If you would like to appeal this decision or have any questions, please contact our customer support team for assistance.</p>" +
+                "<br>" +
+                "<p>Best regards,</p>" +
+                "<p>Narvee Technologies</p>" +
+                "<p style='font-size: 12px; color: #999;'>This email was sent to <a href='mailto:" + email + "'>" + email + "</a></p>" +
+                "</body>" +
+                "</html>";
+    }
+
 
 }
