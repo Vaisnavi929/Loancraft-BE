@@ -195,4 +195,12 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.checkEligibility(decryptedCustomerId);
 	}
 
+	@Override
+	public boolean isEmailDuplicate(String email) {
+		
+		return customerRepository.existsByEmail(email);
+	}
+
+
+
 }
