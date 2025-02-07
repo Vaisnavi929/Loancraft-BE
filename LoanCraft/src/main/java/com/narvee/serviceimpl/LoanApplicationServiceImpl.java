@@ -22,6 +22,7 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.repository.ReferenceRepository;
 import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;

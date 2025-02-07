@@ -17,10 +17,10 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 
 	Optional<CustomersInfo> findByEmail(String email);
 
-	@Query(value = "SELECT email,account_number,first_name,last_name,mobile_number,highest_qualification FROM lms_customers_info ", nativeQuery = true)
+	@Query(value = "SELECT customer_id,email,account_number,first_name,last_name,mobile_number,highest_qualification FROM lms_customers_info ", nativeQuery = true)
 	Page<CustomerResponseDTO> findAllApplicants(Pageable pageable);
 
-	@Query(value = "SELECT email,account_number,first_name,last_name,mobile_number,highest_qualification FROM lms_customers_info where email LIKE CONCAT('%', :keyword, '%') OR " + "first_name LIKE CONCAT('%', :keyword, '%') OR "
+	@Query(value = "SELECT customer_id,email,account_number,first_name,last_name,mobile_number,highest_qualification FROM lms_customers_info where email LIKE CONCAT('%', :keyword, '%') OR " + "first_name LIKE CONCAT('%', :keyword, '%') OR "
 			+ "last_name LIKE CONCAT('%', :keyword, '%') OR " + "mobile_number LIKE CONCAT('%', :keyword, '%') OR "
 			+ "highest_qualification LIKE CONCAT('%', :keyword, '%') OR " + "account_number LIKE CONCAT('%', :keyword, '%') ", nativeQuery = true)
 	Page<CustomerResponseDTO> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
@@ -55,5 +55,5 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 			+ "WHERE c.customer_id = :customerId", nativeQuery = true)
 	Long checkEligibility(@Param("customerId") Long customerId);
 
-
+	public boolean existsByEmail(String email);
 }

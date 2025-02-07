@@ -21,6 +21,7 @@ public interface CustomerService {
 	Page<CustomerResponseDTO> getAllCustomers(SortingDTO sortingDTO);
 
 	Long checkCustomerEligibility(String customerId) throws Exception;
-
-
+	
+	public boolean isEmailDuplicate(String email);
+	
 }
