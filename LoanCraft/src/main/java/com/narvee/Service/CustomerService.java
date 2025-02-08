@@ -3,7 +3,9 @@ package com.narvee.Service;
 import org.springframework.data.domain.Page;
 
 import com.narvee.entity.CustomersInfo;
+import com.narvee.request.dto.CustomerEmailDTo;
 import com.narvee.request.dto.CustomerResponseDTO;
+import com.narvee.request.dto.CustomerResponseDTOS;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
@@ -18,7 +20,7 @@ public interface CustomerService {
 
 	CustomersInfo update(CustomerUpdateRequest customerUpdateDto);
 
-	Page<CustomerResponseDTO> getAllCustomers(SortingDTO sortingDTO);
+	Page<CustomerResponseDTOS> getAllCustomers(SortingDTO sortingDTO);
 
 	Long checkCustomerEligibility(String customerId) throws Exception;
 	

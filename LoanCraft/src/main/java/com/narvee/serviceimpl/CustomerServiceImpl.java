@@ -20,7 +20,9 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.request.dto.CustomerEmailDTo;
 import com.narvee.request.dto.CustomerResponseDTO;
+import com.narvee.request.dto.CustomerResponseDTOS;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
@@ -99,7 +101,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Page<CustomerResponseDTO> getAllCustomers(SortingDTO sortingDTO) {
+	public Page<CustomerResponseDTOS> getAllCustomers(SortingDTO sortingDTO) {
 
 		logger.info("Inside ApplicantServiceImpl: getAllApplicants");
 
@@ -130,12 +132,34 @@ public class CustomerServiceImpl implements CustomerService {
 
 		Sort sort = Sort.by(sortDirection, sortField);
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		Page<CustomerResponseDTO> customerPage;
 		if (keyword.equalsIgnoreCase("empty")) {
-			return customerRepository.findAllApplicants(pageable);
+			customerPage= customerRepository.findAllApplicants(pageable);
 		} else {
-			return customerRepository.findApplicantsByKeyword(keyword, pageable);
+			customerPage= customerRepository.findApplicantsByKeyword(keyword, pageable);
 		}
-	}
+		 Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
+	            // Encrypt the customerId (convert to String first)
+	            String encryptedId=null;
+				try {
+					encryptedId = EncryptionUtil.encrypt(dto.getcustomerId());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            return new CustomerResponseDTOS(
+	                    encryptedId,
+	                    dto.getemail(),
+	                    dto.getaccountNumber(),
+	                    dto.getfirstName(),
+	                    dto.getlastName(),
+	                    dto.getmobileNumber()
+	            );
+	        });
+
+	        return encryptedPage;
+	    }
+	
 
 	@Override
 	public boolean deleteById(Long id) {
