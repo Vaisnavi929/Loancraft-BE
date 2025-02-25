@@ -172,8 +172,8 @@ public class CustomersController {
 		}
 	}
 
-	@GetMapping("/check-email")
-    public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@RequestParam String email) {
+	@GetMapping("/check-email/{email}")
+    public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
         boolean isDuplicate = customerService.isEmailDuplicate(email);
 
         if (isDuplicate) {

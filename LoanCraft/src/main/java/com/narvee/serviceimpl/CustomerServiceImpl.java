@@ -20,7 +20,6 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
-import com.narvee.request.dto.CustomerEmailDTo;
 import com.narvee.request.dto.CustomerResponseDTO;
 import com.narvee.request.dto.CustomerResponseDTOS;
 import com.narvee.request.dto.CustomerUpdateRequest;
@@ -111,18 +110,18 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNumber = sortingDTO.getPageNumber();
 		Integer pageSize = sortingDTO.getPageSize();
 
-		if (sortField.equalsIgnoreCase("HighestQualification")) {
-			sortField = "highest_qualification";
-		} else if (sortField.equalsIgnoreCase("Lastname")) {
+		 if (sortField.equalsIgnoreCase("lastName")) {
 			sortField = "last_name";
 		} else if (sortField.equalsIgnoreCase("Email")) {
 			sortField = "email";
-		} else if (sortField.equalsIgnoreCase("MobileNo")) {
-			sortField = "mobile_no";
+		} else if (sortField.equalsIgnoreCase("MobileNumber")) {
+			sortField = "mobile_number";
 		} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
 			sortField = "account_number";
-		} else {
+		} else if(sortField.equalsIgnoreCase("firstname")) {
 			sortField = "first_name";
+		}else {
+			sortField = "updateddate";
 		}
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;

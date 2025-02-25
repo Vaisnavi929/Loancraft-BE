@@ -44,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		String requestURI = request.getRequestURI();
 		// Define the allowed API paths
 		Set<String> allowedPaths = Set.of("/api/app/get", "/api/app/save", "/api/register", "/api/auth/generateToken",
-				"/api/auth/login", "/api/auth/logout", "/api/forgot-password", "/swagger-ui/index.html");
+				"/api/auth/login", "/api/auth/logout", "/api/forgot-password", "/swagger-ui/index.html","/api/ucrf/convertUrcfFormat");
 
 		// Check if the request path is in the allowed paths
 		if (allowedPaths.contains(requestURI)) {

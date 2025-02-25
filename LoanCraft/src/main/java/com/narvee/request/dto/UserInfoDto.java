@@ -1,7 +1,5 @@
 package com.narvee.request.dto;
 
-import java.util.List;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -15,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserInfoDto {
 
-	private String userId;
+	private Long userId;
 
 	@NotEmpty
 	@Size(min = 4, message = "Name must be min of 4 characters !!")
@@ -26,11 +24,20 @@ public class UserInfoDto {
 	private String email;
 
 	@NotEmpty
-	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
+//	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
 	private String password;
+	
+	private Long roleId;
+	
+	
+	private String mobileNumber;
+	
+	
+	
+	private Long addedBy;
+	
+	private Long updatedBy;
 
-	@NotEmpty(message = "Roles is required !!")
-	@Valid
-	private List<RoleDto> roles;
+	
 
 }

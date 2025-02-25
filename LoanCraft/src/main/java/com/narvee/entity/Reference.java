@@ -32,7 +32,6 @@ public class Reference {
 	private String initial;
 
 	@Column(name = "full_name")
-	@NotBlank(message = "Full name cannot be blank")
 	private String fullName;
 
 	@Column(name = "known_for_years")

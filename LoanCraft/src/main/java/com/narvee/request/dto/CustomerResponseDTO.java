@@ -9,6 +9,7 @@ public interface CustomerResponseDTO {
 	public String getfirstName();
 	public String getlastName();
 	public String getmobileNumber();
+	public String getUpdateddate();
 
 	
 
