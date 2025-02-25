@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressUpdateRequest {
 	
-	private AddressDto parmanentAddress;
+	private AddressDto permanentAddress;
 	private AddressDto currentAddress;
-	
+
 
 
 }

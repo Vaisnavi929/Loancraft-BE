@@ -1,14 +1,19 @@
 package com.narvee.request.dto;
 
-import java.util.Date;
-
 public interface LoanApplicationDTOS {
 	
+	public String getAmaxnum();
 	public String getStatus();
-	public String getFullname();
-	public String getMail_id();
-	public String getMobile_number();
+	public String getEmployment_type();
+	public Double getSalary();
+	public Long getYearsin_employment();
+	public String getCompany_name();
+	public String getCompany_address();
 	public String getApplication_reference_id();
-	public Date getDate_of_birth();
+	public String getPin_code();
+	public Double getLoan_amount();
+	public String getRepayment_mode();
+	public String getLoan_tenure();
+	public String getRemarks();
 
 }

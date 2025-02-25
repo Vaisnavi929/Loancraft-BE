@@ -1,20 +1,25 @@
 package com.narvee.serviceimpl;
 
 import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.narvee.Service.AddressServices;
 import com.narvee.entity.CurrentAddress;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
+import com.narvee.entity.States;
 import com.narvee.repository.AddressRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.PermanentAddressRepository;
+import com.narvee.repository.StateCodeRepository;
 import com.narvee.request.dto.AddressDto;
 import com.narvee.request.dto.AddressUpdateRequest;
+import com.narvee.util.EncryptionUtil;
 
 @Service
 public class AddresServiceImpl implements AddressServices {
@@ -28,6 +33,9 @@ public class AddresServiceImpl implements AddressServices {
 	private CustomersRepository customerRepository;
 
 	@Autowired
+	private StateCodeRepository stateRepository;
+
+	@Autowired
 	private ModelMapper mapper;
 
 	@Autowired
@@ -38,11 +46,11 @@ public class AddresServiceImpl implements AddressServices {
 		logger.info("!!! inside class: AddressServiceImpl, method: saveCurrentAddress()");
 
 		// Decrypt customerId before saving
-		long decryptedCustomerId = Long.parseLong(addressDto.getCustomerId());
+		long decryptedCustomerId = 2; // Long.parseLong(addressDto.getCustomerId());
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
-		Customers customer = customerRepository.findById(decryptedCustomerId)
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		// Map AddressDto to Address entity
@@ -60,13 +68,31 @@ public class AddresServiceImpl implements AddressServices {
 		return savedAddressDto;
 	}
 
+	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception {
+		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
+		CurrentAddress currentAddress = mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
+		PermanentAddress permanentAddress = mapper.map(updateRequest.getPermanentAddress(), PermanentAddress.class);
+		Long customreId = EncryptionUtil.decrypt(customerId);
+		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 
-	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest) {
-		CurrentAddress currentAddress=mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
-		PermanentAddress permanentAddress=mapper.map(updateRequest.getParmanentAddress(),PermanentAddress.class);
-		currentAddressRepository.save(currentAddress);
+		CustomersInfo customers = new CustomersInfo();
+		customers.setCustomerId(customreId);
+
+		States permanentState = stateRepository.findById(updateRequest.getPermanentAddress().getStateId()).get(); 
+		permanentAddress.setState(permanentState);
+
+		States currentState = stateRepository.findById(updateRequest.getCurrentAddress().getStateId()).get();
+		currentAddress.setState(currentState);
+
+		currentAddress.setCustomer(customers);
+		currentAddress.setState(currentState);
+
+		permanentAddress.setCustomer(customers);
+		permanentAddress.setState(permanentState);
+
 		permanentAddressRepository.save(permanentAddress);
-		
+		currentAddressRepository.save(currentAddress);
+
 		return updateRequest;
 
 	}
@@ -93,11 +119,11 @@ public class AddresServiceImpl implements AddressServices {
 	public AddressDto savePermanentAddress(AddressDto addressDto) {
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress()");
 		// Decrypt customerId before saving
-		long decryptedCustomerId = Long.parseLong(addressDto.getCustomerId());
+		long decryptedCustomerId = 2;/// Long.parseLong(addressDto.getCustomerId());
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
-		Customers customer = customerRepository.findById(decryptedCustomerId)
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		// Map AddressDto to Address entity
@@ -114,13 +140,11 @@ public class AddresServiceImpl implements AddressServices {
 
 		return savedAddressDto;
 	}
-	
 
 	@Override
 	public PermanentAddress getBypermanentId(Long pAddressId) {
-
+		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
 		return permanentAddressRepository.findById(pAddressId).get();
 	}
-
 
 }

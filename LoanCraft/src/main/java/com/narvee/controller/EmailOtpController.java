@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.EmailOtpService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.CustomerDto;
+import com.narvee.request.dto.CustomerEmailDTo;
 
 import jakarta.mail.MessagingException;
 
@@ -76,12 +79,12 @@ public class EmailOtpController {
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> changePassword(@RequestBody ApplicantDto applicant)
 			throws MessagingException {
-		Optional<Customers> optionalApplicant = customersRepository.findByEmail(applicant.getEmail());
+		Optional<CustomersInfo> optionalApplicant = customersRepository.findByEmail(applicant.getEmail());
 
 		if (!optionalApplicant.isPresent()) {
 			return new ResponseEntity<>(new RestAPIResponse("mailerror", "Email not Registered"), HttpStatus.OK);
 		} else {
-			Customers existingApplicant = optionalApplicant.get();
+			CustomersInfo existingApplicant = optionalApplicant.get();
 			String encodedPassword = passwordEncoder.encode(applicant.getPassword());
 			existingApplicant.setPassword(encodedPassword);
 
@@ -92,5 +95,22 @@ public class EmailOtpController {
 					HttpStatus.OK);
 		}
 	}
+	@PostMapping("/notify")
+    public ResponseEntity<String> notifyCustomer(@RequestBody CustomerEmailDTo customerEmailDTo) {
+        try {
+        	String applicationReferenceId = customerEmailDTo.getApplicationReferenceId();
+            String status = customerEmailDTo.getStatus();
+            CustomerDto customer = customerEmailDTo.getCustomer();
 
+            emailOtpService.sendLoanApplicationNotification(applicationReferenceId, status, customer.getFirstName(),
+                    customer.getLastName(),
+                    customer.getEmail());
+
+            return ResponseEntity.ok("Notification sent successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to send notification: " + e.getMessage());
+        }
+    }
 }
+

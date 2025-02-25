@@ -1,6 +1,7 @@
 package com.narvee.request.dto;
 
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class GenerationExcelDTO {
 	
 	private String consumerName;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String gender;
     private String incomeTaxIdNumber;
     private String passportNumber;
@@ -26,7 +27,7 @@ public class GenerationExcelDTO {
     private String universalIdNumber;
     private String additionalId1;
     private String additionalId2;
-    private Long telephoneNoMobile;
+    private String telephoneNoMobile;
     private String telephoneNoResidence;
     private String telephoneNoOffice;
     private String extensionOffice;
@@ -41,7 +42,7 @@ public class GenerationExcelDTO {
     private String residenceCode1;
     private String address2;
     private String stateCode2;
-    private String pinCode2;
+    private Long pinCode2;
     private String addressCategory2;
     private String residenceCode2;
     private String currentNewMemberCode;
@@ -81,5 +82,16 @@ public class GenerationExcelDTO {
     private String income;
     private String netGrossIncomeIndicator;
     private String monthlyAnnualIncomeIndicator;
+    private String firstName;
+    private String lastName;
+    private String password;
+    private String accountNumber;
+//    private String city;
+//    private String state;
+//    private String country;
+//    private String location;
+//    private String landmark;
+//    private Long stayedOfYears;
+ 
 	
 }

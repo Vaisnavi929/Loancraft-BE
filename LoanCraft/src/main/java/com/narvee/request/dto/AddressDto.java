@@ -11,16 +11,16 @@ public class AddressDto {
 
 	private String address;
 	private String city;
-	private String state;
 	private String country;
 	private String location;
 	private String landmark;
 	private Long stayedOfYears;
 	private Long pincode;
-	private Long statecode;
-	private String customerId;
-	private Long pAddressId;
-	private Long cAddressId;
+	private long pAddressId;
+	private long cAddressId;
+	private Long stateId;
+	private Long addedBy;
+
+	private Long updatedBy;
 
 }
-

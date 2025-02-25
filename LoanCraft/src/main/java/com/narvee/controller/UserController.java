@@ -21,9 +21,10 @@ import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.UserInfo;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
-import com.narvee.request.dto.UserUpdateDto;
-import com.narvee.serviceimpl.UserInfoServiceimpl;
+import com.narvee.response.UserResponseDTO;
 import com.narvee.util.EncryptionUtil;
+
+import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
@@ -39,7 +40,7 @@ public class UserController {
 	private ModelMapper modelMapper;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> registerUser(@RequestBody UserInfoDto userInfoDTO) {
+	public ResponseEntity<RestAPIResponse> registerUser(@Valid @RequestBody UserInfoDto userInfoDTO) {
 		logger.info("Registering user with email in UserConttoller: {}", userInfoDTO.getEmail());
 		try {
 			UserInfoDto savedUser = iUserInfoService.saveUser(userInfoDTO);
@@ -56,16 +57,13 @@ public class UserController {
 	@RequestMapping(value = "/user/{userId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getUserById(@PathVariable String userId) throws Exception {
 		logger.info("Fetching user by ID: {}", userId);
-
 		UserInfo user = iUserInfoService.getUserById(userId);
 
 		if (user != null) {
-		
 			String encryptUserrId = EncryptionUtil.encrypt(user.getUserId());
 			UserInfoDto userInfoDto = modelMapper.map(user, UserInfoDto.class);
-			
-			userInfoDto.setUserId(encryptUserrId);
-			
+//			userInfoDto.setUserId(encryptUserrId);
+
 			return ResponseEntity.ok(new RestAPIResponse("success", "User fetched successfully", userInfoDto));
 		} else {
 			logger.warn("User not found for encrypted ID: {}", userId);
@@ -73,13 +71,27 @@ public class UserController {
 
 		}
 	}
-	
+
+	// Get User by ID
+	@RequestMapping(value = "/getUser/{userId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> UserById(@PathVariable Long userId) throws Exception {
+		logger.info("Fetching user by ID: {}", userId);
+		UserInfo user = iUserInfoService.UserById(userId);
+		if (user != null) {
+			return ResponseEntity.ok(new RestAPIResponse("success", "User fetched successfully", user));
+		} else {
+			logger.warn("User not found for encrypted ID: {}", userId);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new RestAPIResponse("fail", "User not found"));
+
+		}
+	}
+
 	// Get All Users with Pagination and Sorting
 	@RequestMapping(value = "/users", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllUsers(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all users with pagination and sorting");
 		try {
-			Page<UserInfoDto> users = iUserInfoService.getAllUser(sortingDTO);
+			Page<UserResponseDTO> users = iUserInfoService.getAllUser(sortingDTO);
 			return ResponseEntity.ok(new RestAPIResponse("success", "Users fetched successfully", users));
 		} catch (Exception e) {
 			logger.error("Error fetching all users: {}", e.getMessage(), e);
@@ -90,35 +102,25 @@ public class UserController {
 
 	// Update User
 	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
+	public ResponseEntity<RestAPIResponse> updateUser(@Valid @RequestBody UserInfoDto userUpdateDto) {
 		logger.info("Updating user with ID: {}");
 		try {
-			long decryptUserId = EncryptionUtil.decrypt(userUpdateDto.getUserId());
-			userUpdateDto.setUserId(String.valueOf(decryptUserId));
-
-			UserUpdateDto updatedUser = iUserInfoService.updateUser(userUpdateDto);
-
-			updatedUser.setUserId(EncryptionUtil.encrypt(Long.parseLong(updatedUser.getUserId())));
-
+			UserInfoDto updatedUser = iUserInfoService.updateUser(userUpdateDto);
 			return ResponseEntity.ok(new RestAPIResponse("success", "User updated successfully", updatedUser));
 		} catch (Exception e) {
-			logger.error("Error updating user with ID: {}", e);
+			logger.error("Error updating user with ID: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error updating user"));
+					.body(new RestAPIResponse("fail", "Error updating user", e.getMessage()));
 		}
 	}
 
 	// Delete User
 	@RequestMapping(value = "/delete/{userId}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable String userId) throws Exception {
+	public ResponseEntity<RestAPIResponse> deleteUser(@PathVariable Long userId) throws Exception {
 		logger.info("Deleting user with ID: {}", userId);
 
-		// Decrypt the customerId
-		long decryptedUserrId = EncryptionUtil.decrypt(userId);
-		logger.info("Decrypted User ID: {}", decryptedUserrId);
-
 		try {
-			boolean isDeleted = iUserInfoService.deleteUserById(decryptedUserrId);
+			boolean isDeleted = iUserInfoService.deleteUserById(userId);
 			if (isDeleted) {
 				return ResponseEntity.ok(new RestAPIResponse("success", "User deleted successfully", null));
 			} else {

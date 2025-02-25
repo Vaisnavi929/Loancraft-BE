@@ -1,5 +1,8 @@
 package com.narvee.serviceimpl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.narvee.Service.IUserInfoService;
+import com.narvee.entity.Roles;
 import com.narvee.entity.UserInfo;
+import com.narvee.repository.IRolesRepository;
 import com.narvee.repository.UserRepository;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.request.dto.UserInfoDto;
-import com.narvee.request.dto.UserUpdateDto;
+import com.narvee.response.UserResponseDTO;
 import com.narvee.util.EncryptionUtil;
 
 @Service
@@ -30,6 +36,9 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	private UserRepository userRepo;
 
 	@Autowired
+	private IRolesRepository iRolesRepository;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Override
@@ -39,20 +48,26 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		if (userRepo.findByEmail(userInfodto.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
+		Roles uRole = iRolesRepository.findById(userInfodto.getRoleId()).get();
+		Set<Roles> lRoles = new HashSet<>();
+		lRoles.add(uRole);
 
 		UserInfo user = modelMapper.map(userInfodto, UserInfo.class);
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setRoles(lRoles);
+
+		System.err.println("Response" + user);
+		user.setPassword(passwordEncoder.encode("Lms@123$"));
 		UserInfo savedUser = userRepo.save(user);
 		logger.info("User saved successfully with ID: {}", savedUser.getUserId());
 
 		UserInfoDto responseDto = modelMapper.map(savedUser, UserInfoDto.class);
 
-		try {
-			responseDto.setUserId(EncryptionUtil.encrypt(savedUser.getUserId()));
-		} catch (Exception e) {
-			logger.error("Error encrypting user ID: {}", e.getMessage(), e);
-			throw new RuntimeException("Failed to encrypt user ID", e);
-		}
+//		try {
+//			responseDto.setUserId(EncryptionUtil.encrypt(savedUser.getUserId()));
+//		} catch (Exception e) {
+//			logger.error("Error encrypting user ID: {}", e.getMessage(), e);
+//			throw new RuntimeException("Failed to encrypt user ID", e);
+//		}
 
 		return responseDto;
 	}
@@ -73,7 +88,20 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	}
 
 	@Override
-	public Page<UserInfoDto> getAllUser(SortingDTO sortingDTO) {
+	public UserInfo UserById(Long id) throws Exception {
+		logger.info("!!! inside class: UserInfoServiceImpl, method: getUserById");
+
+		UserInfo user = userRepo.findById(id).orElse(null);
+		if (user != null) {
+			logger.info("User found: {}", user.getEmail());
+		} else {
+			logger.info("User not found for ID: {}", id);
+		}
+		return user;
+	}
+
+	@Override
+	public Page<UserResponseDTO> getAllUser(SortingDTO sortingDTO) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: getAllUser");
 
 		String sortField = sortingDTO.getSortField();
@@ -82,11 +110,20 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		Integer pageNumber = sortingDTO.getPageNumber();
 		Integer pageSize = sortingDTO.getPageSize();
 
-		if (sortField.equalsIgnoreCase("Name")) {
+		if (sortField.equalsIgnoreCase("Name"))
 			sortField = "name";
-		} else {
+		else if (sortField.equalsIgnoreCase("Mobile_Number"))
+			sortField = "mobile_number";
+		else if (sortField.equalsIgnoreCase("Createddate"))
+			sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("designation"))
+			sortField = "designation";
+		else if (sortField.equalsIgnoreCase("Email"))
 			sortField = "email";
-		}
+		else if (sortField.equalsIgnoreCase("status"))
+			sortField = "status";
+		else
+			sortField = "updateddate";
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
@@ -95,34 +132,29 @@ public class UserInfoServiceimpl implements IUserInfoService {
 
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
 
-		Page<UserInfo> userInfo;
+		Page<UserResponseDTO> userInfo;
 
-		if (keyword == null || keyword.isEmpty()) {
+		if (keyword.equalsIgnoreCase("empty")) {
+			logger.info("!!! inside class: UserInfoServiceImpl, method: all");
 			userInfo = userRepo.findAllUsers(pageable);
 		} else {
+			logger.info("!!! inside class: UserInfoServiceImpl, method: filter");
 			userInfo = userRepo.findUsersByKeyword(keyword, pageable);
 		}
-		return userInfo.map(user -> modelMapper.map(user, UserInfoDto.class));
+		return userInfo;
 	}
 
 	@Override
-	public UserUpdateDto updateUser(UserUpdateDto userUpdateDto) {
+	public UserInfoDto updateUser(UserInfoDto userUpdateDto) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
-		Long decryptedUserId = Long.parseLong(userUpdateDto.getUserId());
-		logger.info("Decrypted customer ID: {}", decryptedUserId);
-
-		UserInfo userInfo = userRepo.findById(decryptedUserId)
-				.orElseThrow(() -> new RuntimeException("User not found"));
-
-		String password = userInfo.getPassword();
-		modelMapper.map(userUpdateDto, userInfo);
-		userInfo.setPassword(password);
-
-		userInfo = userRepo.save(userInfo);
-
-		UserUpdateDto users = modelMapper.map(userInfo, UserUpdateDto.class);
-
-		return users;
+		
+		Roles uRole = iRolesRepository.findById(userUpdateDto.getRoleId()).get();
+		Set<Roles> lRoles = new HashSet<>();
+		lRoles.add(uRole);
+		UserInfo usersInfo = modelMapper.map(userUpdateDto, UserInfo.class);
+		usersInfo.setRoles(lRoles);
+		userRepo.save(usersInfo);
+		return userUpdateDto;
 	}
 
 	@Override

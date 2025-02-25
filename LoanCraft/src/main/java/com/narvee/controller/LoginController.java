@@ -3,7 +3,6 @@ package com.narvee.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.narvee.Service.IlogoutService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.AuthRequest;
 import com.narvee.entity.Privilege;
@@ -36,13 +34,9 @@ import com.narvee.entity.UserInfo;
 import com.narvee.exception.InvalidUserCredentialsException;
 import com.narvee.repository.IRolesRepository;
 import com.narvee.repository.UserRepository;
-import com.narvee.response.Response;
-
-import com.narvee.Service.IlogoutService;
-import com.narvee.entity.AuthRequest;
 import com.narvee.request.dto.LoginRequest;
+import com.narvee.response.Response;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;
-
 import com.narvee.util.JwtUtil;
 
 @RestController
@@ -60,6 +54,7 @@ public class LoginController {
 	@Autowired
 	private IRolesRepository Rolesrepository;
 
+	@Autowired
 	private AuthenticationServiceImpl authenticationService;
 
 	@Autowired
@@ -142,33 +137,42 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+	public ResponseEntity<RestAPIResponse> login(@RequestBody LoginRequest request) {
 		logger.info("Login attempt for: {}", request.getUsernameOrEmail());
 
 		try {
 			Object userOrApplicant = authenticationService.authenticate(request.getUsernameOrEmail(),
 					request.getPassword());
 			logger.info("Login successful for: {}", request.getUsernameOrEmail());
-			return ResponseEntity.ok(userOrApplicant);
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "fetched all loan application details ", userOrApplicant),
+					HttpStatus.OK);
 		} catch (IllegalArgumentException e) {
 			logger.warn("Invalid user type for: {}", request.getUsernameOrEmail());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "Invalid user type"),
+					HttpStatus.BAD_REQUEST);
+			
 		} catch (BadCredentialsException e) {
 			logger.warn("Invalid login credentials for: {}", request.getUsernameOrEmail());
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/email or password");
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed","Invalid username/email or password"),
+					HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			logger.error("An unexpected error occurred during login: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed","Invalid username/email or password","An error occurred: " + e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<RestAPIResponse> logout(@RequestHeader("Authorization") String token) {
 		logger.info("Logout attempt received");
 
 		if (token == null || !token.startsWith("Bearer ")) {
 			logger.warn("Invalid token format received");
-			return ResponseEntity.badRequest().body("Invalid token format");
+			return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("failed","Invalid token format"),HttpStatus.BAD_REQUEST);
 		}
 
 		String jwtToken = token.substring(7);
@@ -178,11 +182,12 @@ public class LoginController {
 
 		if (!isLoggedOut) {
 			logger.warn("Token already blacklisted: {}", jwtToken);
-			return ResponseEntity.status(409).body("Token already blacklisted");
+			return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("failed","Token already blacklisted"),HttpStatus.BAD_REQUEST);
 		}
 
 		logger.info("Logout successful for token: {}", jwtToken);
-		return ResponseEntity.ok("Successfully logged out");
+		
+		return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("success","Token already blacklisted"),HttpStatus.BAD_REQUEST);
 	}
 
 }
