@@ -17,6 +17,7 @@ import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Applications;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
+import com.narvee.request.dto.LoanStatusUpdateRequest;
 import com.narvee.util.EncryptionUtil;
 import jakarta.validation.Valid;
 
@@ -123,5 +124,19 @@ public class ApplicationsController {
 				HttpStatus.OK);
 
 	}
+	@RequestMapping(value = "/getallWithSearching", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllLoanApplicationListWithPagination(@RequestBody SortingRequestDto sortingRequestDto){
+	logger.info("!!! inside class: LoanApplicationController, !! method : getAllLoanApplicationListWithPagination");
+	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "successfully fetched laonapplication with searching",applicationService.getAllLoanApplicationListWithPagination(sortingRequestDto)),HttpStatus.OK);
+		
+	}
+	
+	@RequestMapping(value = "/{loanId}/updatestatus", method = RequestMethod.PUT, produces = "application/json")
+  public ResponseEntity<RestAPIResponse> updateLoanStatusWithRemarks(  @PathVariable Long loanId, @RequestBody LoanStatusUpdateRequest request){
+	  applicationService.updateLoanStatus(loanId, request.getStatus(), request.getRemarks());
+return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Loan status updated successfully! "), HttpStatus.OK);
+		
+	}
+	
 
 }

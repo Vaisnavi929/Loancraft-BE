@@ -23,10 +23,12 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.ReferenceRepository;
+import com.narvee.request.dto.ApplicationDTO;
 import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -174,4 +176,52 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	}
 
+	@Override
+	public Page<ApplicationDTO> getAllLoanApplicationListWithPagination(SortingRequestDto sortingRequestDto) {
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword(); 
+		
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+		if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "first_name";
+		else if (sortField.equalsIgnoreCase("lastName"))
+			sortField = "last_name";
+		else if (sortField.equalsIgnoreCase("email"))
+			sortField = "email";
+		else if (sortField.equalsIgnoreCase("mobileNumber"))
+			sortField = "mobile_number";
+		else
+			sortField = "a.status";
+
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return applicationRepository.getallApplicationListWithPagination(pageable);
+		} else {
+
+			return applicationRepository.getallApplicationListWithKeword(pageable, keyword);
+
+		}
+	}
+	
+    @Transactional
+    @Override
+    public void updateLoanStatus(Long loanId, String status, String remarks) {
+        if (!status.equalsIgnoreCase("Reject") && !status.equalsIgnoreCase("Approved")) {
+            throw new IllegalArgumentException("Status must be either 'Reject' or 'Approved'");
+        }
+
+        Applications loanApplication = applicationRepository.findById(loanId)
+                .orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
+        loanApplication.setStatus(status);
+        loanApplication.setRemarks(remarks);
+        applicationRepository.save(loanApplication);
+    }
 }
