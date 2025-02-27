@@ -40,14 +40,11 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Autowired
 	private ApplicationsRepository applicationRepository;
 
- 	@Autowired
-	private ReferenceRepository referenceRepository;
+ 	
 
 	@Autowired
 	private CustomersRepository customerRepository;
-
-	@Autowired
-	private ModelMapper modelMapper;
+	
 	
 	private static final int DIGIT_PADDING = 4;
 

@@ -10,8 +10,8 @@ public class NameSegment {
 	public static String formatNameSegment(String consumerName, String dateOfBirth, String gender) {
 		String[] nameFields = splitConsumerName(consumerName);
 		String dob = "0708" + dateOfBirth;
-		String genderCode =  formatGender(gender);
-
+		String genderCode = formatGender(gender);
+		System.err.println(genderCode);
 		return NAME_SEGMENT + nameFields[0] + nameFields[1] + nameFields[2] + nameFields[3] + nameFields[4] + dob
 				+ genderCode;
 	}
