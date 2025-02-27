@@ -5,6 +5,7 @@ import com.narvee.commons.AuditModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -74,7 +75,7 @@ public class Applications extends AuditModel {
 	@JoinColumn(name = "customerId")
 	private CustomersInfo customers;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name = "loan_id")
 	private List<Reference> reference;
 
