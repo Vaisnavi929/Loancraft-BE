@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class LoanStatusUpdateRequest {
     private String status;
     private String remarks;
+    private Long loanId;
+	
 }
