@@ -19,4 +19,11 @@ public class PrivilegeVO {
 
 		private List<DropdownVO> dashboard;
 		
+		private List<DropdownVO> home;
+
+		private List<DropdownVO> hrm;
+
+		private List<DropdownVO> customerinfo;
+
+		private List<DropdownVO> customer_dashboard;
 }

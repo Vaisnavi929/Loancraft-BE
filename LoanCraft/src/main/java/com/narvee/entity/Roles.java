@@ -6,6 +6,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.narvee.commons.AuditModel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -47,15 +48,19 @@ public class Roles extends AuditModel {
 	@Column(name = "updatedby")
 	private String updatedBy;;
 	
+//	@JsonIgnore
+//	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+//	@JoinTable(name = "lms_role_privilege", joinColumns = {
+//			@JoinColumn(name = "role_id", nullable = false, updatable = false, insertable = false) }, inverseJoinColumns = {
+//					@JoinColumn(name = "privilege_id", nullable = false, updatable = false, insertable = false) })
+//	private Set<Privilege> privileges = new HashSet<Privilege>();
 	
-	
-
-
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "role_privilege", joinColumns = {
-			@JoinColumn(name = "role_id", nullable = false, updatable = false, insertable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "privilege_id", nullable = false, updatable = false, insertable = false) })
+//	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@JoinTable(name = "lms_role_privilege", joinColumns = {
+			@JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = {
+					@JoinColumn(name = "privilege_id", nullable = false) })
 	private Set<Privilege> privileges = new HashSet<Privilege>();
+	
 
 }
