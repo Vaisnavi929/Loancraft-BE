@@ -92,34 +92,24 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		Integer pageSize = sortingRequestDto.getPageSize();
 	    if (sortField.equalsIgnoreCase("loan_requested"))
 			sortField = "loan_requested";
-		else if (sortField.equalsIgnoreCase(" "))
+		else if (sortField.equalsIgnoreCase("amount_disbursed"))
 			sortField = "amount_disbursed";
-		else if (sortField.equalsIgnoreCase("cash_limit"))
-	     sortField = "cash_limit";
+		else if (sortField.equalsIgnoreCase("amountSanctioned;"))
+	     sortField = "amount_sanctioned";
 		else if (sortField.equalsIgnoreCase("emi_amount"))
 		     sortField = "emi_amount";
 		else if (sortField.equalsIgnoreCase("number_of_emis"))
 		     sortField = "number_of_emis";
 		else if (sortField.equalsIgnoreCase("rate_of_interest"))
 		     sortField = "rate_of_interest";
-		else if (sortField.equalsIgnoreCase("emi_due_date"))
-		     sortField = "emi_due_date";
-		else if (sortField.equalsIgnoreCase("date_of_birth"))
-		     sortField = "date_of_birth";
-		else if (sortField.equalsIgnoreCase("emi_start_date"))
-		     sortField = "emi_start_date";
-		else if (sortField.equalsIgnoreCase("currency"))
-		     sortField = "currency";
 		else if (sortField.equalsIgnoreCase("interest_type"))
 		     sortField = "interest_type";
+		else if (sortField.equalsIgnoreCase("updatedBy;"))
+		     sortField = "updatedBy";
+		else if (sortField.equalsIgnoreCase("addedBy;"))
+		     sortField = "addedBy";	    
 		else if (sortField.equalsIgnoreCase("repayment_mode"))
 		     sortField = "repayment_mode";
-		else if (sortField.equalsIgnoreCase("currency"))
-		     sortField = "currency";
-		else if (sortField.equalsIgnoreCase("interest_type"))
-		     sortField = "interest_type";
-		else if (sortField.equalsIgnoreCase("payment_freqmuency"))
-		     sortField = "payment_freqmuency";
 		else
 		sortField = "status";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -131,8 +121,14 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		if (keyword.equalsIgnoreCase("empty")) {
 			return loanSanctionRepository.getAllLoansactionWithPagination(pageable);
+			
+			
+			
 		} else {
 
+			
+			
+			
 			return loanSanctionRepository.getAllLoansactionWithSearching(pageable, keyword);
 
 		}

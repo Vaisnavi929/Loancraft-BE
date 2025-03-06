@@ -1,16 +1,15 @@
 package com.narvee.entity;
 
 import java.util.Date;
-import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.narvee.commons.AuditModel;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "lmsLoanSaction")
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanSanction {
+public class LoanSanction extends AuditModel{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,12 +40,11 @@ public class LoanSanction {
 	private String currency;
 	private String paymentFreqmuency;
 	private String status;
+	private Double loanProcessingCharges;
+	private Double documentationCharges;
+	private Double penaltyForLatePayment;
 	private Long addedBy;
 	private Long updatedBy;
-
-	@OneToMany(mappedBy = "loanSanction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<Payment> payment;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loanId")
