@@ -75,24 +75,8 @@ public class AddressSegment {
         }
     }
 
-    public static String getAddressCategory(String addressTag) {
-        if (addressTag == null || addressTag.isEmpty()) {
-            return "04";
-        }
-        switch (addressTag) {
-            case "01":
-            case "Permanent Address":
-                return "01";
-            case "02":
-            case "Residence Address":
-                return "02";
-            case "03":
-            case "Office Address":
-                return "03";
-            default:
-                return "04";
-        }
-    }
+		return finalAddress.toString();
+	}
 
     public static String getStateCode(String input) {
         if (input == null || input.isEmpty()) {

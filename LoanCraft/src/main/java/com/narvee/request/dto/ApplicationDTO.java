@@ -2,6 +2,7 @@ package com.narvee.request.dto;
 
 public interface ApplicationDTO {
 	
+	public Long getloanId();
 	public String getfirstName();
 	public String getlastName();
 	public String getemail();
