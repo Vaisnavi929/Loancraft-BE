@@ -27,7 +27,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	@Override
 	public Object authenticate(String usernameOrEmail, String password) {
 		// Fetch the applicant from the repository using email
-		CustomersInfo applicant = customersRepository.findByEmail(usernameOrEmail)
+		CustomersInfo applicant = customersRepository.findByEmailOrMobileNumber(usernameOrEmail,usernameOrEmail)
 				.orElseThrow(() -> new BadCredentialsException("Applicant not found"));
 		
 

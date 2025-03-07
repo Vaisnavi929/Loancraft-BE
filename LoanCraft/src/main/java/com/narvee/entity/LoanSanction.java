@@ -46,9 +46,6 @@ public class LoanSanction extends AuditModel{
 	private String currency;
 	private String paymentFreqmuency;
 	private String status;
-	private Double loanProcessingCharges;
-	private Double documentationCharges;
-	private Double penaltyForLatePayment;
 	private Long addedBy;
 	private Long updatedBy;
 	

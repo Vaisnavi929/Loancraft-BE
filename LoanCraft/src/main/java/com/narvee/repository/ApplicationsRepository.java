@@ -26,10 +26,10 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	public Page<LoanApplicationDTOS> getAllLoanApplicationWithKeyword(Pageable pageable,@Param("keyword")String keyword);
 
 	
-	@Query(value ="SELECT c.first_name,c.last_name,c.email,a.status,c.mobile_number FROM lms.lms_customers_info c join lms_applications a on a.customer_id=c.customer_id ",nativeQuery = true)
+	@Query(value ="SELECT a.loan_id,a.application_reference_id, c.first_name,c.last_name,c.email,a.status,c.mobile_number FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id ",nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithPagination(Pageable pageable);
 	
-	@Query(value ="SELECT c.first_name,c.last_name,c.email,a.status,c.mobile_number FROM lms.lms_customers_info c join lms_applications a on a.customer_id=c.customer_id \n"
+	@Query(value ="SELECT a.loan_id,a.application_reference_id c.first_name,c.last_name,c.email,a.status,c.mobile_number FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id \n"
 			+ "where c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR \n"
 			+ "a.status LIKE CONCAT('%', :keyword, '%') OR c.mobile_number LIKE CONCAT('%',:keyword, '%')",nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithKeword(Pageable pageable,@Param("keyword")String keyword);
