@@ -92,8 +92,6 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		Integer pageSize = sortingRequestDto.getPageSize();
 	    if (sortField.equalsIgnoreCase("loan_requested"))
 			sortField = "loan_requested";
-		else if (sortField.equalsIgnoreCase("amount_disbursed"))
-			sortField = "amount_disbursed";
 		else if (sortField.equalsIgnoreCase("amountSanctioned;"))
 	     sortField = "amount_sanctioned";
 		else if (sortField.equalsIgnoreCase("emi_amount"))
@@ -103,11 +101,7 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		else if (sortField.equalsIgnoreCase("rate_of_interest"))
 		     sortField = "rate_of_interest";
 		else if (sortField.equalsIgnoreCase("interest_type"))
-		     sortField = "interest_type";
-		else if (sortField.equalsIgnoreCase("updatedBy;"))
-		     sortField = "updatedBy";
-		else if (sortField.equalsIgnoreCase("addedBy;"))
-		     sortField = "addedBy";	    
+		     sortField = "interest_type";   
 		else if (sortField.equalsIgnoreCase("repayment_mode"))
 		     sortField = "repayment_mode";
 		else
@@ -125,14 +119,9 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 			
 			
 		} else {
-
-			
-			
-			
 			return loanSanctionRepository.getAllLoansactionWithSearching(pageable, keyword);
 
 		}
-
 
 	}
 

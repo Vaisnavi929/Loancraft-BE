@@ -34,7 +34,6 @@ public class LoanSanction extends AuditModel{
 	private Long loanSactionId;
 	private Double loanRequested;
 	private Double amountSanctioned;
-	private Double amountDisbursed;
 	private Double rateOfInterest;
 	private String interestType;
 	private int numberOfEmis;
@@ -43,12 +42,10 @@ public class LoanSanction extends AuditModel{
 	private Date emiStartDate;
 	private Date emiEndDate;
 	private Date emiDueDate;
-	private String currency;
 	private String paymentFreqmuency;
 	private String status;
 	private Double loanProcessingCharges;
 	private Double documentationCharges;
-	private Double penaltyForLatePayment;
 	private Long addedBy;
 	private Long updatedBy;
 	
