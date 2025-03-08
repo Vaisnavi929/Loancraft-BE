@@ -21,9 +21,9 @@ public class AccountSequenceServiceImpl implements AccountSequenceService {
 	private AccountSequenceRepository accountSequenceRepository;
 
 	public synchronized String generateAccountNumber() {
-
+		logger.info("!!! inside class: AccountSequenceServiceImpl, method: generateAccountNumber");
+		
 		String currentYearMonth = new SimpleDateFormat("yyyyMM").format(new Date());
-
 		AccountSequence accountSequence = accountSequenceRepository.findByYear(currentYearMonth).orElseGet(() -> {
 			AccountSequence newSequence = new AccountSequence();
 			newSequence.setYear(currentYearMonth);

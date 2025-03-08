@@ -48,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	public CustomersInfo save(RegisterVO register) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
-		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmail(register.getEmail());
+		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmailOrMobileNumber(register.getEmail(),register.getEmail());
 
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");

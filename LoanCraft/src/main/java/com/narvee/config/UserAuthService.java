@@ -37,7 +37,7 @@ public class UserAuthService implements UserDetailsService {
 	    logger.info("Inside UserAuthService: loadUserByUsername for email: {}", email);
 
 	    // Check if email belongs to a customer
-	    Optional<CustomersInfo> customerOptional = customerRepository.findByEmail(email);
+	    Optional<CustomersInfo> customerOptional = customerRepository.findByEmailOrMobileNumber(email, email);
 	    if (customerOptional.isPresent()) {
 	        CustomersInfo customer = customerOptional.get();
 	        logger.info("Customer found with email: {}", email);
