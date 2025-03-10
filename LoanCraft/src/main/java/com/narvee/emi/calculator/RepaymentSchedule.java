@@ -17,4 +17,5 @@ public class RepaymentSchedule {
     private Long remainingPrincipalAmount;
     private LocalDate dueDate;
     
+    
 }

@@ -14,6 +14,7 @@ public interface LoanSanctionservice {
 	public LoanSanction updateLoanSanction(LoanSanctionDTO LoanSanctionDTO);
 	public LoanSanction getById(Long loanSactionId);
 	public List<LoanSanction> getAllLoanSanction();
+
 	public Boolean deleteById(Long loanSactionId);
 	public Page<LoanSanctionDTOS> getAllLoanSanctionWithPAgination(SortingRequestDto sortingRequestDto);
 

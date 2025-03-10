@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.LoanSanction;
-import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanSanctionDTOS;
 
 public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long> {

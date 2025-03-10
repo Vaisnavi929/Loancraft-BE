@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 
 import com.narvee.entity.Applications;
 import com.narvee.request.dto.ApplicationDTO;
-import com.narvee.request.dto.LoanApplicationDTOS;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 
@@ -25,8 +24,10 @@ public interface ApplicationsService {
 
 	public boolean existsByAadharNumber(String aadharNumber);
 
-	public Page<LoanApplicationDTOS> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto);
+	public Page<ApplicationDTO> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto);
+
 	public Page<ApplicationDTO> getAllLoanApplicationListWithPagination(SortingRequestDto sortingRequestDto);
+
 	public void updateLoanStatus(Long loanId, String status, String remarks);
-	
+
 }

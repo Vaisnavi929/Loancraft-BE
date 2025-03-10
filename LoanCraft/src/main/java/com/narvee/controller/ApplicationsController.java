@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.narvee.Service.ApplicationsService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
@@ -19,6 +20,7 @@ import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 import com.narvee.request.dto.LoanStatusUpdateRequest;
 import com.narvee.util.EncryptionUtil;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -58,13 +60,6 @@ public class ApplicationsController {
 		logger.info("!!! class :LoanApplicationController method : getById ");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loan Application Successfully",
 				applicationService.getById(loanId)), HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getAll() {
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("succuss", "fetched all loan application details ", applicationService.getAll()),
-				HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/delete/{loanId}", method = RequestMethod.DELETE, produces = "application/json")
@@ -115,7 +110,7 @@ public class ApplicationsController {
 
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/getAllApplication", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		return new ResponseEntity<RestAPIResponse>(
@@ -125,7 +120,7 @@ public class ApplicationsController {
 
 	}
 
-	@RequestMapping(value = "/getallWithSearching", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/getAllApporved", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationListWithPagination(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		logger.info("!!! inside class: LoanApplicationController, !! method : getAllLoanApplicationListWithPagination");

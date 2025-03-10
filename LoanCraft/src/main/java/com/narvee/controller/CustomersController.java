@@ -54,8 +54,7 @@ public class CustomersController {
 			return ResponseEntity
 					.ok(new RestAPIResponse("success", "Customer saved and authenticated successfully", authenticate));
 
-		} 
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			logger.warn("Validation error: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new RestAPIResponse("fail", "Validation error", e.getMessage()));
@@ -171,16 +170,16 @@ public class CustomersController {
 	}
 
 	@GetMapping("/check-email/{email}")
-    public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
-        boolean isDuplicate = customerService.isEmailDuplicate(email);
+	public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
+		boolean isDuplicate = customerService.isEmailDuplicate(email);
 
-        if (isDuplicate) {
-         new RestAPIResponse("fail", "Email already exists", true);
-        } else {
-          new RestAPIResponse("success", "Email is available", false);
-        }
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
+		if (isDuplicate) {
+			new RestAPIResponse("fail", "Email already exists", true);
+		} else {
+			new RestAPIResponse("success", "Email is available", false);
+		}
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
 
-       
-    }
+	}
 }

@@ -2,16 +2,20 @@ package com.narvee.emi.calculator;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.narvee.request.dto.EmiCalResponseDTO;
+import com.narvee.request.dto.EmiDatesDTO;
 import com.narvee.request.dto.RepaymentScheduleRequest;
 @Component
 public class EmiCalculatorUtill {
 	
 	
-	public static List<RepaymentSchedule> calculateRepaymentSchedule(RepaymentScheduleRequest request) {
+	public static EmiCalResponseDTO calculateRepaymentSchedule(RepaymentScheduleRequest request) {
 	    Double principal = request.getLoanAmount(); // Total loan amount
 	    Double annualRate = request.getAnnualInterestRate(); // Annual interest rate
 	    Integer months = request.getInstallmentTenor(); // Total number of installments
@@ -42,11 +46,28 @@ public class EmiCalculatorUtill {
 	        schedule.setPrincipalRepaid(Math.round(principalRepaid)); // Principal repaid for this period
 	        schedule.setRemainingPrincipalAmount(Math.max(0, Math.round(outstanding))); // Remaining principal, ensuring no negative values
 	        schedule.setDueDate(LocalDate.now().plusMonths(i + 1)); // Setting due date for installment
-
 	        scheduleList.add(schedule);
 	    }
 	    
-	    return scheduleList;
+	    EmiCalResponseDTO emiResponse=new EmiCalResponseDTO();
+	    emiResponse.setRepaymentSchedules(scheduleList);
+	    
+	    
+	    Optional<LocalDate> minDate = scheduleList.stream()
+	    	    .map(RepaymentSchedule::getDueDate)
+	    	    .min(Comparator.naturalOrder());
+
+	    	Optional<LocalDate> maxDate = scheduleList.stream()
+	    	    .map(RepaymentSchedule::getDueDate)
+	    	    .max(Comparator.naturalOrder());
+	    
+	    EmiDatesDTO emiDates=new EmiDatesDTO();
+	    emiDates.setEmiStartDate(minDate.get());
+	    emiDates.setEmiStartDate(maxDate.get());
+	    
+	    emiResponse.setEmiDates(emiDates);
+	    	
+	    return emiResponse;
 	}
 
 }

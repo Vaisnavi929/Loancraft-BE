@@ -25,46 +25,37 @@ public class UserAuthService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository repository;
-	
+
 	@Autowired
 	private CustomersRepository customerRepository;
 
 	public static final Logger logger = LoggerFactory.getLogger(UserAuthService.class);
 
-
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-	    logger.info("Inside UserAuthService: loadUserByUsername for email: {}", email);
+		logger.info("Inside UserAuthService: loadUserByUsername for email: {}", email);
 
-	    // Check if email belongs to a customer
-	    Optional<CustomersInfo> customerOptional = customerRepository.findByEmailOrMobileNumber(email, email);
-	    if (customerOptional.isPresent()) {
-	        CustomersInfo customer = customerOptional.get();
-	        logger.info("Customer found with email: {}", email);
-	        return new org.springframework.security.core.userdetails.User(
-	                customer.getEmail(),
-	                customer.getPassword(),
-	                Collections.singletonList(new SimpleGrantedAuthority("ROLE_CUSTOMER"))
-	        );
-	    }
+		// Check if email belongs to a customer
+		Optional<CustomersInfo> customerOptional = customerRepository.findByEmailOrMobileNumber(email, email);
+		if (customerOptional.isPresent()) {
+			CustomersInfo customer = customerOptional.get();
+			logger.info("Customer found with email: {}", email);
+			return new org.springframework.security.core.userdetails.User(customer.getEmail(), customer.getPassword(),
+					Collections.singletonList(new SimpleGrantedAuthority("ROLE_CUSTOMER")));
+		}
 
-	    // Check if email belongs to a user
-	    UserInfo userInfo = repository.findByEmail(email)
-	            .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
-	    logger.info("User found with email: {}", email);
+		// Check if email belongs to a user
+		UserInfo userInfo = repository.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
+		logger.info("User found with email: {}", email);
 
-	    // Convert roles to authorities
-	    Set<GrantedAuthority> authorities = userInfo.getRoles().stream()
-	            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().toUpperCase()))
-	            .collect(Collectors.toSet());
+		// Convert roles to authorities
+		Set<GrantedAuthority> authorities = userInfo.getRoles().stream()
+				.map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().toUpperCase()))
+				.collect(Collectors.toSet());
 
-	    return new org.springframework.security.core.userdetails.User(
-	            userInfo.getEmail(),
-	            userInfo.getPassword(),
-	            authorities
-	    );
+		return new org.springframework.security.core.userdetails.User(userInfo.getEmail(), userInfo.getPassword(),
+				authorities);
 	}
 
-
 }
-	
