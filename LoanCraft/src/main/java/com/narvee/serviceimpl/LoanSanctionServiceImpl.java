@@ -1,4 +1,7 @@
-package com.narvee.serviceimpl;
+
+
+
+ package com.narvee.serviceimpl;
 
 import java.util.List;
 
@@ -104,8 +107,12 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		     sortField = "interest_type";   
 		else if (sortField.equalsIgnoreCase("repayment_mode"))
 		     sortField = "repayment_mode";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("status"))
+		     sortField = "status";
 		else
-		sortField = "status";
+		sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
