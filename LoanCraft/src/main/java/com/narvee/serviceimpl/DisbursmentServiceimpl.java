@@ -1,0 +1,116 @@
+package com.narvee.serviceimpl;
+
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import com.narvee.Service.DisbursmentService;
+import com.narvee.Service.SortingRequestDto;
+import com.narvee.entity.Disbursment;
+import com.narvee.entity.LoanSanction;
+import com.narvee.repository.DisbursmentRepository;
+import com.narvee.repository.LoanSanctionRepository;
+import com.narvee.request.dto.DisbursmentDTO;
+import com.narvee.request.dto.DisbursmentResponseDTO;
+
+@Service
+public class DisbursmentServiceimpl implements DisbursmentService {
+	
+	private static final Logger logger=LoggerFactory.getLogger(DisbursmentServiceimpl.class);
+	@Autowired
+	ModelMapper mapper;
+	@Autowired
+	private DisbursmentRepository disbursmentRepository;
+	
+	@Autowired
+	private LoanSanctionRepository loanSanctionRepository;
+
+	@Override
+	public Disbursment saveDisbursment(DisbursmentDTO disbursmentDTO) {
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :saveDisbursment() ");
+		Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
+		LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
+				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		disbursment.setLoanSanction(loanSanction);
+		return disbursmentRepository.save(disbursment);
+	}
+
+	@Override
+	public Disbursment updateDisbursment(DisbursmentDTO disbursmentDTO) {
+	logger.info("!!! inside class:DisbursmentServiceimpl,method :updateDisbursment() ");
+	Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
+	LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
+			.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+	disbursment.setLoanSanction(loanSanction);
+	return disbursmentRepository.save(disbursment);
+	}
+
+	@Override
+	public Disbursment getById(Long disbursmentId) {
+	logger.info("!!! inside class:DisbursmentServiceimpl,method :getById() ");
+	return disbursmentRepository.findById(disbursmentId).get();
+	}
+
+	@Override
+	public List<Disbursment> getAll() {
+    logger.info("!!! inside class:DisbursmentServiceimpl,method :getAll() ");
+		return disbursmentRepository.findAll();
+	}
+
+	@Override
+	public Boolean deleteById(Long disbursmentId) {
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :deleteById() ");
+		disbursmentRepository.deleteById(disbursmentId);
+		return true;
+	}
+
+	@Override
+	public Page<DisbursmentResponseDTO> getAllDisbursmentWithPagination(SortingRequestDto sortingRequestDto) {
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword();
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+	    if (sortField.equalsIgnoreCase("accountNo"))
+			sortField = "account_no";
+		else if (sortField.equalsIgnoreCase("isfc"))
+	     sortField = "isfc";
+		else if (sortField.equalsIgnoreCase("date"))
+		     sortField = "date";
+		else if (sortField.equalsIgnoreCase("disbursedAmount"))
+		     sortField = "disbursed_amount";
+		else if (sortField.equalsIgnoreCase("remarks"))
+		     sortField = "remarks";
+		else if (sortField.equalsIgnoreCase("branch"))
+		     sortField = "branch";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else
+			sortField = "updateddate";
+	    
+	    Sort.Direction sortDirection = Sort.Direction.ASC;
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return disbursmentRepository.getAllDisbursmentWithPagination(pageable);
+			
+		} else {
+			return disbursmentRepository.getAllDisbursmentWithkeyword(pageable, keyword);
+
+		}
+ 
+
+	}
+}
