@@ -137,8 +137,12 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("status"))
+		     sortField = "a.status";
 		else
-			sortField = "a.status";
+			sortField = "updateddate";
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
@@ -172,8 +176,12 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("status"))
+		     sortField = "a.status";
 		else
-			sortField = "a.status";
+			sortField = "updateddate";
 
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {

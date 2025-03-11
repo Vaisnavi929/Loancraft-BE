@@ -15,22 +15,22 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	
 //	public boolean existsByAadharNumber(String aadharNumber);
 
-	@Query(value =" Select a.loan_id,application_reference_id, c.first_name,c.last_name,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id ",nativeQuery = true)
+	@Query(value =" Select a.loan_id,application_reference_id,a.updateddate,a.createddate, c.first_name,c.last_name,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id ",nativeQuery = true)
 	public Page<ApplicationDTO> getAllLoanApplication(Pageable pageable);
 	
-	@Query(value ="SELECT a.loan_id,a.application_reference_id c.first_name,c.last_name,c.email,a.status,c.mobile_number FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id  "
-			+ "	where c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR "
+	@Query(value ="SELECT a.loan_id,a.application_reference_id c.first_name,a.updateddate,a.createddate,c.last_name,c.email,a.status,c.mobile_number FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id  "
+			+ "	where c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR a.createddate LIKE CONCAT('%',:keyword, '%')  OR "
 			+ "	a.status LIKE CONCAT('%', :keyword, '%') OR c.mobile_number LIKE CONCAT('%',:keyword, '%') ",nativeQuery = true)
 	public Page<ApplicationDTO> getAllLoanApplicationWithKeyword(Pageable pageable,@Param("keyword")String keyword);
 
 	
 
-	@Query(value ="SELECT a.loan_id,application_reference_id, c.first_name,c.last_name,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id WHERE a.status = 'Approved'",nativeQuery = true)
+	@Query(value ="SELECT a.loan_id,application_reference_id, c.first_name,c.last_name,a.updateddate,a.createddate,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id WHERE a.status = 'Approved'",nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListApproved(Pageable pageable);
 
 	
-	@Query(value ="SELECT a.loan_id,a.application_reference_id c.first_name,c.last_name,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id \n"
-			+ "where c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR \n"
+	@Query(value ="SELECT a.loan_id,a.application_reference_id c.first_name,c.last_name,a.updateddate,a.createddate,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id \n"
+			+ "where c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR a.createddate LIKE CONCAT('%',:keyword, '%')  OR \n"
 			+ "a.status LIKE CONCAT('%', :keyword, '%') OR c.mobile_number LIKE CONCAT('%',:keyword, '%') AND  a.status = 'Approved'",nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,@Param("keyword")String keyword);
 }
