@@ -3,14 +3,27 @@ package com.narvee.request.dto;
 import java.time.LocalDateTime;
 
 public interface ApplicationDTO {
-	
-	public Long getloanId();
-	public String getfirstName();
-	public String getlastName();
-	public String getemail();
-	public String getstatus();
-	public String getmobileNumber();
-	public LocalDateTime getcreateddate();
-    public LocalDateTime getupdateddate();
+
+	public Long getLoanId();
+
+	public String getFirstName();
+
+	public String getLastName();
+
+	public String getEmail();
+
+	public String getStatus();
+
+	public String getMobileNumber();
+
+	public LocalDateTime getCreateddate();
+
+	public LocalDateTime getUpdateddate();
+
+	public String getRepaymentmode();
+
+	public Double getLoanamount();
+
+	public String getReferenceid();
 
 }

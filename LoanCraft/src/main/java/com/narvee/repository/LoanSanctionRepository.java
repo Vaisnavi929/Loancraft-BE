@@ -12,14 +12,17 @@ import com.narvee.request.dto.LoanSanctionDTOS;
 public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long> {
 	
 	
-	@Query(value ="select amount_sanctioned,number_of_emis,rate_of_interest,interest_type,repayment_mode,emi_amount,status\r\n"
-			+ "currency,interest_type,payment_freqmuency,repayment_mode,status,createddate,updateddate from lms_loan_saction ",nativeQuery = true)
+	@Query(value ="select c.first_name , c.last_name, a.application_reference_id as referenceid, s.loan_saction_id as sanctionid,s.documentation_charges,s.loan_processing_charges, s.amount_sanctioned,s.number_of_emis,s.rate_of_interest,s.interest_type,s.repayment_mode,s.emi_amount,\r\n"
+			+ "s.interest_type,s.payment_freqmuency,s.repayment_mode,s.status,date(s.createddate) as createddate,date(s.updateddate) as updateddate from lms_loan_saction s join lms_applications a ON a.loan_id=s.loan_id\r\n"
+			+ "join lms_customers_info c ON c.customer_id=a.customer_id",nativeQuery = true)
 	public Page<LoanSanctionDTOS> getAllLoansactionWithPagination(Pageable pageable);
 	
-	@Query(value = "select amount_sanctioned,number_of_emis,rate_of_interest,interest_type,repayment_mode,emi_amount,status ,createddate,updateddate \r\n"
-			+ "from lms_loan_saction where amount_sanctioned LIKE CONCAT('%',:keyword, '%')  OR number_of_emis LIKE CONCAT('%',:keyword, '%') "
-			+ " OR rate_of_interest LIKE CONCAT('%',:keyword, '%') OR interest_type LIKE CONCAT('%',:keyword, '%') \r\n"
-			+ "OR repayment_mode LIKE CONCAT('%',:keyword, '%') OR emi_amount LIKE CONCAT('%',:keyword, '%')  OR status LIKE CONCAT('%',:keyword, '%') OR createddate LIKE CONCAT('%',:keyword, '%') ",nativeQuery =true)
+	@Query(value = "select c.first_name , c.last_name, a.application_reference_id as referenceid, s.loan_saction_id as sanctionid,s.documentation_charges,s.loan_processing_charges, s.amount_sanctioned,s.number_of_emis,s.rate_of_interest,s.interest_type,s.repayment_mode,s.emi_amount,\r\n"
+			+ "s.interest_type,s.payment_freqmuency,s.repayment_mode,s.status,date(s.createddate) as createddate,date(s.updateddate) as updateddate  from lms_loan_saction s join lms_applications a ON a.loan_id=s.loan_id\r\n"
+			+ "join lms_customers_info c ON c.customer_id=a.customer_id where s.amount_sanctioned LIKE CONCAT('%',:keyword, '%')  OR s.number_of_emis LIKE CONCAT('%',:keyword, '%') "
+			+ " OR s.rate_of_interest LIKE CONCAT('%',:keyword, '%') OR s.interest_type LIKE CONCAT('%',:keyword, '%') OR c.first_name LIKE CONCAT('%',:keyword, '%') \r\n"
+			+ "OR s.repayment_mode LIKE CONCAT('%',:keyword, '%') OR s.emi_amount LIKE CONCAT('%',:keyword, '%')  OR s.status LIKE CONCAT('%',:keyword, '%')"
+			+ " OR date(s.createddate) LIKE CONCAT('%',:keyword, '%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR a.application_reference_id LIKE CONCAT('%',:keyword, '%') ",nativeQuery =true)
 	public Page<LoanSanctionDTOS> getAllLoansactionWithSearching(Pageable pageable,@Param("keyword")String keyword);
 
 }

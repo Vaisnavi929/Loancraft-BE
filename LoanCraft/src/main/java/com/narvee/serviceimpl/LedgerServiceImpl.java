@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.LedgerService;
 import com.narvee.entity.Ledger;
-import com.narvee.entity.Payment;
 import com.narvee.repository.LedgerRepository;
 import com.narvee.request.dto.LedgerDTO;
 
@@ -29,9 +28,9 @@ public class LedgerServiceImpl implements LedgerService{
 	public Ledger saveLedger(LedgerDTO ledgerDTO) {
 	logger.info("!!! inside class : LedgerServiceImpl,method : saveLedger");
 	Ledger ledger=modelMapper.map(ledgerDTO, Ledger.class);
-	Payment payment=new Payment();
-	payment.setPayamentId(ledgerDTO.getPayamentId());
-	ledger.setPayment(payment);
+//	Payment payment=new Payment();
+//	payment.setPayamentId(ledgerDTO.getPayamentId());
+//	ledger.setPayment(payment);
 	return ledgerRepository.save(ledger);
 	}
 

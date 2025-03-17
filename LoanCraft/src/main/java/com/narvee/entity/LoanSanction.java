@@ -23,9 +23,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class LoanSanction extends AuditModel{
+public class LoanSanction extends AuditModel {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long loanSactionId;
@@ -45,7 +45,7 @@ public class LoanSanction extends AuditModel{
 	private Double documentationCharges;
 	private Long addedBy;
 	private Long updatedBy;
-	
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loanId")
 	private Applications applications;
