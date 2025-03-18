@@ -128,7 +128,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-
+		
 		if (sortField.equalsIgnoreCase("firstName"))
 			sortField = "first_name";
 		else if (sortField.equalsIgnoreCase("lastName"))
@@ -138,9 +138,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-			sortField = "createddate";
+		     sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-			sortField = "a.status";
+		     sortField = "a.status";
 		else
 			sortField = "updateddate";
 
@@ -177,9 +177,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-			sortField = "createddate";
+		     sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-			sortField = "a.status";
+		     sortField = "a.status";
 		else
 			sortField = "updateddate";
 
