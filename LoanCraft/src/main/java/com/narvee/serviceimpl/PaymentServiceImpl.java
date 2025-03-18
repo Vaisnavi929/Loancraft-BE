@@ -1,5 +1,10 @@
 package com.narvee.serviceimpl;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,5 +103,37 @@ public class PaymentServiceImpl implements PaymentService{
 		paymentRepository.deleteById(paymentId);
 		return true;
 	}
+
+    public void generatePayments(Disbursment disbursment) {
+        LocalDate currentDate = LocalDate.now();
+        Month currentMonth = currentDate.getMonth();
+        int currentYear = currentDate.getYear();
+        
+        List<LmsPayment> payments = new ArrayList<>();
+        
+        for (int i = 1; i <= 12; i++) { 
+            LocalDate dueDate = disbursment.getDate().plusMonths(i);
+            String amountStatus;
+            
+            if (dueDate.getMonth() == currentMonth && dueDate.getYear() == currentYear) {
+                amountStatus = "pending";
+            } else if (dueDate.isBefore(currentDate)) {
+                amountStatus = "Due";
+            } else {
+                amountStatus = "upcoming";
+            }
+            
+            LmsPayment payment = new LmsPayment();
+            payment.setDueAmount(disbursment.getDisbursedAmount() / 12); 
+            payment.setDueDate(dueDate);
+            payment.setAmountPaid("0");
+            payment.setAmountStatus(amountStatus);
+            payment.setDisbursment(disbursment);
+            
+            payments.add(payment);
+        }
+        
+        paymentRepository.saveAll(payments);
+    }
 
 }
