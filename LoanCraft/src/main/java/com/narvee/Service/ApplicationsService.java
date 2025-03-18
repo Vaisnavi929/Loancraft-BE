@@ -26,7 +26,7 @@ public interface ApplicationsService {
 
 	public Page<ApplicationDTO> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto);
 
-	public Page<ApplicationDTO> getAllLoanApplicationListWithPagination(SortingRequestDto sortingRequestDto);
+	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto);
 
 	public void updateLoanStatus(Long loanId, String status, String remarks);
 

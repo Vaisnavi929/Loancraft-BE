@@ -161,11 +161,11 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	}
 
 	@Override
-	public Page<ApplicationDTO> getAllLoanApplicationListWithPagination(SortingRequestDto sortingRequestDto) {
+	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto) {
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
-
+        String status=sortingRequestDto.getStatus();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
 		if (sortField.equalsIgnoreCase("firstName"))
@@ -191,10 +191,11 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Sort sort = Sort.by(sortDirection, sortField);
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		if (keyword.equalsIgnoreCase("empty")) {
-			return applicationRepository.getallApplicationListApproved(pageable);
+			return applicationRepository.getallApplicationListApproved(pageable, status);
 		} else {
 
-			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword);
+			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword, status);
+
 
 		}
 	}

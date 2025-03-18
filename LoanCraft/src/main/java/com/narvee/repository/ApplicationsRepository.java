@@ -25,14 +25,21 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 
 	
 
-	@Query(value ="SELECT a.loan_id,application_reference_id as referenceId, c.first_name,c.last_name,a.updateddate,a.createddate,c.email,a.status,c.mobile_number,a.repayment_mode as repaymentmode ,a.loan_amount as loanamount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id WHERE a.status = 'Approved'",nativeQuery = true)
-	public Page<ApplicationDTO> getallApplicationListApproved(Pageable pageable);
+	@Query(value ="SELECT a.loan_id,application_reference_id, c.first_name,c.last_name,a.updateddate,a.createddate,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id WHERE a.status =:status",nativeQuery = true)
+	public Page<ApplicationDTO> getallApplicationListApproved(Pageable pageable, @Param("status") String status);
 
 	
-	@Query(value ="SELECT  a.loan_id,a.application_reference_id as referenceId, c.first_name,c.last_name,a.updateddate,a.createddate,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id \n"
-			+ "where (c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR a.createddate LIKE CONCAT('%',:keyword, '%')  OR \n"
-			+ "a.status LIKE CONCAT('%', :keyword, '%') OR c.mobile_number LIKE CONCAT('%',:keyword, '%') )AND  a.status = 'Approved'",nativeQuery = true)
-	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,@Param("keyword")String keyword);
+	@Query(value ="SELECT a.loan_id,a.application_reference_id c.first_name,c.last_name,a.updateddate,a.createddate,c.email,a.status,c.mobile_number,a.repayment_mode,a.loan_amount FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id \n"
+			+ "where c.first_name LIKE CONCAT('%', :keyword,'%') OR c.last_name LIKE CONCAT('%',:keyword, '%') OR c.email LIKE CONCAT('%',:keyword, '%') OR a.createddate LIKE CONCAT('%',:keyword, '%')  OR \n"
+			+ "a.status LIKE CONCAT('%', :keyword, '%') OR c.mobile_number LIKE CONCAT('%',:keyword, '%') AND  a.status = :status",nativeQuery = true)
+	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,@Param("keyword")String keyword, @Param("status") String status);
+
 }
 
  
+
+
+
+
+
+
