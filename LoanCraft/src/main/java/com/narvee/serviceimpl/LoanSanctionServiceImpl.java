@@ -93,19 +93,19 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-	    if (sortField.equalsIgnoreCase("loan_requested"))
-			sortField = "loan_requested";
-		else if (sortField.equalsIgnoreCase("amountSanctioned;"))
-	     sortField = "amount_sanctioned";
-		else if (sortField.equalsIgnoreCase("emi_amount"))
-		     sortField = "emi_amount";
-		else if (sortField.equalsIgnoreCase("number_of_emis"))
+	    if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "firstname";
+		else if (sortField.equalsIgnoreCase("lastName"))
+	     sortField = "lastname";
+		else if (sortField.equalsIgnoreCase("rateOfInterest"))
+		     sortField = "rate_Of_interest";
+		else if (sortField.equalsIgnoreCase("numberOfEmis"))
 		     sortField = "number_of_emis";
-		else if (sortField.equalsIgnoreCase("rate_of_interest"))
-		     sortField = "rate_of_interest";
+		else if (sortField.equalsIgnoreCase("emiAmount"))
+		     sortField = "emi_amount";
 		else if (sortField.equalsIgnoreCase("interest_type"))
 		     sortField = "interest_type";   
-		else if (sortField.equalsIgnoreCase("repayment_mode"))
+		else if (sortField.equalsIgnoreCase("repaymentMode"))
 		     sortField = "repayment_mode";
 		else if (sortField.equalsIgnoreCase("createddate"))
 		     sortField = "createddate";

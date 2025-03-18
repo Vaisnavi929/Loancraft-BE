@@ -26,4 +26,6 @@ public class PrivilegeVO {
 		private List<DropdownVO> customerinfo;
 
 		private List<DropdownVO> customer_dashboard;
+		
+		private List<DropdownVO> applications;
 }

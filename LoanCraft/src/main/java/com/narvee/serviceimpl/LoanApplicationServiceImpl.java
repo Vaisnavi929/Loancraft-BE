@@ -152,10 +152,10 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Sort sort = Sort.by(sortDirection, sortField);
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		if (keyword.equalsIgnoreCase("empty")) {
-			return applicationRepository.getallApplicationListApproved(pageable);
+			return applicationRepository.getAllLoanApplication(pageable);
 		} else {
 
-			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword);
+			return applicationRepository.getAllLoanApplicationWithKeyword(pageable, keyword);
 
 		}
 	}
@@ -177,9 +177,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-		     sortField = "createddate";
+			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-		     sortField = "a.status";
+			sortField = "a.status";
 		else
 			sortField = "updateddate";
 
@@ -191,10 +191,10 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Sort sort = Sort.by(sortDirection, sortField);
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		if (keyword.equalsIgnoreCase("empty")) {
-			return applicationRepository.getAllLoanApplication(pageable);
+			return applicationRepository.getallApplicationListApproved(pageable);
 		} else {
 
-			return applicationRepository.getAllLoanApplicationWithKeyword(pageable, keyword);
+			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword);
 
 		}
 	}
