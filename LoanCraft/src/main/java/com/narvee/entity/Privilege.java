@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "privilege")
+@Table(name = "lms_privilege")
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -52,7 +52,7 @@ public class Privilege extends AuditModel{
 	private boolean selected;
 	
 	public enum privilegeType {
-		USER, ROLES, DASHBOARD, HOME, HRM, CUSTOMER_INFO, CUSTOMER_DASHBOARD
+		USER, ROLES, DASHBOARD, HOME, HRM, CUSTOMER_INFO, CUSTOMER_DASHBOARD,APPLICATIONS
 	}
 	
 }

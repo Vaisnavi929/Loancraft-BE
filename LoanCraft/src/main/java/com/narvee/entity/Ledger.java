@@ -31,8 +31,8 @@ public class Ledger {
 	private Double balance;
 	private Double paid;
 	
-	@ManyToOne
-	@JoinColumn(name="payamentId")
-	private Payment payment;
+//	@ManyToOne
+//	@JoinColumn(name="payamentId")
+//	private Payment payment;
 
 }

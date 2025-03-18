@@ -64,8 +64,8 @@ public class Roles extends AuditModel {
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "role_privilege", joinColumns = {
-			@JoinColumn(name = "role_id", nullable = false, updatable = false, insertable = false) }, inverseJoinColumns = {
+	@JoinTable(name = "lms_role_privilege", joinColumns = {
+			@JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "privilege_id", nullable = false, updatable = false, insertable = false) })
 	private Set<Privilege> privileges = new HashSet<Privilege>();
 

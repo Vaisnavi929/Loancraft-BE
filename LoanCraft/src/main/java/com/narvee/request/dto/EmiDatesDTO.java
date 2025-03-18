@@ -13,5 +13,7 @@ public class EmiDatesDTO {
 
 	private LocalDate emiStartDate;
 	private LocalDate emiEndDate;
+	private Integer monthlyDueDate;
+	private Integer numberOfEmis;
 
 }
