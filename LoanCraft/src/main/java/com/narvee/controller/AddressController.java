@@ -26,7 +26,6 @@ public class AddressController {
 	@Autowired
 	private AddressServices AddressService;
 
-
 	@PutMapping(value = "/updateAddress/{customerId}")
 	public ResponseEntity<RestAPIResponse> updateAddress(@RequestBody AddressUpdateRequest addressUpdateRequest,
 			@PathVariable String customerId) throws Exception {

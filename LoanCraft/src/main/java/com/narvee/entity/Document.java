@@ -2,13 +2,11 @@ package com.narvee.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,8 +28,8 @@ public class Document {
 
 	    private String fileType;
 
-	    @Lob
-	    @Column(columnDefinition = "LONGBLOB")
+//	    @Lob
+// 	    @Column(columnDefinition = "BYTEA")
 	    private byte[] data;
 	    
 	    @ManyToOne
@@ -39,5 +37,6 @@ public class Document {
 	    @JsonIgnore
 	    private Applications loanApplication; 
 
+	     
     }
 

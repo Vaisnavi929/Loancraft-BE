@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.CustomerService;
@@ -56,8 +54,7 @@ public class CustomersController {
 			return ResponseEntity
 					.ok(new RestAPIResponse("success", "Customer saved and authenticated successfully", authenticate));
 
-		} 
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			logger.warn("Validation error: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new RestAPIResponse("fail", "Validation error", e.getMessage()));
@@ -173,16 +170,16 @@ public class CustomersController {
 	}
 
 	@GetMapping("/check-email/{email}")
-    public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
-        boolean isDuplicate = customerService.isEmailDuplicate(email);
+	public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
+		boolean isDuplicate = customerService.isEmailDuplicate(email);
 
-        if (isDuplicate) {
-         new RestAPIResponse("fail", "Email already exists", true);
-        } else {
-          new RestAPIResponse("success", "Email is available", false);
-        }
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
+		if (isDuplicate) {
+			new RestAPIResponse("fail", "Email already exists", true);
+		} else {
+			new RestAPIResponse("success", "Email is available", false);
+		}
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
 
-       
-    }
+	}
 }

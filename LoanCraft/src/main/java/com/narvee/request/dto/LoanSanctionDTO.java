@@ -14,7 +14,6 @@ public class LoanSanctionDTO {
 	private Long loanSactionId;
 	private Double loanRequested;
 	private Double amountSanctioned;
-	private Double amountDisbursed;
 	private Double rateOfInterest;
 	private String interestType;
 	private int numberOfEmis;
@@ -23,17 +22,13 @@ public class LoanSanctionDTO {
 	private Date emiStartDate;
 	private Date emiEndDate;
 	private Date emiDueDate;
-	private String currency;
-	private String paymentFrequency;
-	private Double creditLimit;
-	private Double cashLimit;
-	private Double loanProcessingCharges;
-	private Double documentationCharges;
-	private Double penaltyForLatePayment;
 	private String status;
 	private Long addedBy;
 	private Long updatedBy;
+	private String paymentFreqmuency;
+	private Double loanProcessingCharges;
+	private Double documentationCharges;
 	private Long loanId;
-	private Long payamentId;
+
 	
 }

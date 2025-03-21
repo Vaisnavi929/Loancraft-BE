@@ -62,6 +62,9 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 
 		List<DropdownVO> customer_dashboard = new ArrayList<DropdownVO>();
 
+		List<DropdownVO> applications = new ArrayList<DropdownVO>();
+
+
 		List<Privilege> privileges = privRepo.findAll();
 
 		for (Privilege singlePrivilege : privileges) {
@@ -116,6 +119,15 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 				privilegeVO.setCustomer_dashboard(customer_dashboard);
 			}
 			
+
+			// Applications
+			if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATIONS.name())) {
+				customer_dashboard.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setApplications(applications);
+			}
+		
+
 		}
 
 		return privilegeVO;
@@ -134,7 +146,7 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 			allPrevPrivileges.add(privlig);
 		}
 		role.setPrivileges(allPrevPrivileges);
-		System.err.println("after setting priv to roles:" + role);
+
 		roleRepo.save(role);
 	}
 
@@ -158,6 +170,8 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> customerinfo = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> customer_dashboard = new ArrayList<DropdownVO>();
+		
+		List<DropdownVO> applications = new ArrayList<DropdownVO>();
 
 		Set<Privilege> privileges = roles.getPrivileges();
 
@@ -213,6 +227,15 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 				customer_dashboard.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
 
+			
+			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATIONS.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				applications.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+
 		}
 
 		privilegeVO.setUser(users);
@@ -228,6 +251,9 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		privilegeVO.setCustomerinfo(customerinfo);
 
 		privilegeVO.setCustomer_dashboard(customer_dashboard);
+
+		privilegeVO.setApplications(applications);
+
 
 		return privilegeVO;
 	}

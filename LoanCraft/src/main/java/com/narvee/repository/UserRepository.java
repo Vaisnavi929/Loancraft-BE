@@ -20,13 +20,13 @@ public interface UserRepository extends JpaRepository<UserInfo,Long> {
 	
 	@Query(value = "SELECT r.role_name as designation, u.user_Id, u.email,u.name, u.mobile_number,u.status,date(u.createddate) as createddate,date(u.updateddate) as updateddate,uf.name as addedby  FROM lms_user_info u "
 			+ "left join lms_user_info uf on   u.addedby=uf.user_id "
-			+ "join user_roles  ur on ur.user_id=u.user_Id "
+			+ "join lms_user_roles  ur on ur.user_id=u.user_Id "
 			+ "join lms_roles r  on r.role_id=ur.role_id", nativeQuery = true)
     Page<UserResponseDTO> findAllUsers(Pageable pageable);
 
 	@Query(value = "SELECT r.role_name as designation, u.user_Id, u.email,u.name, u.mobile_number,u.status,date(u.createddate) as createddate,date(u.updateddate) as updateddate,uf.name as addedby,r.role_name as designation  FROM lms_user_info u "
 			+ "	left join lms_user_info uf on   u.addedby=uf.user_id "
-			+ "	join user_roles  ur on ur.user_id=u.user_Id "
+			+ "	join lms_user_roles  ur on ur.user_id=u.user_Id "
 			+ "	join lms_roles r  on r.role_id=ur.role_id where "
 			+ "u.email LIKE CONCAT('%', :keyword, '%') OR "
 			+ "u.name LIKE CONCAT('%', :keyword, '%') OR u.mobile_number LIKE CONCAT('%', :keyword, '%') OR u.createddate LIKE CONCAT('%', :keyword, '%') "

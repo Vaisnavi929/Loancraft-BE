@@ -52,9 +52,10 @@ public class UcrfController {
 			TelephoneSegment telephoneSegment = new TelephoneSegment();
 			Map<String, String> tel = new HashMap<>();
 			tel.put("mobile phone", consumerInfo.getTelephoneNoMobile());
-			if (consumerInfo.getTelephoneNoResidence() != null || !consumerInfo.getTelephoneNoResidence().isEmpty()) {
+			if (consumerInfo.getTelephoneNoResidence() != null && !consumerInfo.getTelephoneNoResidence().isEmpty()) {
 				tel.put("home phone", consumerInfo.getTelephoneNoResidence());
 			}
+			
 			UcrfFormatting.append(telephoneSegment.telephoneNumberGenerator(tel));
 			String addressSeg = AddressSegment.splitAddress(consumerInfo.getAddress1(), consumerInfo.getStateCode1(),
 					consumerInfo.getPinCode1(), consumerInfo.getAddressCategory1(), consumerInfo.getResidenceCode1());

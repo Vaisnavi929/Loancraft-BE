@@ -14,4 +14,5 @@ private Integer pageSize;
 private String sortField;
 private String sortOrder;
 private String keyword;
+private String status;
 }

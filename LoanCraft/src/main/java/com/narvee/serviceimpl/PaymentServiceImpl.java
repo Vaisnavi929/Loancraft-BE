@@ -1,5 +1,10 @@
 package com.narvee.serviceimpl;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,127 +16,124 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.PaymentService;
-import com.narvee.entity.Ledger;
-import com.narvee.entity.LoanSanction;
-import com.narvee.entity.Payment;
-import com.narvee.repository.LedgerRepository;
-import com.narvee.repository.LoanSanctionRepository;
+import com.narvee.Service.SortingRequestDto;
+import com.narvee.entity.Disbursment;
+import com.narvee.entity.LmsPayment;
+import com.narvee.repository.DisbursmentRepository;
 import com.narvee.repository.PaymentRepository;
 import com.narvee.request.dto.PaymentDTO;
-import com.narvee.request.dto.SortingDTO;
+import com.narvee.request.dto.PaymentResponseDTO;
 
-import jakarta.transaction.Transactional;
 @Service
 public class PaymentServiceImpl implements PaymentService{
 	
-	private static final Logger logger=LoggerFactory.getLogger(PaymentServiceImpl.class);
-
-	@Autowired
-    private PaymentRepository paymentRepository;
-
-    @Autowired
-    private LedgerRepository ledgerRepository;
-
-    @Autowired
-    private LoanSanctionRepository loanSanctionRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-	@Override
-	@Transactional
-	public Payment savePayment(PaymentDTO paymentDTO) {
-		logger.info("!!! inside class : PaymentServiceImpl, !! method : savePayment");
-		Payment payment = modelMapper.map(paymentDTO, Payment.class);
-
-		LoanSanction loanSanction = loanSanctionRepository.findById(paymentDTO.getLoanSactionId())
-				.orElseThrow(() -> new RuntimeException("LoanSanction not found"));
-		payment.setLoanSanction(loanSanction);
-		Payment savedPayment = paymentRepository.save(payment);
-		Ledger ledger = new Ledger();
-		ledger.setPayment(savedPayment);
-		ledger.setDate(savedPayment.getPaymentDate());
-		ledger.setLoanAmount(loanSanction.getAmountSanctioned());
-		ledger.setPrincipleAmount(loanSanction.getAmountDisbursed());
-		ledger.setAmountPaid(savedPayment.getAmount());
-		ledger.setBalance(loanSanction.getAmountDisbursed() - savedPayment.getAmount());
-		ledger.setPaid(savedPayment.getAmount());
-		ledgerRepository.save(ledger);
-		
-		loanSanction.setAmountDisbursed(loanSanction.getAmountDisbursed() - savedPayment.getAmount());
-		loanSanctionRepository.save(loanSanction);
-
-		return savedPayment;
-	}
+	public static final Logger logger=LoggerFactory.getLogger(PaymentServiceImpl.class);
 	
+	@Autowired
+	private PaymentRepository paymentRepository;
+	@Autowired
+	private DisbursmentRepository disbursmentRepository;
+	
+	@Autowired
+	ModelMapper mapper;
+
 	@Override
-	public Payment updatePayment(PaymentDTO paymentDto) {
-		logger.info("!!! inside class : PaymentServiceImpl, !! method : updatePayment ");
-		Payment payment=modelMapper.map(paymentDto, Payment.class);
-		return paymentRepository.save(payment);
+	public LmsPayment savePayment(PaymentDTO paymentDTO) {
+	logger.info("!!! inside class :PaymentServiceImpl ,method :savePayment() ");
+	LmsPayment lmsPayment = mapper.map(paymentDTO, LmsPayment.class);
+	Disbursment disbursment = disbursmentRepository.findById(paymentDTO.getDisbursmentId())
+			.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+	lmsPayment.setDisbursment(disbursment);
+		return paymentRepository.save(lmsPayment);
 	}
 
 	@Override
-	public Payment getById(Long payamentId) {
-		logger.info("!!! inside class : PaymentServiceImpl, !! method : getById");
-		return paymentRepository.findById(payamentId).get();
+	public LmsPayment updatePayment(PaymentDTO paymentDTO) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :updatePayment() ");
+		LmsPayment lmsPayment = mapper.map(paymentDTO, LmsPayment.class);
+		Disbursment disbursment = disbursmentRepository.findById(paymentDTO.getDisbursmentId())
+				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		lmsPayment.setDisbursment(disbursment);
+		return paymentRepository.save(lmsPayment);
 	}
 
 	@Override
-	public Page<PaymentDTO> getAllPayments(SortingDTO sortingDTO) {
-		logger.info("Inside PaymentServiceImpl: getAllPayments");
+	public LmsPayment getPaymentById(Long paymentId) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :getPaymentById() ");
+		return paymentRepository.findById(paymentId).get();
+	}
 
-		String sortField = sortingDTO.getSortField();
-		String sortOrder = sortingDTO.getSortOrder();
-		String keyword = sortingDTO.getKeyword();
-		Integer pageNumber = sortingDTO.getPageNumber();
-		Integer pageSize = sortingDTO.getPageSize();
-
-
-		// Map sorting field to entity's field
-		if (sortField.equalsIgnoreCase("Amount")) {
-			sortField = "amount";
-		} else if (sortField.equalsIgnoreCase("LoanSactionId")) {
-			sortField = "loan_saction_id";		
-		
-		} else if (sortField.equalsIgnoreCase("VoucherNumber")) {
-			sortField = "vocher_number";
-		} else if (sortField.equalsIgnoreCase("BranchName")) {
-			sortField = "branch_name";
-		} else if (sortField.equalsIgnoreCase("Perticulars")) {
-			sortField = "perticulars";
-		} else if (sortField.equalsIgnoreCase("Description")) {
-			sortField = "description";
-		} else if (sortField.equalsIgnoreCase("BankDetails")) {
-			sortField = "bank_details";
-		} else {
-			sortField = "payment_date"; // Default field for sorting
-		}
-		// Set sort direction (ascending or descending)
+	@Override
+	public Page<PaymentResponseDTO> getAllPaymentList(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :getAll() ");
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword();
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+	    if (sortField.equalsIgnoreCase("amountPaid"))
+			sortField = "amount_paid";
+		else if (sortField.equalsIgnoreCase("dueDate"))
+		     sortField = "due_date";   
+		else if (sortField.equalsIgnoreCase("amountStatus"))
+		     sortField = "amount_status";
+		else if (sortField.equalsIgnoreCase("dueAmount"))
+		     sortField = "due_amount";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
 		}
-		// Create Pageable object with sorting and pagination
-		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(sortDirection, sortField));
 
-		Page<Payment> paymentsPage;
-		// If keyword is provided, search by keyword; otherwise, fetch all
-		if (keyword == null || keyword.isEmpty()) {
-			paymentsPage = paymentRepository.findAllPayment(pageable);
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return paymentRepository.getAllPaymentListWithPagination(pageable);
+			
+			
+			
 		} else {
-			paymentsPage = paymentRepository.findPaymentByKeyword(keyword, pageable);
-		}
-		// Map Payment entities to PaymentDTOs
-		return paymentsPage.map(payment -> modelMapper.map(payment, PaymentDTO.class));
-	}
+			return paymentRepository.getAllPaymentListWithKeyword(pageable, keyword);
+
+		}}
+	
 
 	@Override
-	public Boolean deleteById(Long payamentId) {
-		logger.info("!!! inside class : PaymentServiceImpl , !! method : deleteById ");
-		 paymentRepository.deleteById(payamentId);
-		 return true;
+	public Boolean deleteById(Long paymentId) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :deleteById() ");
+		paymentRepository.deleteById(paymentId);
+		return true;
 	}
 
-	
+    public void generatePayments(Disbursment disbursment) {
+        LocalDate currentDate = LocalDate.now();
+        Month currentMonth = currentDate.getMonth();
+        int currentYear = currentDate.getYear();
+        
+        List<LmsPayment> payments = new ArrayList<>();
+        
+        for (int i = 1; i <= 12; i++) { 
+            LocalDate dueDate = disbursment.getDate().plusMonths(i);
+            String amountStatus;
+            
+            if (dueDate.getMonth() == currentMonth && dueDate.getYear() == currentYear) {
+                amountStatus = "pending";
+            } else if (dueDate.isBefore(currentDate)) {
+                amountStatus = "Due";
+            } else {
+                amountStatus = "upcoming";
+            }
+            
+            LmsPayment payment = new LmsPayment();
+            payment.setDueAmount(disbursment.getDisbursedAmount() / 12); 
+            payment.setDueDate(dueDate);
+            payment.setAmountPaid("0");
+            payment.setAmountStatus(amountStatus);
+            payment.setDisbursment(disbursment);
+            
+            payments.add(payment);
+        }
+        
+        paymentRepository.saveAll(payments);
+    }
+
 }

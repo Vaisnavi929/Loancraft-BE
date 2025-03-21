@@ -9,10 +9,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.EmailOtpService;
-import com.narvee.entity.MailBody;
 import com.narvee.entity.OtpVerification;
 import com.narvee.repository.OtpRepository;
 import com.narvee.request.dto.ApplicantDto;
+import com.narvee.request.dto.MailBody;
 import com.narvee.util.OTPGenerator;
 
 import jakarta.mail.MessagingException;

@@ -79,7 +79,7 @@ public class EmailOtpController {
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> changePassword(@RequestBody ApplicantDto applicant)
 			throws MessagingException {
-		Optional<CustomersInfo> optionalApplicant = customersRepository.findByEmail(applicant.getEmail());
+		Optional<CustomersInfo> optionalApplicant = customersRepository.findByEmailOrMobileNumber(applicant.getEmail(),applicant.getEmail());
 
 		if (!optionalApplicant.isPresent()) {
 			return new ResponseEntity<>(new RestAPIResponse("mailerror", "Email not Registered"), HttpStatus.OK);

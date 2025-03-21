@@ -1,4 +1,7 @@
-package com.narvee.serviceimpl;
+
+
+
+ package com.narvee.serviceimpl;
 
 import java.util.List;
 
@@ -90,38 +93,26 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-	    if (sortField.equalsIgnoreCase("loan_requested"))
-			sortField = "loan_requested";
-		else if (sortField.equalsIgnoreCase(" "))
-			sortField = "amount_disbursed";
-		else if (sortField.equalsIgnoreCase("cash_limit"))
-	     sortField = "cash_limit";
-		else if (sortField.equalsIgnoreCase("emi_amount"))
-		     sortField = "emi_amount";
-		else if (sortField.equalsIgnoreCase("number_of_emis"))
+	    if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "firstname";
+		else if (sortField.equalsIgnoreCase("lastName"))
+	     sortField = "lastname";
+		else if (sortField.equalsIgnoreCase("rateOfInterest"))
+		     sortField = "rate_Of_interest";
+		else if (sortField.equalsIgnoreCase("numberOfEmis"))
 		     sortField = "number_of_emis";
-		else if (sortField.equalsIgnoreCase("rate_of_interest"))
-		     sortField = "rate_of_interest";
-		else if (sortField.equalsIgnoreCase("emi_due_date"))
-		     sortField = "emi_due_date";
-		else if (sortField.equalsIgnoreCase("date_of_birth"))
-		     sortField = "date_of_birth";
-		else if (sortField.equalsIgnoreCase("emi_start_date"))
-		     sortField = "emi_start_date";
-		else if (sortField.equalsIgnoreCase("currency"))
-		     sortField = "currency";
+		else if (sortField.equalsIgnoreCase("emiAmount"))
+		     sortField = "emi_amount";
 		else if (sortField.equalsIgnoreCase("interest_type"))
-		     sortField = "interest_type";
-		else if (sortField.equalsIgnoreCase("repayment_mode"))
+		     sortField = "interest_type";   
+		else if (sortField.equalsIgnoreCase("repaymentMode"))
 		     sortField = "repayment_mode";
-		else if (sortField.equalsIgnoreCase("currency"))
-		     sortField = "currency";
-		else if (sortField.equalsIgnoreCase("interest_type"))
-		     sortField = "interest_type";
-		else if (sortField.equalsIgnoreCase("payment_freqmuency"))
-		     sortField = "payment_freqmuency";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("status"))
+		     sortField = "status";
 		else
-		sortField = "status";
+		sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
@@ -131,12 +122,13 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		if (keyword.equalsIgnoreCase("empty")) {
 			return loanSanctionRepository.getAllLoansactionWithPagination(pageable);
+			
+			
+			
 		} else {
-
 			return loanSanctionRepository.getAllLoansactionWithSearching(pageable, keyword);
 
 		}
-
 
 	}
 

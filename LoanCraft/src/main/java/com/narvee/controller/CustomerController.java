@@ -15,15 +15,15 @@ import com.narvee.entity.CustomerDetails;
 @RequestMapping("/api/cust")
 public class CustomerController {
 //	public static final Logger logger = LoggerFactory.getLogger(ApplicantesController.class);
-	
+
 	@Autowired
 	private CustomerSer customerService;
-	
-	@RequestMapping(value ="/saveApplicantes",method = RequestMethod.POST,produces ="application/json")
-	public CustomerDetails saveApplicantes(@RequestBody CustomerDetails customerDetails){
+
+	@RequestMapping(value = "/saveApplicantes", method = RequestMethod.POST, produces = "application/json")
+	public CustomerDetails saveApplicantes(@RequestBody CustomerDetails customerDetails) {
 //		logger.info("!!! inside class: ApplicationController, !! method :saveApplicantes()");
 		return customerService.save(customerDetails);
-		
+
 	}
-	
+
 }

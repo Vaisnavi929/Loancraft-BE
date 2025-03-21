@@ -22,11 +22,11 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.CustomersInfo;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
-import com.narvee.repository.ReferenceRepository;
-import com.narvee.request.dto.LoanApplicationDTOS;
+import com.narvee.request.dto.ApplicationDTO;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -38,15 +38,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Autowired
 	private ApplicationsRepository applicationRepository;
 
- 	@Autowired
-	private ReferenceRepository referenceRepository;
-
 	@Autowired
 	private CustomersRepository customerRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
-	
 	private static final int DIGIT_PADDING = 4;
 
 	@Override
@@ -66,17 +60,18 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
 
-		 // Fetch customer using decrypted ID
-	    Optional<CustomersInfo> customerOptional = customerRepository.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
-	    if (customerOptional.isPresent()) {
-	    	 logger.info("Customer with ID {} found", loanApplicationDto.getCustomerId());
-	        loan.setCustomers(customerOptional.get());
-	        
-	    } else {
-	        logger.error("Customer with ID {} not found", loanApplicationDto.getCustomerId());
-	        throw new RuntimeException("Customer not found");
-	    }
-	    
+		// Fetch customer using decrypted ID
+		Optional<CustomersInfo> customerOptional = customerRepository
+				.findById(Long.parseLong(loanApplicationDto.getCustomerId()));
+		if (customerOptional.isPresent()) {
+			logger.info("Customer with ID {} found", loanApplicationDto.getCustomerId());
+			loan.setCustomers(customerOptional.get());
+
+		} else {
+			logger.error("Customer with ID {} not found", loanApplicationDto.getCustomerId());
+			throw new RuntimeException("Customer not found");
+		}
+
 		Long amaxnumber = applicationRepository.appmaxNumber();
 		if (amaxnumber == null) {
 			amaxnumber = 0L;
@@ -127,36 +122,28 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	}
 
 	@Override
-	public Page<LoanApplicationDTOS> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto) {
+	public Page<ApplicationDTO> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto) {
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-		if (sortField.equalsIgnoreCase("employment_type"))
-			sortField = "employment_type";
-		else if (sortField.equalsIgnoreCase("amaxnum"))
-			sortField = "amaxnum";
-		else if (sortField.equalsIgnoreCase("application_reference_id"))
-			sortField = "application_reference_id";
-		else if (sortField.equalsIgnoreCase("company_name"))
-			sortField = "company_name";
-		else if (sortField.equalsIgnoreCase("salary"))
-			sortField = "salary";
-		else if (sortField.equalsIgnoreCase("yearsin_employment"))
-			sortField = "yearsin_employment";
-		else if (sortField.equalsIgnoreCase("company_address"))
-			sortField = "company_address";
-		else if (sortField.equalsIgnoreCase("pin_code"))
-			sortField = "pin_code";
-		else if (sortField.equalsIgnoreCase("loan_amount"))
-			sortField = "loan_amount";
-		else if (sortField.equalsIgnoreCase("repayment_mode"))
-			sortField = "repayment_mode";
-		else if (sortField.equalsIgnoreCase("loan_tenure"))
-			sortField = "loan_tenure";
+		
+		if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "first_name";
+		else if (sortField.equalsIgnoreCase("lastName"))
+			sortField = "last_name";
+		else if (sortField.equalsIgnoreCase("email"))
+			sortField = "email";
+		else if (sortField.equalsIgnoreCase("mobileNumber"))
+			sortField = "mobile_number";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("status"))
+		     sortField = "a.status";
 		else
-			sortField = "status";
+			sortField = "updateddate";
+
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
@@ -171,7 +158,59 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			return applicationRepository.getAllLoanApplicationWithKeyword(pageable, keyword);
 
 		}
-
 	}
 
+	@Override
+	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto) {
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword();
+        String status=sortingRequestDto.getStatus();
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+		if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "first_name";
+		else if (sortField.equalsIgnoreCase("lastName"))
+			sortField = "last_name";
+		else if (sortField.equalsIgnoreCase("email"))
+			sortField = "email";
+		else if (sortField.equalsIgnoreCase("mobileNumber"))
+			sortField = "mobile_number";
+		else if (sortField.equalsIgnoreCase("createddate"))
+		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("status"))
+		     sortField = "a.status";
+		else
+			sortField = "updateddate";
+
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return applicationRepository.getallApplicationListApproved(pageable, status);
+		} else {
+
+			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword, status);
+
+
+		}
+	}
+
+	@Transactional
+	@Override
+	public void updateLoanStatus(Long loanId, String status, String remarks) {
+		if (!status.equalsIgnoreCase("Reject") && !status.equalsIgnoreCase("Approved")) {
+			throw new IllegalArgumentException("Status must be either 'Reject' or 'Approved'");
+		}
+
+		Applications loanApplication = applicationRepository.findById(loanId)
+				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
+		loanApplication.setStatus(status);
+		loanApplication.setRemarks(remarks);
+		applicationRepository.save(loanApplication);
+	}
 }

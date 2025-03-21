@@ -27,10 +27,6 @@ public class Reference {
 	@Column(name = "reference_id")
 	private Long referenceId;
 
-
-	@Column(name = "initial")
-	private String initial;
-
 	@Column(name = "full_name")
 	private String fullName;
 
