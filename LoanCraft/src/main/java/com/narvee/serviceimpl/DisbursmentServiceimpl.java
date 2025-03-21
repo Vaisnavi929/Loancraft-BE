@@ -103,6 +103,12 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		     sortField = "remarks";
 		else if (sortField.equalsIgnoreCase("branch"))
 		     sortField = "branch";
+		else if (sortField.equalsIgnoreCase("mobileNumber"))
+		     sortField = "mobilenumber";
+		else if (sortField.equalsIgnoreCase("firstName"))
+		     sortField = "firstname";
+		else if (sortField.equalsIgnoreCase("referenceid"))
+		     sortField = "referenceid";
 		else if (sortField.equalsIgnoreCase("createddate"))
 		     sortField = "createddate";
 		else
