@@ -13,12 +13,22 @@ import com.narvee.request.dto.DisbursmentResponseDTO;
 public interface DisbursmentRepository extends JpaRepository<Disbursment, Long>{
 	
 	
-	@Query(value ="select d.disbursment_id,d.account_no,d.disbursed_amount,d.branch,d.date,d.createddate,d.isfc,d.remarks,d.updateddate from lms_disbursment d ",nativeQuery =true)
+	@Query(value ="SELECT c.mobile_number as mobilenumber, d.disbursed_amount, d.disbursment_id,d.account_no,la.application_reference_id as referenceid,  d.branch, d.date, \r\n"
+			+ "  d.createddate, d.isfc, d.remarks,c.first_name as firstname, d.updateddate "
+			+ "FROM lms_disbursment d\r\n"
+			+ "JOIN lms_loan_saction ls ON d.loan_saction_id= ls.loan_saction_id\r\n"
+			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id\r\n"
+			+ "join lms_customers_info c ON c.customer_id=la.customer_id",nativeQuery =true)
 	public Page<DisbursmentResponseDTO> getAllDisbursmentWithPagination(Pageable pageable);
 
-	@Query(value="select d.disbursment_id,d.account_no,d.disbursed_amount,d.branch,d.date,d.createddate,d.isfc,d.remarks,d.updateddate from lms_disbursment d where d.account_no LIKE CONCAT('%',:keyword, '%') OR d.disbursed_amount LIKE CONCAT('%',:keyword, '%') OR\r\n"
+	@Query(value="SELECT c.mobile_number as mobilenumber, d.disbursed_amount, d.disbursment_id,d.account_no,la.application_reference_id as referenceid,  d.branch, d.date, "
+			+ "	d.createddate, d.isfc, d.remarks,c.first_name as firstname, d.updateddate "
+			+ "FROM lms_disbursment d\r\n"
+			+ "JOIN lms_loan_saction ls ON d.loan_saction_id= ls.loan_saction_id\r\n"
+			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id\r\n"
+			+ "join lms_customers_info c ON c.customer_id=la.customer_id where d.account_no LIKE CONCAT('%',:keyword, '%') OR d.disbursed_amount LIKE CONCAT('%',:keyword, '%') OR\r\n"
 			+ "d.branch LIKE CONCAT('%',:keyword, '%') OR d.date LIKE CONCAT('%',:keyword, '%') OR d.createddate LIKE CONCAT('%',:keyword, '%') OR d.isfc LIKE CONCAT('%',:keyword, '%')\r\n"
-			+ "OR d.remarks LIKE CONCAT('%',:keyword, '%')",nativeQuery =true)
+			+ "OR d.remarks LIKE CONCAT('%',:keyword, '%') OR la.application_reference_id LIKE CONCAT('%',:keyword, '%')  OR c.mobile_number LIKE CONCAT('%',:keyword, '%')  OR c.first_name LIKE CONCAT('%',:keyword, '%')",nativeQuery =true)
 	public Page<DisbursmentResponseDTO> getAllDisbursmentWithkeyword(Pageable pageable,@Param("keyword")String keyword);
 	
 }
