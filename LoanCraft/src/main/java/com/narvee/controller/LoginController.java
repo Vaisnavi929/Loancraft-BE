@@ -82,13 +82,13 @@ public class LoginController {
 
 		} catch (BadCredentialsException e) {
 			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => Invalid Credentials");
-			throw new InvalidUserCredentialsException("Invalid Credentials");
+			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed","Invalid Credentials"),HttpStatus.UNAUTHORIZED);
 		} catch (UsernameNotFoundException e) {
 			logger.error("Username not found: {}", authRequest.getUsername());
 			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "User with email " , e), HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			logger.error("An error occurred: {}", e.getMessage());
-			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e), HttpStatus.INTERNAL_SERVER_ERROR);
+			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e), HttpStatus.UNAUTHORIZED);
 
 		}
 		 
