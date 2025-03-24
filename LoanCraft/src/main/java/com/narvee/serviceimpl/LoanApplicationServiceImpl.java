@@ -203,7 +203,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Transactional
 	@Override
 	public void updateLoanStatus(Long loanId, String status, String remarks) {
-		if (!status.equalsIgnoreCase("Reject") && !status.equalsIgnoreCase("Approved")) {
+		if (!status.equalsIgnoreCase("Rejected") && !status.equalsIgnoreCase("Approved")) {
 			throw new IllegalArgumentException("Status must be either 'Reject' or 'Approved'");
 		}
 
