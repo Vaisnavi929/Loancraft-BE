@@ -20,7 +20,7 @@ public class CustomerUpdateResponse {
 	private String firstName;
 	private String middleName;
 	private String lastName;
-	private String mobileNo;
+	private String mobileNumber;
 	private String email;
 	private String gender;
 	private String fathersOrSpousesName;

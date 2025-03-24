@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="States")
-public class States {
+public class States  {
 	
 	@Id
 	@GeneratedValue(strategy =GenerationType.IDENTITY)

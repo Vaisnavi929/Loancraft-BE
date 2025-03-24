@@ -54,6 +54,7 @@ public class LoginController {
 	@Autowired
 	private IRolesRepository Rolesrepository;
 
+	@Autowired
 	private AuthenticationServiceImpl authenticationService;
 
 	@Autowired
@@ -81,13 +82,13 @@ public class LoginController {
 
 		} catch (BadCredentialsException e) {
 			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => Invalid Credentials");
-			throw new InvalidUserCredentialsException("Invalid Credentials");
+			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed","Invalid Credentials"),HttpStatus.UNAUTHORIZED);
 		} catch (UsernameNotFoundException e) {
 			logger.error("Username not found: {}", authRequest.getUsername());
 			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "User with email " , e), HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			logger.error("An error occurred: {}", e.getMessage());
-			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e), HttpStatus.INTERNAL_SERVER_ERROR);
+			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e), HttpStatus.UNAUTHORIZED);
 
 		}
 		 
@@ -136,33 +137,42 @@ public class LoginController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+	public ResponseEntity<RestAPIResponse> login(@RequestBody LoginRequest request) {
 		logger.info("Login attempt for: {}", request.getUsernameOrEmail());
 
 		try {
 			Object userOrApplicant = authenticationService.authenticate(request.getUsernameOrEmail(),
 					request.getPassword());
 			logger.info("Login successful for: {}", request.getUsernameOrEmail());
-			return ResponseEntity.ok(userOrApplicant);
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "fetched all loan application details ", userOrApplicant),
+					HttpStatus.OK);
 		} catch (IllegalArgumentException e) {
 			logger.warn("Invalid user type for: {}", request.getUsernameOrEmail());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user type");
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "Invalid user type"),
+					HttpStatus.BAD_REQUEST);
+			
 		} catch (BadCredentialsException e) {
 			logger.warn("Invalid login credentials for: {}", request.getUsernameOrEmail());
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/email or password");
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed","Invalid username/email or password"),
+					HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			logger.error("An unexpected error occurred during login: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed","Invalid username/email or password","An error occurred: " + e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<RestAPIResponse> logout(@RequestHeader("Authorization") String token) {
 		logger.info("Logout attempt received");
 
 		if (token == null || !token.startsWith("Bearer ")) {
 			logger.warn("Invalid token format received");
-			return ResponseEntity.badRequest().body("Invalid token format");
+			return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("failed","Invalid token format"),HttpStatus.BAD_REQUEST);
 		}
 
 		String jwtToken = token.substring(7);
@@ -172,11 +182,12 @@ public class LoginController {
 
 		if (!isLoggedOut) {
 			logger.warn("Token already blacklisted: {}", jwtToken);
-			return ResponseEntity.status(409).body("Token already blacklisted");
+			return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("failed","Token already blacklisted"),HttpStatus.BAD_REQUEST);
 		}
 
 		logger.info("Logout successful for token: {}", jwtToken);
-		return ResponseEntity.ok("Successfully logged out");
+		
+		return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("success","Token already blacklisted"),HttpStatus.BAD_REQUEST);
 	}
 
 }

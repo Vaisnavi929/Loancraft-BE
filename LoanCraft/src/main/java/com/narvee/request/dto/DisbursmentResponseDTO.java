@@ -1,0 +1,24 @@
+package com.narvee.request.dto;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+public interface DisbursmentResponseDTO {
+	
+	public Long getdisbursmentId();
+
+	public Date getdate();
+	public String getfirstName();
+	public String getaccountNo();
+	public String getmobileNumber();
+	public String getisfc();
+
+	public Double getdisbursedAmount();
+	public String getReferenceid();
+	public String getremarks();
+    public LocalDateTime getcreateddate();
+    public LocalDateTime getupdateddate();
+	public String getbranch();
+    
+
+}

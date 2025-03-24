@@ -33,5 +33,5 @@ public class EncryptionUtil {
 		cipher.init(Cipher.DECRYPT_MODE, secretKey);
 		byte[] decryptedBytes = cipher.doFinal(Base64.getUrlDecoder().decode(encryptedData)); // URL-safe decoding
 		return Long.parseLong(new String(decryptedBytes));
-	}
+	}	
 }

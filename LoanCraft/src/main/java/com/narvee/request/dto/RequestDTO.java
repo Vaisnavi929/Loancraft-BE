@@ -1,0 +1,18 @@
+package com.narvee.request.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class RequestDTO {
+
+	private int pageNumber;
+	private int pageSize;
+	private String sortField;
+	private String sortOrder;
+	private String keyword;
+
+}

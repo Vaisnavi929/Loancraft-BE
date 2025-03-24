@@ -1,12 +1,8 @@
 package com.narvee.entity;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.apache.catalina.User;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.narvee.commons.AuditModel;
 
@@ -20,11 +16,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -32,31 +27,36 @@ import lombok.NoArgsConstructor;
 @Table(name = "LmsRoles")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Roles extends AuditModel {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "roleId")
 	private Long roleId;
 
-//	@Column(name = "id")
-//	private Long id;	
-	
 	@Column(name = "roleName")
 	private String roleName;
 
 	@Column(name = "description")
 	private String description;
-	
-//	@JsonBackReference
-//	@ManyToMany(mappedBy = "roles")
-//    private Set<UserInfo> users = new HashSet<>();
+
+	@Column(name = "addedby")
+	private String addedBy;
+
+	@Column(name = "updatedby")
+	private String updatedBy;;
+
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "role_privilege", joinColumns = {
-			@JoinColumn(name = "role_id", nullable = false, updatable = false, insertable = false) }, inverseJoinColumns = {
+	@JoinTable(name = "lms_role_privilege", joinColumns = {
+			@JoinColumn(name = "role_id", nullable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "privilege_id", nullable = false, updatable = false, insertable = false) })
+
 	private Set<Privilege> privileges = new HashSet<Privilege>();
+	
+
 
 }

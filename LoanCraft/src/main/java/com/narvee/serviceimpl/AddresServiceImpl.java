@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.AddressServices;
 import com.narvee.entity.CurrentAddress;
-import com.narvee.entity.Customers;
+import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.AddressRepository;
@@ -50,7 +50,7 @@ public class AddresServiceImpl implements AddressServices {
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
-		Customers customer = customerRepository.findById(decryptedCustomerId)
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		// Map AddressDto to Address entity
@@ -75,7 +75,7 @@ public class AddresServiceImpl implements AddressServices {
 		Long customreId = EncryptionUtil.decrypt(customerId);
 		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress customreId {}", customreId);
 
-		Customers customers = new Customers();
+		CustomersInfo customers = new CustomersInfo();
 		customers.setCustomerId(customreId);
 
 		States permanentState = stateRepository.findById(updateRequest.getPermanentAddress().getStateId()).get(); 
@@ -123,7 +123,7 @@ public class AddresServiceImpl implements AddressServices {
 		logger.info("Decrypted customerId: {}", decryptedCustomerId);
 
 		// Fetch the customer by decrypted customerId
-		Customers customer = customerRepository.findById(decryptedCustomerId)
+		CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 				.orElseThrow(() -> new RuntimeException("Customer not found"));
 
 		// Map AddressDto to Address entity

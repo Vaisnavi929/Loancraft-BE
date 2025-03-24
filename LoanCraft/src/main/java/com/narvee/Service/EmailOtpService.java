@@ -10,4 +10,6 @@ public interface EmailOtpService {
 
 	boolean verifyOtp(String otp);
 	
+	 public void sendLoanApplicationNotification( String applicationReferenceId, String status, String firstName, String lastName, String email);
+	
 }

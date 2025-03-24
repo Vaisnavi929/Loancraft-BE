@@ -12,16 +12,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "privilege")
+@Table(name = "lms_privilege")
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler" })
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Privilege extends AuditModel{
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +52,9 @@ public class Privilege extends AuditModel{
 	private boolean selected;
 	
 	public enum privilegeType {
-		USER, ROLE, DASHBOARD
+
+		USER, ROLES, DASHBOARD, HOME, HRM, CUSTOMER_INFO, CUSTOMER_DASHBOARD,APPLICATIONS
+
 	}
 	
 }
