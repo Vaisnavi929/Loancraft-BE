@@ -23,6 +23,8 @@ import com.narvee.repository.DisbursmentRepository;
 import com.narvee.repository.PaymentRepository;
 import com.narvee.request.dto.PaymentDTO;
 import com.narvee.request.dto.PaymentResponseDTO;
+import com.narvee.request.dto.PaymentStatementDTO;
+import com.narvee.request.dto.PaymentStatementResponseDTO;
 
 @Service
 public class PaymentServiceImpl implements PaymentService{
@@ -110,8 +112,8 @@ public class PaymentServiceImpl implements PaymentService{
         int currentYear = currentDate.getYear();
         
         List<LmsPayment> payments = new ArrayList<>();
-        
-        for (int i = 1; i <= 12; i++) { 
+        int noOfEmis = disbursment.getLoanSanction().getNumberOfEmis();
+        for (int i = 1; i <= noOfEmis; i++) { 
             LocalDate dueDate = disbursment.getDate().plusMonths(i);
             String amountStatus;
             
@@ -124,7 +126,7 @@ public class PaymentServiceImpl implements PaymentService{
             }
             
             LmsPayment payment = new LmsPayment();
-            payment.setDueAmount(disbursment.getDisbursedAmount() / 12); 
+            payment.setDueAmount(disbursment.getDisbursedAmount() / noOfEmis); 
             payment.setDueDate(dueDate);
             payment.setAmountPaid("0");
             payment.setAmountStatus(amountStatus);
@@ -134,6 +136,25 @@ public class PaymentServiceImpl implements PaymentService{
         }
         
         paymentRepository.saveAll(payments);
+    }
+    public List<PaymentStatementDTO> getPaymentStatement(Long disbursmentId) {
+        List<PaymentStatementResponseDTO> payments = paymentRepository.findByDisbursmentId(disbursmentId);
+        List<PaymentStatementDTO> statements = new ArrayList<>();
+
+        for (PaymentStatementResponseDTO payment : payments) {
+            PaymentStatementDTO statement = new PaymentStatementDTO();
+            statement.setDueDate(payment.getDueDate());
+            statement.setDueAmount(payment.getDueAmount());
+            statement.setAmountPaid(payment.getAmountPaid());
+            statement.setAmountStatus(payment.getAmountStatus());
+            statement.setFirstName(payment.getFirstName());
+            statement.setMobileNumber(payment.getMobileNumber());
+            statement.setPaymentId(payment.getPaymentId());
+            statement.setApplicationReferenceId(payment.getApplicationReferenceId());
+            statements.add(statement)  ;
+        }
+
+        return statements;
     }
 
 }
