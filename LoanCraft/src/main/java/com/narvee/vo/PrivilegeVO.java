@@ -13,7 +13,7 @@ import lombok.ToString;
 @Data
 public class PrivilegeVO {
 
-		private List<DropdownVO> user; //
+		private List<DropdownVO> user; 
 		
 		private List<DropdownVO> role;
 
@@ -28,5 +28,15 @@ public class PrivilegeVO {
 		private List<DropdownVO> customer_dashboard;
 
 		private List<DropdownVO> applications;
+		
+		private List<DropdownVO> loans;
+
+		private List<DropdownVO> approved;
+
+		private List<DropdownVO> sanctioned;
+
+		private List<DropdownVO> disbursed;
+
+		private List<DropdownVO> rejected;
 
 }
