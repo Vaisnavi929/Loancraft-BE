@@ -45,6 +45,7 @@ public class Disbursment extends AuditModel{
 
     private String branch;
     
+    private String status;
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "loanSactionId")

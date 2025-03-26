@@ -112,6 +112,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Applications loan = mapper.map(loanApplication, Applications.class);
 		Applications applications = applicationRepository.save(loan);
 		LoanApplicationUpdateDto applicationUpdateDto = mapper.map(applications, LoanApplicationUpdateDto.class);
+		
 		return applicationUpdateDto;
 	}
 
@@ -203,10 +204,6 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Transactional
 	@Override
 	public void updateLoanStatus(Long loanId, String status, String remarks) {
-		if (!status.equalsIgnoreCase("Rejected") && !status.equalsIgnoreCase("Approved")) {
-			throw new IllegalArgumentException("Status must be either 'Reject' or 'Approved'");
-		}
-
 		Applications loanApplication = applicationRepository.findById(loanId)
 				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 		loanApplication.setStatus(status);

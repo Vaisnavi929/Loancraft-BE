@@ -71,9 +71,10 @@ public class ApplicationsController {
 	}
 
 	@RequestMapping(value = "/updateLoanApplication", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateLoanApplication(@Valid @RequestBody LoanApplicationUpdateDto loanApplication) {
-	logger.info("!!! inside class: LoanApplicationController, !! method : updateLoanApplication");
-	try {
+	public ResponseEntity<RestAPIResponse> updateLoanApplication(
+			@Valid @RequestBody LoanApplicationUpdateDto loanApplication) {
+		logger.info("!!! inside class: LoanApplicationController, !! method : updateLoanApplication");
+		try {
 			// Decrypt the customerId from the request
 			long decryptedCustomerId = EncryptionUtil.decrypt(loanApplication.getCustomerId());
 			loanApplication.setCustomerId(String.valueOf(decryptedCustomerId));
@@ -86,18 +87,22 @@ public class ApplicationsController {
 					.ok(new RestAPIResponse("success", "Application Updated Successfully", updateApplication));
 		} catch (Exception e) {
 			logger.error("Error upadte loan application: {}", e.getMessage());
-	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new RestAPIResponse("fail", "Error updating application.", e.getMessage()));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("fail", "Error updating application.", e.getMessage()));
 		}
 	}
 
 	@RequestMapping(value = "/duplicateCheck/{aadhar}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> duplicateCheck(@PathVariable String aadhar) {
-	logger.info("!!! inside class: LoanApplicationController, !! method : duplicateCheck");
-    boolean isDuplicate = applicationService.existsByAadharNumber(aadhar);
-	if (isDuplicate) {
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed ","A loan application already exists for the provided Aadhaar number. above give User friendly",isDuplicate), HttpStatus.OK);
-	} else {
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success ", "Aadhar validated successfully", isDuplicate), HttpStatus.OK);
+		logger.info("!!! inside class: LoanApplicationController, !! method : duplicateCheck");
+		boolean isDuplicate = applicationService.existsByAadharNumber(aadhar);
+		if (isDuplicate) {
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed ",
+					"A loan application already exists for the provided Aadhaar number. above give User friendly",
+					isDuplicate), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success ", "Aadhar validated successfully", isDuplicate), HttpStatus.OK);
 
 		}
 
@@ -106,7 +111,10 @@ public class ApplicationsController {
 	@RequestMapping(value = "/getAllApplication", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
-    return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "successfully fetched laonapplication with searching",applicationService.getAllLoanApplicationPagination(sortingRequestDto)),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
+						applicationService.getAllLoanApplicationPagination(sortingRequestDto)),
+				HttpStatus.OK);
 
 	}
 
@@ -114,14 +122,18 @@ public class ApplicationsController {
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationListWithPagination(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		logger.info("!!! inside class: LoanApplicationController, !! method : getAllLoanApplicationListWithPagination");
-    return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "successfully fetched laonapplication with searching",applicationService.getAllLoanApplicationListWitApproved(sortingRequestDto)),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
+						applicationService.getAllLoanApplicationListWitApproved(sortingRequestDto)),
+				HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/updatestatus", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateLoanStatusWithRemarks(@RequestBody LoanStatusUpdateRequest request) {
 		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks());
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Loan status updated successfully! "),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Loan status updated successfully! "),
+				HttpStatus.OK);
 
 	}
 

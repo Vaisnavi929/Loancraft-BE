@@ -30,6 +30,8 @@ public class RegisterVO {
 	@NotEmpty
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
 	private String password;
+	
+	private Long userId;
 
 
 }
