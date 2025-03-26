@@ -21,51 +21,58 @@ import com.narvee.request.dto.LoanSanctionDTO;
 @CrossOrigin("*")
 @RequestMapping("/api/loanSanction")
 public class LoanSactionController {
-	
-	Logger logger=LoggerFactory.getLogger(LoanSactionController.class);
-	
+	Logger logger = LoggerFactory.getLogger(LoanSactionController.class);
+
 	@Autowired
 	private LoanSanctionservice loanSanctionservice;
 
-	
-	@RequestMapping(value="/saveLoanSanction",method=RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> saveLoanSanction(@RequestBody LoanSanctionDTO loanSanctionDTO ){
+	@RequestMapping(value = "/saveLoanSanction", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> saveLoanSanction(@RequestBody LoanSanctionDTO loanSanctionDTO) {
 		logger.info("!!! inside class: LoanSactionController , !! method : saveLoanSanction ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loanSanction Successfully", loanSanctionservice.saveLoanSanction(loanSanctionDTO)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loanSanction Successfully",
+				loanSanctionservice.saveLoanSanction(loanSanctionDTO)), HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value ="/updateLoanSanction",method = RequestMethod.PUT,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> updateLoanSanction(@RequestBody LoanSanctionDTO loanSanction){
+
+	@RequestMapping(value = "/updateLoanSanction", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateLoanSanction(@RequestBody LoanSanctionDTO loanSanction) {
 		logger.info("!!! inside class :LoanSactionController , !! method : updateLoanSaction");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated loanSanction Successfully", loanSanctionservice.updateLoanSanction(loanSanction)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated loanSanction Successfully",
+				loanSanctionservice.updateLoanSanction(loanSanction)), HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value ="/getByid/{loanSactionId}",method = RequestMethod.GET,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long loanSactionId){
+
+	@RequestMapping(value = "/getByid/{loanSactionId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long loanSactionId) {
 		logger.info(" !!! inside class : LoanSanctionController, !! method : getById");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "fetched by id Successfully", loanSanctionservice.getById(loanSactionId)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "fetched by id Successfully",
+				loanSanctionservice.getById(loanSactionId)), HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value ="/getAll",method =RequestMethod.GET,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> getAllLoanApplication(){
+
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllLoanApplication() {
 		logger.info("!!! inside class : LoanSanctionController, !! method : getAllLoanApplication");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "fetched All LoanSanction Details", loanSanctionservice.getAllLoanSanction()), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "fetched All LoanSanction Details",
+				loanSanctionservice.getAllLoanSanction()), HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value ="/delete/{loanSactionId}",method=RequestMethod.DELETE,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long loanSactionId){
+
+	@RequestMapping(value = "/delete/{loanSactionId}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long loanSactionId) {
 		logger.info("!!! inside class : LoanSactionController, !! method : deleteById");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "deleted by Id Successfully", loanSanctionservice.deleteById(loanSactionId)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "deleted by Id Successfully",
+				loanSanctionservice.deleteById(loanSactionId)), HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value = "/loanSanctionSearch" ,method = RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse>  getAllLoanApplicationWithSearching(@RequestBody SortingRequestDto sortingRequestDto){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "successfully fetched laonapplication with searching", loanSanctionservice.getAllLoanSanctionWithPAgination(sortingRequestDto)), HttpStatus.OK);
-		
+
+	@RequestMapping(value = "/loanSanctionSearch", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
+			@RequestBody SortingRequestDto sortingRequestDto) {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
+						loanSanctionservice.getAllLoanSanctionWithPAgination(sortingRequestDto)),
+				HttpStatus.OK);
+
 	}
 }

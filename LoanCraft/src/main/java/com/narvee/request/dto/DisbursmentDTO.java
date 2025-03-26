@@ -26,5 +26,7 @@ public class DisbursmentDTO {
     private String branch;
     
     private Long loanSactionId;
+    
+    private String status;
 
 }

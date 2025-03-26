@@ -47,7 +47,9 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		// Fetch the existing Applications entity
 		Applications loanApplication = applicationRepository.findById(loanSanctionDTO.getLoanId())
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		loanApplication.setStatus(loanSanctionDTO.getStatus());
 		loanSanction.setApplications(loanApplication);
+		
 		return loanSanctionRepository.save(loanSanction);
 	}
 
