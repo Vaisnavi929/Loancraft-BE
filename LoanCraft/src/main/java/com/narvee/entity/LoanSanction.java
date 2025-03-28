@@ -45,6 +45,7 @@ public class LoanSanction extends AuditModel{
 	private Double documentationCharges;
 	private Long addedBy;
 	private Long updatedBy;
+	private String loanAccountNumber;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "loanId")

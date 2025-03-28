@@ -21,6 +21,7 @@ import com.narvee.entity.LoanSanction;
 import com.narvee.repository.DisbursmentRepository;
 import com.narvee.repository.LoanSanctionRepository;
 import com.narvee.request.dto.DisbursmentDTO;
+import com.narvee.request.dto.DisbursmentIdDTO;
 import com.narvee.request.dto.DisbursmentResponseDTO;
 
 @Service
@@ -130,5 +131,11 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		}
  
 
+	}
+
+
+	@Override
+	public List<DisbursmentIdDTO> getCustomerDetailsWithDisbursmentId() {		
+		return disbursmentRepository.getCustomerDetailsWithDisbursmentId();
 	}
 }

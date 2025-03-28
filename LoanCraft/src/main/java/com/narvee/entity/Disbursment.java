@@ -31,12 +31,10 @@ public class Disbursment extends AuditModel{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long disbursmentId;
 
-
     private LocalDate date;
 
     private String accountNo;
     
-
     private String isfc;
 
     private Double disbursedAmount;
@@ -45,6 +43,7 @@ public class Disbursment extends AuditModel{
 
     private String branch;
     
+    private String status;
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "loanSactionId")

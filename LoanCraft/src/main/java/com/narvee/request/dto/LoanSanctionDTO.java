@@ -28,6 +28,7 @@ public class LoanSanctionDTO {
 	private String paymentFreqmuency;
 	private Double loanProcessingCharges;
 	private Double documentationCharges;
+	private String loanAccountNumber;
 	private Long loanId;
 
 	

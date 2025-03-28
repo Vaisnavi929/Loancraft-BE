@@ -72,6 +72,9 @@ public class CustomersInfo extends AuditModel {
 
 	@Column(name = "updated_by")
 	private Long updatedBy;
+	
+	@Column(name = "referred_by")
+	private Long userId;
 
 	@OneToOne(mappedBy = "customer")
 	@JsonManagedReference

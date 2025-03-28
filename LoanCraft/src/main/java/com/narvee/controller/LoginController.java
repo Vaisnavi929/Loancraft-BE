@@ -27,13 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.IlogoutService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.AuthRequest;
 import com.narvee.entity.Privilege;
 import com.narvee.entity.Roles;
 import com.narvee.entity.UserInfo;
-import com.narvee.exception.InvalidUserCredentialsException;
 import com.narvee.repository.IRolesRepository;
 import com.narvee.repository.UserRepository;
+import com.narvee.request.dto.AuthRequest;
 import com.narvee.request.dto.LoginRequest;
 import com.narvee.response.Response;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;

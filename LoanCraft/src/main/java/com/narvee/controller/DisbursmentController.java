@@ -68,6 +68,11 @@ public class DisbursmentController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Deleted deleteByDisbursmentId" ,disbursmentService.getAllDisbursmentWithPagination(sortingRequestDto)),HttpStatus.OK);
 		
 	}
-	
+	@RequestMapping(value ="/getCustomerDetails",method =RequestMethod.GET,produces ="application/json")
+	public ResponseEntity<RestAPIResponse> getCustomerDetailsWithDisbursmentId(){
+		logger.info("!!! inside class :DisbursmentController , method :getAllDisbursment() ");		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched customer details ", disbursmentService.getCustomerDetailsWithDisbursmentId()), HttpStatus.OK);
+		
+	}
 	
 }
