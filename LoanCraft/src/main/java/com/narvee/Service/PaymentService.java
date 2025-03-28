@@ -9,6 +9,7 @@ import com.narvee.entity.LmsPayment;
 import com.narvee.request.dto.PaymentDTO;
 import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
+import com.narvee.request.dto.PaymentStatementResponseDTO;
 
 public interface PaymentService {
 	
@@ -19,5 +20,6 @@ public interface PaymentService {
 	public Boolean deleteById(Long paymentId); 	
 	 public void generatePayments(Disbursment disbursment);
 	 public List<PaymentStatementDTO> getPaymentStatement(Long disbursmentId) ;
+	 public List<PaymentStatementResponseDTO> getMonthlyDueList();
 }
 

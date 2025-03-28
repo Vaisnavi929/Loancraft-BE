@@ -6,9 +6,12 @@ public interface PaymentStatementResponseDTO {
 	  public Long getPaymentId();
 	  public  LocalDate getDueDate();    
 	  public  double getDueAmount();	    
-	  public String getAmountPaid();	    
+	  public Double getAmountPaid();	    
 	  public  String getAmountStatus();	    
 	  public  String getFirstName(); 
 	  public String getMobileNumber();
+	  public String getPaymentType();
 	  public String getApplicationReferenceId();
+	  public String getloanAccountNumber(); 
+	  
 	}
