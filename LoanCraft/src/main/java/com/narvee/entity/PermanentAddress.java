@@ -21,7 +21,7 @@ import lombok.ToString;
 
 @Entity
 @Data
-@Table(name = "LmsPermanentAdress")
+@Table(name = "LmsPermanentAddress")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)

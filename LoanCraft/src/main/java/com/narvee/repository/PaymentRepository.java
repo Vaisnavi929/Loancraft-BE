@@ -27,17 +27,15 @@ public interface PaymentRepository extends JpaRepository<LmsPayment, Long> {
 	public List<LmsPayment> findPaymentsByDisbursment(@Param("disbursmentId") Long disbursmentId,
 			@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-	@Query(value = """
-			SELECT p.payment_id, p.amount_paid, c.first_name, la.application_reference_id,
-			       c.mobile_number, p.amount_status, p.due_amount, p.due_date, p.disbursment_id
-			FROM lms_payment p
-			JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id
-			JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id
-			JOIN lms_applications la ON ls.loan_id = la.loan_id
-			JOIN lms_customers_info c ON c.customer_id = la.customer_id
-			WHERE p.disbursment_id = :disbursmentId
-			ORDER BY p.due_date ASC
-			""", nativeQuery = true)
+	@Query(value = "SELECT p.payment_id, p.amount_paid, c.first_name, la.application_reference_id,\r\n"
+			+ "			       c.mobile_number, p.amount_status, p.due_amount, p.due_date, p.disbursment_id\r\n"
+			+ "			FROM lms_payment p\r\n"
+			+ "			JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id\r\n"
+			+ "			JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id\r\n"
+			+ "			JOIN lms_applications la ON ls.loan_id = la.loan_id\r\n"
+			+ "			JOIN lms_customers_info c ON c.customer_id = la.customer_id\r\n"
+			+ "			WHERE p.disbursment_id = :disbursmentId\r\n"
+			+ "			ORDER BY p.due_date ASC", nativeQuery = true)
 	List<PaymentStatementResponseDTO> findByDisbursmentId(@Param("disbursmentId") Long disbursmentId);
 
 }

@@ -1,4 +1,4 @@
-package com.narvee.entity;
+package com.narvee.request.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
