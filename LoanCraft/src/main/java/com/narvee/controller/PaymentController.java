@@ -20,6 +20,7 @@ import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.request.dto.PaymentDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
+import com.narvee.request.dto.PaymentStatementResponseDTO;
 
 @RestController
 @CrossOrigin("*")
@@ -65,6 +66,9 @@ public class PaymentController {
 	    List<PaymentStatementDTO> statements = paymentService.getPaymentStatement(disbursmentId);
 	    return ResponseEntity.ok(statements);
 	}
-
-
+	@GetMapping("/getMonthlyDueList")
+	public ResponseEntity<List<PaymentStatementResponseDTO>> getMonthlyDueList() {
+	    List<PaymentStatementResponseDTO> statements = paymentService.getMonthlyDueList();
+	    return ResponseEntity.ok(statements);
+	}
 }

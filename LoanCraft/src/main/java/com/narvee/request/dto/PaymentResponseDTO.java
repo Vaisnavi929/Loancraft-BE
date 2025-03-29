@@ -9,6 +9,7 @@ public interface PaymentResponseDTO {
     public LocalDate getDueDate();
     public String getAmountPaid();
     public String getAmountStatus();
+    public String getPaymentType();
 //    public Long getDisbursmentId();
    
 }

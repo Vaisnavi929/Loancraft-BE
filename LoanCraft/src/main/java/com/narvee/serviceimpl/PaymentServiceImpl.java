@@ -116,7 +116,7 @@ public class PaymentServiceImpl implements PaymentService{
         for (int i = 1; i <= noOfEmis; i++) { 
             LocalDate dueDate = disbursment.getDate().plusMonths(i);
             String amountStatus;
-            
+         
             if (dueDate.getMonth() == currentMonth && dueDate.getYear() == currentYear) {
                 amountStatus = "pending";
             } else if (dueDate.isBefore(currentDate)) {
@@ -124,11 +124,11 @@ public class PaymentServiceImpl implements PaymentService{
             } else {
                 amountStatus = "upcoming";
             }
-            
+            Double amountPaid = 0.0;
             LmsPayment payment = new LmsPayment();
             payment.setDueAmount(disbursment.getDisbursedAmount() / noOfEmis); 
             payment.setDueDate(dueDate);
-            payment.setAmountPaid("0");
+            payment.setAmountPaid(amountPaid);
             payment.setAmountStatus(amountStatus);
             payment.setDisbursment(disbursment);
             
@@ -150,11 +150,18 @@ public class PaymentServiceImpl implements PaymentService{
             statement.setFirstName(payment.getFirstName());
             statement.setMobileNumber(payment.getMobileNumber());
             statement.setPaymentId(payment.getPaymentId());
+            statement.setPaymentType(payment.getPaymentType());    
             statement.setApplicationReferenceId(payment.getApplicationReferenceId());
             statements.add(statement)  ;
         }
 
         return statements;
     }
+
+	@Override
+	public List<PaymentStatementResponseDTO> getMonthlyDueList() {
+		
+		return paymentRepository.getMonthlyDueList();
+	}
 
 }

@@ -1,3 +1,4 @@
+
 package com.narvee.repository;
 
 import java.time.LocalDate;
@@ -37,5 +38,12 @@ public interface PaymentRepository extends JpaRepository<LmsPayment, Long> {
 			+ "			WHERE p.disbursment_id = :disbursmentId\r\n"
 			+ "			ORDER BY p.due_date ASC", nativeQuery = true)
 	List<PaymentStatementResponseDTO> findByDisbursmentId(@Param("disbursmentId") Long disbursmentId);
+  
+    @Query(value = "SELECT p.payment_id,p.payment_type,p.amount_paid, c.mobile_number,c.first_name,ls.loan_account_number,p.amount_status,p.due_amount,p.due_date "
+  		+ "FROM lms_payment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
+  		+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
+  		+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)",nativeQuery =true)
+  public List<PaymentStatementResponseDTO> getMonthlyDueList();
 
 }
+

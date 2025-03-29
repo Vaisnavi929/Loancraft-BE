@@ -13,11 +13,13 @@ public class PaymentStatementDTO {
 	private Long paymentId;
     private LocalDate dueDate;
     private double dueAmount;
-    private String amountPaid;
+    private Double amountPaid;
     private String amountStatus;
     private String firstName;
     private String mobileNumber;
     private String applicationReferenceId;
+    private String paymentType;
+    private String loanAccountNumber; 
 
     // Getters and Setters
 }
