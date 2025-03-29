@@ -38,5 +38,11 @@ public class PrivilegeVO {
 		private List<DropdownVO> disbursed;
 
 		private List<DropdownVO> rejected;
+		
+		private List<DropdownVO> receivables;
+		
+		private List<DropdownVO> currentDues;
+		
+		private List<DropdownVO> receivable;
 
 }
