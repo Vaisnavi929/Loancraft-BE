@@ -159,9 +159,44 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
 	@Override
-	public List<PaymentStatementResponseDTO> getMonthlyDueList() {
-		
-		return paymentRepository.getMonthlyDueList();
-	}
+	public Page<PaymentStatementResponseDTO> getMonthlyDueList(SortingRequestDto sortingRequestDto){
+		logger.info("!!! inside class :PaymentServiceImpl ,method :getMonthlyDueList() ");
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword();
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+		  if (sortField.equalsIgnoreCase("amountPaid"))
+				sortField = "amount_paid";
+			else if (sortField.equalsIgnoreCase("dueDate"))
+			     sortField = "due_date";   
+			else if (sortField.equalsIgnoreCase("amountStatus"))
+			     sortField = "amount_status";
+			else if (sortField.equalsIgnoreCase("dueAmount"))
+			     sortField = "due_amount";
+			else if (sortField.equalsIgnoreCase("paymentType"))
+			     sortField = "payment_Type";
+			else if (sortField.equalsIgnoreCase("mobileNumber"))
+			     sortField = "mobile_number";
+			else if (sortField.equalsIgnoreCase("firstName"))
+			     sortField = "first_name";
+			else if (sortField.equalsIgnoreCase("loanAccountNumber"))
+			     sortField = "loan_account_number";
+			Sort.Direction sortDirection = Sort.Direction.ASC;
+			if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+				sortDirection = Sort.Direction.DESC;
+			}
 
+			Sort sort = Sort.by(sortDirection, sortField);
+			Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+			if (keyword.equalsIgnoreCase("empty")) {
+				return paymentRepository.getMonthlyDueList(pageable);
+				
+				
+				
+			} else {
+				return paymentRepository.getMonthlyDueListWithKeyword(pageable, keyword);
+
+	}
+	}
 }
