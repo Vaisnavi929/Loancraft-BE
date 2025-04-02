@@ -75,6 +75,10 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> rejected = new ArrayList<DropdownVO>();
 		
 		List<DropdownVO> receivables = new ArrayList<DropdownVO>();
+		
+		List<DropdownVO> currentDues = new ArrayList<DropdownVO>();
+		
+		List<DropdownVO> receivable = new ArrayList<DropdownVO>();
 
 		List<Privilege> privileges = privRepo.findAll();
 

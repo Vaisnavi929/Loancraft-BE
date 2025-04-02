@@ -20,6 +20,10 @@ public interface PaymentService {
 	public Boolean deleteById(Long paymentId); 	
 	 public void generatePayments(Disbursment disbursment);
 	 public List<PaymentStatementDTO> getPaymentStatement(Long disbursmentId) ;
-	 public List<PaymentStatementResponseDTO> getMonthlyDueList();
+	 
+	 //commented by Laxman
+//	 public List<PaymentStatementResponseDTO> getMonthlyDueList();
+	 
+	 public Page<PaymentStatementResponseDTO> getMonthlyDueList(SortingRequestDto sortingRequestDto);
 }
 

@@ -39,11 +39,28 @@ public interface PaymentRepository extends JpaRepository<LmsPayment, Long> {
 			+ "			ORDER BY p.due_date ASC", nativeQuery = true)
 	List<PaymentStatementResponseDTO> findByDisbursmentId(@Param("disbursmentId") Long disbursmentId);
   
-    @Query(value = "SELECT p.payment_id,p.payment_type,p.amount_paid, c.mobile_number,c.first_name,ls.loan_account_number,p.amount_status,p.due_amount,p.due_date "
-  		+ "FROM lms_payment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
-  		+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
-  		+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)",nativeQuery =true)
-  public List<PaymentStatementResponseDTO> getMonthlyDueList();
+	//comented by Laxman
+//    @Query(value = "SELECT p.payment_id,p.payment_type,p.amount_paid, c.mobile_number,c.first_name,ls.loan_account_number,p.amount_status,p.due_amount,p.due_date "
+//  		+ "FROM lms_payment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
+//  		+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
+//  		+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)",nativeQuery =true)
+//  public List<PaymentStatementResponseDTO> getMonthlyDueList();
 
+	  @Query(value = "SELECT p.payment_id,c.first_name as firstname,p.payment_type,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber,p.due_amount,p.due_date "
+              + "FROM lms_payment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
+              + "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
+              + " EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)",nativeQuery =true)
+public Page<PaymentStatementResponseDTO> getMonthlyDueList(Pageable pageable);
+
+@Query(value = "SELECT p.payment_id,c.first_name as firstname,p.payment_type,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date "
++ "FROM lms_payment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
++ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
++ " EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND "
++ "( p.payment_type LIKE CONCAT('%', :keyword, '%') OR p.amount_paid LIKE CONCAT('%', :keyword, '%')  OR c.mobile_number LIKE CONCAT('%', :keyword, '%') "
++ "OR c.first_name LIKE CONCAT('%', :keyword, '%') OR ls.loan_account_number LIKE CONCAT('%', :keyword, '%') OR p.amount_status LIKE CONCAT('%', :keyword, '%')"
++ "OR p.due_amount LIKE CONCAT('%', :keyword, '%') OR p.due_date  LIKE CONCAT('%', :keyword, '%'))",nativeQuery =true)
+public Page<PaymentStatementResponseDTO> getMonthlyDueListWithKeyword(Pageable pageable,@Param("keyword")String keyword);
+
+	
 }
 

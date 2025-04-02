@@ -26,8 +26,10 @@ public class LmsPayment {
 	private Long paymentId;
 	private Double dueAmount;
 	private LocalDate dueDate;
-	private String amountPaid;
+	private Double amountPaid;
 	private String amountStatus;
+	private String paymentType;
+	
 	
 	  @ManyToOne
 	  @JoinColumn(name = "disbursment_id")
