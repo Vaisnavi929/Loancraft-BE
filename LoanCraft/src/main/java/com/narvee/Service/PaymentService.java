@@ -21,5 +21,6 @@ public interface PaymentService {
 	 public void generatePayments(Disbursment disbursment);
 	 public List<PaymentStatementDTO> getPaymentStatement(Long disbursmentId) ;
 	 public Page<PaymentStatementResponseDTO> getMonthlyDueList(SortingRequestDto sortingRequestDto);
+	  public void updatePaymentStatusScheduled();
 }
 
