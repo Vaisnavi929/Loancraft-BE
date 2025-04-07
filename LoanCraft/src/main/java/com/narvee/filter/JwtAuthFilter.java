@@ -17,6 +17,8 @@ import com.narvee.config.UserAuthService;
 import com.narvee.repository.BlacklistedTokenRepository;
 import com.narvee.util.JwtUtil;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
