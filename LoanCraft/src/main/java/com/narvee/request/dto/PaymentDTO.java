@@ -3,6 +3,9 @@ package com.narvee.request.dto;
 
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.narvee.entity.Penalty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,9 +21,15 @@ public class PaymentDTO {
     private Long paymentId;
     private Double dueAmount;
     private LocalDate dueDate;
-    private String amountPaid;
+    private Double amountPaid;
     private String amountStatus;
     private Long disbursmentId; 
+	private String paymentType;
+	private Double intrest ;
+	private String paymentmode;
+	private String remarks;
+	private String checkBouns;
+    private List<Penalty> penalty;
 }
 
 

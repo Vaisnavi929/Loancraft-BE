@@ -88,6 +88,16 @@ public class PaymentServiceImpl implements PaymentService{
 		     sortField = "amount_status";
 		else if (sortField.equalsIgnoreCase("dueAmount"))
 		     sortField = "due_amount";
+		else if (sortField.equalsIgnoreCase("paymentType"))
+		     sortField = "payment_type";
+		else if (sortField.equalsIgnoreCase("checkBouns"))
+		     sortField = "check_bouns";
+		else if (sortField.equalsIgnoreCase("intrest"))
+		     sortField = "intrest";
+		else if (sortField.equalsIgnoreCase("paymentmode"))
+		     sortField = "paymentmode";
+		else if (sortField.equalsIgnoreCase("remarks"))
+		     sortField = "remarks";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
