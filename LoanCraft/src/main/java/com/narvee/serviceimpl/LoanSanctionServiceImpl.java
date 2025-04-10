@@ -115,6 +115,10 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		     sortField = "referenceid";
 		else if (sortField.equalsIgnoreCase("status"))
 		     sortField = "status";
+		else if (sortField.equalsIgnoreCase("originationFee"))
+		     sortField = "origination_fee";
+		else if (sortField.equalsIgnoreCase("returnOriginationfee"))
+		     sortField = "return_originationfee";
 		else
 		sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;

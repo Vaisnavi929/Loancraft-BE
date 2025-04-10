@@ -1,4 +1,5 @@
 
+
 package com.narvee.repository;
 
 import java.time.LocalDate;
@@ -62,5 +63,17 @@ public Page<PaymentStatementResponseDTO> getMonthlyDueList(Pageable pageable);
 public Page<PaymentStatementResponseDTO> getMonthlyDueListWithKeyword(Pageable pageable,@Param("keyword")String keyword);
 
 	
+}
+         
+          @Modifying
+  @Transactional
+  @Query(value ="UPDATE lms_payment \r\n"
+  		+ "SET amount_status = CASE \r\n"
+  		+ "    WHEN due_date = CURRENT_DATE AND amount_status NOT IN ('Paid') THEN 'Unpaid'\r\n"
+  		+ "    WHEN due_date = DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) AND amount_status = 'Unpaid' THEN 'Due'\r\n"
+  		+ "    WHEN due_date = DATE_SUB(CURRENT_DATE, INTERVAL 3 DAY) AND amount_status IN ('Unpaid', 'Due') THEN 'Overdue'\r\n"
+  		+ "    ELSE amount_status  \r\n"
+  		+ "END",nativeQuery =true)
+  public int updatePaymentStatus();
 }
 

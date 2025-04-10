@@ -32,5 +32,7 @@ public interface LoanSanctionDTOS {
 	
 	public String getLoanProcessingCharges();
 	
+	public String getLoanAccountNumber();
+	
 
 }

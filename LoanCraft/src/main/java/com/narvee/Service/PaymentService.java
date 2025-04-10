@@ -1,3 +1,4 @@
+
 package com.narvee.Service;
 
 import java.util.List;
@@ -20,10 +21,7 @@ public interface PaymentService {
 	public Boolean deleteById(Long paymentId); 	
 	 public void generatePayments(Disbursment disbursment);
 	 public List<PaymentStatementDTO> getPaymentStatement(Long disbursmentId) ;
-	 
-	 //commented by Laxman
-//	 public List<PaymentStatementResponseDTO> getMonthlyDueList();
-	 
 	 public Page<PaymentStatementResponseDTO> getMonthlyDueList(SortingRequestDto sortingRequestDto);
+	  public void updatePaymentStatusScheduled();
 }
 

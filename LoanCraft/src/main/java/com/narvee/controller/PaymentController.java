@@ -1,3 +1,4 @@
+
 package com.narvee.controller;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import com.narvee.request.dto.PaymentStatementResponseDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/payment")
+@RequestMapping("/api/payment")
 public class PaymentController {
 	
 	private static final Logger logger=LoggerFactory.getLogger(PaymentController.class);
@@ -68,19 +69,10 @@ public class PaymentController {
 	    List<PaymentStatementDTO> statements = paymentService.getPaymentStatement(disbursmentId);
 	    return ResponseEntity.ok(statements);
 	}
-	
-	//commented by Laxman
-//	@GetMapping("/getMonthlyDueList")
-//	public ResponseEntity<List<PaymentStatementResponseDTO>> getMonthlyDueList() {
-//	    List<PaymentStatementResponseDTO> statements = paymentService.getMonthlyDueList();
-//	    return ResponseEntity.ok(statements);
-//	}
-	
-	   @PostMapping("/getMonthlyDueList")
-       public ResponseEntity<Page<PaymentStatementResponseDTO>> getMonthlyDueList(@RequestBody SortingRequestDto sortingRequestDto) {
-           Page<PaymentStatementResponseDTO> statements = paymentService.getMonthlyDueList(sortingRequestDto);
-           return ResponseEntity.ok(statements);
-       }
-
-	
+	@PostMapping("/getMonthlyDueList")
+	public ResponseEntity<Page<PaymentStatementResponseDTO>> getMonthlyDueList(@RequestBody SortingRequestDto sortingRequestDto) {
+	    Page<PaymentStatementResponseDTO> statements = paymentService.getMonthlyDueList(sortingRequestDto);
+	    return ResponseEntity.ok(statements);
+	}
 }
+

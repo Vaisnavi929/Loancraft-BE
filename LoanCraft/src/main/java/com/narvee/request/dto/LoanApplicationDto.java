@@ -65,5 +65,6 @@ public class LoanApplicationDto {
 	@Valid
 	private IdentityProof identityProof;
 
-
+	private String employmentCategory;
+	private String empOthterDeatils;
 }
