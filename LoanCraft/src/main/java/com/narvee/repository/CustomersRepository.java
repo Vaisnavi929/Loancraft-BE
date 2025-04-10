@@ -44,14 +44,14 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 			+ "AND c.dob IS NOT NULL " + " AND c.email IS NOT NULL " + "AND c.fathers_or_spouses_name IS NOT NULL "
 			+ "AND c.first_name IS NOT NULL " + " AND c.gender IS NOT NULL "
 			+ "AND c.highest_qualification IS NOT NULL " + "AND c.last_name IS NOT NULL "
-			+ "AND c.middle_name IS NOT NULL " + "AND c.mobile_number IS NOT NULL " + "AND c.password IS NOT NULL "
+			 + "AND c.mobile_number IS NOT NULL " + "AND c.password IS NOT NULL "
 			+ "AND p.address IS NOT NULL " + "AND p.city IS NOT NULL " + "AND p.state_id IS NOT NULL "
 			+ "AND p.location IS NOT NULL " + "AND p.landmark IS NOT NULL " + "AND p.pincode IS NOT NULL "
 			+ "AND p.stayed_of_years IS NOT NULL " + "AND ca.address IS NOT NULL " + "AND ca.city IS NOT NULL "
 			+ "AND ca.state_id IS NOT NULL " + "AND ca.location IS NOT NULL " + "AND ca.landmark IS NOT NULL "
 			+ "AND ca.pincode IS NOT NULL " + "AND ca.stayed_of_years IS NOT NULL " + "THEN 1 " + "ELSE 0 "
 			+ "END AS eligibility_status " + "FROM lms_customers_info c "
-			+ "LEFT JOIN lms_permanent_adress p ON c.customer_id = p.customer_id "
+			+ "LEFT JOIN lms_permanent_address p ON c.customer_id = p.customer_id "
 			+ "LEFT JOIN lms_current_address ca ON c.customer_id = ca.customer_id "
 			+ "WHERE c.customer_id = :customerId", nativeQuery = true)
 	Long checkEligibility(@Param("customerId") Long customerId);

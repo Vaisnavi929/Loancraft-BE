@@ -19,7 +19,7 @@ import com.narvee.entity.States;
 import com.narvee.request.dto.StateCodeDTO;
 
 @RestController
-@RequestMapping("/api/statecode")
+@RequestMapping("/auth/statecode")
 @CrossOrigin("*")
 public class StatesController {
 	

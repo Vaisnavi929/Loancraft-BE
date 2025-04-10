@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.StateCodeService;
@@ -37,9 +38,8 @@ public class StateCodeServiceimpl implements StateCodeService{
 
 	@Override
 	public List<States> getAll() {
-		return stateCodeRepository.findAll();
+	    return stateCodeRepository.findAll(Sort.by(Sort.Direction.ASC, "state")); // Change "stateName" to your sorting field
 	}
-
 	@Override
 	public boolean deltedById(Long stateId) {
 		stateCodeRepository.deleteById(stateId);

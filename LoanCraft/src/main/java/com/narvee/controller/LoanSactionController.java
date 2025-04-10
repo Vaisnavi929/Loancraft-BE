@@ -19,7 +19,7 @@ import com.narvee.request.dto.LoanSanctionDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/loanSanction")
+@RequestMapping("/auth/loanSanction")
 public class LoanSactionController {
 	Logger logger = LoggerFactory.getLogger(LoanSactionController.class);
 

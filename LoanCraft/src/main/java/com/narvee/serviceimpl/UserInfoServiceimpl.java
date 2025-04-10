@@ -55,7 +55,6 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		UserInfo user = modelMapper.map(userInfodto, UserInfo.class);
 		user.setRoles(lRoles);
 
-		System.err.println("Response" + user);
 		user.setPassword(passwordEncoder.encode("Lms@123$"));
 		UserInfo savedUser = userRepo.save(user);
 		logger.info("User saved successfully with ID: {}", savedUser.getUserId());

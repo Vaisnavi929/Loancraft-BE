@@ -30,6 +30,7 @@ import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Privilege;
 import com.narvee.entity.Roles;
 import com.narvee.entity.UserInfo;
+import com.narvee.exception.UserDoesNotExist;
 import com.narvee.repository.IRolesRepository;
 import com.narvee.repository.UserRepository;
 import com.narvee.request.dto.AuthRequest;
@@ -40,7 +41,7 @@ import com.narvee.util.JwtUtil;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth/")
 public class LoginController {
 	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -64,14 +65,12 @@ public class LoginController {
 
 	@PostMapping("/generateToken")
 	public ResponseEntity<RestAPIResponse> authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws BadCredentialsException {
-		
 		logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken");
 
-		
-	   UserInfo userDetails = repository.findByEmail(authRequest.getUsername()).get();
+		UserInfo userDetails = repository.findByEmail(authRequest.getUsername())
+			    .orElseThrow(() -> new UserDoesNotExist("User does not exist with email: " + authRequest.getUsername()));
+
 		Authentication authentication=null;
-
-
 
 		try {
 			 authentication = authenticationManager.authenticate(
@@ -82,7 +81,12 @@ public class LoginController {
 		} catch (BadCredentialsException e) {
 			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => Invalid Credentials");
 			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed","Invalid Credentials"),HttpStatus.UNAUTHORIZED);
-		} catch (UsernameNotFoundException e) {
+		}
+	 catch (UserDoesNotExist e) {
+		logger.info("!!! inside class: LoginController, !! method: generateJwtToken => UserDoesNotExist");
+		 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed","User does not exist with email: " + authRequest.getUsername()),HttpStatus.NOT_FOUND);
+	}
+		catch (UsernameNotFoundException e) {
 			logger.error("Username not found: {}", authRequest.getUsername());
 			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "User with email " , e), HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
@@ -111,7 +115,6 @@ public class LoginController {
 				});
 				
 			List<String> rolePrivileges = new ArrayList<>();
-			System.err.println("roles data:"+roles);
 			String sb=new String();
 			sb=roles.toString();
 			sb=sb.replace("[", "");

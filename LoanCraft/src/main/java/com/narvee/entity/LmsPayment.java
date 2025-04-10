@@ -1,3 +1,4 @@
+
 package com.narvee.entity;
 
 import java.time.LocalDate;
@@ -46,3 +47,4 @@ public class LmsPayment {
 	 @JoinColumn(name = "penaltyId")
 	 private List<Penalty> penalty;	  
 }
+

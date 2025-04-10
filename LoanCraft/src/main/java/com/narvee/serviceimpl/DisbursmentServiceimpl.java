@@ -46,6 +46,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 	    Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
 	    LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
 	            .orElseThrow(() -> new RuntimeException("Loan Application not found"));
+	    loanSanction.setStatus(disbursmentDTO.getStatus());
 	    disbursment.setLoanSanction(loanSanction);
 	    Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
     paymentService.generatePayments(savedDisbursment);

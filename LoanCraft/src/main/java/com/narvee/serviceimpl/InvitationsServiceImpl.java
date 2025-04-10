@@ -1,7 +1,5 @@
 package com.narvee.serviceimpl;
 
-import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.InvitationsService;
 import com.narvee.entity.Invitations;
-import com.narvee.entity.OtpVerification;
 import com.narvee.repository.InvitationsRepo;
-import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.MailBody;
-import com.narvee.util.OTPGenerator;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -27,6 +22,9 @@ public class InvitationsServiceImpl implements InvitationsService{
 	
 	@Value("${frommail}")
 	private String fromEmail;
+	
+	@Value("${URL}")
+	private String url;
 	
 	@Autowired
 	InvitationsRepo invitationsRepo;
@@ -39,7 +37,7 @@ public class InvitationsServiceImpl implements InvitationsService{
 	    logger.info("!!! inside class : InvitationsServiceImpl , method : saveInvititions");
 	    invitationsRepo.save(invitations);
 
-	    String registrationLink = "http://192.168.0.167/lms/#/register?id="+invitations.getUserId() ;
+	    String registrationLink = url+"/lms/#/register?id="+invitations.getUserId() ;
 
 	    StringBuilder emailContent = new StringBuilder();
 	    emailContent.append("<!DOCTYPE html>")
@@ -58,8 +56,8 @@ public class InvitationsServiceImpl implements InvitationsService{
 
         // Content
         .append("<tr><td style=\"padding: 30px;\">")
-        .append("<p style=\"font-size: 18px; font-weight: bold; color: #333; margin: 0;\">Hello, ").append(invitations.getName()).append(",</p>")
-        .append("<p style=\"font-size: 16px; color: #555;\">Thank you for providing your details. You're just one step away from completing your application. Please click the link below to proceed:</p>")
+        .append("<p style=\"font-size: 18px; font-weight: bold; color: #333; margin: 0;\">Hi ").append(invitations.getName()).append(",</p>")
+        .append("<p style=\"font-size: 16px; color: #555;\">Thank you for providing your details. You're just one step away from completing your Loan application. Please click the link below to proceed:</p>")
 
         // Centered Button
         .append("<table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\" style=\"margin: 20px 0;\">")
@@ -70,7 +68,7 @@ public class InvitationsServiceImpl implements InvitationsService{
 
         .append("<p style=\"font-size: 14px; color: #777; text-align: left;\">If you did not request this, you can safely ignore this email.</p>")
         .append("<p style=\"font-size: 14px; font-weight: bold; color: #555; text-align: left;\">Best regards,</p>")
-        .append("<p style=\"margin: 0; font-size: 14px; color: #333; text-align: left;\">Your Company Name</p>")
+        .append("<p style=\"margin: 0; font-size: 14px; color: #333; text-align: left;\">Narvee Tech Inc</p>")
 
         .append("</td></tr>")
         .append("</table>")
@@ -98,5 +96,7 @@ public class InvitationsServiceImpl implements InvitationsService{
     helper.setText(mailBody.getText(), true);
 
     mailSender.send(message);
+    
+    logger.info("!!! inside class : InvitationsServiceImpl ,---> Email sent");
    }
 }
