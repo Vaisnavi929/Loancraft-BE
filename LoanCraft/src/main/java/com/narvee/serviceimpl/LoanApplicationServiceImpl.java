@@ -210,3 +210,10 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		applicationRepository.save(loanApplication);
 	}
 }
+
+
+
+
+
+
+
