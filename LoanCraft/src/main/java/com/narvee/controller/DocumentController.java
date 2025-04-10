@@ -30,7 +30,7 @@ import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.util.EncryptionUtil;
 @RestController
-@RequestMapping("/api/documents")
+@RequestMapping("/auth/documents")
 public class DocumentController {
 
 	@Autowired

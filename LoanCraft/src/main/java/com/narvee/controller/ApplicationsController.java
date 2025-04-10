@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/app")
+@RequestMapping("/auth/app")
 public class ApplicationsController {
 	public static final Logger logger = LoggerFactory.getLogger(ApplicationsController.class);
 
@@ -112,10 +112,9 @@ public class ApplicationsController {
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
+				new RestAPIResponse("success", "successfully fetched laonapplication with searching",
 						applicationService.getAllLoanApplicationPagination(sortingRequestDto)),
 				HttpStatus.OK);
-
 	}
 
 	@RequestMapping(value = "/getAllApporved", method = RequestMethod.POST, produces = "application/json")

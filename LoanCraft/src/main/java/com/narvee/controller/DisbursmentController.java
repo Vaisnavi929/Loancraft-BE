@@ -19,7 +19,7 @@ import com.narvee.request.dto.DisbursmentDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/disbursment")
+@RequestMapping("/auth/disbursment")
 public class DisbursmentController {
 	
 	private static final Logger logger=LoggerFactory.getLogger(DisbursmentController.class);

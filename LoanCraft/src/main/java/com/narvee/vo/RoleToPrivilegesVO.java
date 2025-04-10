@@ -1,5 +1,7 @@
 package com.narvee.vo;
 
+
+
 import java.util.List;
 
 import lombok.AllArgsConstructor;
