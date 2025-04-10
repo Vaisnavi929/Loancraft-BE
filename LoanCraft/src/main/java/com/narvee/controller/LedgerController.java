@@ -19,7 +19,7 @@ import com.narvee.request.dto.LedgerDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/ledger")
+@RequestMapping("/auth/ledger")
 public class LedgerController {
 	
 	public static final Logger logger=LoggerFactory.getLogger(LedgerController.class);

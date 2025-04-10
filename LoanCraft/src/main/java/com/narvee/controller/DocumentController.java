@@ -19,7 +19,7 @@ import com.narvee.entity.Document;
 
 
 @RestController
-@RequestMapping("/api/documents")
+@RequestMapping("/auth/documents")
 public class DocumentController {
 
     @Autowired

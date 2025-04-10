@@ -18,7 +18,7 @@ import com.narvee.entity.Invitations;
 import jakarta.mail.MessagingException;
 
 @RestController
-@RequestMapping("/api/invitations")
+@RequestMapping("/auth/invitations")
 @CrossOrigin("*")
 public class InvitationsController {
 	

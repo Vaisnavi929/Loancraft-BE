@@ -1,4 +1,4 @@
-package com.narvee.repository;
+package com.narvee.request.dto;
 
 public interface RolesDTO {
 

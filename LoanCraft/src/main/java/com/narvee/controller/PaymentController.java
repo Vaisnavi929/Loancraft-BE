@@ -26,7 +26,7 @@ import com.narvee.request.dto.PaymentStatementResponseDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/payment")
+@RequestMapping("/auth/payment")
 public class PaymentController {
 	
 	private static final Logger logger=LoggerFactory.getLogger(PaymentController.class);

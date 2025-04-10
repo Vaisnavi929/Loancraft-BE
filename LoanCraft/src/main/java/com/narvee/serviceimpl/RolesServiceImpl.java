@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import com.narvee.Service.IRolesService;
 import com.narvee.entity.Roles;
 import com.narvee.repository.IRolesRepository;
-import com.narvee.repository.RolesDTO;
 import com.narvee.request.dto.RequestDTO;
+import com.narvee.request.dto.RolesDTO;
 
 @Service
 public class RolesServiceImpl implements IRolesService {

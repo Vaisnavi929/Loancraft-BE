@@ -183,6 +183,20 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 									singlePrivilege.getCardType()));
 							privilegeVO.setReceivables(receivables);
 						}
+						
+			// currentDues			
+						if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CURRENTDUES.name())) {
+							currentDues.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+									singlePrivilege.getCardType()));
+							privilegeVO.setCurrentDues(currentDues);
+						}
+						
+						// currentDues			
+						if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.RECEIVABLE.name())) {
+							receivable.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+									singlePrivilege.getCardType()));
+							privilegeVO.setReceivable(receivable);
+						}
 		
 		}
 

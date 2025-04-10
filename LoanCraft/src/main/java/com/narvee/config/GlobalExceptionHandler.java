@@ -9,6 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.narvee.exception.CustomAuthenticationException;
 import com.narvee.exception.ErrorResponse;
@@ -42,4 +43,14 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
+	
+	
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<ErrorResponse> NoResourceFoundException(NoResourceFoundException ex) {
+		ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+	}
+	
+	
+	
 }

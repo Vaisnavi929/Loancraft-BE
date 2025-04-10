@@ -27,7 +27,7 @@ import com.narvee.util.EncryptionUtil;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/auth/customer")
 @CrossOrigin("*")
 public class CustomersController {
 

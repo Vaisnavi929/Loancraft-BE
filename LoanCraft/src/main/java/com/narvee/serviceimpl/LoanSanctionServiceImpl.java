@@ -105,12 +105,14 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice{
 		     sortField = "number_of_emis";
 		else if (sortField.equalsIgnoreCase("emiAmount"))
 		     sortField = "emi_amount";
-		else if (sortField.equalsIgnoreCase("interest_type"))
+		else if (sortField.equalsIgnoreCase("interestType"))
 		     sortField = "interest_type";   
 		else if (sortField.equalsIgnoreCase("repaymentMode"))
 		     sortField = "repayment_mode";
 		else if (sortField.equalsIgnoreCase("createddate"))
 		     sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("referenceid"))
+		     sortField = "referenceid";
 		else if (sortField.equalsIgnoreCase("status"))
 		     sortField = "status";
 		else

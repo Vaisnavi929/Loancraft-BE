@@ -1,6 +1,6 @@
 package com.narvee.util;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -17,70 +17,35 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-//	private SecretKey secretKey = Keys.hmacShaKeyFor(
-//			"afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf"
-//					.getBytes());
-	
-	  @Value("${jwt.secret}")
-		private String jwtSecret;
-	  
-	  private SecretKey getSigningKey() {
-	        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-	    }
 
-    public String generateToken(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
-    }
-	 
-//	public String extractUsername(String token) {
-//		return extractClaim(token, Claims::getSubject);
-//	}
-//
-//	public Date extractExpiration(String token) {
-//		return extractClaim(token, Claims::getExpiration);
-//	}
-//
-//	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-//		final Claims claims = extractAllClaims(token);
-//		return claimsResolver.apply(claims);
-//	}
-//
-//	private Claims extractAllClaims(String token) {
-//		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
-//	}
-//
-//	private boolean isTokenExpired(String token) {
-//		return extractExpiration(token).before(new Date());
-//	}
-//
-//	public boolean validateToken(String token, UserDetails userDetails) {
-//		final String username = extractUsername(token);
-//		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-//	}
+	@Value("${jwt.secret}")
+	private String jwtSecret;
 
-    
-    public String extractUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+	private SecretKey getSigningKey() {
+		byte[] decodedKey = Base64.getDecoder().decode(jwtSecret);
+		return Keys.hmacShaKeyFor(decodedKey);
+	}
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Token has expired");
-        } catch (JwtException e) {
-            throw new RuntimeException("Invalid token");
-        }
-    }
+	public String generateToken(String username) {
+		return Jwts.builder().setSubject(username).setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+				.signWith(getSigningKey(), SignatureAlgorithm.HS512).compact();
+	}
+
+
+
+	public String extractUsername(String token) {
+		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody().getSubject();
+	}
+
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+			return true;
+		} catch (ExpiredJwtException e) {
+			throw new RuntimeException("Token has expired");
+		} catch (JwtException e) {
+			throw new RuntimeException("Invalid token");
+		}
+	}
 }
