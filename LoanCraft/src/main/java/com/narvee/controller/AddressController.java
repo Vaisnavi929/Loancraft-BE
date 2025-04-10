@@ -18,7 +18,7 @@ import com.narvee.request.dto.AddressUpdateRequest;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/address")
+@RequestMapping("/auth/address")
 public class AddressController {
 
 	public static final Logger logger = LoggerFactory.getLogger(AddressController.class);

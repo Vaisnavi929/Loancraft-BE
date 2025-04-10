@@ -10,43 +10,46 @@ import org.springframework.stereotype.Component;
 import com.narvee.request.dto.EmiCalResponseDTO;
 import com.narvee.request.dto.EmiDatesDTO;
 import com.narvee.request.dto.RepaymentScheduleRequest;
-
 @Component
 public class EmiCalculatorUtill {
 
 	public static EmiCalResponseDTO calculateRepaymentSchedule(RepaymentScheduleRequest request) {
-		Double principal = request.getLoanAmount(); // Total loan amount
-		Double annualRate = request.getAnnualInterestRate(); // Annual interest rate
-		Integer months = request.getInstallmentTenor(); // Total number of installments
+		Double principal = request.getLoanAmount();
+		Double annualRate = request.getAnnualInterestRate(); 
+		Integer months = request.getInstallmentTenor();
+		LocalDate startDate = request.getStartDate().toLocalDate(); 
 
-		// Convert annual rate to monthly rate
+		
 		Double monthlyRate = annualRate / 12 / 100;
 
-		// Calculate fixed EMI (Equated Monthly Installment)
+		                                 
 		Double emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months))
 				/ (Math.pow(1 + monthlyRate, months) - 1);
 
 		List<RepaymentSchedule> scheduleList = new ArrayList<>();
-		Double outstanding = principal; // Initial outstanding loan amount
+		Double outstanding = principal;
 
 		for (int i = 0; i < months; i++) {
-			Double interest = outstanding * monthlyRate; // Interest for the current period
-			Double principalRepaid = emi - interest; // Principal repaid in this period
-			Double prevOutstanding = outstanding; // Store current outstanding before deducting principal
+			Double interest = outstanding * monthlyRate;
+			Double principalRepaid = emi - interest; 
+			Double prevOutstanding = outstanding;
 
-			outstanding -= principalRepaid; // Update remaining outstanding principal after repayment
+			
+			
+			
+			
+			
+			
+			outstanding -= principalRepaid;
 
 			RepaymentSchedule schedule = new RepaymentSchedule();
+			schedule.setOutstanding(Math.round(prevOutstanding));
+			schedule.setInstallment(Math.round(emi));
+			schedule.setInterest(Math.round(interest));
+			schedule.setPrincipalRepaid(Math.round(principalRepaid));
+			schedule.setRemainingPrincipalAmount(Math.max(0, Math.round(outstanding)));
+			schedule.setDueDate(startDate.plusMonths(i));
 
-			// Set the values before reducing the outstanding amount
-			schedule.setOutstanding(Math.round(prevOutstanding)); // Outstanding at the start of the period (before
-																	// repayment)
-			schedule.setInstallment(Math.round(emi)); // Fixed installment (EMI)
-			schedule.setInterest(Math.round(interest)); // Interest paid for this period
-			schedule.setPrincipalRepaid(Math.round(principalRepaid)); // Principal repaid for this period
-			schedule.setRemainingPrincipalAmount(Math.max(0, Math.round(outstanding))); // Remaining principal, ensuring
-																						// no negative values
-			schedule.setDueDate(LocalDate.now().plusMonths(i + 1)); // Setting due date for installment
 			scheduleList.add(schedule);
 		}
 
@@ -67,5 +70,4 @@ public class EmiCalculatorUtill {
 		emiResponse.setEmiDates(emiDates);
 		return emiResponse;
 	}
-
 }

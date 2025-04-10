@@ -33,7 +33,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class LoanApplicationServiceImpl implements ApplicationsService {
 
-	public static final Logger logger = LoggerFactory.getLogger(CustomerS.class);
+	public static final Logger logger = LoggerFactory.getLogger(LoanApplicationServiceImpl.class);
 
 	@Autowired
 	private ApplicationsRepository applicationRepository;
@@ -112,7 +112,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Applications loan = mapper.map(loanApplication, Applications.class);
 		Applications applications = applicationRepository.save(loan);
 		LoanApplicationUpdateDto applicationUpdateDto = mapper.map(applications, LoanApplicationUpdateDto.class);
-		
+
 		return applicationUpdateDto;
 	}
 
@@ -129,7 +129,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-		
+
 		if (sortField.equalsIgnoreCase("firstName"))
 			sortField = "first_name";
 		else if (sortField.equalsIgnoreCase("lastName"))
@@ -139,9 +139,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-		     sortField = "createddate";
+			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-		     sortField = "a.status";
+			sortField = "a.status";
 		else
 			sortField = "updateddate";
 
@@ -166,7 +166,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
-        String status=sortingRequestDto.getStatus();
+		String status = sortingRequestDto.getStatus();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
 		if (sortField.equalsIgnoreCase("firstName"))
@@ -178,9 +178,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-		     sortField = "createddate";
+			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-		     sortField = "a.status";
+			sortField = "a.status";
 		else
 			sortField = "updateddate";
 
@@ -197,7 +197,6 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword, status);
 
-
 		}
 	}
 
@@ -211,3 +210,10 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		applicationRepository.save(loanApplication);
 	}
 }
+
+
+
+
+
+
+

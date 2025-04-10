@@ -27,7 +27,7 @@ import com.narvee.request.dto.CustomerEmailDTo;
 import jakarta.mail.MessagingException;
 
 @RestController
-@RequestMapping("/api/otp")
+@RequestMapping("/auth/otp")
 @CrossOrigin("*")
 public class EmailOtpController {
 

@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.IRolesService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Roles;
-import com.narvee.repository.RolesDTO;
 import com.narvee.request.dto.RequestDTO;
+import com.narvee.request.dto.RolesDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/roles")
+@RequestMapping("/auth/roles")
 public class RolesController {
 	public static final Logger logger = LoggerFactory.getLogger(RolesController.class);
 

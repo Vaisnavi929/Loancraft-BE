@@ -70,6 +70,12 @@ public class Applications extends AuditModel {
 
 	@Column(name = "updatedby")
 	private String updatedBy;
+	
+	@Column(name = "emp_othter_deatils")
+	private String empOthterDeatils;
+	
+	@Column(name = "employment_category")
+	private String employmentCategory;
 
 	@ManyToOne
 	@JoinColumn(name = "customerId")

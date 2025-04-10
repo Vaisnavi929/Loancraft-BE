@@ -75,6 +75,10 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> rejected = new ArrayList<DropdownVO>();
 		
 		List<DropdownVO> receivables = new ArrayList<DropdownVO>();
+		
+		List<DropdownVO> currentDues = new ArrayList<DropdownVO>();
+		
+		List<DropdownVO> receivable = new ArrayList<DropdownVO>();
 
 		List<Privilege> privileges = privRepo.findAll();
 
@@ -178,6 +182,20 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 							receivables.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
 									singlePrivilege.getCardType()));
 							privilegeVO.setReceivables(receivables);
+						}
+						
+			// currentDues			
+						if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CURRENTDUES.name())) {
+							currentDues.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+									singlePrivilege.getCardType()));
+							privilegeVO.setCurrentDues(currentDues);
+						}
+						
+						// currentDues			
+						if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.RECEIVABLE.name())) {
+							receivable.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+									singlePrivilege.getCardType()));
+							privilegeVO.setReceivable(receivable);
 						}
 		
 		}

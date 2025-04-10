@@ -13,7 +13,7 @@ import com.narvee.request.dto.RepaymentScheduleRequest;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class RepaymentScheduleController {
 
 	@PostMapping("/calculateschedule")

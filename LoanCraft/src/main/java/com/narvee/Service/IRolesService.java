@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.narvee.entity.Roles;
-import com.narvee.repository.RolesDTO;
 import com.narvee.request.dto.RequestDTO;
+import com.narvee.request.dto.RolesDTO;
 
 public interface IRolesService {
 	

@@ -24,7 +24,7 @@ import com.narvee.vo.RoleToPrivilegesVO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/priviliges")
+@RequestMapping("/auth/priviliges")
 public class PriviliagesController {
 
 	private static final Logger logger = LoggerFactory.getLogger(PriviliagesController.class);

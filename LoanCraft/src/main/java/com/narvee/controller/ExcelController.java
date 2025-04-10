@@ -15,7 +15,7 @@ import com.narvee.Service.GeneratexcelService;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/excel")
+@RequestMapping("/auth/excel")
 public class ExcelController {
 
 	@Autowired

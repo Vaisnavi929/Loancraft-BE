@@ -8,10 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.Roles;
-
+import com.narvee.request.dto.RolesDTO;
+@EnableJpaRepositories
 public interface IRolesRepository extends JpaRepository<Roles, Serializable> {
 
 	@Query(value = "select role_name from lms_roles WHERE role_name=:roleName", nativeQuery = true)
@@ -21,15 +23,29 @@ public interface IRolesRepository extends JpaRepository<Roles, Serializable> {
 
 	public Optional<Roles> findByRoleNameIgnoreCase(String rolename);
 
-	@Query(value = "SELECT r.role_Id,r.role_Name,r.description ,uf.name as addedby ,ufu.name as updatedby, date(r.createddate) as createddate ,date(r.updateddate) as updateddate  FROM lms_roles  r "
-			+ "    left join lms_user_info  uf on  uf.user_id=r.addedby"
-			+ "    left join lms_user_info  ufu on  ufu.user_id=r.updatedby", nativeQuery = true)
+	@Query(value = "SELECT r.role_id,r.role_name,r.description,uf.name AS addedby,ufu.name AS updatedby, DATE(r.createddate) AS createddate, \r\n"
+			+ "DATE(r.updateddate) AS updateddate  FROM lms_roles r LEFT JOIN lms_user_info uf ON uf.user_id = r.addedby\r\n"
+			+ "LEFT JOIN lms_user_info ufu ON ufu.user_id = r.updatedby", nativeQuery = true)
 	public Page<RolesDTO> getAllRoles(Pageable pageable);
 	
-	@Query(value = "SELECT r.role_Id,r.role_Name,r.description ,uf.name as addedby ,ufu.name as updatedby, date(r.createddate) as createddate ,date(r.updateddate) as updateddate  FROM lms_roles  r "
-			+ "    left join lms_user_info  uf on  uf.user_id=r.addedby "
-			+ "    left join lms_user_info  ufu on  ufu.user_id=r.updatedby WHERE  r.role_Name LIKE CONCAT('%',:keyword, '%')  OR date(r.createddate) LIKE CONCAT('%',:keyword, '%')  OR r.description LIKE CONCAT('%',:keyword, '%') "
-			+ "    OR uf.name LIKE CONCAT('%',:keyword, '%') OR ufu.name LIKE CONCAT('%',:keyword, '%')", nativeQuery = true)
+	@Query(value = "SELECT \r\n"
+			+ "    r.role_Id,\r\n"
+			+ "    r.role_Name,\r\n"
+			+ "    r.description,\r\n"
+			+ "    uf.name AS addedby,\r\n"
+			+ "    ufu.name AS updatedby,\r\n"
+			+ "    r.createddate::DATE AS createddate,\r\n"
+			+ "    r.updateddate::DATE AS updateddate  \r\n"
+			+ "FROM lms_roles r\r\n"
+			+ "LEFT JOIN lms_user_info uf ON uf.user_id = r.addedby\r\n"
+			+ "LEFT JOIN lms_user_info ufu ON ufu.user_id = r.updatedby\r\n"
+			+ "WHERE \r\n"
+			+ "    r.role_Name ILIKE '%' || :keyword || '%'\r\n"
+			+ "    OR r.createddate::TEXT ILIKE '%' || :keyword || '%'\r\n"
+			+ "    OR r.description ILIKE '%' || :keyword || '%'\r\n"
+			+ "    OR uf.name ILIKE '%' || :keyword || '%'\r\n"
+			+ "    OR ufu.name ILIKE '%' || :keyword || '%' "
+			+ "", nativeQuery = true)
 	public Page<RolesDTO> getAllRolesWithFilter(Pageable pageable, String keyword );
 
 }
