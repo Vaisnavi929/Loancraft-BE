@@ -20,6 +20,9 @@ public class JwtUtil {
 
 	@Value("${jwt.secret}")
 	private String jwtSecret;
+	
+	@Value("${jwt.token.validity}")
+	private int tokenValidity;
 
 	private SecretKey getSigningKey() {
 		byte[] decodedKey = Base64.getDecoder().decode(jwtSecret);
@@ -28,7 +31,7 @@ public class JwtUtil {
 
 	public String generateToken(String username) {
 		return Jwts.builder().setSubject(username).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+				.setExpiration(new Date(System.currentTimeMillis() + tokenValidity ))
 				.signWith(getSigningKey(), SignatureAlgorithm.HS512).compact();
 	}
 

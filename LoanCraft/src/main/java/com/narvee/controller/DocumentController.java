@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -56,7 +57,10 @@ public class DocumentController {
 		return documentService.getByDocumentId(id);
     	
     }
-    private static final String UPLOAD_DIR = "C:\\FileUploads";
+
+    @Value("AppFilesDir")
+    private String UPLOAD_DIR ;
+
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
             @RequestParam("file") MultipartFile file,
@@ -88,6 +92,7 @@ public class DocumentController {
 
             doc.setFileName(formattedFileName);
             doc.setFileType(file.getContentType());
+
 
             doc.setLoanApplication(loanApp);
             documentRepository.save(doc);
