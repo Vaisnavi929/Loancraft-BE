@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name="lmsDocument")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Document {
@@ -29,14 +31,12 @@ public class Document {
 	    private String fileName;
 
 	    private String fileType;
-	    @Lob
-	    @Column(columnDefinition = "LONGBLOB") // ✅ Use LONGBLOB for large files
-	    private byte[] data;
+
 	    @ManyToOne
 	    @JoinColumn(name = "loanId")
 	    @JsonIgnore
 	    private Applications loanApplication; 
 
 	     
-    }
+    }   
 

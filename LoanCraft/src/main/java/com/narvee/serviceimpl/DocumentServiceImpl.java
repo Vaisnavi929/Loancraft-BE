@@ -28,7 +28,6 @@ public class DocumentServiceImpl implements DocumentService {
         Document document = new Document();
         document.setFileName(file.getOriginalFilename());
         document.setFileType(file.getContentType());
-        document.setData(file.getBytes());
         document.setLoanApplication(loanApplication); 
         return documentRepository.save(document);
     }

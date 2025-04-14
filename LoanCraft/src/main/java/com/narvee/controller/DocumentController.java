@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -28,9 +29,8 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
-import com.narvee.util.EncryptionUtil;
 @RestController
-@RequestMapping("/auth/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
 
 	@Autowired
@@ -57,40 +57,48 @@ public class DocumentController {
     	
     }
     private static final String UPLOAD_DIR = "C:\\FileUploads";
-
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("customerId") long customerId,
+            @RequestParam("customerId") String customerId,
             @RequestParam("documentType") String documentType,
-            @RequestParam("loanId") Long loanId 
-    ) {
+            @RequestParam("loanId") Long loanId) {
         try {         
-            String encryptedCustomerId = EncryptionUtil.encrypt(customerId);           
             String originalFilename = file.getOriginalFilename();
-            String formattedFileName = documentType.toLowerCase() + "-" + encryptedCustomerId + "_" + originalFilename;
+            String formattedFileName = documentType.toLowerCase() + "-" + customerId + "_" + originalFilename;
+            
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
+
             File destinationFile = Paths.get(UPLOAD_DIR, formattedFileName).toFile();
             try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
                 fos.write(file.getBytes());
             }
+
             Applications loanApp = applicationsRepository.findById(loanId)
                     .orElseThrow(() -> new RuntimeException("Loan not found"));
+
             Document doc = new Document();
+            byte[] fileBytes = file.getBytes();
+
+            // Logging the type of fileBytes for debugging
+            System.out.println("File bytes type: " + fileBytes.getClass().getName());
+
             doc.setFileName(formattedFileName);
-            doc.setFileType(file.getContentType());  
-            doc.setData(file.getBytes());
+            doc.setFileType(file.getContentType());
+
             doc.setLoanApplication(loanApp);
             documentRepository.save(doc);
+
             return ResponseEntity.ok("File uploaded and stored in DB: " + formattedFileName);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
-    }   
+    }
+
     @GetMapping("/download-file/{id}")
     public ResponseEntity<Resource> downloadFileFromDisk(@PathVariable Long id) {
         try {     
@@ -135,6 +143,36 @@ public class DocumentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while deleting file: " + e.getMessage());
         }
     }
+    @GetMapping("/verify-document/{id}")
+    public ResponseEntity<String> verifyDocument(@PathVariable Long id) {
+        try {
+            Optional<Document> optionalDoc = documentRepository.findById(id);
 
+            if (optionalDoc.isPresent()) {
+                Document doc = optionalDoc.get();
+
+                // Check if file exists on disk
+                Path filePath = Paths.get(UPLOAD_DIR).resolve(doc.getFileName()).normalize();
+                File file = filePath.toFile();
+
+                if (!file.exists()) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body("Document metadata exists in DB, but file is missing on disk.");
+                }
+
+                // You can add more custom validations here
+                return ResponseEntity.ok("Document verified successfully. File exists on disk and is linked to loan ID: " +
+                        doc.getLoanApplication().getLoanId());
+
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No document found with ID: " + id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error verifying document: " + e.getMessage());
+        }
+    }
 
 }
