@@ -31,7 +31,7 @@ import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 @RestController
-@RequestMapping("/api/documents")
+@RequestMapping("/auth/documents")
 public class DocumentController {
 
 	@Autowired
