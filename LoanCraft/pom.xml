@@ -66,6 +66,10 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.3</version> <!-- or any latest version -->
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

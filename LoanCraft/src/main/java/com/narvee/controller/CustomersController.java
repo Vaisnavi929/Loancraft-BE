@@ -180,6 +180,5 @@ public class CustomersController {
 		}
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
-
 	}
 }

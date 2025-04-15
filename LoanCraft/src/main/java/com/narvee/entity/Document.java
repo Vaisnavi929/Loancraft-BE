@@ -28,6 +28,10 @@ public class Document {
 
 	private String fileType;
 	
+	private Boolean verified;
+	
+	private String remarks;
+	
 	@ManyToOne
 	@JoinColumn(name = "loanId")
 	@JsonIgnore
