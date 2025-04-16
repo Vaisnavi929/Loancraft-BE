@@ -6,10 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +32,7 @@ import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 @RestController
-@RequestMapping("/auth/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
 
 	@Autowired
@@ -57,10 +58,7 @@ public class DocumentController {
 		return documentService.getByDocumentId(id);
     	
     }
-
-    @Value("AppFilesDir")
-    private String UPLOAD_DIR ;
-
+    private static final String UPLOAD_DIR = "C:\\FileUploads";
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
             @RequestParam("file") MultipartFile file,
@@ -92,7 +90,6 @@ public class DocumentController {
 
             doc.setFileName(formattedFileName);
             doc.setFileType(file.getContentType());
-
 
             doc.setLoanApplication(loanApp);
             documentRepository.save(doc);
@@ -177,6 +174,90 @@ public class DocumentController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error verifying document: " + e.getMessage());
+        }
+    }
+    
+    @PostMapping("/upload-documents")
+    public ResponseEntity<String> uploadDocuments(
+            @RequestParam(value = "pan", required = false) MultipartFile panFile,
+            @RequestParam(value = "aadhaar", required = false) MultipartFile aadhaarFile,
+            @RequestParam(value = "bankStatements", required = false) List<MultipartFile> bankStatementFiles,
+            @RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
+            @RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
+            @RequestParam("customerId") String customerId,
+            @RequestParam("loanId") Long loanId) {
+
+        StringBuilder result = new StringBuilder();
+
+        try {
+            Applications loanApp = applicationsRepository.findById(loanId)
+                    .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+            File uploadDir = new File(UPLOAD_DIR);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            // Helper method to save file with custom name
+            BiConsumer<MultipartFile, String> processFile = (file, docType) -> {
+                try {
+                    if (file == null || file.isEmpty()) return;
+
+                    String originalFilename = file.getOriginalFilename();
+                    String formattedFileName = docType + "-" + customerId + "_" + originalFilename;
+
+                    File destinationFile = Paths.get(UPLOAD_DIR, formattedFileName).toFile();
+                    try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
+                        fos.write(file.getBytes());
+                    }
+
+                    Document doc = new Document();
+                    doc.setFileName(formattedFileName);
+                    doc.setFileType(file.getContentType());
+                    doc.setLoanApplication(loanApp);
+
+                    documentRepository.save(doc);
+                    result.append("Uploaded: ").append(formattedFileName).append("\n");
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    result.append("Failed to upload file: ").append(file.getOriginalFilename()).append("\n");
+                }
+            };
+
+            // Process optional single files
+            processFile.accept(panFile, "pan");
+            processFile.accept(aadhaarFile, "aadhaar");
+
+            // Process optional multiple bank statements
+            if (bankStatementFiles != null) {
+                int bankIndex = 1;
+                for (MultipartFile bankFile : bankStatementFiles) {
+                    processFile.accept(bankFile, "bankstatement" + bankIndex++);
+                }
+            }
+
+            // Process optional multiple payslips
+            if (payslipFiles != null) {
+                int payslipIndex = 1;
+                for (MultipartFile payslipFile : payslipFiles) {
+                    processFile.accept(payslipFile, "payslip" + payslipIndex++);
+                }
+            }
+
+            // Process optional multiple other documents
+            if (otherFiles != null) {
+                int otherIndex = 1;
+                for (MultipartFile otherFile : otherFiles) {
+                    processFile.accept(otherFile, "other" + otherIndex++);
+                }
+            }
+
+            return ResponseEntity.ok("Document Upload Summary:\n" + result.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
     }
 

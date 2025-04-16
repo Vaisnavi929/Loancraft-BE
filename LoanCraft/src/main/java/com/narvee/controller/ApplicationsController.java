@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/app")
+@RequestMapping("/api/app")
 public class ApplicationsController {
 	public static final Logger logger = LoggerFactory.getLogger(ApplicationsController.class);
 
