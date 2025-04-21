@@ -40,7 +40,7 @@ public class SecurityConfig {
 			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
 			"/api/test/**", "/authenticate", "/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken",
 			"/api/auth/login", "/api/auth/logout", "/api/excel/upload", "/api/app/save", "/api/app/get",
-			"/api/app/save", "/api/**" };
+			"/api/app/save", "/api/**" ,"/auth/customer/check-email/{email}" ,"/auth/otp/send-otp" ,"/auth/otp/verify-otp/{otp}","/auth/customer/save"};
 
 	@Autowired
 	private JwtAuthFilter authFilter;

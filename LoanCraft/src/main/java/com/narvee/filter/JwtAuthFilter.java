@@ -1,6 +1,7 @@
 package com.narvee.filter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -48,16 +49,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		System.out.println("DDDDD"+authHeader1);
 		
 		String requestURI = request.getRequestURI();
+		
 
 		// Define API paths that do not require authentication
 		Set<String> allowedPaths = Set.of("/api/app/get", "/api/app/save", "/auth/customer/register",
 				"/auth/emp/register", "/api/Emp/login", "/api/Cust/login", "/api/auth/logout", "/api/forgot-password",
-				"/swagger-ui/index.html", "/api/ucrf/convertUrcfFormat");
+				"/swagger-ui/index.html", "/api/ucrf/convertUrcfFormat" ,"/auth/customer/save","/auth/customer/check-email");
+		
+		List<String> allowedPrefixPaths = List.of(
+			    "/auth/customer/check-email","/auth/otp/send-otp","/auth/otp/verify-otp" // Add trailing slash for prefix match
+			);
 
-		if (allowedPaths.contains(requestURI) || requestURI.startsWith("/api/")) {
+			boolean isAllowed = allowedPaths.contains(requestURI) || 
+			                    allowedPrefixPaths.stream().anyMatch(requestURI::startsWith) || 
+			                    requestURI.startsWith("/api/");
+		
+
+		if (isAllowed) {
 			filterChain.doFilter(request, response);
 			return;
 		}
+		
+		System.err.println("0000000000000000000000");
 		// Extract token from Authorization header
 		String authHeader = request.getHeader("Authorization");
 		System.out.println("yy"+authHeader);
