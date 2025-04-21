@@ -12,4 +12,5 @@ public Document saveDocument(MultipartFile file,Long loanId) throws IOException;
 
 public Document getByDocumentId(Long id);
 
+public boolean updateDocVerified(Long id,Boolean value);
 }

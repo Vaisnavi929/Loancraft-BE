@@ -37,6 +37,14 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		return documentRepository.findById(id).get();
 	}
+
+	@Override
+	public boolean updateDocVerified(Long id, Boolean value) {
+		
+		 int updatedCount = documentRepository.updateReviewed(id, value);
+
+		    return updatedCount > 0;
+	}
     
    
 }

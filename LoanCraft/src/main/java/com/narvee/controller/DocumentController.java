@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -22,11 +21,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.narvee.Service.DocumentService;
+import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
@@ -259,6 +260,10 @@ public class DocumentController {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
-    }
-
-}
+    } 
+    @RequestMapping(value ="/updateDocVerified/{id}",method=RequestMethod.POST,produces="application/json")
+	public ResponseEntity<RestAPIResponse> updateDocVerified(Long id, Boolean value){		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update DocVerified  ", documentService.updateDocVerified(id, value)), HttpStatus.OK);
+		
+	}
+   }

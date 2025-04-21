@@ -130,7 +130,7 @@ public class ApplicationsController {
 
 	@RequestMapping(value = "/updatestatus", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateLoanStatusWithRemarks(@RequestBody LoanStatusUpdateRequest request) {
-		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks());
+		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks(),request.getCbilScore());
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Loan status updated successfully! "),
 				HttpStatus.OK);
 
