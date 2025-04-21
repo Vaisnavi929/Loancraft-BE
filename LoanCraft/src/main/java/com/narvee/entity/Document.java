@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name="lmsDocument")
+@Table(name = "lmsDocument")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Document {
@@ -27,18 +27,19 @@ public class Document {
 	private String fileName;
 
 	private String fileType;
-	
-	private Boolean verified;
-	
+
+	private Boolean docVerified;
+
 	private String remarks;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "loanId")
 	@JsonIgnore
 	private Applications loanApplication;
 
+	@ManyToOne
+	@JoinColumn(name = "verificationId")
+    @JsonIgnore
+	private Verification verification;
 
-	     
-    }   
-
-
+}

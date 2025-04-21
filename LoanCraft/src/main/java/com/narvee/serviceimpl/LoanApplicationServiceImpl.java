@@ -20,8 +20,10 @@ import com.narvee.Service.SortingRequestDto;
 import com.narvee.config.MapperConfig;
 import com.narvee.entity.Applications;
 import com.narvee.entity.CustomersInfo;
+import com.narvee.entity.Verification;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.repository.VerificationRepository;
 import com.narvee.request.dto.ApplicationDTO;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
@@ -40,6 +42,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Autowired
 	private CustomersRepository customerRepository;
+
+	@Autowired
+	private VerificationRepository verificationRepository;
 
 	private static final int DIGIT_PADDING = 4;
 
@@ -202,18 +207,25 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Transactional
 	@Override
-	public void updateLoanStatus(Long loanId, String status, String remarks) {
+	public void updateLoanStatus(Long loanId, String status, String remarks, Long creditScore) {
 		Applications loanApplication = applicationRepository.findById(loanId)
 				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 		loanApplication.setStatus(status);
 		loanApplication.setRemarks(remarks);
+		loanApplication.setCreditScore(creditScore);
+
+		if (status.equalsIgnoreCase("reviewed")) {
+			Verification verification = new Verification();
+			verification.setCibil(false);
+			verification.setDisbursed(false);
+			verification.setSanction(false);
+			verification.setPhysicalLocationVerified(false);
+			verification.setReviewed(true);
+			verification.setPhysicalLocationVerified(false);
+			verification.setApplications(loanApplication);
+			verificationRepository.save(verification);
+		}
+
 		applicationRepository.save(loanApplication);
 	}
 }
-
-
-
-
-
-
-

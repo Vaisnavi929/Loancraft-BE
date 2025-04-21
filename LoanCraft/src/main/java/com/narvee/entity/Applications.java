@@ -76,6 +76,9 @@ public class Applications extends AuditModel {
 	
 	@Column(name = "employment_category")
 	private String employmentCategory;
+	
+	@Column(name = "creditScore")
+	private Long creditScore;
 
 	@ManyToOne
 	@JoinColumn(name = "customerId")

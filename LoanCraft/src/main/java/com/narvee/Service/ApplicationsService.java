@@ -28,6 +28,6 @@ public interface ApplicationsService {
 
 	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto);
 
-	public void updateLoanStatus(Long loanId, String status, String remarks);
+	public void updateLoanStatus(Long loanId, String status, String remarks, Long creditScore);
 
 }
