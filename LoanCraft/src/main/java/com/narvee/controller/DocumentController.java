@@ -47,7 +47,7 @@ public class DocumentController {
 	@Autowired
 	private DocumentService documentService;
 
-	@Value("AppFilesDir")
+	@Value("${AppFilesDir}")
 	private String UPLOAD_DIR;
 
 	@PostMapping("/docupload/{loanId}")
@@ -185,6 +185,8 @@ public class DocumentController {
 			@RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
 			@RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
 			@RequestParam("customerId") String customerId, @RequestParam("loanId") Long loanId) {
+		
+		System.err.println(UPLOAD_DIR);
 
 		StringBuilder result = new StringBuilder();
 
@@ -199,6 +201,7 @@ public class DocumentController {
 
 			// Helper method to save file with custom name
 			BiConsumer<MultipartFile, String> processFile = (file, docType) -> {
+				System.err.println(docType);
 				try {
 					if (file == null || file.isEmpty())
 						return;
@@ -213,7 +216,7 @@ public class DocumentController {
 
 					Document doc = new Document();
 					doc.setFileName(formattedFileName);
-					doc.setFileType(file.getContentType());
+					doc.setFileType(docType);
 					doc.setLoanApplication(loanApp);
 
 					documentRepository.save(doc);
@@ -231,25 +234,25 @@ public class DocumentController {
 
 			// Process optional multiple bank statements
 			if (bankStatementFiles != null) {
-				int bankIndex = 1;
+		
 				for (MultipartFile bankFile : bankStatementFiles) {
-					processFile.accept(bankFile, "bankstatement" + bankIndex++);
+					processFile.accept(bankFile, "bankstatement");
 				}
 			}
 
 			// Process optional multiple payslips
 			if (payslipFiles != null) {
-				int payslipIndex = 1;
+				
 				for (MultipartFile payslipFile : payslipFiles) {
-					processFile.accept(payslipFile, "payslip" + payslipIndex++);
+					processFile.accept(payslipFile, "payslip");
 				}
 			}
 
 			// Process optional multiple other documents
 			if (otherFiles != null) {
-				int otherIndex = 1;
+			
 				for (MultipartFile otherFile : otherFiles) {
-					processFile.accept(otherFile, "other" + otherIndex++);
+					processFile.accept(otherFile, "other" );
 				}
 			}
 
@@ -257,29 +260,7 @@ public class DocumentController {
 			processFile.accept(panFile, "pan");
 			processFile.accept(aadhaarFile, "aadhaar");
 
-			// Process optional multiple bank statements
-			if (bankStatementFiles != null) {
-				int bankIndex = 1;
-				for (MultipartFile bankFile : bankStatementFiles) {
-					processFile.accept(bankFile, "bankstatement" + bankIndex++);
-				}
-			}
-
-			// Process optional multiple payslips
-			if (payslipFiles != null) {
-				int payslipIndex = 1;
-				for (MultipartFile payslipFile : payslipFiles) {
-					processFile.accept(payslipFile, "payslip" + payslipIndex++);
-				}
-			}
-
-			// Process optional multiple other documents
-			if (otherFiles != null) {
-				int otherIndex = 1;
-				for (MultipartFile otherFile : otherFiles) {
-					processFile.accept(otherFile, "other" + otherIndex++);
-				}
-			}
+		
 
 			return ResponseEntity.ok("Document Upload Summary:\n" + result.toString());
 
@@ -295,4 +276,12 @@ public class DocumentController {
 				documentService.updateDocVerified(id, value)), HttpStatus.OK);
 
 	}
+
+	@RequestMapping(value = "/getLoanAppDocs/{loanId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getLoanAppDocs(Long loanId) {
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents fetched successfully",
+				documentService.getLoanAppDocs(loanId)), HttpStatus.OK);
+
+	}
+
 }

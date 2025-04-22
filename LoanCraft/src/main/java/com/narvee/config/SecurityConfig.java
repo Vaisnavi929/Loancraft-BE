@@ -38,7 +38,7 @@ public class SecurityConfig {
 	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
 			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
 			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
-			"/api/test/**", "/authenticate", "/api/auth/welcome", "/api/auth/register", "/api/auth/generateToken",
+			"/api/test/**", "/authenticate", "/api/auth/welcome", "/auth/users/register", "/api/auth/generateToken",
 			"/api/auth/login", "/api/auth/logout", "/api/excel/upload", "/api/app/save", "/api/app/get",
 			"/api/app/save", "/api/**" ,"/auth/customer/check-email/{email}" ,"/auth/otp/send-otp" ,"/auth/otp/verify-otp/{otp}","/auth/customer/save"};
 

@@ -1,5 +1,7 @@
 package com.narvee.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.Applications;
 import com.narvee.request.dto.ApplicationDTO;
+import com.narvee.request.dto.DisbursmentIdDTO;
 
 public interface ApplicationsRepository extends JpaRepository<Applications, Long> {
 
@@ -60,5 +63,11 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "  AND a.status = :status\r\n", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,
 			@Param("keyword") String keyword, @Param("status") String status);
+
+	@Query("SELECT la.loanId as loanid, c.mobileNumber as mobileNumber, " +
+		       "c.firstName as firstName, c.email as email " +
+		       "FROM Applications la " +
+		       "JOIN la.customers c")
+	public List<DisbursmentIdDTO> getReviewedAppDropDown();
 
 }

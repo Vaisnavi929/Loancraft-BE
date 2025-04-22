@@ -88,6 +88,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 
 	@Override
 	public Page<DisbursmentResponseDTO> getAllDisbursmentWithPagination(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :getAllDisbursmentWithPagination() ");
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
@@ -136,7 +137,8 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 
 
 	@Override
-	public List<DisbursmentIdDTO> getCustomerDetailsWithDisbursmentId() {		
+	public List<DisbursmentIdDTO> getCustomerDetailsWithDisbursmentId() {	
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :getCustomerDetailsWithDisbursmentId() ");
 		return disbursmentRepository.getCustomerDetailsWithDisbursmentId();
 	}
 }

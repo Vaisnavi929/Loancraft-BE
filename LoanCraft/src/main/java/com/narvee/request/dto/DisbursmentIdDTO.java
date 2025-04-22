@@ -4,8 +4,10 @@ public interface DisbursmentIdDTO {
 	
 	public Long getdisbursmentId();
 	public String getLoanAccountNumber();
-	public String getfirstName();
-	public String getmobileNumber();
+	public String getFirstName();
+	public String getMobileNumber();
+	public Long getLoanid();
+	
 
 	
 	
