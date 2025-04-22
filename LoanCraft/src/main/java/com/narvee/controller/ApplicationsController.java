@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/app")
+@RequestMapping("/auth/app")
 public class ApplicationsController {
 	public static final Logger logger = LoggerFactory.getLogger(ApplicationsController.class);
 
@@ -130,8 +130,18 @@ public class ApplicationsController {
 
 	@RequestMapping(value = "/updatestatus", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateLoanStatusWithRemarks(@RequestBody LoanStatusUpdateRequest request) {
-		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks(),request.getCbilScore());
+		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks(),
+				request.getCbilScore());
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Loan status updated successfully! "),
+				HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/getReviewedAppDropDown", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getReviewedAppDropDown() {
+		logger.info("!!! inside class: LoanApplicationController, !! method : getReviewedAppDropDown");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"ReviewedAppDropDown fetched successfully", applicationService.getReviewedAppDropDown()),
 				HttpStatus.OK);
 
 	}

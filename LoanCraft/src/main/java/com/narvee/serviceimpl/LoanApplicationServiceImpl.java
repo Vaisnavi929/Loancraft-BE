@@ -25,6 +25,7 @@ import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.repository.VerificationRepository;
 import com.narvee.request.dto.ApplicationDTO;
+import com.narvee.request.dto.DisbursmentIdDTO;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 
@@ -129,6 +130,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Override
 	public Page<ApplicationDTO> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getAllLoanApplicationPagination");
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
@@ -168,6 +170,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Override
 	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getAllLoanApplicationListWitApproved");
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
@@ -208,6 +211,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 	@Transactional
 	@Override
 	public void updateLoanStatus(Long loanId, String status, String remarks, Long creditScore) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: updateLoanStatus");
 		Applications loanApplication = applicationRepository.findById(loanId)
 				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 		loanApplication.setStatus(status);
@@ -227,5 +231,11 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		}
 
 		applicationRepository.save(loanApplication);
+	}
+
+	@Override
+	public List<DisbursmentIdDTO> getReviewedAppDropDown() {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getReviewedAppDropDown");
+		return applicationRepository.getReviewedAppDropDown();
 	}
 }

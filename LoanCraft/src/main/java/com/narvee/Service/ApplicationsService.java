@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 
 import com.narvee.entity.Applications;
 import com.narvee.request.dto.ApplicationDTO;
+import com.narvee.request.dto.DisbursmentIdDTO;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 
@@ -29,5 +30,7 @@ public interface ApplicationsService {
 	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto);
 
 	public void updateLoanStatus(Long loanId, String status, String remarks, Long creditScore);
+	
+	public List<DisbursmentIdDTO> getReviewedAppDropDown();
 
 }
