@@ -136,6 +136,8 @@ public class DocumentController {
 				}
 			}
 			documentRepository.deleteById(id);
+			
+			
 			return ResponseEntity.ok("File and DB entry deleted successfully!");
 		} catch (FileNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -146,37 +148,38 @@ public class DocumentController {
 		}
 	}
 
-	@GetMapping("/verify-document/{id}")
-	public ResponseEntity<String> verifyDocument(@PathVariable Long id) {
-		try {
-			Optional<Document> optionalDoc = documentRepository.findById(id);
+	@PostMapping("/verify-document/{id}")
+	public ResponseEntity<Boolean> verifyDocument(@PathVariable Long id, @RequestParam Boolean value) {
+	    try {
+	        Optional<Document> optionalDoc = documentRepository.findById(id);
 
-			if (optionalDoc.isPresent()) {
-				Document doc = optionalDoc.get();
-
-				// Check if file exists on disk
-				Path filePath = Paths.get(UPLOAD_DIR).resolve(doc.getFileName()).normalize();
-				File file = filePath.toFile();
-
-				if (!file.exists()) {
-					return ResponseEntity.status(HttpStatus.NOT_FOUND)
-							.body("Document metadata exists in DB, but file is missing on disk.");
-				}
-
-				// You can add more custom validations here
-				return ResponseEntity
-						.ok("Document verified successfully. File exists on disk and is linked to loan ID: "
-								+ doc.getLoanApplication().getLoanId());
-
-			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No document found with ID: " + id);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("Error verifying document: " + e.getMessage());
-		}
+	        if (optionalDoc.isPresent()) {
+	            Document doc = optionalDoc.get();
+	            
+	            Path filePath = Paths.get(UPLOAD_DIR).resolve(doc.getFileName()).normalize();
+	            File file = filePath.toFile();
+	            
+	            // Directly use the 'value' since it's already a Boolean
+	            if (file.exists() && value) {
+	                // Perform necessary actions when accepting the file (e.g., mark as approved)
+	                return ResponseEntity.ok(true);
+	            } 
+	            else if (file.exists() && !value) {
+	                // Perform necessary actions when rejecting the file (e.g., mark as rejected)
+	                return ResponseEntity.ok(false);
+	            } 
+	            else {
+	                return ResponseEntity.ok(false);
+	            }
+	        } else {
+	            return ResponseEntity.ok(false);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+	    }
 	}
+
 
 	@PostMapping("/upload-documents")
 	public ResponseEntity<String> uploadDocuments(@RequestParam(value = "pan", required = false) MultipartFile panFile,
@@ -252,7 +255,7 @@ public class DocumentController {
 			if (otherFiles != null) {
 			
 				for (MultipartFile otherFile : otherFiles) {
-					processFile.accept(otherFile, "other" );
+					processFile.accept(otherFile, "others" );
 				}
 			}
 
