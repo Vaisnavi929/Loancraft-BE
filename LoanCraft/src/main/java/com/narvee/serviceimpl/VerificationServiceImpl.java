@@ -16,6 +16,8 @@ import com.narvee.entity.Document;
 import com.narvee.entity.Verification;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.repository.VerificationRepository;
+import com.narvee.request.dto.VerificationDTO;
+import com.narvee.request.dto.VerificationTrackResponseDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -136,6 +138,26 @@ public class VerificationServiceImpl implements VerificationService{
 		int updatedCount = verificationRepository.updateDisbursed(verifiedId, value);
 
 	    return updatedCount > 0; 
+	}
+
+	@Override
+	public VerificationTrackResponseDTO getAllVericationdetailsByLoanId(Long loanId) {
+		logger.info("!!! inside class: VerificationServiceImpl, method: getAllVericationdetailsByLoanId");
+		List<Document> documents = documentRepository.findByLoanApplicationLoanId(loanId);
+		boolean allVerified = documents.stream().allMatch(Document::getDocVerified);
+
+	    VerificationDTO dto = verificationRepository.getAllVericationDetailsByLoanid(loanId);
+	    VerificationTrackResponseDTO trackResponse=new VerificationTrackResponseDTO();
+	    trackResponse.setDocumentsVerified(allVerified);
+	    trackResponse.setCibil(dto.getCibil());
+	    trackResponse.setDisbursed(dto.getDisbursed());
+	    trackResponse.setPhysicalLocationVerified(dto.getPhysicalLocationVerified());
+	    trackResponse.setReviewed(dto.getReviewed());
+	    trackResponse.setSanction(dto.getSanction());
+	   
+	
+		
+		return trackResponse;
 	}
 
 

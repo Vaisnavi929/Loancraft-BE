@@ -35,7 +35,7 @@ import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 
 @RestController
-@RequestMapping("/auth/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
 
 	@Autowired
@@ -148,7 +148,7 @@ public class DocumentController {
 		}
 	}
 
-	@PostMapping("/verify-document/{id}")
+	@GetMapping("/verify-document/{id}")
 	public ResponseEntity<Boolean> verifyDocument(@PathVariable Long id, @RequestParam Boolean value) {
 	    try {
 	        Optional<Document> optionalDoc = documentRepository.findById(id);
@@ -273,11 +273,16 @@ public class DocumentController {
 		}
 	}
 
-	@RequestMapping(value = "/updateDocVerified/{id}", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateDocVerified(Long id, Boolean value) {
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update DocVerified  ",
-				documentService.updateDocVerified(id, value)), HttpStatus.OK);
+	@RequestMapping(value = "/updateDocVerified/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateDocVerified(
+	        @PathVariable("id") Long id, 
+	        @PathVariable("value") Boolean value) {
+	    boolean isUpdated = documentService.updateDocVerified(id, value);
 
+	    return new ResponseEntity<>(new RestAPIResponse(
+	            isUpdated ? "success" : "failure", 
+	            isUpdated ? "Successfully updated DocVerified" : "Failed to update DocVerified",
+	            isUpdated), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/getLoanAppDocs/{loanId}", method = RequestMethod.GET, produces = "application/json")
