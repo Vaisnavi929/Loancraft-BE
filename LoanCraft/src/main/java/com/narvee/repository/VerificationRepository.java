@@ -43,4 +43,5 @@ public interface VerificationRepository extends JpaRepository<Verification, Long
 	@Modifying
 	@Query("UPDATE LoanDocument ld SET ld.documentVerified = :documentVerified WHERE ld.id = :id")
 	void updateDocumentVerifiedById(@Param("documentVerified") Boolean documentVerified, @Param("id") Long id);
-
+	
+}
