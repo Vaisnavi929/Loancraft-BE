@@ -4,18 +4,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,7 +86,6 @@ public class DocumentController {
 			byte[] fileBytes = file.getBytes();
 
 			// Logging the type of fileBytes for debugging
-			System.out.println("File bytes type: " + fileBytes.getClass().getName());
 
 			doc.setFileName(formattedFileName);
 			doc.setFileType(file.getContentType());
@@ -112,8 +111,12 @@ public class DocumentController {
 			if (!resource.exists() || !resource.isReadable()) {
 				throw new FileNotFoundException("Could not read file: " + filename);
 			}
-			return ResponseEntity.ok().contentType(MediaType.parseMediaType(doc.getFileType()))
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
+//			return ResponseEntity.ok().contentType(MediaType.parseMediaType(doc.getFileType()))
+//					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
+//					.body(resource);
+			
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(filePath))
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
 					.body(resource);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,6 +150,7 @@ public class DocumentController {
 					.body("Error while deleting file: " + e.getMessage());
 		}
 	}
+
 
 	@GetMapping("/verify-document/{id}")
 	public ResponseEntity<Boolean> verifyDocument(@PathVariable Long id, @RequestParam Boolean value) {
@@ -182,13 +186,14 @@ public class DocumentController {
 
 
 	@PostMapping("/upload-documents")
-	public ResponseEntity<String> uploadDocuments(@RequestParam(value = "pan", required = false) MultipartFile panFile,
+	public ResponseEntity<RestAPIResponse> uploadDocuments(
+			@RequestParam(value = "pan", required = false) MultipartFile panFile,
 			@RequestParam(value = "aadhaar", required = false) MultipartFile aadhaarFile,
 			@RequestParam(value = "bankStatements", required = false) List<MultipartFile> bankStatementFiles,
 			@RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
 			@RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
 			@RequestParam("customerId") String customerId, @RequestParam("loanId") Long loanId) {
-		
+
 		System.err.println(UPLOAD_DIR);
 
 		StringBuilder result = new StringBuilder();
@@ -204,7 +209,6 @@ public class DocumentController {
 
 			// Helper method to save file with custom name
 			BiConsumer<MultipartFile, String> processFile = (file, docType) -> {
-				System.err.println(docType);
 				try {
 					if (file == null || file.isEmpty())
 						return;
@@ -237,7 +241,7 @@ public class DocumentController {
 
 			// Process optional multiple bank statements
 			if (bankStatementFiles != null) {
-		
+
 				for (MultipartFile bankFile : bankStatementFiles) {
 					processFile.accept(bankFile, "bankstatement");
 				}
@@ -245,7 +249,7 @@ public class DocumentController {
 
 			// Process optional multiple payslips
 			if (payslipFiles != null) {
-				
+
 				for (MultipartFile payslipFile : payslipFiles) {
 					processFile.accept(payslipFile, "payslip");
 				}
@@ -253,7 +257,7 @@ public class DocumentController {
 
 			// Process optional multiple other documents
 			if (otherFiles != null) {
-			
+
 				for (MultipartFile otherFile : otherFiles) {
 					processFile.accept(otherFile, "others" );
 				}
@@ -263,21 +267,22 @@ public class DocumentController {
 			processFile.accept(panFile, "pan");
 			processFile.accept(aadhaarFile, "aadhaar");
 
-		
-
-			return ResponseEntity.ok("Document Upload Summary:\n" + result.toString());
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents uploaded successfully",
+					"Document Upload Summary: \n " + result.toString()), HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "Upload failed: " + e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	@RequestMapping(value = "/updateDocVerified/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateDocVerified(
-	        @PathVariable("id") Long id, 
-	        @PathVariable("value") Boolean value) {
-	    boolean isUpdated = documentService.updateDocVerified(id, value);
+
+	@RequestMapping(value = "/updateDocVerified/{id}/{verify}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateDocVerified(@PathVariable Long id, Boolean verify) {
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update DocVerified  ",
+				documentService.updateDocVerified(id, verify)), HttpStatus.OK);
 
 	    return new ResponseEntity<>(new RestAPIResponse(
 	            isUpdated ? "success" : "failure", 
@@ -286,7 +291,7 @@ public class DocumentController {
 	}
 
 	@RequestMapping(value = "/getLoanAppDocs/{loanId}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getLoanAppDocs(Long loanId) {
+	public ResponseEntity<RestAPIResponse> getLoanAppDocs(@PathVariable Long loanId) {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents fetched successfully",
 				documentService.getLoanAppDocs(loanId)), HttpStatus.OK);
 

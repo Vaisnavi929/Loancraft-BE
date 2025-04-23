@@ -229,7 +229,8 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			verification.setApplications(loanApplication);
 			verificationRepository.save(verification);
 		}
-
+		
+	
 		applicationRepository.save(loanApplication);
 	}
 
