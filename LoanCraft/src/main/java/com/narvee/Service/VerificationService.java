@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.narvee.entity.Verification;
+import com.narvee.request.dto.VerificationDTO;
+import com.narvee.request.dto.VerificationTrackResponseDTO;
 
 
 public interface VerificationService {
@@ -21,6 +23,8 @@ public interface VerificationService {
 	public boolean updatePhysicalLocationVerified(Long verifiedId, Boolean value);
 	public boolean updateSanction(Long verifiedId, Boolean value);
 	public boolean updateDisbursed(Long verifiedId, Boolean value);
+	public VerificationTrackResponseDTO getAllVericationdetailsByLoanId(Long loanId);
+	
 	
 	  
 }

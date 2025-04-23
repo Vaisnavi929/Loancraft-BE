@@ -70,35 +70,41 @@ public class VerificationController {
 	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully uploaded document ", verificationService.uploadDocumentsToVerification(verifiedId, files)), HttpStatus.OK);
 	
 }
-	@RequestMapping(value ="/updateReviewed/{verifiedId}",method=RequestMethod.GET,produces="application/json")
-	public ResponseEntity<RestAPIResponse> updateReviewed(Long verifiedId, Boolean value){
+	@RequestMapping(value ="/updateReviewed/{verifiedId}/{value}",method=RequestMethod.GET,produces="application/json")
+	public ResponseEntity<RestAPIResponse> updateReviewed(@PathVariable Long verifiedId,@PathVariable Boolean value){
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update reviewed ", verificationService.updateReviewed(verifiedId, value)), HttpStatus.OK);
 		
 	}
-	@RequestMapping(value ="/updateCibil/{verifiedId}",method=RequestMethod.GET,produces="application/json")
-	public ResponseEntity<RestAPIResponse> updateCibil(Long verifiedId, Boolean value){
+	@RequestMapping(value ="/updateCibil/{verifiedId}/{value}",method=RequestMethod.GET,produces="application/json")
+	public ResponseEntity<RestAPIResponse> updateCibil(@PathVariable Long verifiedId,@PathVariable Boolean value){
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update reviewed ", verificationService.updateCibil(verifiedId, value)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update cibil ", verificationService.updateCibil(verifiedId, value)), HttpStatus.OK);
 		
 	}
 
-	@RequestMapping(value ="/updatePhysicalLocationVerified/{verifiedId}",method=RequestMethod.GET,produces="application/json")
-	public ResponseEntity<RestAPIResponse> updatePhysicalLocationVerified(Long verifiedId, Boolean value){
+	@RequestMapping(value ="/updatePhysicalLocationVerified/{verifiedId}/{value}",method=RequestMethod.GET,produces="application/json")
+	public ResponseEntity<RestAPIResponse> updatePhysicalLocationVerified(@PathVariable Long verifiedId,@PathVariable Boolean value){
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update reviewed ", verificationService.updatePhysicalLocationVerified(verifiedId, value)), HttpStatus.OK);
 		
 	}
-	@RequestMapping(value ="/updateSanction/{verifiedId}",method=RequestMethod.GET,produces="application/json")
-	public ResponseEntity<RestAPIResponse> updateSanction(Long verifiedId, Boolean value){
+	@RequestMapping(value ="/updateSanction/{verifiedId}/{value}",method=RequestMethod.GET,produces="application/json")
+	public ResponseEntity<RestAPIResponse> updateSanction(@PathVariable Long verifiedId,@PathVariable Boolean value){
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update reviewed ", verificationService.updateSanction(verifiedId, value)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update PhysicalLocationVerified ", verificationService.updateSanction(verifiedId, value)), HttpStatus.OK);
 		
 	}
-	@RequestMapping(value ="/updateDisbursed/{verifiedId}",method=RequestMethod.GET,produces="application/json")
-	public ResponseEntity<RestAPIResponse> updateDisbursed(Long verifiedId, Boolean value){
+	@RequestMapping(value ="/updateDisbursed/{verifiedId}/{value}",method=RequestMethod.GET,produces="application/json")
+	public ResponseEntity<RestAPIResponse> updateDisbursed(@PathVariable Long verifiedId,@PathVariable Boolean value){
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update reviewed ", verificationService.updateDisbursed(verifiedId, value)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update Disbursed ", verificationService.updateDisbursed(verifiedId, value)), HttpStatus.OK);
+		
+	}
+	@RequestMapping(value ="/getVericationTrack/{loanId}",method=RequestMethod.GET,produces="application/json")
+	public ResponseEntity<RestAPIResponse> getAllVericationdetailsByLoanId(@PathVariable Long loanId){
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success"," successfully fetched all verification details by loaid", verificationService.getAllVericationdetailsByLoanId(loanId)), HttpStatus.OK);
+		
 		
 	}
 }

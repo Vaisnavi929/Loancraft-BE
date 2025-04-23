@@ -35,7 +35,7 @@ import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 
 @RestController
-@RequestMapping("/auth/documents")
+@RequestMapping("/api/documents")
 public class DocumentController {
 
 	@Autowired
@@ -152,6 +152,38 @@ public class DocumentController {
 	}
 
 
+	@GetMapping("/verify-document/{id}")
+	public ResponseEntity<Boolean> verifyDocument(@PathVariable Long id, @RequestParam Boolean value) {
+	    try {
+	        Optional<Document> optionalDoc = documentRepository.findById(id);
+
+	        if (optionalDoc.isPresent()) {
+	            Document doc = optionalDoc.get();
+	            
+	            Path filePath = Paths.get(UPLOAD_DIR).resolve(doc.getFileName()).normalize();
+	            File file = filePath.toFile();
+	            
+	            // Directly use the 'value' since it's already a Boolean
+	            if (file.exists() && value) {
+	                // Perform necessary actions when accepting the file (e.g., mark as approved)
+	                return ResponseEntity.ok(true);
+	            } 
+	            else if (file.exists() && !value) {
+	                // Perform necessary actions when rejecting the file (e.g., mark as rejected)
+	                return ResponseEntity.ok(false);
+	            } 
+	            else {
+	                return ResponseEntity.ok(false);
+	            }
+	        } else {
+	            return ResponseEntity.ok(false);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+	    }
+	}
+
 
 	@PostMapping("/upload-documents")
 	public ResponseEntity<RestAPIResponse> uploadDocuments(
@@ -246,11 +278,16 @@ public class DocumentController {
 		}
 	}
 
+
 	@RequestMapping(value = "/updateDocVerified/{id}/{verify}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateDocVerified(@PathVariable Long id, Boolean verify) {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update DocVerified  ",
 				documentService.updateDocVerified(id, verify)), HttpStatus.OK);
 
+	    return new ResponseEntity<>(new RestAPIResponse(
+	            isUpdated ? "success" : "failure", 
+	            isUpdated ? "Successfully updated DocVerified" : "Failed to update DocVerified",
+	            isUpdated), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/getLoanAppDocs/{loanId}", method = RequestMethod.GET, produces = "application/json")
