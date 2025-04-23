@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.narvee.entity.Document;
+import com.narvee.request.dto.LoanAppDocsResponse;
 
 public interface DocumentService {
 
@@ -15,5 +16,5 @@ public interface DocumentService {
 
 	public boolean updateDocVerified(Long id, Boolean value);
 
-	public List<Document> getLoanAppDocs(Long id);
+	public LoanAppDocsResponse  getLoanAppDocs(Long id);
 }
