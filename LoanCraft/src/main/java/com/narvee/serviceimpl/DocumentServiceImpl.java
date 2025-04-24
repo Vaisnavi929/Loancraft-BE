@@ -2,6 +2,7 @@ package com.narvee.serviceimpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -56,15 +57,15 @@ public class DocumentServiceImpl implements DocumentService {
 
 
 	@Override
-	public LoanAppDocsResponse  getLoanAppDocs(Long id) {
-		logger.info("!!! inside class: DocumentServiceImpl, method: getLoanAppDocs");
-		 List<Document> allDocs = documentRepository.findByLoanApplicationLoanId(id);
-		List<Document> payslips = new ArrayList<>();
+	public LoanAppDocsResponse getLoanAppDocs(Long id) {
+	    logger.info("!!! inside class: DocumentServiceImpl, method: getLoanAppDocs");
+
+	    List<Document> allDocs = documentRepository.findByLoanApplicationLoanId(id);
+	    List<Document> payslips = new ArrayList<>();
 	    List<Document> bankStatements = new ArrayList<>();
 	    List<Document> otherDocs = new ArrayList<>();
-	   List<Document> aadhaar= new ArrayList<>();
-	   List<Document> pan= new ArrayList<>();
-	    
+	    List<Document> aadhaar = new ArrayList<>();
+	    List<Document> pan = new ArrayList<>();
 
 	    for (Document doc : allDocs) {
 	        String fileName = doc.getFileName().toLowerCase();
@@ -82,8 +83,18 @@ public class DocumentServiceImpl implements DocumentService {
 	        }
 	    }
 
+	    // Sort each list by fileType ascending (if fileType is a field in Document)
+	    Comparator<Document> byFileType = Comparator.comparing(Document::getFileType);
+
+	    aadhaar.sort(byFileType);
+	    pan.sort(byFileType);
+	    payslips.sort(byFileType);
+	    bankStatements.sort(byFileType);
+	    otherDocs.sort(byFileType);
+
 	    return new LoanAppDocsResponse(aadhaar, pan, payslips, bankStatements, otherDocs);
 	}
+
 
    
 }
