@@ -335,7 +335,6 @@ public class DocumentController {
 	                fos.write(file.getBytes());
 	            }
 
-	            // Save metadata in DB
 	            Document doc = new Document();
 	            doc.setFileName(storedFilename);
 	            doc.setFileType(file.getContentType());
