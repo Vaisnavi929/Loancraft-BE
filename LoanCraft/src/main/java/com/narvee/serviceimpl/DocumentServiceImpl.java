@@ -83,7 +83,7 @@ public class DocumentServiceImpl implements DocumentService {
 	        }
 	    }
 
-	    // Sort each list by fileType ascending (if fileType is a field in Document)
+	  
 	    Comparator<Document> byFileType = Comparator.comparing(Document::getFileType);
 
 	    aadhaar.sort(byFileType);
