@@ -31,6 +31,7 @@ public class Verification {
 	private Boolean physicalLocationVerified;
 	private Boolean sanction;
 	private Boolean disbursed;
+	
 
 	@OneToMany(mappedBy = "verification", cascade = CascadeType.ALL)
 	private List<Document> physicalLocationDocument = new ArrayList<>();
