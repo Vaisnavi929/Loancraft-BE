@@ -33,9 +33,10 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
+import com.narvee.util.EncryptionUtil;
 
 @RestController
-@RequestMapping("/api/documents")
+@RequestMapping("/auth/documents")
 public class DocumentController {
 
 	@Autowired
@@ -259,6 +260,66 @@ public class DocumentController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents fetched successfully",
 				documentService.getLoanAppDocs(loanId)), HttpStatus.OK);
 
+	}
+	@PostMapping("/upload-multiple")
+	public ResponseEntity<String> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files,
+	                                                  @RequestParam("loanId") Long loanId) {
+	    StringBuilder responseMessage = new StringBuilder();
+
+	    try {
+	        // Encrypt loanId
+	        String encryptedLoanId = EncryptionUtil.encrypt(loanId);
+
+	        // Ensure upload dir exists
+	        File uploadDir = new File(UPLOAD_DIR);
+	        if (!uploadDir.exists()) {
+	            uploadDir.mkdirs();
+	        }
+
+	        // Find loan application
+	        Applications loanApp = applicationsRepository.findById(loanId)
+	                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+	        for (MultipartFile file : files) {
+	            if (file.isEmpty() || file.getOriginalFilename() == null) {
+	                continue;
+	            }
+
+	            String originalFilename = file.getOriginalFilename();
+
+	            // Split filename and extension
+	            String baseName = originalFilename;
+	            String extension = "";
+	            int dotIndex = originalFilename.lastIndexOf('.');
+	            if (dotIndex > 0) {
+	                baseName = originalFilename.substring(0, dotIndex);
+	                extension = originalFilename.substring(dotIndex);
+	            }
+
+	            // Construct new filename
+	            String storedFilename = baseName + "_" + encryptedLoanId + extension;
+
+	            // Save file
+	            File destinationFile = Paths.get(uploadDir.getAbsolutePath(), storedFilename).toFile();
+	            try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
+	                fos.write(file.getBytes());
+	            }
+
+	            Document doc = new Document();
+	            doc.setFileName(storedFilename);
+	            doc.setFileType(file.getContentType());
+	            doc.setLoanApplication(loanApp);
+//	            doc.setEncryptedLoanId(encryptedLoanId); // Add this if your entity has it
+	            documentRepository.save(doc);
+
+	            responseMessage.append("Uploaded: ").append(storedFilename).append("\n");
+	        }
+
+	        return ResponseEntity.ok(responseMessage.toString().trim());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+	    }
 	}
 
 }
