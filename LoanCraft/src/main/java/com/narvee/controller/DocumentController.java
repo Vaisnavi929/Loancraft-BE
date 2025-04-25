@@ -1,14 +1,29 @@
 package com.narvee.controller;
-
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import java.nio.charset.StandardCharsets;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiConsumer;
+
+import java.io.OutputStream;
+import javax.imageio.ImageIO;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.narvee.Service.DocumentService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Applications;
@@ -261,9 +277,9 @@ public class DocumentController {
 				documentService.getLoanAppDocs(loanId)), HttpStatus.OK);
 
 	}
-	@PostMapping("/upload-multiple")
-	public ResponseEntity<String> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files,
-	                                                  @RequestParam("loanId") Long loanId) {
+	@RequestMapping(value = "/upload-multiple", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files,
+	                                                           @RequestParam("loanId") Long loanId) {
 	    StringBuilder responseMessage = new StringBuilder();
 
 	    try {
@@ -305,21 +321,24 @@ public class DocumentController {
 	                fos.write(file.getBytes());
 	            }
 
+	            // Save metadata in DB
 	            Document doc = new Document();
 	            doc.setFileName(storedFilename);
 	            doc.setFileType(file.getContentType());
 	            doc.setLoanApplication(loanApp);
-//	            doc.setEncryptedLoanId(encryptedLoanId); // Add this if your entity has it
 	            documentRepository.save(doc);
 
 	            responseMessage.append("Uploaded: ").append(storedFilename).append("\n");
 	        }
 
-	        return ResponseEntity.ok(responseMessage.toString().trim());
+	        return new ResponseEntity<>(new RestAPIResponse("success", "Files uploaded successfully", responseMessage.toString().trim()), HttpStatus.OK);
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+	        return new ResponseEntity<>(new RestAPIResponse("error", "Upload failed", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+
+	
 
 }
