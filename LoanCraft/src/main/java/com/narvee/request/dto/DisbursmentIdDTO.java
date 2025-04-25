@@ -7,6 +7,7 @@ public interface DisbursmentIdDTO {
 	public String getFirstName();
 	public String getMobileNumber();
 	public Long getLoanid();
+	public String getApplicationReferenceId();
 	
 
 	
