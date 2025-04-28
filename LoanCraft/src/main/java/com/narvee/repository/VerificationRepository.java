@@ -10,35 +10,36 @@ import com.narvee.request.dto.VerificationDTO;
 
 import jakarta.transaction.Transactional;
 
-public interface VerificationRepository extends  JpaRepository<Verification, Long>{
+public interface VerificationRepository extends JpaRepository<Verification, Long> {
 
 	@Modifying
-    @Transactional
-	@Query(value ="UPDATE lms_verification  SET reviewed = :value WHERE verified_id = :verifiedId",nativeQuery = true)
+	@Transactional
+	@Query(value = "UPDATE lms_verification  SET reviewed = :value WHERE verified_id = :verifiedId", nativeQuery = true)
 	int updateReviewed(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
-	
-	@Modifying
-    @Transactional
-	@Query(value ="UPDATE lms_verification  SET cibil = :value WHERE verified_id = :verifiedId",nativeQuery = true)
-	int updateCibil(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
-	
-	@Modifying
-    @Transactional
-	@Query(value ="UPDATE lms_verification  SET physical_location_verified = :value WHERE verified_id = :verifiedId",nativeQuery = true)
-	int updatePhysicalLocationVerified(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
-	
-	@Modifying
-    @Transactional
-	@Query(value ="UPDATE lms_verification  SET sanction = :value WHERE verified_id = :verifiedId",nativeQuery = true)
-	int updateSanction(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
-	
-	@Modifying
-    @Transactional
-	@Query(value ="UPDATE lms_verification  SET disbursed = :value WHERE verified_id = :verifiedId",nativeQuery = true)
-	int updateDisbursed(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
-	
-	
 
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_verification  SET cibil = :value WHERE verified_id = :verifiedId", nativeQuery = true)
+	int updateCibil(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
+
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_verification  SET physical_location_verified = :value WHERE verified_id = :verifiedId", nativeQuery = true)
+	int updatePhysicalLocationVerified(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
+
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_verification  SET sanction = :value WHERE verified_id = :verifiedId", nativeQuery = true)
+	int updateSanction(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
+
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_verification  SET disbursed = :value WHERE verified_id = :verifiedId", nativeQuery = true)
+	int updateDisbursed(@Param("verifiedId") Long verifiedId, @Param("value") Boolean value);
+  
 	@Query(value="SELECT verified_id,cibil,disbursed,physical_location_verified,reviewed,sanction FROM lms_verification WHERE loan_id =:loanId",nativeQuery = true)
 	public VerificationDTO getAllVericationDetailsByLoanid(Long loanId);
+  
+	
+	
 }

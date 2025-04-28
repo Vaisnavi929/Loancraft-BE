@@ -216,11 +216,13 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 		loanApplication.setStatus(status);
 		loanApplication.setRemarks(remarks);
-		loanApplication.setCreditScore(creditScore);
+		if (creditScore != null) {
+			loanApplication.setCreditScore(creditScore);
+		}
 
 		if (status.equalsIgnoreCase("reviewed")) {
 			Verification verification = new Verification();
-			verification.setCibil(false);
+			verification.setCibil(true);
 			verification.setDisbursed(false);
 			verification.setSanction(false);
 			verification.setPhysicalLocationVerified(false);

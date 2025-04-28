@@ -1,3 +1,4 @@
+
 package com.narvee.controller;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import com.narvee.serviceimpl.VerificationServiceImpl;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/verification")
+@RequestMapping("/api/verification")
 public class VerificationController {
 
 	private static final Logger logger = LoggerFactory.getLogger(VerificationServiceImpl.class);
@@ -130,9 +131,10 @@ public class VerificationController {
 	@RequestMapping(value = "/getVericationTrack/{loanId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllVericationdetailsByLoanId(@PathVariable Long loanId) {
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("succ ess", " successfully fetched all verification details by loaid",
+				new RestAPIResponse("success", " successfully fetched all verification details by loaid",
 						verificationService.getAllVericationdetailsByLoanId(loanId)),
 				HttpStatus.OK);
 
 	}
 }
+
