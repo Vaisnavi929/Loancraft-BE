@@ -18,6 +18,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 	@Query(value ="UPDATE lms_document  SET doc_verified = :value WHERE id = :id",nativeQuery = true)
 	int updateReviewed(@Param("id") Long id, @Param("value") Boolean value);
 	
+	
 	public List<Document> findByLoanApplicationLoanId(Long id);
 
 

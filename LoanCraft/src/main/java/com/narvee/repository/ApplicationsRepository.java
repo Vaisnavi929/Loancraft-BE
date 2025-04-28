@@ -64,13 +64,15 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,
 			@Param("keyword") String keyword, @Param("status") String status);
 
-	@Query("SELECT la.loanId as loanid, c.mobileNumber as mobileNumber, " +
-		       "c.firstName as firstName, c.email as email " +
+	@Query("SELECT la.applicationReferenceId AS applicationReferenceId, " +
+		       "la.loanId AS loanid, " +
+		       "c.mobileNumber AS mobileNumber, " +
+		       "c.firstName AS firstName, " +
+		       "c.email AS email " +
 		       "FROM Applications la " +
-		       "JOIN la.customers c " +
-		       "WHERE la.status = 'Reviewed' " +
-		       "ORDER BY c.firstName ASC")
-		List<DisbursmentIdDTO> getReviewedAppDropDown();
+		       "JOIN la.customers c")
+		public List<DisbursmentIdDTO> getReviewedAppDropDown();
+
 
 
 }

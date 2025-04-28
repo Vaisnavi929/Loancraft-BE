@@ -1,3 +1,4 @@
+
 package com.narvee.entity;
 
 import java.util.ArrayList;
@@ -41,3 +42,4 @@ public class Verification {
 	private Applications applications;	
 
 }
+
