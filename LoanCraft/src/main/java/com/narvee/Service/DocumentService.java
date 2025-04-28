@@ -3,6 +3,7 @@ package com.narvee.Service;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.narvee.entity.Document;
@@ -17,4 +18,12 @@ public interface DocumentService {
 	public boolean updateDocVerified(Long id, Boolean value);
 
 	public LoanAppDocsResponse  getLoanAppDocs(Long id);
+	
+	public  ResponseEntity<String> uploadPdfFile(MultipartFile file, String customerId, String documentType, Long loanId);
+	
+	public ResponseEntity<String> uploadMultipleFilesPdf(List<MultipartFile> files, Long loanId) throws Exception;
+	public String uploadDocumentsPdf(MultipartFile panFile, MultipartFile aadhaarFile,
+                List<MultipartFile> bankStatementFiles, List<MultipartFile> payslipFiles,
+                List<MultipartFile> otherFiles, String customerId, Long loanId);
+
 }

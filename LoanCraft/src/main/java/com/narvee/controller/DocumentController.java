@@ -1,27 +1,14 @@
 package com.narvee.controller;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.io.OutputStream;
-import javax.imageio.ImageIO;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -40,15 +27,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.narvee.Service.DocumentService;
+import com.narvee.Service.VerificationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.util.EncryptionUtil;
-
 @RestController
 @RequestMapping("/auth/documents")
 public class DocumentController {
@@ -56,6 +42,9 @@ public class DocumentController {
 	@Autowired
 	ApplicationsRepository applicationsRepository;
 
+	@Autowired
+	VerificationService verificationService;
+	
 	@Autowired
 	DocumentRepository documentRepository;
 
@@ -109,7 +98,10 @@ public class DocumentController {
 			doc.setLoanApplication(loanApp);
 			documentRepository.save(doc);
 
-			return ResponseEntity.ok("File uploaded and stored in DB: " + formattedFileName);
+			return ResponseEntity.ok("File uploaded and"
+					+ ""
+					+ ""
+					+ " stored in DB: " + formattedFileName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
@@ -306,44 +298,46 @@ public class DocumentController {
 
 	}
 	@RequestMapping(value = "/upload-multiple", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files,
-	                                                           @RequestParam("loanId") Long loanId) {
-	    StringBuilder responseMessage = new StringBuilder();
+	public ResponseEntity<RestAPIResponse> uploadMultipleFiles(
+	        @RequestParam("files") List<MultipartFile> files,
+	        @RequestParam("loanId") Long loanId) {
+
+	    StringBuilder result = new StringBuilder();
 
 	    try {
 	        // Encrypt loanId
 	        String encryptedLoanId = EncryptionUtil.encrypt(loanId);
 
-	        // Ensure upload dir exists
+	        // Ensure upload directory exists
 	        File uploadDir = new File(UPLOAD_DIR);
 	        if (!uploadDir.exists()) {
 	            uploadDir.mkdirs();
 	        }
 
-	        // Find loan application
+	        // Fetch loan application
 	        Applications loanApp = applicationsRepository.findById(loanId)
 	                .orElseThrow(() -> new RuntimeException("Loan not found"));
 
+	        boolean anyFileUploaded = false;
+
 	        for (MultipartFile file : files) {
-	            if (file.isEmpty() || file.getOriginalFilename() == null) {
+	            if (file == null || file.isEmpty() || file.getOriginalFilename() == null) {
 	                continue;
 	            }
 
 	            String originalFilename = file.getOriginalFilename();
-
-	            // Split filename and extension
 	            String baseName = originalFilename;
 	            String extension = "";
+
 	            int dotIndex = originalFilename.lastIndexOf('.');
 	            if (dotIndex > 0) {
 	                baseName = originalFilename.substring(0, dotIndex);
 	                extension = originalFilename.substring(dotIndex);
 	            }
 
-	            // Construct new filename
 	            String storedFilename = baseName + "_" + encryptedLoanId + extension;
 
-	            // Save file
+	            // Save file to disk
 	            File destinationFile = Paths.get(uploadDir.getAbsolutePath(), storedFilename).toFile();
 	            try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
 	                fos.write(file.getBytes());
@@ -356,17 +350,70 @@ public class DocumentController {
 	            doc.setLoanApplication(loanApp);
 	            documentRepository.save(doc);
 
-	            responseMessage.append("Uploaded: ").append(storedFilename).append("\n");
+	            result.append("Uploaded: ").append(storedFilename).append("\n");
+	            anyFileUploaded = true;
 	        }
 
-	        return new ResponseEntity<>(new RestAPIResponse("success", "Files uploaded successfully", responseMessage.toString().trim()), HttpStatus.OK);
+	        if (anyFileUploaded) {
+	            boolean isUpdated = verificationService.updatePhysicalLocationVerified(loanId, true);
+	            if (isUpdated) {
+	                result.append("Verification status updated successfully.\n");
+	            } else {
+	                result.append("Verification status update failed.\n");
+	            }
+	        } else {
+	            result.append("No valid files were uploaded.\n");
+	        }
+
+	        return ResponseEntity.ok(
+	                new RestAPIResponse("success", "Document upload completed", result.toString().trim())
+	        );
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return new ResponseEntity<>(new RestAPIResponse("error", "Upload failed", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+	                new RestAPIResponse("error", "Upload failed", e.getMessage())
+	        );
 	    }
 	}
 
-
+	@PostMapping("/uploadpdf")
+	public ResponseEntity<String> uploadFilepdf(@RequestParam("file") MultipartFile file,
+	                                         @RequestParam("customerId") String customerId,
+	                                         @RequestParam("documentType") String documentType,
+	                                         @RequestParam("loanId") Long loanId) {
+												return documentService.uploadPdfFile(file, customerId, documentType, loanId);
+		
+	}
 	
+	 @PostMapping(value = "/upload-multiplepdf", produces = "application/json")
+	    public ResponseEntity<String> uploadMultipleFilesPdf(@RequestParam("files") List<MultipartFile> files,
+	                                                      @RequestParam("loanId") Long loanId) {
+	        try {
+	            return documentService.uploadMultipleFilesPdf(files, loanId);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return new ResponseEntity<>("Upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
 
+	 }
+	 @PostMapping("/uploadPdf")
+	    public ResponseEntity<String> uploadDocumentspdf(
+	            @RequestParam(value = "pan", required = false) MultipartFile panFile,
+	            @RequestParam(value = "aadhaar", required = false) MultipartFile aadhaarFile,
+	            @RequestParam(value = "bankStatements", required = false) List<MultipartFile> bankStatementFiles,
+	            @RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
+	            @RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
+	            @RequestParam("customerId") String customerId,
+	            @RequestParam("loanId") Long loanId) {
+
+	        String result = documentService.uploadDocumentsPdf(
+	                panFile, aadhaarFile, bankStatementFiles, payslipFiles, otherFiles, customerId, loanId);
+
+	        if (result.startsWith("Upload failed")) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	        }
+	        return ResponseEntity.ok("Document Upload Summary:\n" + result);
+	    }
+	
 }

@@ -26,12 +26,12 @@ public class Verification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long verifiedId;
-	private Boolean reviewed;
-	private Boolean cibil;
-	private Boolean physicalLocationVerified;
-	private Boolean sanction;
-	private Boolean disbursed;
-
+	private boolean reviewed;
+	private boolean cibil;
+	private boolean physicalLocationVerified;
+	private boolean sanction;
+	private boolean disbursed;
+	
 	@OneToMany(mappedBy = "verification", cascade = CascadeType.ALL)
 	private List<Document> physicalLocationDocument = new ArrayList<>();
 

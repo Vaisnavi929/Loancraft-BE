@@ -24,7 +24,7 @@ import com.narvee.serviceimpl.VerificationServiceImpl;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/verification")
+@RequestMapping("/auth/verification")
 public class VerificationController {
 
 	
@@ -103,7 +103,7 @@ public class VerificationController {
 	}
 	@RequestMapping(value ="/getVericationTrack/{loanId}",method=RequestMethod.GET,produces="application/json")
 	public ResponseEntity<RestAPIResponse> getAllVericationdetailsByLoanId(@PathVariable Long loanId){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success"," successfully fetched all verification details by loaid", verificationService.getAllVericationdetailsByLoanId(loanId)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("succ ess"," successfully fetched all verification details by loaid", verificationService.getAllVericationdetailsByLoanId(loanId)), HttpStatus.OK);
 		
 		
 	}
