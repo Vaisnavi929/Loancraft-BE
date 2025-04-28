@@ -40,8 +40,6 @@ public interface VerificationRepository extends JpaRepository<Verification, Long
 	@Query(value="SELECT verified_id,cibil,disbursed,physical_location_verified,reviewed,sanction FROM lms_verification WHERE loan_id =:loanId",nativeQuery = true)
 	public VerificationDTO getAllVericationDetailsByLoanid(Long loanId);
   
-	@Modifying
-	@Query("UPDATE LoanDocument ld SET ld.documentVerified = :documentVerified WHERE ld.id = :id")
-	void updateDocumentVerifiedById(@Param("documentVerified") Boolean documentVerified, @Param("id") Long id);
+	
 	
 }

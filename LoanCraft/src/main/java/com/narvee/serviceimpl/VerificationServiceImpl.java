@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,9 +144,19 @@ public class VerificationServiceImpl implements VerificationService{
 	@Override
 	public VerificationTrackResponseDTO getAllVericationdetailsByLoanId(Long loanId) {
 		logger.info("!!! inside class: VerificationServiceImpl, method: getAllVericationdetailsByLoanId");
-		List<Document> documents = documentRepository.findByLoanApplicationLoanId(loanId);
-		boolean allVerified = documents.stream().allMatch(Document::getDocVerified);
-
+		List<Document> documents = Optional.ofNullable(documentRepository.findByLoanApplicationLoanId(loanId))
+                .filter(list -> !list.isEmpty())
+                .orElse(null);
+		System.err.println("Doccccc"+documents);
+		
+		boolean allVerified =false;
+		if(documents!=null) {
+			
+			System.err.println("uuu");
+			 allVerified = documents.stream().allMatch(Document::getDocVerified);
+			
+		}
+		
 	    VerificationDTO dto = verificationRepository.getAllVericationDetailsByLoanid(loanId);
 	    VerificationTrackResponseDTO trackResponse=new VerificationTrackResponseDTO();
 	    trackResponse.setDocumentsVerified(allVerified);

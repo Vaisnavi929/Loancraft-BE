@@ -67,7 +67,10 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	@Query("SELECT la.loanId as loanid, c.mobileNumber as mobileNumber, " +
 		       "c.firstName as firstName, c.email as email " +
 		       "FROM Applications la " +
-		       "JOIN la.customers c")
-	public List<DisbursmentIdDTO> getReviewedAppDropDown();
+		       "JOIN la.customers c " +
+		       "WHERE la.status = 'Reviewed' " +
+		       "ORDER BY c.firstName ASC")
+		List<DisbursmentIdDTO> getReviewedAppDropDown();
+
 
 }

@@ -1,29 +1,13 @@
 package com.narvee.controller;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import java.nio.charset.StandardCharsets;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import java.io.OutputStream;
-import javax.imageio.ImageIO;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.narvee.Service.DocumentService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Applications;
@@ -209,6 +192,7 @@ public class DocumentController {
 					Document doc = new Document();
 					doc.setFileName(formattedFileName);
 					doc.setFileType(docType);
+					doc.setDocVerified(false);
 					doc.setLoanApplication(loanApp);
 
 					documentRepository.save(doc);
@@ -248,9 +232,6 @@ public class DocumentController {
 				}
 			}
 
-			// Process optional single files
-			processFile.accept(panFile, "pan");
-			processFile.accept(aadhaarFile, "aadhaar");
 
 			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents uploaded successfully",
 					"Document Upload Summary: \n " + result.toString()), HttpStatus.OK);
