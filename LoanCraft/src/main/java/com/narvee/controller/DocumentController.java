@@ -1,4 +1,5 @@
 package com.narvee.controller;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -35,6 +36,7 @@ import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.util.EncryptionUtil;
+
 @RestController
 @RequestMapping("/auth/documents")
 public class DocumentController {
@@ -44,7 +46,7 @@ public class DocumentController {
 
 	@Autowired
 	VerificationService verificationService;
-	
+
 	@Autowired
 	DocumentRepository documentRepository;
 
@@ -98,10 +100,7 @@ public class DocumentController {
 			doc.setLoanApplication(loanApp);
 			documentRepository.save(doc);
 
-			return ResponseEntity.ok("File uploaded and"
-					+ ""
-					+ ""
-					+ " stored in DB: " + formattedFileName);
+			return ResponseEntity.ok("File uploaded and" + "" + "" + " stored in DB: " + formattedFileName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
@@ -143,8 +142,7 @@ public class DocumentController {
 				}
 			}
 			documentRepository.deleteById(id);
-			
-			
+
 			return ResponseEntity.ok("File and DB entry deleted successfully!");
 		} catch (FileNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -157,36 +155,33 @@ public class DocumentController {
 
 	@GetMapping("/verify-document/{id}")
 	public ResponseEntity<Boolean> verifyDocument(@PathVariable Long id, @RequestParam Boolean value) {
-	    try {
-	        Optional<Document> optionalDoc = documentRepository.findById(id);
+		try {
+			Optional<Document> optionalDoc = documentRepository.findById(id);
 
-	        if (optionalDoc.isPresent()) {
-	            Document doc = optionalDoc.get();
-	            
-	            Path filePath = Paths.get(UPLOAD_DIR).resolve(doc.getFileName()).normalize();
-	            File file = filePath.toFile();
-	            
-	            // Directly use the 'value' since it's already a Boolean
-	            if (file.exists() && value) {
-	                // Perform necessary actions when accepting the file (e.g., mark as approved)
-	                return ResponseEntity.ok(true);
-	            } 
-	            else if (file.exists() && !value) {
-	                // Perform necessary actions when rejecting the file (e.g., mark as rejected)
-	                return ResponseEntity.ok(false);
-	            } 
-	            else {
-	                return ResponseEntity.ok(false);
-	            }
-	        } else {
-	            return ResponseEntity.ok(false);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
-	    }
+			if (optionalDoc.isPresent()) {
+				Document doc = optionalDoc.get();
+
+				Path filePath = Paths.get(UPLOAD_DIR).resolve(doc.getFileName()).normalize();
+				File file = filePath.toFile();
+
+				// Directly use the 'value' since it's already a Boolean
+				if (file.exists() && value) {
+					// Perform necessary actions when accepting the file (e.g., mark as approved)
+					return ResponseEntity.ok(true);
+				} else if (file.exists() && !value) {
+					// Perform necessary actions when rejecting the file (e.g., mark as rejected)
+					return ResponseEntity.ok(false);
+				} else {
+					return ResponseEntity.ok(false);
+				}
+			} else {
+				return ResponseEntity.ok(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+		}
 	}
-
 
 	@PostMapping("/upload-documents")
 	public ResponseEntity<String> uploadDocuments(@RequestParam(value = "pan", required = false) MultipartFile panFile,
@@ -195,7 +190,7 @@ public class DocumentController {
 			@RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
 			@RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
 			@RequestParam("customerId") String customerId, @RequestParam("loanId") Long loanId) {
-		
+
 		System.err.println(UPLOAD_DIR);
 
 		StringBuilder result = new StringBuilder();
@@ -243,7 +238,7 @@ public class DocumentController {
 
 			// Process optional multiple bank statements
 			if (bankStatementFiles != null) {
-		
+
 				for (MultipartFile bankFile : bankStatementFiles) {
 					processFile.accept(bankFile, "bankstatement");
 				}
@@ -251,7 +246,7 @@ public class DocumentController {
 
 			// Process optional multiple payslips
 			if (payslipFiles != null) {
-				
+
 				for (MultipartFile payslipFile : payslipFiles) {
 					processFile.accept(payslipFile, "payslip");
 				}
@@ -259,17 +254,15 @@ public class DocumentController {
 
 			// Process optional multiple other documents
 			if (otherFiles != null) {
-			
+
 				for (MultipartFile otherFile : otherFiles) {
-					processFile.accept(otherFile, "others" );
+					processFile.accept(otherFile, "others");
 				}
 			}
 
 			// Process optional single files
 			processFile.accept(panFile, "pan");
 			processFile.accept(aadhaarFile, "aadhaar");
-
-		
 
 			return ResponseEntity.ok("Document Upload Summary:\n" + result.toString());
 
@@ -280,15 +273,14 @@ public class DocumentController {
 	}
 
 	@RequestMapping(value = "/updateDocVerified/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateDocVerified(
-	        @PathVariable("id") Long id, 
-	        @PathVariable("value") Boolean value) {
-	    boolean isUpdated = documentService.updateDocVerified(id, value);
+	public ResponseEntity<RestAPIResponse> updateDocVerified(@PathVariable("id") Long id,
+			@PathVariable("value") Boolean value) {
+		boolean isUpdated = documentService.updateDocVerified(id, value);
 
-	    return new ResponseEntity<>(new RestAPIResponse(
-	            isUpdated ? "success" : "failure", 
-	            isUpdated ? "Successfully updated DocVerified" : "Failed to update DocVerified",
-	            isUpdated), HttpStatus.OK);
+		return new ResponseEntity<>(
+				new RestAPIResponse(isUpdated ? "success" : "failure",
+						isUpdated ? "Successfully updated DocVerified" : "Failed to update DocVerified", isUpdated),
+				HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/getLoanAppDocs/{loanId}", method = RequestMethod.GET, produces = "application/json")
@@ -297,123 +289,120 @@ public class DocumentController {
 				documentService.getLoanAppDocs(loanId)), HttpStatus.OK);
 
 	}
+
 	@RequestMapping(value = "/upload-multiple", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> uploadMultipleFiles(
-	        @RequestParam("files") List<MultipartFile> files,
-	        @RequestParam("loanId") Long loanId) {
+	public ResponseEntity<RestAPIResponse> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files,
+			@RequestParam("loanId") Long loanId) {
 
-	    StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder();
 
-	    try {
-	        // Encrypt loanId
-	        String encryptedLoanId = EncryptionUtil.encrypt(loanId);
+		try {
+			// Encrypt loanId
+			String encryptedLoanId = EncryptionUtil.encrypt(loanId);
 
-	        // Ensure upload directory exists
-	        File uploadDir = new File(UPLOAD_DIR);
-	        if (!uploadDir.exists()) {
-	            uploadDir.mkdirs();
-	        }
+			// Ensure upload directory exists
+			File uploadDir = new File(UPLOAD_DIR);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdirs();
+			}
 
-	        // Fetch loan application
-	        Applications loanApp = applicationsRepository.findById(loanId)
-	                .orElseThrow(() -> new RuntimeException("Loan not found"));
+			// Fetch loan application
+			Applications loanApp = applicationsRepository.findById(loanId)
+					.orElseThrow(() -> new RuntimeException("Loan not found"));
 
-	        boolean anyFileUploaded = false;
+			boolean anyFileUploaded = false;
 
-	        for (MultipartFile file : files) {
-	            if (file == null || file.isEmpty() || file.getOriginalFilename() == null) {
-	                continue;
-	            }
+			for (MultipartFile file : files) {
+				if (file == null || file.isEmpty() || file.getOriginalFilename() == null) {
+					continue;
+				}
 
-	            String originalFilename = file.getOriginalFilename();
-	            String baseName = originalFilename;
-	            String extension = "";
+				String originalFilename = file.getOriginalFilename();
+				String baseName = originalFilename;
+				String extension = "";
 
-	            int dotIndex = originalFilename.lastIndexOf('.');
-	            if (dotIndex > 0) {
-	                baseName = originalFilename.substring(0, dotIndex);
-	                extension = originalFilename.substring(dotIndex);
-	            }
+				int dotIndex = originalFilename.lastIndexOf('.');
+				if (dotIndex > 0) {
+					baseName = originalFilename.substring(0, dotIndex);
+					extension = originalFilename.substring(dotIndex);
+				}
 
-	            String storedFilename = baseName + "_" + encryptedLoanId + extension;
+				String storedFilename = baseName + "_" + encryptedLoanId + extension;
 
-	            // Save file to disk
-	            File destinationFile = Paths.get(uploadDir.getAbsolutePath(), storedFilename).toFile();
-	            try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
-	                fos.write(file.getBytes());
-	            }
+				// Save file to disk
+				File destinationFile = Paths.get(uploadDir.getAbsolutePath(), storedFilename).toFile();
+				try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
+					fos.write(file.getBytes());
+				}
 
-	            // Save metadata in DB
-	            Document doc = new Document();
-	            doc.setFileName(storedFilename);
-	            doc.setFileType(file.getContentType());
-	            doc.setLoanApplication(loanApp);
-	            documentRepository.save(doc);
+				// Save metadata in DB
+				Document doc = new Document();
+				doc.setFileName(storedFilename);
+				doc.setFileType(file.getContentType());
+				doc.setLoanApplication(loanApp);
+				documentRepository.save(doc);
 
-	            result.append("Uploaded: ").append(storedFilename).append("\n");
-	            anyFileUploaded = true;
-	        }
+				result.append("Uploaded: ").append(storedFilename).append("\n");
+				anyFileUploaded = true;
+			}
 
-	        if (anyFileUploaded) {
-	            boolean isUpdated = verificationService.updatePhysicalLocationVerified(loanId, true);
-	            if (isUpdated) {
-	                result.append("Verification status updated successfully.\n");
-	            } else {
-	                result.append("Verification status update failed.\n");
-	            }
-	        } else {
-	            result.append("No valid files were uploaded.\n");
-	        }
+			if (anyFileUploaded) {
+				boolean isUpdated = verificationService.updatePhysicalLocationVerified(loanId, true);
+				if (isUpdated) {
+					result.append("Verification status updated successfully.\n");
+				} else {
+					result.append("Verification status update failed.\n");
+				}
+			} else {
+				result.append("No valid files were uploaded.\n");
+			}
 
-	        return ResponseEntity.ok(
-	                new RestAPIResponse("success", "Document upload completed", result.toString().trim())
-	        );
+			return ResponseEntity
+					.ok(new RestAPIResponse("success", "Document upload completed", result.toString().trim()));
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-	                new RestAPIResponse("error", "Upload failed", e.getMessage())
-	        );
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new RestAPIResponse("error", "Upload failed", e.getMessage()));
+		}
 	}
 
 	@PostMapping("/uploadpdf")
 	public ResponseEntity<String> uploadFilepdf(@RequestParam("file") MultipartFile file,
-	                                         @RequestParam("customerId") String customerId,
-	                                         @RequestParam("documentType") String documentType,
-	                                         @RequestParam("loanId") Long loanId) {
-												return documentService.uploadPdfFile(file, customerId, documentType, loanId);
-		
+			@RequestParam("customerId") String customerId, @RequestParam("documentType") String documentType,
+			@RequestParam("loanId") Long loanId) {
+		return documentService.uploadPdfFile(file, customerId, documentType, loanId);
+
 	}
-	
-	 @PostMapping(value = "/upload-multiplepdf", produces = "application/json")
-	    public ResponseEntity<String> uploadMultipleFilesPdf(@RequestParam("files") List<MultipartFile> files,
-	                                                      @RequestParam("loanId") Long loanId) {
-	        try {
-	            return documentService.uploadMultipleFilesPdf(files, loanId);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return new ResponseEntity<>("Upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
 
-	 }
-	 @PostMapping("/uploadPdf")
-	    public ResponseEntity<String> uploadDocumentspdf(
-	            @RequestParam(value = "pan", required = false) MultipartFile panFile,
-	            @RequestParam(value = "aadhaar", required = false) MultipartFile aadhaarFile,
-	            @RequestParam(value = "bankStatements", required = false) List<MultipartFile> bankStatementFiles,
-	            @RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
-	            @RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
-	            @RequestParam("customerId") String customerId,
-	            @RequestParam("loanId") Long loanId) {
+	@PostMapping(value = "/upload-multiplepdf", produces = "application/json")
+	public ResponseEntity<String> uploadMultipleFilesPdf(@RequestParam("files") List<MultipartFile> files,
+			@RequestParam("loanId") Long loanId) {
+		try {
+			return documentService.uploadMultipleFilesPdf(files, loanId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("Upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
-	        String result = documentService.uploadDocumentsPdf(
-	                panFile, aadhaarFile, bankStatementFiles, payslipFiles, otherFiles, customerId, loanId);
+	}
 
-	        if (result.startsWith("Upload failed")) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
-	        }
-	        return ResponseEntity.ok("Document Upload Summary:\n" + result);
-	    }
-	
+	@PostMapping("/uploadPdf")
+	public ResponseEntity<String> uploadDocumentspdf(
+			@RequestParam(value = "pan", required = false) MultipartFile panFile,
+			@RequestParam(value = "aadhaar", required = false) MultipartFile aadhaarFile,
+			@RequestParam(value = "bankStatements", required = false) List<MultipartFile> bankStatementFiles,
+			@RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
+			@RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
+			@RequestParam("customerId") String customerId, @RequestParam("loanId") Long loanId) {
+
+		String result = documentService.uploadDocumentsPdf(panFile, aadhaarFile, bankStatementFiles, payslipFiles,
+				otherFiles, customerId, loanId);
+
+		if (result.startsWith("Upload failed")) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+		}
+		return ResponseEntity.ok("Document Upload Summary:\n" + result);
+	}
+
 }
