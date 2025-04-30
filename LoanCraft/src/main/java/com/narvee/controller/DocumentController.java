@@ -95,7 +95,7 @@ public class DocumentController {
 			// Logging the type of fileBytes for debugging
 
 			doc.setFileName(formattedFileName);
-			doc.setFileType(file.getContentType());
+			doc.setFileType("Physical Doc"); // explicitly mark as physical document
 
 			doc.setLoanApplication(loanApp);
 			documentRepository.save(doc);
@@ -315,11 +315,13 @@ public class DocumentController {
 				}
 
 				// Save metadata in DB
+				// Save metadata in DB
 				Document doc = new Document();
 				doc.setFileName(storedFilename);
-				doc.setFileType(file.getContentType());
+				doc.setFileType("Physical Doc"); // explicitly mark as physical document
 				doc.setLoanApplication(loanApp);
 				documentRepository.save(doc);
+
 
 				result.append("Uploaded: ").append(storedFilename).append("\n");
 				anyFileUploaded = true;
@@ -383,5 +385,10 @@ public class DocumentController {
 		}
 		return ResponseEntity.ok("Document Upload Summary:\n" + result);
 	}
-
+	@RequestMapping(value = "/getPhysicalVerificationDocuments/{loanId}/{fileType}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getPhysicalVerificationDocuments(@PathVariable Long loanId, @PathVariable String fileType){
+    	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents fetched By loanid ,fileType ,successfully",
+				documentService.getPhysicalVerificationDocuments(loanId, fileType)), HttpStatus.OK);
+		
+	}
 }

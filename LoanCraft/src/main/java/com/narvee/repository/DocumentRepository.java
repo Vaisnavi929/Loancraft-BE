@@ -21,5 +21,26 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 	
 	public List<Document> findByLoanApplicationLoanId(Long id);
 
-
+	public List<Document> findByLoanApplicationLoanIdAndFileType(Long loanId, String fileType);
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
