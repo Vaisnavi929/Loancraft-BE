@@ -20,6 +20,10 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.slf4j.Logger;
@@ -41,16 +45,6 @@ import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.request.dto.LoanAppDocsResponse;
 import com.narvee.util.EncryptionUtil;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-
-
-
-
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -155,7 +149,7 @@ public class DocumentServiceImpl implements DocumentService {
 	            byte[] fileBytes = Files.readAllBytes(pdfFile.toPath());
 
 	            doc.setFileName(formattedFileName);
-	            doc.setFileType("application/pdf");
+	            doc.setFileType("Physical Doc");
 	            doc.setLoanApplication(loanApp);
 
 	            documentRepository.save(doc);
@@ -368,4 +362,10 @@ public class DocumentServiceImpl implements DocumentService {
         return result.toString();
     }
 
+	@Override
+	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType) {
+		logger.info("!!! inside class: DocumentServiceImpl, method: getLoanAppDocs");
+		return documentRepository.findByLoanApplicationLoanIdAndFileType(loanId, fileType);
+
+	}
 }

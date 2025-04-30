@@ -26,4 +26,5 @@ public interface DocumentService {
                 List<MultipartFile> bankStatementFiles, List<MultipartFile> payslipFiles,
                 List<MultipartFile> otherFiles, String customerId, Long loanId);
 
+	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType);
 }
