@@ -1,5 +1,6 @@
 package com.narvee.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.CustomersInfo;
+import com.narvee.request.dto.ApplicationResponseDto;
 import com.narvee.request.dto.CustomerResponseDTO;
 import com.narvee.request.dto.SearchingDTO;
 
@@ -57,4 +59,9 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Long checkEligibility(@Param("customerId") Long customerId);
 
 	public boolean existsByEmail(String email);
+	
+	@Query(value ="SELECT a.updateddate as updateddate,   a.loan_id,a.application_reference_id AS referenceId,  a.createddate, c.first_name, c.last_name,c.email,a.status,c.mobile_number,\n"
+			+ "	a.repayment_mode,a.loan_amount FROM lms_applications a JOIN lms_customers_info c ON a.customer_id = c.customer_id WHERE c.customer_id = :customerId",nativeQuery = true)
+		List<ApplicationResponseDto> findApplicationsByCustomerId(@Param("customerId") Long customerId);
+
 }
