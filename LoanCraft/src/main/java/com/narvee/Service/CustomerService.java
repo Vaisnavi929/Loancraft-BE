@@ -1,8 +1,12 @@
 package com.narvee.Service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
 import com.narvee.entity.CustomersInfo;
+import com.narvee.request.dto.ApplicationDTO;
+import com.narvee.request.dto.ApplicationResponseDto;
 import com.narvee.request.dto.CustomerResponseDTOS;
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
@@ -23,5 +27,5 @@ public interface CustomerService {
 	Long checkCustomerEligibility(String customerId) throws Exception;
 	
 	public boolean isEmailDuplicate(String email);
-	
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String  customerId);
 }

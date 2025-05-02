@@ -1,6 +1,8 @@
 package com.narvee.serviceimpl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -15,11 +17,14 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
+import com.narvee.entity.Applications;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.request.dto.ApplicationDTO;
+import com.narvee.request.dto.ApplicationResponseDto;
 import com.narvee.request.dto.CustomerResponseDTO;
 import com.narvee.request.dto.CustomerResponseDTOS;
 import com.narvee.request.dto.CustomerUpdateRequest;
@@ -35,6 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private CustomersRepository customerRepository;
 
+	
 	@Autowired
 	private ModelMapper modelMapper;
 
@@ -224,6 +230,19 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.existsByEmail(email);
 	}
 
+	@Override
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId) {
+	    try {
+	        System.out.println("Received encryptedCustomerId: " + encryptedCustomerId);
+	        long decryptedId = EncryptionUtil.decrypt(encryptedCustomerId);
+	        
+	        System.out.println("Decrypted customerId: " + decryptedId);
+	        return customerRepository.findApplicationsByCustomerId(decryptedId);
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Detailed stack trace
+	        throw new RuntimeException("Invalid encrypted customer ID", e);
+	    }
+	}
 
 
 }
