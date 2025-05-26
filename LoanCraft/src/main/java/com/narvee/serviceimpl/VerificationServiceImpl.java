@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +25,8 @@ import com.narvee.request.dto.VerificationTrackResponseDTO;
 import jakarta.transaction.Transactional;
 
 @Service
-public class VerificationServiceImpl implements VerificationService{
-	
+public class VerificationServiceImpl implements VerificationService {
+
 	private static final Logger logger = LoggerFactory.getLogger(VerificationServiceImpl.class);
 	private static final String UPLOAD_DIR = "C:\\FileUploads";
 	@Autowired
@@ -33,6 +34,7 @@ public class VerificationServiceImpl implements VerificationService{
 
 	@Autowired
 	DocumentRepository documentRepository;
+
 	@Override
 	public Verification saveVerification(Verification verification) {
 		logger.info("!!! inside class: VerificationServiceImpl, method: saveVerification");
@@ -63,75 +65,77 @@ public class VerificationServiceImpl implements VerificationService{
 		verificationRepository.deleteById(verifiedId);
 		return false;
 	}
-	
+
 	@Override
 	public Verification uploadDocumentsToVerification(Long verifiedId, List<MultipartFile> files) throws IOException {
-	    logger.info("!!! inside class: VerificationServiceImpl, method: uploadDocumentsToVerification");
+		logger.info("!!! inside class: VerificationServiceImpl, method: uploadDocumentsToVerification");
 
-	    Verification verification = verificationRepository.findById(verifiedId)
-	            .orElseThrow(() -> new RuntimeException("Verification not found with ID: " + verifiedId));
+		Verification verification = verificationRepository.findById(verifiedId)
+				.orElseThrow(() -> new RuntimeException("Verification not found with ID: " + verifiedId));
 
-	    // Ensure the upload directory exists
-	    File uploadDir = new File(UPLOAD_DIR);
-	    if (!uploadDir.exists()) {
-	        uploadDir.mkdirs();
-	    }
+		// Ensure the upload directory exists
+		File uploadDir = new File(UPLOAD_DIR);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
 
-	    for (MultipartFile file : files) {
-	        if (file != null && !file.isEmpty()) {
-	            // Save file to filesystem
-	            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-	            File destinationFile = new File(uploadDir, fileName);
-	            try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
-	                fos.write(file.getBytes());
-	            }
+		for (MultipartFile file : files) {
+			if (file != null && !file.isEmpty()) {
+				// Save file to filesystem
+				String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+				File destinationFile = new File(uploadDir, fileName);
+				try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
+					fos.write(file.getBytes());
+				}
 
-	            // Create Document entity and set metadata
-	            Document document = new Document();
-	            document.setFileName(fileName);
-	            document.setFileType(file.getContentType());
-	            document.setDocVerified(false);
-	            document.setVerification(verification);
+				// Create Document entity and set metadata
+				Document document = new Document();
+				document.setFileName(fileName);
+				document.setFileType(file.getContentType());
+				document.setDocVerified(false);
+				document.setVerification(verification);
 
-	            // Add document to verification
-	            verification.getPhysicalLocationDocument().add(document);
-	        }
-	    }
+				// Add document to verification
+				verification.getPhysicalLocationDocument().add(document);
+			}
+		}
 
-	    // Save the verification (CascadeType.ALL saves documents too)
-	    return verificationRepository.save(verification);
+		// Save the verification (CascadeType.ALL saves documents too)
+		return verificationRepository.save(verification);
 	}
 
 	@Transactional
 	@Override
 	public boolean updateReviewed(Long verifiedId, Boolean value) {
-	    logger.info("!!! inside class: VerificationServiceImpl, method: updateReviewed");
+		logger.info("!!! inside class: VerificationServiceImpl, method: updateReviewed");
 
-	    int updatedCount = verificationRepository.updateReviewed(verifiedId, value);
+		int updatedCount = verificationRepository.updateReviewed(verifiedId, value);
 
-	    return updatedCount > 0;
+		return updatedCount > 0;
 	}
+
 	@Override
 	public boolean updateCibil(Long verifiedId, Boolean value) {
 		logger.info("!!! inside class: VerificationServiceImpl, method: updateCibil");
-		 int updatedCount = verificationRepository.updateCibil(verifiedId, value);
+		int updatedCount = verificationRepository.updateCibil(verifiedId, value);
 
-		    return updatedCount > 0; 
+		return updatedCount > 0;
 	}
+
 	@Override
 	public boolean updatePhysicalLocationVerified(Long verifiedId, Boolean value) {
 		logger.info("!!! inside class: VerificationServiceImpl, method: updatePhysicalLocationVerified");
 		int updatedCount = verificationRepository.updatePhysicalLocationVerified(verifiedId, value);
 
-	    return updatedCount > 0; 
+		return updatedCount > 0;
 	}
 
 	@Override
-	public boolean updateSanction(Long verifiedId, Boolean value) {
+	public boolean updateSanction(Long loanId, Boolean value) {
 		logger.info("!!! inside class: VerificationServiceImpl, method: updateSanction");
-		int updatedCount = verificationRepository.updateSanction(verifiedId, value);
+		int updatedCount = verificationRepository.updateSanction(loanId, value);
 
-	    return updatedCount > 0; 
+		return updatedCount > 0;
 	}
 
 	@Override
@@ -139,39 +143,39 @@ public class VerificationServiceImpl implements VerificationService{
 		logger.info("!!! inside class: VerificationServiceImpl, method: updateDisbursed");
 		int updatedCount = verificationRepository.updateDisbursed(verifiedId, value);
 
-	    return updatedCount > 0; 
+		return updatedCount > 0;
 	}
 
 	@Override
 	public VerificationTrackResponseDTO getAllVericationdetailsByLoanId(Long loanId) {
 		logger.info("!!! inside class: VerificationServiceImpl, method: getAllVericationdetailsByLoanId");
 		List<Document> documents = Optional.ofNullable(documentRepository.findByLoanApplicationLoanId(loanId))
-                .filter(list -> !list.isEmpty())
-                .orElse(null);
-		System.err.println("Doccccc"+documents);
-		
-		boolean allVerified =false;
-		if(documents!=null) {
-			
-			System.err.println("uuu");
-			 allVerified = documents.stream().allMatch(Document::getDocVerified);
-			
+				.filter(list -> !list.isEmpty()).orElse(null);
+
+		boolean allVerified = false;
+
+		if (documents != null) {
+		    List<Document> filteredDocs = documents.stream()
+		        .filter(doc -> !"Physical Doc".equalsIgnoreCase(doc.getFileType()))
+		        .toList();
+
+		    if (!filteredDocs.isEmpty()) {
+		        allVerified = filteredDocs.stream()
+		            .allMatch(doc -> Boolean.TRUE.equals(doc.getDocVerified())); // null is treated as false
+		    }
 		}
+
 		
-	    VerificationDTO dto = verificationRepository.getAllVericationDetailsByLoanid(loanId);
-	    VerificationTrackResponseDTO trackResponse=new VerificationTrackResponseDTO();
-	    trackResponse.setDocumentsVerified(allVerified);
-	    trackResponse.setCibil(dto.getCibil());
-	    trackResponse.setDisbursed(dto.getDisbursed());
-	    trackResponse.setPhysicalLocationVerified(dto.getPhysicalLocationVerified());
-	    trackResponse.setReviewed(dto.getReviewed());
-	    trackResponse.setSanction(dto.getSanction());
-	   
-	
-		
+		VerificationDTO dto = verificationRepository.getAllVericationDetailsByLoanid(loanId);
+		VerificationTrackResponseDTO trackResponse = new VerificationTrackResponseDTO();
+		trackResponse.setDocumentsVerified(allVerified);
+		trackResponse.setCibil(dto.getCibil());
+		trackResponse.setDisbursed(dto.getDisbursed());
+		trackResponse.setPhysicalLocationVerified(dto.getPhysicalLocationVerified());
+		trackResponse.setReviewed(dto.getReviewed());
+		trackResponse.setSanction(dto.getSanction());
+
 		return trackResponse;
 	}
 
-
 }
-

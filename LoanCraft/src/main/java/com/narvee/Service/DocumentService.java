@@ -1,6 +1,7 @@
 package com.narvee.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,4 +27,6 @@ public interface DocumentService {
                 List<MultipartFile> otherFiles, String customerId, Long loanId);
 
 	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType);
+
+	boolean updatePhysicalDocVerified(Long id, Boolean value,Long loanId);
 }

@@ -198,7 +198,7 @@ public class DocumentController {
 					Document doc = new Document();
 					doc.setFileName(formattedFileName);
 					doc.setFileType(docType);
-					doc.setDocVerified(false);
+//					doc.setDocVerified(false);
 					doc.setLoanApplication(loanApp);
 
 					documentRepository.save(doc);
@@ -254,6 +254,20 @@ public class DocumentController {
 	public ResponseEntity<RestAPIResponse> updateDocVerified(@PathVariable("id") Long id,
 			@PathVariable("value") Boolean value) {
 		boolean isUpdated = documentService.updateDocVerified(id, value);
+
+		return new ResponseEntity<>(
+				new RestAPIResponse(isUpdated ? "success" : "failure",
+						isUpdated ? "Successfully updated DocVerified" : "Failed to update DocVerified", isUpdated),
+				HttpStatus.OK);
+
+	}
+	
+	
+	
+	@RequestMapping(value = "/updatePhysicalDocVerified/{id}/{value}/{loanId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updatePhysicalDocVerified(@PathVariable("id") Long id,
+			@PathVariable("value") Boolean value,@PathVariable("loanId") Long loanId) {
+		boolean isUpdated = documentService.updatePhysicalDocVerified(id, value, loanId);
 
 		return new ResponseEntity<>(
 				new RestAPIResponse(isUpdated ? "success" : "failure",

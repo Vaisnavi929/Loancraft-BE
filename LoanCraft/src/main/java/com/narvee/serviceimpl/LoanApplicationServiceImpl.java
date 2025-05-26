@@ -1,5 +1,7 @@
 package com.narvee.serviceimpl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -137,8 +139,10 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
 
+		if (sortField.equalsIgnoreCase("referenceid"))
+			sortField = "referenceId";
 		if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "first_name";
+			sortField = "first_name";	
 		else if (sortField.equalsIgnoreCase("lastName"))
 			sortField = "last_name";
 		else if (sortField.equalsIgnoreCase("email"))
@@ -216,6 +220,9 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 		loanApplication.setStatus(status);
 		loanApplication.setRemarks(remarks);
+		loanApplication.setUpdateddate();
+
+		
 		if (creditScore != null) {
 			loanApplication.setCreditScore(creditScore);
 		}

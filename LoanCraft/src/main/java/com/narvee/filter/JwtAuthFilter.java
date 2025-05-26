@@ -39,41 +39,34 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	@Autowired
 	private BlacklistedTokenRepository blacklistedTokenRepository;
 
-
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		logger.info("Inside JwtAuthFilter -> doFilterInternal()");
-		
-		String authHeader1 = request.getHeader("Authorization");
-		System.out.println("DDDDD"+authHeader1);
-		
+
 		String requestURI = request.getRequestURI();
-		
 
 		// Define API paths that do not require authentication
 		Set<String> allowedPaths = Set.of("/api/app/get", "/api/app/save", "/auth/customer/register",
 				"/auth/emp/register", "/api/Emp/login", "/api/Cust/login", "/api/auth/logout", "/api/forgot-password",
-				"/swagger-ui/index.html", "/api/ucrf/convertUrcfFormat" ,"/auth/customer/save","/auth/customer/check-email");
-		
-		List<String> allowedPrefixPaths = List.of(
-			    "/auth/customer/check-email","/auth/otp/send-otp","/auth/otp/verify-otp" // Add trailing slash for prefix match
-			);
+				"/swagger-ui/index.html", "/api/ucrf/convertUrcfFormat", "/auth/customer/save",
+				"/auth/customer/check-email");
 
-			boolean isAllowed = allowedPaths.contains(requestURI) || 
-			                    allowedPrefixPaths.stream().anyMatch(requestURI::startsWith) || 
-			                    requestURI.startsWith("/api/");
-		
+		List<String> allowedPrefixPaths = List.of("/auth/customer/check-email", "/auth/otp/send-otp",
+				"/auth/otp/verify-otp" // Add trailing slash for prefix match
+		);
+
+		boolean isAllowed = allowedPaths.contains(requestURI)
+				|| allowedPrefixPaths.stream().anyMatch(requestURI::startsWith) || requestURI.startsWith("/api/");
 
 		if (isAllowed) {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		
-		System.err.println("0000000000000000000000");
+
 		// Extract token from Authorization header
 		String authHeader = request.getHeader("Authorization");
-		System.out.println("yy"+authHeader);
+		System.out.println("yy" + authHeader);
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			filterChain.doFilter(request, response);
 			return;

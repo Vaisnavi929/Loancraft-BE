@@ -2,7 +2,6 @@ package com.narvee.serviceimpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.IAuthenticationService;
@@ -19,21 +18,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 	private CustomersRepository customersRepository;
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
 	private JwtUtil jwtUtil;
 
 	@Override
-	public Object authenticate(String usernameOrEmail, String password) {
+	public AuthResponse authenticate(String usernameOrEmail) {
 		// Fetch the applicant from the repository using email
 		CustomersInfo applicant = customersRepository.findByEmailOrMobileNumber(usernameOrEmail,usernameOrEmail)
 				.orElseThrow(() -> new BadCredentialsException("Applicant not found"));
 		
-
-		if (passwordEncoder.matches(password, applicant.getPassword())) {
-			
-			String token = jwtUtil.generateToken(usernameOrEmail);
+			String token = jwtUtil.generateTokenFoCustomer(usernameOrEmail);
 
 			// Map the applicant information to the ResponseDto
 			AuthResponse responseDto = new AuthResponse();
@@ -50,9 +43,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 			responseDto.setToken(token); // Set the generated token
 
 			return responseDto; // Return ResponseDto with applicant details and token
-		} else {
-			throw new BadCredentialsException("Invalid credentials");
-		}
-	}
+		} 
 
 }

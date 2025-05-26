@@ -48,7 +48,7 @@ public class CustomersController {
 		try {
 			customerService.save(register);
 
-			Object authenticate = authenticationService.authenticate(register.getEmail(), register.getPassword());
+			Object authenticate = authenticationService.authenticate(register.getEmail());
 			logger.info("customer saved and authenticated successfully: {}", register.getEmail());
 
 			return ResponseEntity

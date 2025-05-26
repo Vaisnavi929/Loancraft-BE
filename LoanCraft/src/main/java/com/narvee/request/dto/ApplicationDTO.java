@@ -26,4 +26,5 @@ public interface ApplicationDTO {
 
 	public String getReferenceid();
 
+	public Boolean  getPhysicalVerification();
 }
