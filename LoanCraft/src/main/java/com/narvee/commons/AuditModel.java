@@ -28,16 +28,19 @@ public class AuditModel implements Serializable {
 
 	@PrePersist
 	public void setCreateddate() {
-		ZoneId newYork = ZoneId.of("America/Chicago");
-		LocalDateTime now = LocalDateTime.now(newYork);
+		ZoneId india = ZoneId.of("Asia/Kolkata");
+		LocalDateTime now = LocalDateTime.now(india);
 		this.createddate = now;
 		this.updateddate = now;
 	}
 
 	@PreUpdate
 	public void setUpdateddate() {
-		ZoneId newYork = ZoneId.of("America/Chicago");
-		LocalDateTime now = LocalDateTime.now(newYork);
+		ZoneId india = ZoneId.of("Asia/Kolkata");
+		LocalDateTime now = LocalDateTime.now(india);
 		this.updateddate = now;
 	}
+	
+	
+	
 }

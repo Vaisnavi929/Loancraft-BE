@@ -1,5 +1,6 @@
 package com.narvee.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import com.narvee.commons.AuditModel;
@@ -38,7 +39,7 @@ public class LoanSanction extends AuditModel{
 	private String repaymentMode;
 	private Date emiStartDate;
 	private Date emiEndDate;
-	private Date emiDueDate;
+	private String dueDate;
 	private String paymentFreqmuency;
 	private String status;
 	private Double loanProcessingCharges;

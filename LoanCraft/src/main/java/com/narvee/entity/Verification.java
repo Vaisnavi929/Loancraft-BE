@@ -1,3 +1,4 @@
+
 package com.narvee.entity;
 
 import java.util.ArrayList;
@@ -26,12 +27,13 @@ public class Verification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long verifiedId;
-	private boolean reviewed;
-	private boolean cibil;
-	private boolean physicalLocationVerified;
-	private boolean sanction;
-	private boolean disbursed;
+	private Boolean reviewed;
+	private Boolean cibil;
+	private Boolean physicalLocationVerified;
+	private Boolean sanction;
+	private Boolean disbursed;
 	
+
 	@OneToMany(mappedBy = "verification", cascade = CascadeType.ALL)
 	private List<Document> physicalLocationDocument = new ArrayList<>();
 
@@ -40,3 +42,4 @@ public class Verification {
 	private Applications applications;	
 
 }
+

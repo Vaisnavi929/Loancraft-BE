@@ -37,6 +37,8 @@ public class LmsPayment {
 	private String paymentmode;
 	private String remarks;
 	private String checkBouns;
+	private Double penaltyCharges;
+	private Double principalAmount;
 	
 	
 	 @ManyToOne

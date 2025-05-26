@@ -27,4 +27,6 @@ public interface DocumentService {
                 List<MultipartFile> otherFiles, String customerId, Long loanId);
 
 	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType);
+
+	boolean updatePhysicalDocVerified(Long id, Boolean value,Long loanId);
 }

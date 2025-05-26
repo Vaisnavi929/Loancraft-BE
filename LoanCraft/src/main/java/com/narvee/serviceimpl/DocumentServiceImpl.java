@@ -1,4 +1,5 @@
 package com.narvee.serviceimpl;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,7 +11,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -43,35 +46,38 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
+import com.narvee.repository.VerificationRepository;
 import com.narvee.request.dto.LoanAppDocsResponse;
+import com.narvee.request.dto.VerificationDTO;
 import com.narvee.util.EncryptionUtil;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
-	private static final Logger logger=LoggerFactory.getLogger(DocumentServiceImpl.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(DocumentServiceImpl.class);
+
 	@Value("${AppFilesDir}")
 	private String UPLOAD_DIR;
 
-	
-    @Autowired
-    private DocumentRepository documentRepository;
-    @Autowired
-    private ApplicationsRepository loanApplicationRepository;
+	@Autowired
+	private DocumentRepository documentRepository;
+	@Autowired
+	private ApplicationsRepository loanApplicationRepository;
 
-    @Override
-    public Document saveDocument(MultipartFile file, Long loanId) throws IOException {
-    	logger.info("!!! inside class: DocumentServiceImpl, method: saveDocument");
-        Applications loanApplication = loanApplicationRepository.findById(loanId)
-                .orElseThrow(() -> new IllegalArgumentException("LoanApplication not found with ID: " + loanId));
- 
-        Document document = new Document();
-        document.setFileName(file.getOriginalFilename());
-        document.setFileType(file.getContentType());
-        document.setLoanApplication(loanApplication); 
-        return documentRepository.save(document);
-    }
+	@Autowired
+	private VerificationRepository verificationRepository;
 
+	@Override
+	public Document saveDocument(MultipartFile file, Long loanId) throws IOException {
+		logger.info("!!! inside class: DocumentServiceImpl, method: saveDocument");
+		Applications loanApplication = loanApplicationRepository.findById(loanId)
+				.orElseThrow(() -> new IllegalArgumentException("LoanApplication not found with ID: " + loanId));
+
+		Document document = new Document();
+		document.setFileName(file.getOriginalFilename());
+		document.setFileType(file.getContentType());
+		document.setLoanApplication(loanApplication);
+		return documentRepository.save(document);
+	}
 
 	@Override
 	public Document getByDocumentId(Long id) {
@@ -80,287 +86,311 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	@Override
-	public boolean updateDocVerified(Long id, Boolean value) {
-		logger.info("!!! inside class: DocumentServiceImpl, method: updateDocVerified");
-		 int updatedCount = documentRepository.updateReviewed(id, value);
+	public boolean updatePhysicalDocVerified(Long id, Boolean value, Long loanId) {
+		logger.info("!!! inside class: DocumentServiceImpl, method: updatePhysicalDocVerified");
+		int updatedCount = documentRepository.updateReviewed(id, value);
 
-		    return updatedCount > 0;
+		List<Document> documents = Optional.ofNullable(documentRepository.findByLoanApplicationLoanId(loanId))
+				.filter(list -> !list.isEmpty()).orElse(null);
+
+		boolean physicallocationVerified = false;
+		if (documents != null) {
+			List<Document> physicalDocs = documents.stream()
+					.filter(doc -> "Physical Doc".equalsIgnoreCase(doc.getFileType())).collect(Collectors.toList());
+
+			if (!physicalDocs.isEmpty()) {
+
+				physicallocationVerified = physicalDocs.stream()
+						.allMatch(doc -> Boolean.TRUE.equals(doc.getDocVerified()));
+				verificationRepository.updatePhysicalLocationVerified(loanId, physicallocationVerified);
+
+			}
+		}
+
+		return updatedCount > 0;
 	}
 
+	@Override
+	public boolean updateDocVerified(Long id, Boolean value) {
+		logger.info("!!! inside class: DocumentServiceImpl, method: updateDocVerified");
+		int updatedCount = documentRepository.updateReviewed(id, value);
+		return updatedCount > 0;
+	}
 
 	@Override
 	public LoanAppDocsResponse getLoanAppDocs(Long id) {
-	    logger.info("!!! inside class: DocumentServiceImpl, method: getLoanAppDocs");
+		logger.info("!!! inside class: DocumentServiceImpl, method: getLoanAppDocs");
 
-	    List<Document> allDocs = documentRepository.findByLoanApplicationLoanId(id);
-	    List<Document> payslips = new ArrayList<>();
-	    List<Document> bankStatements = new ArrayList<>();
-	    List<Document> otherDocs = new ArrayList<>();
-	    List<Document> aadhaar = new ArrayList<>();
-	    List<Document> pan = new ArrayList<>();
+		List<Document> allDocs = documentRepository.findByLoanApplicationLoanId(id);
+		List<Document> payslips = new ArrayList<>();
+		List<Document> bankStatements = new ArrayList<>();
+		List<Document> otherDocs = new ArrayList<>();
+		List<Document> aadhaar = new ArrayList<>();
+		List<Document> pan = new ArrayList<>();
 
-	    for (Document doc : allDocs) {
-	        String fileName = doc.getFileName().toLowerCase();
+		for (Document doc : allDocs) {
+			String fileName = doc.getFileName().toLowerCase();
 
-	        if (fileName.contains("payslip")) {
-	            payslips.add(doc);
-	        } else if (fileName.contains("bankstatement")) {
-	            bankStatements.add(doc);
-	        } else if (fileName.contains("aadhaar")) {
-	            aadhaar.add(doc);
-	        } else if (fileName.contains("pan")) {
-	            pan.add(doc);
-	        } else {
-	            otherDocs.add(doc);
-	        }
-	    }
+			if (fileName.contains("payslip")) {
+				payslips.add(doc);
+			} else if (fileName.contains("bankstatement")) {
+				bankStatements.add(doc);
+			} else if (fileName.contains("aadhaar")) {
+				aadhaar.add(doc);
+			} else if (fileName.contains("pan")) {
+				pan.add(doc);
+			} else {
+				otherDocs.add(doc);
+			}
+		}
 
-	  
-	    Comparator<Document> byFileType = Comparator.comparing(Document::getFileType);
+		Comparator<Document> byFileType = Comparator.comparing(Document::getFileType);
 
-	    aadhaar.sort(byFileType);
-	    pan.sort(byFileType);
-	    payslips.sort(byFileType);
-	    bankStatements.sort(byFileType);
-	    otherDocs.sort(byFileType);
+		aadhaar.sort(byFileType);
+		pan.sort(byFileType);
+		payslips.sort(byFileType);
+		bankStatements.sort(byFileType);
+		otherDocs.sort(byFileType);
 
-	    return new LoanAppDocsResponse(aadhaar, pan, payslips, bankStatements, otherDocs);
+		return new LoanAppDocsResponse(aadhaar, pan, payslips, bankStatements, otherDocs);
 	}
-
 
 	@Override
-	public ResponseEntity<String> uploadPdfFile(MultipartFile file, String customerId, String documentType, Long loanId) {
-		
-		 try {
-	            String originalFilename = file.getOriginalFilename();
-	            String baseName = originalFilename != null ? originalFilename.replaceAll("\\.[^.]*$", "") : "document";
-	            String formattedFileName = documentType.toLowerCase() + "-" + customerId + "_" + baseName + ".pdf";
+	public ResponseEntity<String> uploadPdfFile(MultipartFile file, String customerId, String documentType,
+			Long loanId) {
 
-	            File uploadDir = new File(UPLOAD_DIR);
-	            if (!uploadDir.exists()) uploadDir.mkdirs();
+		try {
+			String originalFilename = file.getOriginalFilename();
+			String baseName = originalFilename != null ? originalFilename.replaceAll("\\.[^.]*$", "") : "document";
+			String formattedFileName = documentType.toLowerCase() + "-" + customerId + "_" + baseName + ".pdf";
 
-	            File pdfFile = new File(uploadDir, formattedFileName);
-	            convertToPdf(file, pdfFile);
+			File uploadDir = new File(UPLOAD_DIR);
+			if (!uploadDir.exists())
+				uploadDir.mkdirs();
 
-	            Applications loanApp = loanApplicationRepository.findById(loanId)
-	                    .orElseThrow(() -> new RuntimeException("Loan not found"));
+			File pdfFile = new File(uploadDir, formattedFileName);
+			convertToPdf(file, pdfFile);
 
-	            Document doc = new Document();
-	            byte[] fileBytes = Files.readAllBytes(pdfFile.toPath());
+			Applications loanApp = loanApplicationRepository.findById(loanId)
+					.orElseThrow(() -> new RuntimeException("Loan not found"));
 
-	            doc.setFileName(formattedFileName);
-	            doc.setFileType("Physical Doc");
-	            doc.setLoanApplication(loanApp);
+			Document doc = new Document();
+			byte[] fileBytes = Files.readAllBytes(pdfFile.toPath());
 
-	            documentRepository.save(doc);
+			doc.setFileName(formattedFileName);
+			doc.setFileType("Physical Doc");
+			doc.setLoanApplication(loanApp);
 
-	            return ResponseEntity.ok("File converted to PDF and uploaded: " + formattedFileName);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
-	        }
-	    }
+			documentRepository.save(doc);
+
+			return ResponseEntity.ok("File converted to PDF and uploaded: " + formattedFileName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+		}
+	}
 
 	private void convertToPdf(MultipartFile file, File pdfFile) throws IOException {
-	    String contentType = file.getContentType();
-	    String originalFilename = file.getOriginalFilename();
+		String contentType = file.getContentType();
+		String originalFilename = file.getOriginalFilename();
 
-	    if (contentType != null && contentType.startsWith("image/")) {
-	        // Convert image to PDF
-	        BufferedImage image = ImageIO.read(file.getInputStream());
-	        try (PDDocument doc = new PDDocument()) {
-	            PDPage page = new PDPage(new PDRectangle(image.getWidth(), image.getHeight()));
-	            doc.addPage(page);
-	            PDImageXObject pdImage = LosslessFactory.createFromImage(doc, image);
-	            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
-	                contentStream.drawImage(pdImage, 0, 0);
-	            }
-	            doc.save(pdfFile);
-	        }
-	    } else if (originalFilename != null && originalFilename.endsWith(".docx")) {
-	        // Convert Word (.docx) to PDF using Apache POI and iText
-	        try (XWPFDocument docx = new XWPFDocument(file.getInputStream());
-	             OutputStream out = new FileOutputStream(pdfFile)) {
+		if (contentType != null && contentType.startsWith("image/")) {
+			// Convert image to PDF
+			BufferedImage image = ImageIO.read(file.getInputStream());
+			try (PDDocument doc = new PDDocument()) {
+				PDPage page = new PDPage(new PDRectangle(image.getWidth(), image.getHeight()));
+				doc.addPage(page);
+				PDImageXObject pdImage = LosslessFactory.createFromImage(doc, image);
+				try (PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
+					contentStream.drawImage(pdImage, 0, 0);
+				}
+				doc.save(pdfFile);
+			}
+		} else if (originalFilename != null && originalFilename.endsWith(".docx")) {
+			// Convert Word (.docx) to PDF using Apache POI and iText
+			try (XWPFDocument docx = new XWPFDocument(file.getInputStream());
+					OutputStream out = new FileOutputStream(pdfFile)) {
 
-	            PdfWriter writer = new PdfWriter(out);
-	            com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-	            com.itextpdf.layout.Document pdfDocument = new com.itextpdf.layout.Document(pdfDoc);
+				PdfWriter writer = new PdfWriter(out);
+				com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
+				com.itextpdf.layout.Document pdfDocument = new com.itextpdf.layout.Document(pdfDoc);
 
-	            for (XWPFParagraph p : docx.getParagraphs()) {
-	                pdfDocument.add(new com.itextpdf.layout.element.Paragraph(p.getText()));
-	            }
+				for (XWPFParagraph p : docx.getParagraphs()) {
+					pdfDocument.add(new com.itextpdf.layout.element.Paragraph(p.getText()));
+				}
 
-	            pdfDocument.close();
-	        }
-	    } else if (contentType != null && contentType.equals("text/plain")) {
-	        // Convert plain text to PDF
-	        try (OutputStream out = new FileOutputStream(pdfFile)) {
-	            PdfWriter writer = new PdfWriter(out);
-	            com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-	            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+				pdfDocument.close();
+			}
+		} else if (contentType != null && contentType.equals("text/plain")) {
+			// Convert plain text to PDF
+			try (OutputStream out = new FileOutputStream(pdfFile)) {
+				PdfWriter writer = new PdfWriter(out);
+				com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
+				com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
 
-	            String text = new String(file.getBytes(), StandardCharsets.UTF_8);
-	            document.add(new com.itextpdf.layout.element.Paragraph(text));
-	            document.close();
-	        }
-	    } else if (originalFilename != null && originalFilename.endsWith(".xlsx")) {
-	        // Handle XLSX files (Excel spreadsheets)
-	        try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-	             OutputStream out = new FileOutputStream(pdfFile)) {
-	            
-	            PdfWriter writer = new PdfWriter(out);
-	            com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-	            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+				String text = new String(file.getBytes(), StandardCharsets.UTF_8);
+				document.add(new com.itextpdf.layout.element.Paragraph(text));
+				document.close();
+			}
+		} else if (originalFilename != null && originalFilename.endsWith(".xlsx")) {
+			// Handle XLSX files (Excel spreadsheets)
+			try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+					OutputStream out = new FileOutputStream(pdfFile)) {
 
-	            
-	            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-	                Sheet sheet = workbook.getSheetAt(i);
-	                document.add(new com.itextpdf.layout.element.Paragraph("Sheet: " + sheet.getSheetName()));
-	                
-	                for (Row row : sheet) {
-	                    StringBuilder rowText = new StringBuilder();
-	                    for (Cell cell : row) {
-	                        switch (cell.getCellType()) {
-	                            case STRING:
-	                                rowText.append(cell.getStringCellValue());
-	                                break;
-	                            case NUMERIC:
-	                                rowText.append(cell.getNumericCellValue());
-	                                break;
-	                            case BOOLEAN:
-	                                rowText.append(cell.getBooleanCellValue());
-	                                break;
-	                            default:
-	                                rowText.append(" ");
-	                        }
-	                        rowText.append(" | ");
-	                    }
-	                    document.add(new com.itextpdf.layout.element.Paragraph(rowText.toString()));
-	                }
-	                document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-	            }
-	            document.close();
-	        }
-	    } else {
-	        throw new IOException("Unsupported file type for conversion.");
-	    }
+				PdfWriter writer = new PdfWriter(out);
+				com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(writer);
+				com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+
+				for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+					Sheet sheet = workbook.getSheetAt(i);
+					document.add(new com.itextpdf.layout.element.Paragraph("Sheet: " + sheet.getSheetName()));
+
+					for (Row row : sheet) {
+						StringBuilder rowText = new StringBuilder();
+						for (Cell cell : row) {
+							switch (cell.getCellType()) {
+							case STRING:
+								rowText.append(cell.getStringCellValue());
+								break;
+							case NUMERIC:
+								rowText.append(cell.getNumericCellValue());
+								break;
+							case BOOLEAN:
+								rowText.append(cell.getBooleanCellValue());
+								break;
+							default:
+								rowText.append(" ");
+							}
+							rowText.append(" | ");
+						}
+						document.add(new com.itextpdf.layout.element.Paragraph(rowText.toString()));
+					}
+					document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+				}
+				document.close();
+			}
+		} else {
+			throw new IOException("Unsupported file type for conversion.");
+		}
 	}
-    @Override
-    public ResponseEntity<String> uploadMultipleFilesPdf(List<MultipartFile> files, Long loanId) throws Exception {
-        StringBuilder responseMessage = new StringBuilder();
 
-        // Encrypt loanId
-        String encryptedLoanId = EncryptionUtil.encrypt(loanId);
+	@Override
+	public ResponseEntity<String> uploadMultipleFilesPdf(List<MultipartFile> files, Long loanId) throws Exception {
+		StringBuilder responseMessage = new StringBuilder();
 
-        // Ensure upload dir exists
-        File uploadDir = new File(UPLOAD_DIR);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
+		// Encrypt loanId
+		String encryptedLoanId = EncryptionUtil.encrypt(loanId);
 
-        // Find loan application
-        Applications loanApp = loanApplicationRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
+		// Ensure upload dir exists
+		File uploadDir = new File(UPLOAD_DIR);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
 
-        // Process each file
-        for (MultipartFile file : files) {
-            if (file.isEmpty() || file.getOriginalFilename() == null) {
-                continue;
-            }
+		// Find loan application
+		Applications loanApp = loanApplicationRepository.findById(loanId)
+				.orElseThrow(() -> new RuntimeException("Loan not found"));
 
-            String originalFilename = file.getOriginalFilename();
+		// Process each file
+		for (MultipartFile file : files) {
+			if (file.isEmpty() || file.getOriginalFilename() == null) {
+				continue;
+			}
 
-            // Split filename and extension
-            String baseName = originalFilename;
-            String extension = "";
-            int dotIndex = originalFilename.lastIndexOf('.');
-            if (dotIndex > 0) {
-                baseName = originalFilename.substring(0, dotIndex);
-                extension = originalFilename.substring(dotIndex);
-            }
+			String originalFilename = file.getOriginalFilename();
 
-            // Construct new filename for PDF
-            String formattedFileName = baseName + "_" + encryptedLoanId + ".pdf";
+			// Split filename and extension
+			String baseName = originalFilename;
+			String extension = "";
+			int dotIndex = originalFilename.lastIndexOf('.');
+			if (dotIndex > 0) {
+				baseName = originalFilename.substring(0, dotIndex);
+				extension = originalFilename.substring(dotIndex);
+			}
 
-            // Convert file to PDF
-            File pdfFile = new File(uploadDir, formattedFileName);
-            convertToPdf(file, pdfFile);
+			// Construct new filename for PDF
+			String formattedFileName = baseName + "_" + encryptedLoanId + ".pdf";
 
-            // Save document metadata to DB
-            Document doc = new Document();
-            
-            
-            byte[] fileBytes = Files.readAllBytes(pdfFile.toPath());
+			// Convert file to PDF
+			File pdfFile = new File(uploadDir, formattedFileName);
+			convertToPdf(file, pdfFile);
 
-            doc.setFileName(formattedFileName);
-            doc.setFileType("application/pdf");
-            doc.setLoanApplication(loanApp);
-            documentRepository.save(doc);
+			// Save document metadata to DB
+			Document doc = new Document();
 
-            responseMessage.append("Uploaded: ").append(formattedFileName).append("\n");
-        }
+			byte[] fileBytes = Files.readAllBytes(pdfFile.toPath());
 
-        // Return response message
-        return new ResponseEntity<>(responseMessage.toString().trim(), HttpStatus.OK);
-    }
-    @Override
-    public String uploadDocumentsPdf(MultipartFile panFile, MultipartFile aadhaarFile,
-                                  List<MultipartFile> bankStatementFiles, List<MultipartFile> payslipFiles,
-                                  List<MultipartFile> otherFiles, String customerId, Long loanId) {
+			doc.setFileName(formattedFileName);
+			doc.setFileType("application/pdf");
+			doc.setLoanApplication(loanApp);
+			documentRepository.save(doc);
 
-        StringBuilder result = new StringBuilder();
+			responseMessage.append("Uploaded: ").append(formattedFileName).append("\n");
+		}
 
-        try {
-            Applications loanApp = loanApplicationRepository.findById(loanId)
-                    .orElseThrow(() -> new RuntimeException("Loan not found"));
+		// Return response message
+		return new ResponseEntity<>(responseMessage.toString().trim(), HttpStatus.OK);
+	}
 
-            File dir = new File(UPLOAD_DIR);
-            if (!dir.exists()) dir.mkdirs();
+	@Override
+	public String uploadDocumentsPdf(MultipartFile panFile, MultipartFile aadhaarFile,
+			List<MultipartFile> bankStatementFiles, List<MultipartFile> payslipFiles, List<MultipartFile> otherFiles,
+			String customerId, Long loanId) {
 
-            BiConsumer<MultipartFile, String> processFile = (file, docType) -> {
-                try {
-                    if (file == null || file.isEmpty()) return;
+		StringBuilder result = new StringBuilder();
 
-                    String originalName = file.getOriginalFilename();
-                    String baseName = originalName != null ? originalName.replaceAll("\\.[^.]+$", "") : "unknown";
-                    String pdfFileName = docType + "-" + customerId + "_" + baseName + ".pdf";
+		try {
+			Applications loanApp = loanApplicationRepository.findById(loanId)
+					.orElseThrow(() -> new RuntimeException("Loan not found"));
 
-                    File pdfFile = Paths.get(UPLOAD_DIR, pdfFileName).toFile();
-                    convertToPdf(file, pdfFile);
+			File dir = new File(UPLOAD_DIR);
+			if (!dir.exists())
+				dir.mkdirs();
 
-                    Document doc = new Document();
-                    doc.setFileName(pdfFileName);
-                    doc.setFileType(docType);
-                    doc.setLoanApplication(loanApp);
-                    documentRepository.save(doc);
+			BiConsumer<MultipartFile, String> processFile = (file, docType) -> {
+				try {
+					if (file == null || file.isEmpty())
+						return;
 
-                    result.append("Uploaded & converted to PDF: ").append(pdfFileName).append("\n");
+					String originalName = file.getOriginalFilename();
+					String baseName = originalName != null ? originalName.replaceAll("\\.[^.]+$", "") : "unknown";
+					String pdfFileName = docType + "-" + customerId + "_" + baseName + ".pdf";
 
-                } catch (Exception ex) {
-                    result.append("Failed to upload/convert: ")
-                          .append(file.getOriginalFilename()).append("\n");
-                }
-            };
+					File pdfFile = Paths.get(UPLOAD_DIR, pdfFileName).toFile();
+					convertToPdf(file, pdfFile);
 
-            processFile.accept(panFile, "pan");
-            processFile.accept(aadhaarFile, "aadhaar");
+					Document doc = new Document();
+					doc.setFileName(pdfFileName);
+					doc.setFileType(docType);
+					doc.setLoanApplication(loanApp);
+					documentRepository.save(doc);
 
-            if (bankStatementFiles != null)
-                bankStatementFiles.forEach(file -> processFile.accept(file, "bankstatement"));
+					result.append("Uploaded & converted to PDF: ").append(pdfFileName).append("\n");
 
-            if (payslipFiles != null)
-                payslipFiles.forEach(file -> processFile.accept(file, "payslip"));
+				} catch (Exception ex) {
+					result.append("Failed to upload/convert: ").append(file.getOriginalFilename()).append("\n");
+				}
+			};
 
-            if (otherFiles != null)
-                otherFiles.forEach(file -> processFile.accept(file, "others"));
+			processFile.accept(panFile, "pan");
+			processFile.accept(aadhaarFile, "aadhaar");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Upload failed: " + e.getMessage();
-        }
+			if (bankStatementFiles != null)
+				bankStatementFiles.forEach(file -> processFile.accept(file, "bankstatement"));
 
-        return result.toString();
-    }
+			if (payslipFiles != null)
+				payslipFiles.forEach(file -> processFile.accept(file, "payslip"));
+
+			if (otherFiles != null)
+				otherFiles.forEach(file -> processFile.accept(file, "others"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Upload failed: " + e.getMessage();
+		}
+
+		return result.toString();
+	}
 
 	@Override
 	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType) {

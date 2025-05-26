@@ -1,8 +1,9 @@
 package com.narvee.Service;
 
-public interface IAuthenticationService {
-	
-    Object authenticate(String usernameOrEmail, String password);
+import com.narvee.request.dto.AuthResponse;
 
+public interface IAuthenticationService {
+
+	AuthResponse authenticate(String usernameOrEmail);
 
 }

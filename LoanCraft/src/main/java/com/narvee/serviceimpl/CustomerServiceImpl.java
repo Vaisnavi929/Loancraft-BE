@@ -233,10 +233,8 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId) {
 	    try {
-	        System.out.println("Received encryptedCustomerId: " + encryptedCustomerId);
 	        long decryptedId = EncryptionUtil.decrypt(encryptedCustomerId);
 	        
-	        System.out.println("Decrypted customerId: " + decryptedId);
 	        return customerRepository.findApplicationsByCustomerId(decryptedId);
 	    } catch (Exception e) {
 	        e.printStackTrace(); // Detailed stack trace

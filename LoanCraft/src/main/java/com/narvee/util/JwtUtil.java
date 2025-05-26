@@ -36,6 +36,11 @@ public class JwtUtil {
 	}
 
 
+	public String generateTokenFoCustomer(String username) {
+		return Jwts.builder().setSubject(username+"|customer").setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + tokenValidity ))
+				.signWith(getSigningKey(), SignatureAlgorithm.HS512).compact();
+	}
 
 	public String extractUsername(String token) {
 		return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody().getSubject();

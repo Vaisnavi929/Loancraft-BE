@@ -12,7 +12,7 @@ public interface LoanSanctionDTOS {
 
 	public Double getEmiAmount();
 
-	public String getrepaymentMode();
+	public String getRepaymentMode();
 
 	public String getStatus();
 
@@ -33,6 +33,7 @@ public interface LoanSanctionDTOS {
 	public String getLoanProcessingCharges();
 	
 	public String getLoanAccountNumber();
+	
 	
 
 }

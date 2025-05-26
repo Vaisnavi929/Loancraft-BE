@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.narvee.entity.Verification;
-import com.narvee.request.dto.VerificationDTO;
 import com.narvee.request.dto.VerificationTrackResponseDTO;
 
 

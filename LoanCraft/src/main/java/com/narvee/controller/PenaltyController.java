@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.PenaltyService;
 import com.narvee.commons.RestAPIResponse;
-import com.narvee.entity.Penalty;
 import com.narvee.request.dto.PenaltyDto;
 import com.narvee.serviceimpl.PenaltyServiceImpl;
 
