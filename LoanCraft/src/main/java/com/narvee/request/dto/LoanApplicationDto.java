@@ -5,6 +5,7 @@ import java.util.List;
 import com.narvee.entity.IdentityProof;
 import com.narvee.entity.Reference;
 
+import jakarta.persistence.Column;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -67,4 +68,8 @@ public class LoanApplicationDto {
 
 	private String employmentCategory;
 	private String empOthterDeatils;
+	
+	private Boolean isRequestedFileUpload;
+	
+	private Boolean isFileUpload;
 }

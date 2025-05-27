@@ -5,12 +5,15 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.Applications;
 import com.narvee.request.dto.ApplicationDTO;
 import com.narvee.request.dto.DisbursmentIdDTO;
+
+import jakarta.transaction.Transactional;
 
 public interface ApplicationsRepository extends JpaRepository<Applications, Long> {
 
@@ -87,7 +90,13 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 		       "ORDER BY la.applicationReferenceId DESC")
 		public List<DisbursmentIdDTO> getReviewedAppDropDown();
 
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_applications SET is_requested_file_upload = :value WHERE loan_id = :loanId", nativeQuery = true)
+	int updateIsRequestedFileUpload(@Param("loanId") Long loanId, @Param("value") Boolean value);
 
-
-
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_applications SET is_file_upload = :value WHERE loan_id = :loanId", nativeQuery = true)
+	int updateIsFileUpload(@Param("loanId") Long loanId, @Param("value") Boolean value);
 }

@@ -32,5 +32,8 @@ public interface ApplicationsService {
 	public void updateLoanStatus(Long loanId, String status, String remarks, Long creditScore);
 	
 	public List<DisbursmentIdDTO> getReviewedAppDropDown();
+	
+	public boolean updateIsRequestedFileUpload(Long verifiedId, Boolean value);
+	public boolean updateIsFileUpload(Long verifiedId, Boolean value);
 
 }

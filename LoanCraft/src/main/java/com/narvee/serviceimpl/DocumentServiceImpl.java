@@ -47,6 +47,7 @@ import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.repository.VerificationRepository;
+import com.narvee.request.dto.DocumentDTO;
 import com.narvee.request.dto.LoanAppDocsResponse;
 import com.narvee.request.dto.VerificationDTO;
 import com.narvee.util.EncryptionUtil;
@@ -395,7 +396,26 @@ public class DocumentServiceImpl implements DocumentService {
 	@Override
 	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType) {
 		logger.info("!!! inside class: DocumentServiceImpl, method: getLoanAppDocs");
-		return documentRepository.findByLoanApplicationLoanIdAndFileType(loanId, fileType);
+		List<Document> documents = documentRepository.findByLoanApplicationLoanIdAndFileType(loanId, fileType);
 
+		// Map to DTO with cleaned fileName
+		return documents.stream().map(doc -> {
+			Document dto = new Document();
+			dto.setId(doc.getId());
+			dto.setFileType(doc.getFileType());
+			dto.setDocVerified(doc.getDocVerified());
+			dto.setRemarks(doc.getRemarks());
+
+			// Clean the filename (take substring before first underscore and add ".pdf")
+			String original = doc.getFileName();
+			String cleanedFileName = original != null && original.contains("_")
+					? original.split("_")[0] + ".pdf"
+					: original;
+
+			dto.setFileName(cleanedFileName);
+
+			return dto;
+		}).toList();
 	}
+
 }

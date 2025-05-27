@@ -2,6 +2,8 @@ package com.narvee.request.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+
 public interface ApplicationDTO {
 
 	public Long getLoanId();
@@ -27,4 +29,9 @@ public interface ApplicationDTO {
 	public String getReferenceid();
 
 	public Boolean  getPhysicalVerification();
+	
+	public Boolean getIsRequestedFileUpload();
+
+	public Boolean getIsFileUpload();
+	
 }

@@ -83,6 +83,8 @@ public class Applications extends AuditModel {
 	@ManyToOne
 	@JoinColumn(name = "customerId")
 	private CustomersInfo customers;
+	
+	
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "loan_id")
@@ -91,5 +93,11 @@ public class Applications extends AuditModel {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "identity_id")
 	private IdentityProof identityProof;
+	
+	@Column(name = "is_requested_file_upload")
+	private Boolean isRequestedFileUpload;
+	
+	@Column(name = "is_file_upload")
+	private Boolean isFileUpload;
 
 }
