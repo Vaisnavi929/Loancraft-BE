@@ -22,7 +22,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 
 //	public boolean existsByAadharNumber(String aadharNumber);
 
-	@Query(value = " SELECT \r\n" + "    a.updateddate as updateddate,\r\n" + "    a.loan_id,\r\n"
+	@Query(value = " SELECT \r\n" + "    a.updateddate as updateddate,\r\n" + "    a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
 			+ "    a.application_reference_id AS referenceId,\r\n" + "    a.createddate as createddate ,\r\n" + "    c.first_name,\r\n"
 			+ "    c.last_name,\r\n" + "    c.email,\r\n" + "    a.status,\r\n" + "    c.mobile_number,\r\n"
 			+ "    a.repayment_mode,\r\n" + "    a.loan_amount\r\n" + "FROM \r\n" + "    lms_customers_info c\r\n"
@@ -30,7 +30,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "WHERE a.status NOT IN ('Approved', 'sanctioned', 'rejected')", nativeQuery = true)
 	public Page<ApplicationDTO> getAllLoanApplication(Pageable pageable);
 
-	@Query(value = "SELECT  a.updateddate as updateddate,\r\n" + "    a.loan_id,\r\n"
+	@Query(value = "SELECT  a.updateddate as updateddate,\r\n" + "    a.loan_id,  a.loan_id,a.is_requested_file_upload,a.is_file_upload"
 			+ "    a.application_reference_id AS referenceId,\r\n" + "    a.createddate,\r\n" + "    c.first_name,\r\n"
 			+ "    c.last_name,\r\n" + "    c.email,\r\n" + "    a.status,\r\n" + "    c.mobile_number,\r\n"
 			+ "    a.repayment_mode,\r\n" + "    a.loan_amount\r\n" + "FROM \r\n" + "    lms_customers_info c\r\n"

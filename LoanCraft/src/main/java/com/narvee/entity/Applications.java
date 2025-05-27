@@ -95,9 +95,9 @@ public class Applications extends AuditModel {
 	private IdentityProof identityProof;
 	
 	@Column(name = "is_requested_file_upload")
-	private Boolean isRequestedFileUpload;
+	private Boolean isRequestedFileUpload=false;
 	
 	@Column(name = "is_file_upload")
-	private Boolean isFileUpload;
+	private Boolean isFileUpload=false;
 
 }
