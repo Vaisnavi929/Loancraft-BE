@@ -1,7 +1,6 @@
 package com.narvee.request.dto;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 
 
@@ -18,5 +17,7 @@ public interface ApplicationResponseDto {
 	  public  String getMobileNumber();
 	  public String getRepaymentMode();
 	  public Double getLoanAmount();
+	  public Boolean getIsRequestedFileUpload();
+	  public Boolean getIsFileUpload();
 
 }

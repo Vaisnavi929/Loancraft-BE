@@ -146,4 +146,20 @@ public class ApplicationsController {
 
 	}
 
+	@RequestMapping(value = "/updateIsRequestedFileUpload/{verifiedId}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateIsRequestedFileUpload(@PathVariable Long verifiedId, @PathVariable Boolean value) {
+		logger.info("!!! inside class: VerificationController, method: updateReviewed");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update updateIsRequestedFileUpload ",
+				applicationService.updateIsRequestedFileUpload(verifiedId, value)), HttpStatus.OK);
+
+	}
+	
+	@RequestMapping(value = "/updateIsFileUpload/{verifiedId}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateIsFileUpload(@PathVariable Long verifiedId, @PathVariable Boolean value) {
+		logger.info("!!! inside class: VerificationController, method: updateReviewed");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update updateIsFileUpload ",
+				applicationService.updateIsFileUpload(verifiedId, value)), HttpStatus.OK);
+
+	}
 }
+

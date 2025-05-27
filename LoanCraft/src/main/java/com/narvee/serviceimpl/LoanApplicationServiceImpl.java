@@ -247,4 +247,20 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getReviewedAppDropDown");
 		return applicationRepository.getReviewedAppDropDown();
 	}
+
+	@Override
+	public boolean updateIsRequestedFileUpload(Long verifiedId, Boolean value) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl, method: updateIsRequestedFileUpload");
+		int updatedCount = applicationRepository.updateIsRequestedFileUpload(verifiedId, value);
+		return updatedCount > 0;
+	}
+
+	@Override
+	public boolean updateIsFileUpload(Long verifiedId, Boolean value) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl, method: updateIsFileUpload");
+		int updatedCount = applicationRepository.updateIsFileUpload(verifiedId, value);
+		return updatedCount > 0;
+	}
+	
+	
 }
