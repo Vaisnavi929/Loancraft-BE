@@ -60,7 +60,7 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 
 	public boolean existsByEmail(String email);
 	
-	@Query(value ="SELECT a.updateddate as updateddate,   a.loan_id,a.application_reference_id AS referenceId,  a.createddate, c.first_name, c.last_name,c.email,a.status,c.mobile_number,\n"
+	@Query(value ="SELECT a.updateddate as updateddate,   a.loan_id,a.is_requested_file_upload,a.is_file_upload,a.application_reference_id AS referenceId,  a.createddate, c.first_name, c.last_name,c.email,a.status,c.mobile_number,\n"
 			+ "	a.repayment_mode,a.loan_amount FROM lms_applications a JOIN lms_customers_info c ON a.customer_id = c.customer_id WHERE c.customer_id = :customerId",nativeQuery = true)
 		List<ApplicationResponseDto> findApplicationsByCustomerId(@Param("customerId") Long customerId);
 
