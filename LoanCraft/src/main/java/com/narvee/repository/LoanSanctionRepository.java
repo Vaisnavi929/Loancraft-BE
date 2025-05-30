@@ -11,7 +11,7 @@ import com.narvee.request.dto.LoanSanctionDTOS;
 
 public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long> {
 
-	@Query(value = "select c.first_name as firstname,  c.last_name as lastname, a.application_reference_id as referenceid, s.loan_saction_id as sanctionid,s.documentation_charges,s.loan_processing_charges, s.amount_sanctioned,s.number_of_emis,s.rate_of_interest,s.interest_type,s.repayment_mode,s.emi_amount,\r\n"
+	@Query(value = "select c.first_name as firstname,  c.last_name as lastname, a.application_reference_id as referenceid,a.is_requested_file_upload,a.is_file_upload, s.loan_saction_id as sanctionid,s.documentation_charges,s.loan_processing_charges, s.amount_sanctioned,s.number_of_emis,s.rate_of_interest,s.interest_type,s.repayment_mode,s.emi_amount,\r\n"
 
 			+ "s.interest_type,s.payment_freqmuency,s.origination_fee,s.return_originationfee,s.repayment_mode,s.status,date(s.createddate) as createddate,s.updateddate as updateddate from lms_loan_saction s join lms_applications a ON a.loan_id=s.loan_id\r\n"
 			+ "join lms_customers_info c ON c.customer_id=a.customer_id where s.status='sanctioned' ", nativeQuery = true)
@@ -23,6 +23,7 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			    DATE(s.updateddate) as updateddate,
 			    c.first_name as firstname, c.last_name as  lastname,
 			    a.application_reference_id as referenceid,
+			    a.is_requested_file_upload,a.is_file_upload,
 			    s.loan_saction_id AS sanctionid,
 			    s.documentation_charges,
 			    s.loan_processing_charges,
