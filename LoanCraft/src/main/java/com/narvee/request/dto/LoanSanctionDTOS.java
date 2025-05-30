@@ -34,6 +34,9 @@ public interface LoanSanctionDTOS {
 	
 	public String getLoanAccountNumber();
 	
+	public Boolean getIsRequestedFileUpload();
+
+	public Boolean getIsFileUpload();
 	
 
 }

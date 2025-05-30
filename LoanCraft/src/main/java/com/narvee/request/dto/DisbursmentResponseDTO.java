@@ -19,6 +19,7 @@ public interface DisbursmentResponseDTO {
     public LocalDateTime getcreateddate();
     public LocalDateTime getupdateddate();
 	public String getbranch();
-    
+	public Boolean getIsRequestedFileUpload();
+	public Boolean getIsFileUpload();
 
 }
