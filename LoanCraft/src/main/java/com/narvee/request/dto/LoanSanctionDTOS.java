@@ -37,6 +37,7 @@ public interface LoanSanctionDTOS {
 	public Boolean getIsRequestedFileUpload();
 
 	public Boolean getIsFileUpload();
+	public Long getLoanId();
 	
 
 }
