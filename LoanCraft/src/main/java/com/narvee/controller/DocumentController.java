@@ -211,14 +211,14 @@ public class DocumentController {
 			};
 
 			// Process optional single files
-			processFile.accept(panFile, "pan");
-			processFile.accept(aadhaarFile, "aadhaar");
+			processFile.accept(panFile, "PAN");
+			processFile.accept(aadhaarFile, "Aadhaar");
 
 			// Process optional multiple bank statements
 			if (bankStatementFiles != null) {
 
 				for (MultipartFile bankFile : bankStatementFiles) {
-					processFile.accept(bankFile, "bankstatement");
+					processFile.accept(bankFile, "Bank Statement");
 				}
 			}
 
@@ -226,7 +226,7 @@ public class DocumentController {
 			if (payslipFiles != null) {
 
 				for (MultipartFile payslipFile : payslipFiles) {
-					processFile.accept(payslipFile, "payslip");
+					processFile.accept(payslipFile, "Payslips");
 				}
 			}
 
@@ -234,7 +234,7 @@ public class DocumentController {
 			if (otherFiles != null) {
 
 				for (MultipartFile otherFile : otherFiles) {
-					processFile.accept(otherFile, "others");
+					processFile.accept(otherFile, "Others");
 				}
 			}
 			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents uploaded successfully",
