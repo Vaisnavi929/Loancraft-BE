@@ -47,7 +47,9 @@ import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.repository.VerificationRepository;
+import com.narvee.request.dto.DocumentDTO;
 import com.narvee.request.dto.LoanAppDocsResponse;
+import com.narvee.request.dto.VerificationDTO;
 import com.narvee.util.EncryptionUtil;
 
 @Service
