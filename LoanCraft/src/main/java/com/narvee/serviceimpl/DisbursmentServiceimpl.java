@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.narvee.Service.DisbursmentService;
-import com.narvee.Service.PaymentService;
+import com.narvee.Service.RepaymentService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.Service.VerificationService;
 import com.narvee.entity.Disbursment;
@@ -35,7 +35,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 	private DisbursmentRepository disbursmentRepository;
 
 	@Autowired
-	private PaymentService paymentService;
+	private RepaymentService repaymentService;
 
 	@Autowired
 	private LoanSanctionRepository loanSanctionRepository;
@@ -56,7 +56,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		if (disbursmentDTO.getStatus().equalsIgnoreCase("disbursed")) {
 			verificationService.updateDisbursed(loanSanction.getApplications().getLoanId(), true);
 		}
-		paymentService.generatePayments(savedDisbursment);
+		repaymentService.generateRepayment(savedDisbursment);
 		return savedDisbursment;
 
 	}
@@ -69,7 +69,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
 		disbursment.setLoanSanction(loanSanction);
 		Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
-		paymentService.generatePayments(savedDisbursment);
+		repaymentService.generateRepayment(savedDisbursment);
 		return savedDisbursment;
 	}
 
@@ -145,4 +145,6 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		logger.info("!!! inside class:DisbursmentServiceimpl,method :getCustomerDetailsWithDisbursmentId() ");
 		return disbursmentRepository.getCustomerDetailsWithDisbursmentId();
 	}
+
+
 }

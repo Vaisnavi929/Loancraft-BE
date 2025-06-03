@@ -47,7 +47,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 
 	@Query(value = "SELECT a.loan_id,a.is_requested_file_upload,a.is_file_upload,application_reference_id as referenceId, c.first_name,c.last_name,a.updateddate,a.createddate,c.email,"
 			+ "a.status,c.mobile_number,a.repayment_mode as repaymentmode,a.loan_amount as loanamount ,COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
-			+ "FROM loancraft.lms_customers_info c join loancraft.lms_applications a on a.customer_id=c.customer_id  LEFT JOIN   loancraft.lms_verification v ON v.loan_id = a.loan_id "
+			+ "FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id  LEFT JOIN   lms_verification v ON v.loan_id = a.loan_id "
 			+ "WHERE a.status =:status", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListApproved(Pageable pageable, @Param("status") String status);
 
@@ -66,7 +66,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "  COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
 			+ "FROM lms_customers_info c\r\n"
 			+ "JOIN lms_applications a ON a.customer_id = c.customer_id\r\n"
-			+ "LEFT JOIN   loancraft.lms_verification v ON v.loan_id = a.loan_id\r\n"
+			+ "LEFT JOIN   lms_verification v ON v.loan_id = a.loan_id\r\n"
 			+ "WHERE (\r\n"
 			+ "    c.first_name ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    c.last_name ILIKE '%' || :keyword || '%' OR\r\n"

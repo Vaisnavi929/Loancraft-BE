@@ -23,21 +23,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class LmsPayment {
+public class LmsRepayment {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long paymentId;
+	private Long repaymentId;
 	private Double dueAmount;
 	private LocalDate dueDate;
 	private Double amountPaid;
 	private String amountStatus;
 	private String paymentType;
-	private Double intrest ;
-	private String paymentmode;
+	private Double interest ;
 	private String remarks;
-	private String checkBouns;
-	private Double penaltyCharges;
 	private Double principalAmount;
 	
 	

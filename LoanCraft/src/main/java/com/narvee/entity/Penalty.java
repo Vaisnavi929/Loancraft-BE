@@ -28,7 +28,7 @@ public class Penalty extends AuditModel{
 	private String remarks; 
 	@ManyToOne
 	@JoinColumn(name = "paymentId")
-	private LmsPayment lmsPayment;
+	private LmsRepayment lmsPayment;
 ////
 	
 

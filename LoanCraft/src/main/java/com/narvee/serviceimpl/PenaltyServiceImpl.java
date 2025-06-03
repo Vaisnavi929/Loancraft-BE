@@ -9,45 +9,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.PenaltyService;
-import com.narvee.entity.Disbursment;
-import com.narvee.entity.LmsPayment;
+import com.narvee.entity.LmsRepayment;
 import com.narvee.entity.Penalty;
-import com.narvee.repository.PaymentRepository;
 import com.narvee.repository.PenaltyRepository;
+import com.narvee.repository.RepaymentRepository;
 import com.narvee.request.dto.PenaltyDto;
 
 @Service
-public class PenaltyServiceImpl implements PenaltyService{
+public class PenaltyServiceImpl implements PenaltyService {
 
-	private final static Logger logger=LoggerFactory.getLogger(PenaltyServiceImpl.class);
-	
+	private final static Logger logger = LoggerFactory.getLogger(PenaltyServiceImpl.class);
+
 	@Autowired
 	private PenaltyRepository penaltyRepository;
 	@Autowired
-	private PaymentRepository paymentRepository;
-	
+	private RepaymentRepository repaymentRepository;
+
 	@Autowired
 	ModelMapper mapper;
-	
+
 	@Override
 	public Penalty savePenalty(PenaltyDto penaltyDto) {
 		logger.info("!!! inside class : PenaltyServiceImpl,method : savePenalty");
 
-		Penalty  penalty= mapper.map(penaltyDto, Penalty.class);
-		LmsPayment lmsPayment = paymentRepository.findById(penaltyDto.getPaymentId())
+		Penalty penalty = mapper.map(penaltyDto, Penalty.class);
+		LmsRepayment lmsPayment = repaymentRepository.findById(penaltyDto.getPaymentId())
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
 		penalty.setLmsPayment(lmsPayment);
-			return penaltyRepository.save(penalty);
+		return penaltyRepository.save(penalty);
 	}
 
 	@Override
 	public Penalty updatePenalty(PenaltyDto penaltyDto) {
 		logger.info("!!! inside class : PenaltyServiceImpl,method : updatePenalty");
-		Penalty  penalty= mapper.map(penaltyDto, Penalty.class);
-		LmsPayment lmsPayment = paymentRepository.findById(penaltyDto.getPaymentId())
+		Penalty penalty = mapper.map(penaltyDto, Penalty.class);
+		LmsRepayment lmsPayment = repaymentRepository.findById(penaltyDto.getPaymentId())
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
 		penalty.setLmsPayment(lmsPayment);
-			return penaltyRepository.save(penalty);
+		return penaltyRepository.save(penalty);
 	}
 
 	@Override

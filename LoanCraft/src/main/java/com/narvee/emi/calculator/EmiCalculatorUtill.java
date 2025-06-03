@@ -85,8 +85,8 @@ public class EmiCalculatorUtill {
 
 	    double outstandingAmount = totalRepayable;
 
-	    System.out.printf("%-5s %-20s %-15s %-10s %-15s %-25s%n", "S.No", "Outstanding Amount", "Installment",
-	            "Interest", "Principal Paid", "Remaining Principal");
+//	    System.out.printf("%-5s %-20s %-15s %-10s %-15s %-25s%n", "S.No", "Outstanding Amount", "Installment",
+//	            "Interest", "Principal Paid", "Remaining Principal");
 
 	    List<RepaymentSchedule> scheduleList = new ArrayList<>();
 
@@ -102,8 +102,8 @@ public class EmiCalculatorUtill {
 	        }
 
 	        // Console debug output
-	        System.out.printf("%-5d %-20.0f %-15.0f %-10.0f %-15.0f %-25.0f%n",
-	                month, outstandingAmount, monthlyEMI, monthlyInterest, principalPaid, remainingPrincipal);
+//	        System.out.printf("%-5d %-20.0f %-15.0f %-10.0f %-15.0f %-25.0f%n",
+//	                month, outstandingAmount, monthlyEMI, monthlyInterest, principalPaid, remainingPrincipal);
 
 	        RepaymentSchedule schedule = new RepaymentSchedule();
 	        schedule.setOutstanding(Math.round(outstandingAmount));
@@ -118,7 +118,7 @@ public class EmiCalculatorUtill {
 	        outstandingAmount = remainingPrincipal;
 	    }
 
-	    // Build response
+	   // ***Build response***
 	    EmiCalResponseDTO response = new EmiCalResponseDTO();
 	    response.setRepaymentSchedules(scheduleList);
 

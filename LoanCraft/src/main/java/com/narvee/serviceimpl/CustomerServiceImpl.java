@@ -2,7 +2,6 @@ package com.narvee.serviceimpl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -17,13 +16,11 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
-import com.narvee.entity.Applications;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
-import com.narvee.request.dto.ApplicationDTO;
 import com.narvee.request.dto.ApplicationResponseDto;
 import com.narvee.request.dto.CustomerResponseDTO;
 import com.narvee.request.dto.CustomerResponseDTOS;

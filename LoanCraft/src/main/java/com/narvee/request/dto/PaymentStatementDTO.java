@@ -20,6 +20,10 @@ public class PaymentStatementDTO {
     private String applicationReferenceId;
     private String paymentType;
     private String loanAccountNumber; 
+    private double interest;
+    private double principalAmount;
+    private double amountSanctioned;
+    
+    
 
-    // Getters and Setters
 }
