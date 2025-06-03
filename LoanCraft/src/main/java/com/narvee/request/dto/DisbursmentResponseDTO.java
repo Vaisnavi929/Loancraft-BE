@@ -1,5 +1,6 @@
 package com.narvee.request.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -7,12 +8,11 @@ public interface DisbursmentResponseDTO {
 	
 	public Long getdisbursmentId();
 
-	public Date getdate();
+	public LocalDate getdate();
 	public String getfirstName();
 	public String getaccountNo();
 	public String getmobileNumber();
 	public String getisfc();
-
 	public Double getdisbursedAmount();
 	public String getReferenceid();
 	public String getremarks();
