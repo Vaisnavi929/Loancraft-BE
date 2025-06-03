@@ -65,7 +65,7 @@ public class DisbursmentController {
 	@RequestMapping(value ="/getAllWithSearching",method =RequestMethod.POST,produces ="application/json")
 	public ResponseEntity<RestAPIResponse> getAllDisbursmentWithPagination(@RequestBody SortingRequestDto sortingRequestDto){
 		logger.info("!!! inside class :DisbursmentController , method :getAllDisbursmentWithPagination() ");		
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all disbursments" ,disbursmentService.getAllDisbursmentWithPagination(sortingRequestDto)),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Deleted deleteByDisbursmentId" ,disbursmentService.getAllDisbursmentWithPagination(sortingRequestDto)),HttpStatus.OK);
 		
 	}
 	@RequestMapping(value ="/getCustomerDetails",method =RequestMethod.GET,produces ="application/json")

@@ -15,29 +15,11 @@ import com.narvee.request.dto.DisbursmentResponseDTO;
 
 public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> {
 
-	@Query(value = """
-			SELECT
-		    c.mobile_number AS mobilenumber,
-		    d.disbursed_amount,
-		    d.disbursment_id,
-		    d.account_no,
-		    la.application_reference_id AS referenceid,
-		    la.is_requested_file_upload,la.is_file_upload,
-		    d.branch,
-		    d.date,
-		    d.createddate,
-		    d.isfc,
-		    d.remarks,
-		    c.first_name AS firstname,
-		    d.updateddate as updateddate
-		FROM
-		    lms_disbursment d 
-		JOIN
-		    lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id
-		JOIN
-		    lms_applications la ON ls.loan_id = la.loan_id
-		JOIN
-		    lms_customers_info c ON c.customer_id = la.customer_id """, nativeQuery = true)
+	@Query(value = "SELECT c.mobile_number as mobilenumber, d.disbursed_amount, d.disbursment_id,d.account_no,la.application_reference_id as referenceid,la.is_requested_file_upload,la.is_file_upload,  d.branch, d.date, \r\n"
+			+ "  d.createddate, d.isfc, d.remarks,c.first_name as firstname, d.updateddate "
+			+ "FROM lms_disbursment d " + "JOIN lms_loan_saction ls ON d.loan_saction_id= ls.loan_saction_id"
+			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id"
+			+ "join lms_customers_info c ON c.customer_id=la.customer_id", nativeQuery = true)
 	public Page<DisbursmentResponseDTO> getAllDisbursmentWithPagination(Pageable pageable);
 
 	@Query(value = """
@@ -56,7 +38,7 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    c.first_name AS firstname,
 			    d.updateddate as updateddate
 			FROM
-			    lms_disbursment d 
+			    lms_disbursment d
 			JOIN
 			    lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id
 			JOIN
