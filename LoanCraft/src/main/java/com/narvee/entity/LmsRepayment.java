@@ -4,9 +4,10 @@ package com.narvee.entity;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,30 +24,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class LmsPayment {
-	
+public class LmsRepayment {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long paymentId;
+	private Long repaymentId;
 	private Double dueAmount;
 	private LocalDate dueDate;
 	private Double amountPaid;
 	private String amountStatus;
-	private String paymentType;
-	private Double intrest ;
-	private String paymentmode;
-	private String remarks;
-	private String checkBouns;
-	private Double penaltyCharges;
+	private Double interest;
 	private Double principalAmount;
-	
-	
-	 @ManyToOne
-	 @JoinColumn(name = "disbursment_id")
-	 private Disbursment disbursment;
-	 
-	 @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)	 
-	 @JoinColumn(name = "penaltyId")
-	 private List<Penalty> penalty;	  
-}
 
+	@ManyToOne
+	@JoinColumn(name = "disbursment_id")
+	private Disbursment disbursment;
+
+	@JsonManagedReference
+	@OneToMany(mappedBy = "repayment", cascade = CascadeType.ALL)
+	private List<RepaymentTransactions> payments;
+
+}

@@ -1,5 +1,6 @@
 package com.narvee.Service;
 
+
 import com.narvee.entity.Invitations;
 
 import jakarta.mail.MessagingException;

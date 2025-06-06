@@ -2,8 +2,6 @@ package com.narvee.request.dto;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-
 public interface ApplicationDTO {
 
 	public Long getLoanId();

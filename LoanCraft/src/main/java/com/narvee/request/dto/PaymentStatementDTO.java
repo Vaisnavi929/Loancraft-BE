@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentStatementDTO {
-	private Long paymentId;
+	private Long repaymentId;
     private LocalDate dueDate;
     private double dueAmount;
     private Double amountPaid;
@@ -20,6 +20,10 @@ public class PaymentStatementDTO {
     private String applicationReferenceId;
     private String paymentType;
     private String loanAccountNumber; 
+    private double interest;
+    private double principalAmount;
+    private double amountSanctioned;
+    
+    
 
-    // Getters and Setters
 }

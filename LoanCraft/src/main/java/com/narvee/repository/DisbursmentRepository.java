@@ -56,7 +56,7 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    c.first_name AS firstname,
 			    d.updateddate as updateddate
 			FROM
-			    lms_disbursment d 
+			    lms_disbursment d
 			JOIN
 			    lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id
 			JOIN
