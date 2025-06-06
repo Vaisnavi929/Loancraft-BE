@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReceipetResponse {
+public class ReceiptResponse {
 	
 	private double loanAmount;
 	private double outstanding;
@@ -24,8 +24,8 @@ public class ReceipetResponse {
 	private double emiDueAmount;
 	private double totalDue;
 	private double totalPenalty;
-	private List<EmiDueInfoDTO> emiDueInfo;	
-	
+	private List<EmiDueInfoDTO> emiDueInfo;
+
 	
 	
 	

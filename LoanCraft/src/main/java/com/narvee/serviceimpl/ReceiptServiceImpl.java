@@ -3,6 +3,7 @@ package com.narvee.serviceimpl;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,9 +13,14 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.ReceiptService;
 import com.narvee.Service.RepaymentService;
+import com.narvee.controller.PayRequest;
+import com.narvee.entity.LmsRepayment;
+import com.narvee.entity.RepaymentTransactions;
 import com.narvee.helpers.EmiDueInfoDTO;
+import com.narvee.repository.RepaymentRepository;
+import com.narvee.repository.RepaymentTransactionsRepository;
 import com.narvee.request.dto.PaymentStatementDTO;
-import com.narvee.response.ReceipetResponse;
+import com.narvee.response.ReceiptResponse;
 
 @Service
 public class ReceiptServiceImpl implements ReceiptService {
@@ -23,11 +29,17 @@ public class ReceiptServiceImpl implements ReceiptService {
 	@Autowired
 	private RepaymentService repaymentService;
 
+	@Autowired
+	private RepaymentRepository repaymentRepository;
+
+	@Autowired
+	private RepaymentTransactionsRepository transactionsRepository;
+
 	@Override
-	public ReceipetResponse getReceiptInfo(Long dId) {
+	public ReceiptResponse getReceiptInfo(Long dId) {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() ");
 
-		ReceipetResponse receipetResponse = new ReceipetResponse();
+		ReceiptResponse receipetResponse = new ReceiptResponse();
 		List<PaymentStatementDTO> re = repaymentService.getRepaymentStatement(dId);
 		double totalInterest = 0;
 		double principal = 0;
@@ -70,9 +82,11 @@ public class ReceiptServiceImpl implements ReceiptService {
 				totalPenalty += emiPenalty + chequeReturnCharge;
 
 				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
-				
+
 				if (overdueDays > 0) {
 					chequeReturnCharge = 500;
+				} else {
+					chequeReturnCharge = 0;
 				}
 
 				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays,
@@ -103,9 +117,9 @@ public class ReceiptServiceImpl implements ReceiptService {
 	}
 
 	@Override
-	public ReceipetResponse getReceiptInfoByReceiptDate(Long dId, LocalDate localDate) {
+	public ReceiptResponse getReceiptInfoByReceiptDate(Long dId, LocalDate localDate) {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
-		ReceipetResponse receipetResponse = new ReceipetResponse();
+		ReceiptResponse receipetResponse = new ReceiptResponse();
 		List<PaymentStatementDTO> re = repaymentService.getRepaymentStatement(dId);
 		double totalInterest = 0;
 		double principal = 0;
@@ -135,8 +149,6 @@ public class ReceiptServiceImpl implements ReceiptService {
 					|| (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() <= now.getMonthValue()))
 					&& paymentStatementDTO.getDueAmount() != 0) {
 				receipetResponse.setDueDate(dueDate);
-				System.err.println(paymentStatementDTO.getDueDate() + "--ttt--" + paymentStatementDTO.getDueAmount());
-
 				totalDue += paymentStatementDTO.getDueAmount();
 			}
 
@@ -153,7 +165,6 @@ public class ReceiptServiceImpl implements ReceiptService {
 
 				emiPenalty += (dueAmount * dailyPenaltyRate) * overdueDays;
 				totalPenalty += Math.round(emiPenalty + chequeReturnCharge);
-		 
 
 				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
 
@@ -180,5 +191,102 @@ public class ReceiptServiceImpl implements ReceiptService {
 
 		return receipetResponse;
 	}
+
+	@Override
+	public ReceiptResponse payLoan(PayRequest payRequest) {
+	    logger.info("!!! inside class:ReceiptServiceImpl, method: payLoan");
+
+	    ReceiptResponse receiptResponse = new ReceiptResponse();
+	    List<PaymentStatementDTO> repaymentList = repaymentService.getRepaymentStatement(payRequest.getDid());
+
+	    int emiCounter = 0;
+	    double paidAmount = payRequest.getAmount();
+	    LocalDate paymentDate = payRequest.getPaymentDate();
+
+	    List<EmiDueInfoDTO> emiDueDetails = new ArrayList<>();
+
+	    // Sort the EMIs by due date (ascending)
+	    repaymentList.sort(Comparator.comparing(PaymentStatementDTO::getDueDate));
+
+	    for (PaymentStatementDTO payment : repaymentList) {
+	        emiCounter++;
+	        LocalDate dueDate = payment.getDueDate();
+
+	        if (payment.getDueAmount() != 0) {
+	            double dueAmount = payment.getDueAmount();
+
+	            long overdueDays = ChronoUnit.DAYS.between(dueDate, paymentDate);
+	            double dailyPenaltyRate = 0.03 / 30;
+	            double emiPenalty = Math.max(0, (dueAmount * dailyPenaltyRate) * overdueDays); // ensure non-negative
+	            double chequeReturnCharge = 0;
+	            double penalty = Math.round(emiPenalty + chequeReturnCharge);
+
+	            // Payment breakdown
+	            double penaltyPaid = 0, interestPaid = 0, principalPaid = 0;
+
+	            if (paidAmount > 0) {
+	                penaltyPaid = Math.min(paidAmount, penalty);
+	                paidAmount -= penaltyPaid;
+	            }
+
+	            if (paidAmount > 0) {
+	                interestPaid = Math.min(paidAmount, payment.getInterest());
+	                paidAmount -= interestPaid;
+	            }
+
+	            if (paidAmount > 0) {
+	                principalPaid = Math.min(paidAmount, payment.getPrincipalAmount());
+	                paidAmount -= principalPaid;
+	            }
+
+	            double remainingInterest = payment.getInterest() - interestPaid;
+	            double remainingPrincipal = payment.getPrincipalAmount() - principalPaid;
+	            double emiPaid = principalPaid + interestPaid;
+	            double remainingDue = dueAmount - emiPaid;
+
+	            String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+	            emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount,
+	                    chequeReturnCharge, emiPenalty, emiMonth));
+
+	            LmsRepayment lmsRepayment = repaymentService.getRepaymentById(payment.getRepaymentId());
+
+	            RepaymentTransactions transaction = new RepaymentTransactions();
+	            transaction.setAmountPaid(emiPaid);
+	            transaction.setPaymentMode(payRequest.getPaymentMode());
+	            transaction.setInterestComponent(interestPaid);
+	            transaction.setPenaltyComponent(penaltyPaid);
+	            transaction.setPrincipalComponent(principalPaid);
+	            transaction.setPaymentDate(paymentDate);
+	            transaction.setDescription("EMI Payment - " + emiMonth);
+	            transaction.setRepayment(lmsRepayment);
+
+	            // Update repayment
+	            lmsRepayment.setInterest(remainingInterest);
+	            lmsRepayment.setPrincipalAmount(remainingPrincipal);
+	            lmsRepayment.setDueAmount(remainingDue);
+	            lmsRepayment.setAmountPaid(payment.getAmountPaid() + emiPaid);
+
+	            if (remainingDue == 0) {
+	                lmsRepayment.setAmountStatus("Paid");
+	            }
+
+	            // Save both
+	            transactionsRepository.save(transaction);
+	            repaymentRepository.save(lmsRepayment);
+
+	            if (paidAmount <= 0)
+	                break;
+	        }
+	    }
+
+	    // You can set response fields like receipt number, paid amount, details, etc.
+//	    receiptResponse.setEmiDueDetails(emiDueDetails);
+//	    receiptResponse.setPaidAmount(payRequest.getAmount());
+//	    receiptResponse.setPaymentDate(paymentDate);
+//	    receiptResponse.setMessage("Payment processed successfully");
+
+	    return receiptResponse;
+	}
+
 
 }

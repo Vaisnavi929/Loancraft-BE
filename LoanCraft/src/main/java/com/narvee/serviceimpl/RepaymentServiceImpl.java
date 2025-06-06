@@ -193,7 +193,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 			statement.setAmountStatus(payment.getAmountStatus());
 			statement.setFirstName(payment.getFirstName());
 			statement.setMobileNumber(payment.getMobileNumber());
-			statement.setPaymentId(payment.getPaymentId());
+			statement.setRepaymentId(payment.getRepaymentId());
 			statement.setPaymentType(payment.getPaymentType());
 			statement.setInterest(payment.getInterest());
 			statement.setPrincipalAmount(payment.getPrincipalAmount());

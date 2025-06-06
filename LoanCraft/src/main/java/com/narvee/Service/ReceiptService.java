@@ -2,12 +2,15 @@ package com.narvee.Service;
 
 import java.time.LocalDate;
 
-import com.narvee.response.ReceipetResponse;
+import com.narvee.controller.PayRequest;
+import com.narvee.response.ReceiptResponse;
 
 public interface ReceiptService {
 
-	public ReceipetResponse getReceiptInfo(Long disbursmentId);
+	public ReceiptResponse getReceiptInfo(Long disbursmentId);
 
-	public ReceipetResponse getReceiptInfoByReceiptDate(Long dId, LocalDate localDate);
+	public ReceiptResponse getReceiptInfoByReceiptDate(Long dId, LocalDate localDate);
+
+	public ReceiptResponse payLoan(PayRequest payRequest);
 
 }

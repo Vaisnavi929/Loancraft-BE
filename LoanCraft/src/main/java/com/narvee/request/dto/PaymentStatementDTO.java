@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentStatementDTO {
-	private Long paymentId;
+	private Long repaymentId;
     private LocalDate dueDate;
     private double dueAmount;
     private Double amountPaid;

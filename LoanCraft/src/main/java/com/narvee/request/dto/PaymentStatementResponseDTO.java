@@ -3,7 +3,7 @@ package com.narvee.request.dto;
 import java.time.LocalDate;
 
 public interface PaymentStatementResponseDTO {
-	public Long getPaymentId();
+	public Long getRepaymentId();
 
 	public LocalDate getDueDate();
 
