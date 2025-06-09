@@ -2,8 +2,11 @@ package com.narvee.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.narvee.entity.CheckBounceEntry;
 import com.narvee.request.dto.CheckBounceDTO;
+import com.narvee.request.dto.CheckBounceResponseDTO;
 
 public interface CheckBounceService {
 	
@@ -11,5 +14,5 @@ public interface CheckBounceService {
 
 	public CheckBounceEntry updateBounceEntry(CheckBounceDTO checkBounceDTO);
 	
-	public List<CheckBounceEntry> getAllCheckBounce();
+	public Page<CheckBounceResponseDTO> getAllCheckBounce(SortingRequestDto sortingRequestDto);
 }

@@ -19,6 +19,7 @@ public class CheckBounceDTO {
 	    private BounceReason reason;
 	    private String remarks;
 	    private Double bounceCharges;
-	    private Long repaymentId;
+	    private Long disbursmentId;
+	    private String status;
 
 }
