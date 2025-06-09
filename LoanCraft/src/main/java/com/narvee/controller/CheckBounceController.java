@@ -18,7 +18,7 @@ import com.narvee.request.dto.CheckBounceDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/checkBounce")
+@RequestMapping("/auth/checkBounce")
 public class CheckBounceController {
 	
 	private static final Logger logger=LoggerFactory.getLogger(CheckBounceController.class);
