@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.CheckBounceService;
+import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.CheckBounceEntry;
 import com.narvee.request.dto.CheckBounceDTO;
@@ -38,9 +39,9 @@ public class CheckBounceController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "succesfully updated CheckBounce details", bounceService.updateBounceEntry(checkBounceDTO)), HttpStatus.OK);
 		
 	}
-	@RequestMapping(value ="/getAll",method =RequestMethod.GET,produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getAllCheckBounce(){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully getall checkBounce details", bounceService.getAllCheckBounce()), HttpStatus.OK) ;
+	@RequestMapping(value ="/getAll",method =RequestMethod.POST,produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllCheckBounce(@RequestBody SortingRequestDto sortingRequestDto){
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully getall checkBounce details", bounceService.getAllCheckBounce(sortingRequestDto)), HttpStatus.OK) ;
 		
 		
 	}

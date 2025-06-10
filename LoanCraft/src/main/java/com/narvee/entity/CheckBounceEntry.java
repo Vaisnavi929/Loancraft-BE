@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
+@Table(name="check_bounce_entry")
 public class CheckBounceEntry {
 	
 
@@ -37,10 +37,11 @@ public class CheckBounceEntry {
     private BounceReason reason;
 
     private String remarks;
+    private String status="Posted";
 
     private Double bounceCharges;
     @ManyToOne
-    @JoinColumn(name = "repayment_id")
-    private LmsRepayment lmsRepayment;
+    @JoinColumn(name = "disbursment_id")
+    private Disbursment disbursment;
 
 }
