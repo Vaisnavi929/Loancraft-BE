@@ -12,10 +12,12 @@ import com.narvee.request.dto.CheckBounceResponseDTO;
 
 public interface CheckBounceRepository extends JpaRepository<CheckBounceEntry, Long> {
 	
-@Query(value ="SELECT c.amount,c.bounce_charges,c.bounce_date,c.status,c.cheque_number,c.reason,c.remarks FROM check_bounce_entry c",nativeQuery =true)
+@Query(value ="SELECT c.amount,c.bounce_charges,c.bounce_date,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_bounce_entry c JOIN loancraft.lms_disbursment ld \r\n"
+		+ "on ld.disbursment_id=c.disbursment_id",nativeQuery =true)
 public Page<CheckBounceResponseDTO> getAllCheckBounceWithPagination(Pageable pageable);
 	
-@Query(value ="SELECT c.amount,c.bounce_charges,c.bounce_date,c.status,c.cheque_number,c.reason,c.remarks FROM check_bounce_entry c "
+@Query(value ="SELECT c.amount,c.bounce_charges,c.bounce_date,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_bounce_entry c JOIN loancraft.lms_disbursment ld \r\n"
+		+ "on ld.disbursment_id=c.disbursment_id"
 		+ "WHERE "
 		+ "  CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR "
 		+ "  CAST(c.bounce_charges AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR "
