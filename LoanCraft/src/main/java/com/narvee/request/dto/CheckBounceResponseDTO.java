@@ -16,5 +16,6 @@ public String getRemarks();
     
 public Double getBounceCharges();
 public String getStatus();
+public Long getDisbursmentId();
 
 }
