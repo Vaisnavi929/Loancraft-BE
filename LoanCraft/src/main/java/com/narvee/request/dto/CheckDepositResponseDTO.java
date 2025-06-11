@@ -1,20 +1,16 @@
 package com.narvee.request.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public interface CheckBounceResponseDTO {
-	
+public interface CheckDepositResponseDTO {
 public String getChequeNumber();
-    
 public LocalDate getBounceDate();
-    
 public Double getAmount();
-    
 public String getReason(); 
-
+public LocalDateTime getCreateddate();
+public LocalDateTime getUpdateddate();
 public String getRemarks();
-    
-public Double getBounceCharges();
 public String getStatus();
 public Long getDisbursmentId();
 

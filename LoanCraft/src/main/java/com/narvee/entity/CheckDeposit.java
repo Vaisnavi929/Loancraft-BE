@@ -2,6 +2,7 @@ package com.narvee.entity;
 
 import java.time.LocalDate;
 
+import com.narvee.commons.AuditModel;
 import com.narvee.helpers.BounceReason;
 
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="check_bounce_entry")
-public class CheckBounceEntry {
+public class CheckDeposit extends AuditModel{
 	
 
     @Id
@@ -38,8 +39,7 @@ public class CheckBounceEntry {
 
     private String remarks;
     private String status="Posted";
-
-    private Double bounceCharges;
+ 
     @ManyToOne
     @JoinColumn(name = "disbursment_id")
     private Disbursment disbursment;
