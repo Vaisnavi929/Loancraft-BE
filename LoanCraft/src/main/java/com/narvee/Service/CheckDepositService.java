@@ -16,5 +16,7 @@ public interface CheckDepositService {
 	
 	public Page<CheckDepositResponseDTO> getAllCheckDeposit(SortingRequestDto sortingRequestDto);
 	
+	public CheckDeposit getById(Long id);
+	
 	public String updateStatus(Long id, String value,String reason);
 }

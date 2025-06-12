@@ -52,5 +52,10 @@ public class CheckDepositController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status", depositService.updateStatus(id, value, reason)), HttpStatus.OK);
 		
 	}
-	
+	@RequestMapping(value = "/getById/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getById(@PathVariable("id") Long id){
+		logger.info("!!! inside class:CheckDepositController,!! method:getById()");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched ById status", depositService.getById(id)), HttpStatus.OK);
+		
+	}
 }

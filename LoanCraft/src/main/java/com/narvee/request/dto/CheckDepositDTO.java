@@ -17,6 +17,7 @@ public class CheckDepositDTO {
 	    private LocalDate bounceDate;
 	    private Double amount;
 	    private BounceReason reason;
+	    private Double recievableAmount;
 	    private String remarks;
 	    private Long disbursmentId;
 
