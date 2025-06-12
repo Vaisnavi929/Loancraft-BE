@@ -73,7 +73,9 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 			sortField = "remarks";
 		else if (sortField.equalsIgnoreCase("Status"))
 			sortField = "status";
-		else if (sortField.equalsIgnoreCase("Createddate"))
+		else if (sortField.equalsIgnoreCase("RecievableAmount"))
+			sortField = "recievable_amount";
+		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
 		else
 			sortField = "updateddate";
@@ -104,6 +106,13 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 	        return "No record found to update";
 	    }
 	}
+
+	@Override
+	public CheckDeposit getById(Long id) {
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getById() ");
+		return depositRepository.findById(id).get();
+	}
+
 	
 	
 }
