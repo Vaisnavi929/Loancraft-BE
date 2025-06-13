@@ -2,8 +2,6 @@ package com.narvee.request.dto;
 
 import java.time.LocalDate;
 
-import com.narvee.helpers.BounceReason;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class CheckDepositDTO {
 	    private Long id;
 	    private String chequeNumber;
-	    private LocalDate bounceDate;
+	    private LocalDate postingDate;
 	    private Double amount;
-	    private BounceReason reason;
+	    private String reason;
 	    private Double recievableAmount;
 	    private String remarks;
 	    private Long disbursmentId;

@@ -3,7 +3,7 @@ package com.narvee.entity;
 import java.time.LocalDate;
 
 import com.narvee.commons.AuditModel;
-import com.narvee.helpers.BounceReason;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,11 +31,10 @@ public class CheckDeposit extends AuditModel{
     private Long id;
 
     private String chequeNumber;
-    private LocalDate bounceDate;
+    private LocalDate postingDate;
     private Double amount;
 
-    @Enumerated(EnumType.STRING)
-    private BounceReason reason;
+    private String reason;
 
     private String remarks;
     private String status="Posted";

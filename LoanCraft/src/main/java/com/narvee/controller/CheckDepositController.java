@@ -58,4 +58,12 @@ public class CheckDepositController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched ById status", depositService.getById(id)), HttpStatus.OK);
 		
 	}
+	
+	@RequestMapping(value = "/triggerStatusUpdate", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> triggerStatusUpdate(){
+		logger.info("!!! inside class:CheckDepositController,!! method:triggerStatusUpdate()");
+		depositService.updatePostedChecksToInProgress();
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully triggerStatusUpdates","Status update triggered manually."), HttpStatus.OK);
+		
+	}
 }

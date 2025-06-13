@@ -19,4 +19,5 @@ public interface CheckDepositService {
 	public CheckDeposit getById(Long id);
 	
 	public String updateStatus(Long id, String value,String reason);
+	public void updatePostedChecksToInProgress();
 }
