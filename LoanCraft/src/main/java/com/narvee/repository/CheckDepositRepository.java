@@ -18,11 +18,11 @@ import jakarta.transaction.Transactional;
 
 public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long> {
 	
-@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.posting_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN loancraft.lms_disbursment ld \r\n"
+@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.posting_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN lms_disbursment ld "
 		+ "on ld.disbursment_id=c.disbursment_id",nativeQuery =true)
 public Page<CheckDepositResponseDTO> getAllCheckDepositWithPagination(Pageable pageable);
 	
-@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.posting_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN loancraft.lms_disbursment ld \r\n"
+@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.posting_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN lms_disbursment ld "
 		+ "on ld.disbursment_id=c.disbursment_id "
 		+ "WHERE "
 		+ "  CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR "	
