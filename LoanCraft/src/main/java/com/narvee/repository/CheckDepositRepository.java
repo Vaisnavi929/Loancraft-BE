@@ -18,16 +18,15 @@ import jakarta.transaction.Transactional;
 
 public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long> {
 	
-@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.bounce_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_bounce_entry c JOIN loancraft.lms_disbursment ld \r\n"
+@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.posting_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN loancraft.lms_disbursment ld \r\n"
 		+ "on ld.disbursment_id=c.disbursment_id",nativeQuery =true)
 public Page<CheckDepositResponseDTO> getAllCheckDepositWithPagination(Pageable pageable);
 	
-@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.bounce_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_bounce_entry c JOIN loancraft.lms_disbursment ld \r\n"
+@Query(value ="SELECT c.id,c.amount,c.bounce_charges,c.posting_date,c.createddate,c.recievable_amount,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN loancraft.lms_disbursment ld \r\n"
 		+ "on ld.disbursment_id=c.disbursment_id "
 		+ "WHERE "
-		+ "  CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR "
-		+ "  CAST(c.bounce_charges AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR "
-		+ "  CAST(c.bounce_date AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR "
+		+ "  CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR "	
+		+ "  CAST(c.posting_date AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR "
 		+ "c.status ILIKE CONCAT('%','INSUFFICIENT_FUNDS', '%') OR"
 		+ "  c.cheque_number ILIKE CONCAT('%',:keyword, '%') OR "
 		+ "  c.reason ILIKE CONCAT('%',:keyword, '%') OR "
@@ -36,8 +35,8 @@ public Page<CheckDepositResponseDTO> getAllCheckDepositWithKeyword(Pageable page
 
 @Modifying
 @Transactional
-@Query(value ="UPDATE check_bounce_entry SET status =:value,Reason=:reason WHERE id =:id",nativeQuery = true)
+@Query(value ="UPDATE check_deposit SET status =:value,Reason=:reason WHERE id =:id",nativeQuery = true)
 int updateStatus(@Param("id") Long id ,@Param("value") String value,@Param("reason") String reason) ;
 
-public List<CheckDeposit> findByStatusAndBounceDate(String status, LocalDate postingDate);
+public List<CheckDeposit> findByStatusAndPostingDate(String status, LocalDate postingDate);
 }

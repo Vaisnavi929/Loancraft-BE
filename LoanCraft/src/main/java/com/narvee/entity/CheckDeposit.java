@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="check_bounce_entry")
+@Table(name="check_deposit")
 public class CheckDeposit extends AuditModel{
 	
 

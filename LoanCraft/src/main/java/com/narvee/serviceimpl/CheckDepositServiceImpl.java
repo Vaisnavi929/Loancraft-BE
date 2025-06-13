@@ -122,7 +122,7 @@ public class CheckDepositServiceImpl implements CheckDepositService{
     public void updatePostedChecksToInProgress() {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updatePostedChecksToInProgress() ");
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        List<CheckDeposit> checks = depositRepository.findByStatusAndBounceDate("Posted", yesterday);
+        List<CheckDeposit> checks = depositRepository.findByStatusAndPostingDate("Posted", yesterday);
 
         for (CheckDeposit check : checks) {
             check.setStatus("Pending");
