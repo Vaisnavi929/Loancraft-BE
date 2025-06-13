@@ -17,6 +17,7 @@ public class CheckDepositDTO {
 	    private String reason;
 	    private Double recievableAmount;
 	    private String remarks;
+	    private String status;
 	    private Long disbursmentId;
 
 }

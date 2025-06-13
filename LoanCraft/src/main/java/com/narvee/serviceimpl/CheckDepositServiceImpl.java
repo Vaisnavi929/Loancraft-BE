@@ -68,7 +68,7 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 		if (sortField.equalsIgnoreCase("Amount"))
 			sortField = "amount";
 		else if (sortField.equalsIgnoreCase("PostingDate"))
-			sortField = "postingDate";
+			sortField = "posting_date";
 		else if (sortField.equalsIgnoreCase("ChequeNumber"))
 			sortField = "cheque_number";
 		else if (sortField.equalsIgnoreCase("Reason"))
