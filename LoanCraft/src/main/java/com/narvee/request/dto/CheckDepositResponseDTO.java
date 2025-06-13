@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public interface CheckDepositResponseDTO {
 public String getId();
 public String getChequeNumber();
-public LocalDate getBounceDate();
+public LocalDate getPostingDate();
 public Double getAmount();
 public String getReason(); 
 public LocalDateTime getCreateddate();

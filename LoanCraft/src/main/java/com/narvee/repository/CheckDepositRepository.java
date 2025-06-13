@@ -1,5 +1,8 @@
 package com.narvee.repository;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,5 +39,5 @@ public Page<CheckDepositResponseDTO> getAllCheckDepositWithKeyword(Pageable page
 @Query(value ="UPDATE check_bounce_entry SET status =:value,Reason=:reason WHERE id =:id",nativeQuery = true)
 int updateStatus(@Param("id") Long id ,@Param("value") String value,@Param("reason") String reason) ;
 
-
+public List<CheckDeposit> findByStatusAndBounceDate(String status, LocalDate postingDate);
 }

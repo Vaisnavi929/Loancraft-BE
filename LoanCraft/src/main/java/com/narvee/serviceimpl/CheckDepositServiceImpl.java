@@ -1,5 +1,8 @@
 package com.narvee.serviceimpl;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.CheckDepositService;
@@ -63,8 +67,8 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 		
 		if (sortField.equalsIgnoreCase("Amount"))
 			sortField = "amount";
-		else if (sortField.equalsIgnoreCase("BounceDate"))
-			sortField = "bounce_date";
+		else if (sortField.equalsIgnoreCase("PostingDate"))
+			sortField = "postingDate";
 		else if (sortField.equalsIgnoreCase("ChequeNumber"))
 			sortField = "cheque_number";
 		else if (sortField.equalsIgnoreCase("Reason"))
@@ -113,6 +117,19 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 		return depositRepository.findById(id).get();
 	}
 
+	@Override
+    @Scheduled(cron = "0 0 0 * * ?") // Runs every day at midnight
+    public void updatePostedChecksToInProgress() {
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updatePostedChecksToInProgress() ");
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        List<CheckDeposit> checks = depositRepository.findByStatusAndBounceDate("Posted", yesterday);
+
+        for (CheckDeposit check : checks) {
+            check.setStatus("Pending");
+        }
+
+        depositRepository.saveAll(checks);
+    }
 	
 	
 }
