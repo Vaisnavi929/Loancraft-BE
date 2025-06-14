@@ -130,6 +130,12 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 
         depositRepository.saveAll(checks);
     }
+
+	@Override
+	public List<Object[]> getRepaymentMonthYear(Long disbursmentId) {
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
+		return depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
+	}
 	
 	
 }

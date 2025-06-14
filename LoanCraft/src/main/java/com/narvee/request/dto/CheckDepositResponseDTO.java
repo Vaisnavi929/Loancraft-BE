@@ -15,5 +15,6 @@ public String getRemarks();
 public Double getRecievableAmount();
 public String getStatus();
 public Long getDisbursmentId();
+public Long getRepaymentId();
 
 }

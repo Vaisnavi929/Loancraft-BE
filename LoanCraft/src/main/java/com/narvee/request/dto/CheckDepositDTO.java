@@ -19,5 +19,6 @@ public class CheckDepositDTO {
 	    private String remarks;
 	    private String status;
 	    private Long disbursmentId;
+		private Long repaymentId;
 
 }
