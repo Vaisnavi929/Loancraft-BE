@@ -20,4 +20,6 @@ public interface CheckDepositService {
 	
 	public String updateStatus(Long id, String value,String reason);
 	public void updatePostedChecksToInProgress();
+	
+	public List<Object[]> getRepaymentMonthYear(Long disbursmentId);
 }

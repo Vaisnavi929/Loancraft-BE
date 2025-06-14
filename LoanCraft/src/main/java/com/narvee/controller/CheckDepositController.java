@@ -66,4 +66,11 @@ public class CheckDepositController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully triggerStatusUpdates","Status update triggered manually."), HttpStatus.OK);
 		
 	}
+	
+	@RequestMapping(value = "/getRepaymentMonthYear/{disbursmentId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getRepaymentMonthYear(@PathVariable Long disbursmentId){
+		logger.info("!!! inside class:CheckDepositController,!! method:getById()");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched ById status", depositService.getRepaymentMonthYear(disbursmentId)), HttpStatus.OK);
+		
+	}
 }

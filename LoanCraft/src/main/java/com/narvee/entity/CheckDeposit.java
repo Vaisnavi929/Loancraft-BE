@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,5 +45,8 @@ public class CheckDeposit extends AuditModel{
     @ManyToOne
     @JoinColumn(name = "disbursment_id")
     private Disbursment disbursment;
+    @OneToOne
+    @JoinColumn(name = "repayment_id")
+    private LmsRepayment lmsRepayment;
 
 }

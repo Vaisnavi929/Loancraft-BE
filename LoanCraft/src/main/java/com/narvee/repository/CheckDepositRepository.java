@@ -39,4 +39,10 @@ public Page<CheckDepositResponseDTO> getAllCheckDepositWithKeyword(Pageable page
 int updateStatus(@Param("id") Long id ,@Param("value") String value,@Param("reason") String reason) ;
 
 public List<CheckDeposit> findByStatusAndPostingDate(String status, LocalDate postingDate);
+@Query(value = "SELECT r.repayment_id, TO_CHAR(r.due_date, 'Month YYYY') AS due_month_year " +
+        "FROM lms_repayment r " +
+        "JOIN lms_disbursment ld ON r.disbursment_id = ld.disbursment_id " +
+        "WHERE ld.disbursment_id = :disbursmentId", nativeQuery = true)
+public List<Object[]> getRepaymentMonthAndYearByDisbursmentId(@Param("disbursmentId") Long disbursmentId);
+
 }
