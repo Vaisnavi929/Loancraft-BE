@@ -18,6 +18,7 @@ import com.narvee.Service.CheckDepositService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.entity.CheckDeposit;
 import com.narvee.entity.Disbursment;
+import com.narvee.entity.LmsRepayment;
 import com.narvee.repository.CheckDepositRepository;
 import com.narvee.repository.RepaymentRepository;
 import com.narvee.request.dto.CheckDepositDTO;
@@ -42,6 +43,9 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 		Disbursment disbursment=new Disbursment();
 		disbursment.setDisbursmentId(checkDepositDTO.getDisbursmentId());
 		checkDeposit.setDisbursment(disbursment);
+		LmsRepayment lmsRepayment=new LmsRepayment();
+		lmsRepayment.setRepaymentId(checkDepositDTO.getRepaymentId());
+		checkDeposit.setLmsRepayment(lmsRepayment);
 		return depositRepository.save(checkDeposit);
 	}
 
@@ -52,6 +56,9 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 		Disbursment disbursment=new Disbursment();
 		disbursment.setDisbursmentId(checkDepositDTO.getDisbursmentId());
 		checkDeposit.setDisbursment(disbursment);
+		LmsRepayment lmsRepayment=new LmsRepayment();
+		lmsRepayment.setRepaymentId(checkDepositDTO.getRepaymentId());
+		checkDeposit.setLmsRepayment(lmsRepayment);
 		return depositRepository.save(checkDeposit);
 	}
 
