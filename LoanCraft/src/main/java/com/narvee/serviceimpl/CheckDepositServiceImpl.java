@@ -2,6 +2,7 @@ package com.narvee.serviceimpl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -84,8 +85,6 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			sortField = "remarks";
 		else if (sortField.equalsIgnoreCase("Status"))
 			sortField = "status";
-		else if (sortField.equalsIgnoreCase("RecievableAmount"))
-			sortField = "recievable_amount";
 		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
 		else
@@ -143,5 +142,6 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
 		return depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
 	}
+
 
 }

@@ -22,4 +22,7 @@ public interface CheckDepositService {
 	public void updatePostedChecksToInProgress();
 	
 	public List<Object[]> getRepaymentMonthYear(Long disbursmentId);
+	
+
+	
 }
