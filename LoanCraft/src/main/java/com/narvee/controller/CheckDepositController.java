@@ -46,10 +46,10 @@ public class CheckDepositController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully getall checkDeposit details", depositService.getAllCheckDeposit(sortingRequestDto)), HttpStatus.OK) ;		
 	}
 	
-	@RequestMapping(value = "/UpdateStatus/{id}/{value}/{reason}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> UpdateStatus(@PathVariable("id") Long id,@PathVariable("value") String value,@PathVariable("reason") String reason){
+	@RequestMapping(value = "/UpdateStatus/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> UpdateStatus(@PathVariable("id") Long id,@PathVariable("value") String value){
 		logger.info("!!! inside class:CheckDepositController,!! method:UpdateStatus()");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status", depositService.updateStatus(id, value, reason)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status", depositService.updateStatus(id, value)), HttpStatus.OK);
 		
 	}
 	@RequestMapping(value = "/getById/{id}", method = RequestMethod.GET, produces = "application/json")

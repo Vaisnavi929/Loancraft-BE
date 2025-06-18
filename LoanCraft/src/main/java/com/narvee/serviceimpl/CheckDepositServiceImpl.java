@@ -25,25 +25,26 @@ import com.narvee.request.dto.CheckDepositDTO;
 import com.narvee.request.dto.CheckDepositResponseDTO;
 
 @Service
-public class CheckDepositServiceImpl implements CheckDepositService{
+public class CheckDepositServiceImpl implements CheckDepositService {
 
-	private static final Logger logger=LoggerFactory.getLogger(CheckDepositServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(CheckDepositServiceImpl.class);
 
 	@Autowired
 	private CheckDepositRepository depositRepository;
 	@Autowired
 	private RepaymentRepository repaymentRepository;
-	
+
 	@Autowired
 	ModelMapper mapper;
+
 	@Override
-	public CheckDeposit saveDeposit(CheckDepositDTO checkDepositDTO) {		
+	public CheckDeposit saveDeposit(CheckDepositDTO checkDepositDTO) {
 		logger.info("!!! inside class : CheckDepositServiceImpl,!! method: saveBounceEntry()  ");
 		CheckDeposit checkDeposit = mapper.map(checkDepositDTO, CheckDeposit.class);
-		Disbursment disbursment=new Disbursment();
+		Disbursment disbursment = new Disbursment();
 		disbursment.setDisbursmentId(checkDepositDTO.getDisbursmentId());
 		checkDeposit.setDisbursment(disbursment);
-		LmsRepayment lmsRepayment=new LmsRepayment();
+		LmsRepayment lmsRepayment = new LmsRepayment();
 		lmsRepayment.setRepaymentId(checkDepositDTO.getRepaymentId());
 		checkDeposit.setLmsRepayment(lmsRepayment);
 		return depositRepository.save(checkDeposit);
@@ -53,15 +54,14 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 	public CheckDeposit updateDeposit(CheckDepositDTO checkDepositDTO) {
 		logger.info("!!! inside class : CheckDepositServiceImpl,!! method: updateBounceEntry()  ");
 		CheckDeposit checkDeposit = mapper.map(checkDepositDTO, CheckDeposit.class);
-		Disbursment disbursment=new Disbursment();
+		Disbursment disbursment = new Disbursment();
 		disbursment.setDisbursmentId(checkDepositDTO.getDisbursmentId());
 		checkDeposit.setDisbursment(disbursment);
-		LmsRepayment lmsRepayment=new LmsRepayment();
+		LmsRepayment lmsRepayment = new LmsRepayment();
 		lmsRepayment.setRepaymentId(checkDepositDTO.getRepaymentId());
 		checkDeposit.setLmsRepayment(lmsRepayment);
 		return depositRepository.save(checkDeposit);
 	}
-
 
 	@Override
 	public Page<CheckDepositResponseDTO> getAllCheckDeposit(SortingRequestDto sortingRequestDto) {
@@ -71,7 +71,7 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-		
+
 		if (sortField.equalsIgnoreCase("Amount"))
 			sortField = "amount";
 		else if (sortField.equalsIgnoreCase("PostingDate"))
@@ -108,14 +108,14 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 	}
 
 	@Override
-	public String updateStatus(Long id, String value,String reason) {
+	public String updateStatus(Long id, String value) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateStatus() ");
-	    int rows = depositRepository.updateStatus(id, value, reason);
-	    if (rows > 0) {
-	        return "Update successful";
-	    } else {
-	        return "No record found to update";
-	    }
+		int rows = depositRepository.updateStatus(id, value);
+		if (rows > 0) {
+			return "Update successful";
+		} else {
+			return "No record found to update";
+		}
 	}
 
 	@Override
@@ -125,24 +125,23 @@ public class CheckDepositServiceImpl implements CheckDepositService{
 	}
 
 	@Override
-    @Scheduled(cron = "0 0 0 * * ?") // Runs every day at midnight
-    public void updatePostedChecksToInProgress() {
+	@Scheduled(cron = "0 0 0 * * ?") // Runs every day at midnight
+	public void updatePostedChecksToInProgress() {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updatePostedChecksToInProgress() ");
-        LocalDate yesterday = LocalDate.now().minusDays(1);
-        List<CheckDeposit> checks = depositRepository.findByStatusAndPostingDate("Posted", yesterday);
+		LocalDate yesterday = LocalDate.now().minusDays(1);
+		List<CheckDeposit> checks = depositRepository.findByStatusAndPostingDate("Posted", yesterday);
 
-        for (CheckDeposit check : checks) {
-            check.setStatus("Pending");
-        }
+		for (CheckDeposit check : checks) {
+			check.setStatus("Pending");
+		}
 
-        depositRepository.saveAll(checks);
-    }
+		depositRepository.saveAll(checks);
+	}
 
 	@Override
 	public List<Object[]> getRepaymentMonthYear(Long disbursmentId) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
 		return depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
 	}
-	
-	
+
 }

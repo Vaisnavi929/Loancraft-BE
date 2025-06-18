@@ -35,8 +35,8 @@ public Page<CheckDepositResponseDTO> getAllCheckDepositWithKeyword(Pageable page
 
 @Modifying
 @Transactional
-@Query(value ="UPDATE check_deposit SET status =:value,Reason=:reason WHERE id =:id",nativeQuery = true)
-int updateStatus(@Param("id") Long id ,@Param("value") String value,@Param("reason") String reason) ;
+@Query(value ="UPDATE check_deposit SET status =:value WHERE id =:id",nativeQuery = true)
+int updateStatus(@Param("id") Long id ,@Param("value") String value) ;
 
 public List<CheckDeposit> findByStatusAndPostingDate(String status, LocalDate postingDate);
 @Query(value = "SELECT r.repayment_id, TO_CHAR(r.due_date, 'Month YYYY') AS due_month_year " +

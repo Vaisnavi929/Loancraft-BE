@@ -18,7 +18,7 @@ public interface CheckDepositService {
 	
 	public CheckDeposit getById(Long id);
 	
-	public String updateStatus(Long id, String value,String reason);
+	public String updateStatus(Long id, String value);
 	public void updatePostedChecksToInProgress();
 	
 	public List<Object[]> getRepaymentMonthYear(Long disbursmentId);
