@@ -27,6 +27,9 @@ public class LowCheckDepositApproval extends AuditModel {
 	private Long approvedById;
 	private boolean isApproved;
 	
+	private Double recievableMount;
+	private Double requestedAmount;
+	
 	@ManyToOne
 	@JoinColumn(name = "repayment_id")
 	private LmsRepayment lmsRepayment;
