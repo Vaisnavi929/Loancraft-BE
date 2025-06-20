@@ -12,17 +12,17 @@ import com.narvee.Service.LowCheckDepositService;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.entity.LowCheckDepositApproval;
 import com.narvee.repository.LowCheckDepositApprovalRespository;
+import com.narvee.request.dto.FetchLowCheckDepositDTO;
 import com.narvee.request.dto.LowCheckDepositDTO;
-
 
 @Service
 public class LowCheckDepositServiceImpl implements LowCheckDepositService {
-	
-	private static final Logger logger=LoggerFactory.getLogger(LowCheckDepositServiceImpl.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(LowCheckDepositServiceImpl.class);
+
 	@Autowired
 	ModelMapper mapper;
-	
+
 	@Autowired
 	private LowCheckDepositApprovalRespository approvalRespository;
 
@@ -57,5 +57,17 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:getAllLowCheckDepositApproval() ");
 		return approvalRespository.findAll();
 	}
-}
 
+	@Override
+	public List<FetchLowCheckDepositDTO> getLowCheckDepositDetails() {
+		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:getLowCheckDepositDetails() ");
+		return approvalRespository.fetchLowCheckDepositDetails();
+	}
+
+	@Override
+	public boolean updateIsApproved(Long id, Boolean value) {
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateIsApproved() ");
+		int updatedCount = approvalRespository.updateIsApproved(id, value);
+		return updatedCount > 0;
+	}
+}
