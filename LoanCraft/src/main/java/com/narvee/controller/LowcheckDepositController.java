@@ -20,36 +20,63 @@ import com.narvee.request.dto.LowCheckDepositDTO;
 @CrossOrigin("*")
 @RequestMapping("/auth/LowCheckApproval")
 public class LowcheckDepositController {
-	
-	private static final Logger logger=LoggerFactory.getLogger(LowcheckDepositController.class);
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(LowcheckDepositController.class);
+
 	@Autowired
 	private LowCheckDepositService checkDepositService;
-	
-	
-	@RequestMapping(value ="/save",method=RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> saveLowDepositEntity(@RequestBody LowCheckDepositDTO LowCheckDepositDTO){
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> saveLowDepositEntity(@RequestBody LowCheckDepositDTO LowCheckDepositDTO) {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :saveLowDepositEntity() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully saved LowCheckApproval", checkDepositService.saveCheckDepositApproval(LowCheckDepositDTO)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully saved LowCheckApproval",
+				checkDepositService.saveCheckDepositApproval(LowCheckDepositDTO)), HttpStatus.OK);
+
 	}
-	@RequestMapping(value ="/update",method=RequestMethod.PUT,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> updateLowDepositEntity(@RequestBody LowCheckDepositDTO LowCheckDepositDTO){
+
+	@RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateLowDepositEntity(@RequestBody LowCheckDepositDTO LowCheckDepositDTO) {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :updateLowDepositEntity() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update LowCheckApproval", checkDepositService.updateCheckDepositApproval(LowCheckDepositDTO)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully update LowCheckApproval",
+						checkDepositService.updateCheckDepositApproval(LowCheckDepositDTO)),
+				HttpStatus.OK);
+
 	}
-	@RequestMapping(value ="/getById/{id}",method=RequestMethod.GET,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long id){
+
+	@RequestMapping(value = "/getById/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getById(@PathVariable Long id) {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :getById() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetchedById", checkDepositService.getById(id)), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully fetchedById", checkDepositService.getById(id)),
+				HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value ="/getAll",method =RequestMethod.GET,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> getAllLowCheckDepositArppoval(){
+
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllLowCheckDepositArppoval() {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :getAllLowCheckDepositArppoval() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully all LowCheckDepositArppoval ", checkDepositService.getAllLowCheckDepositApproval()), HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"successfully all LowCheckDepositArppoval ", checkDepositService.getAllLowCheckDepositApproval()),
+				HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/getLowCheckDepositDetails", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getLowCheckDepositDetails() {
+		logger.info("!!! inside class :LowcheckDepositController , !! method :getAllLowCheckDepositArppoval() ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"successfully all LowCheckDepositArppoval ", checkDepositService.getLowCheckDepositDetails()),
+				HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/updateIsApproved/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateIsApproved(@PathVariable("id") Long id,
+			@PathVariable("value") boolean value) {
+		logger.info("!!! inside class :LowcheckDepositController , !! method :updateIsApproved() ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated IsApproved ",
+				checkDepositService.updateIsApproved(id, value)), HttpStatus.OK);
+
 	}
 }

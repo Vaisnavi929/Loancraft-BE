@@ -11,25 +11,29 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="LmsLowCheckDepositApproval")
+@Table(name = "LmsLowCheckDepositApproval")
+@EqualsAndHashCode(callSuper = true)
 public class LowCheckDepositApproval extends AuditModel {
-	
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Long requestById;
 	private Long approvedById;
 	private boolean isApproved;
-	
+
 	private Double recievableMount;
 	private Double requestedAmount;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "repayment_id")
 	private LmsRepayment lmsRepayment;
