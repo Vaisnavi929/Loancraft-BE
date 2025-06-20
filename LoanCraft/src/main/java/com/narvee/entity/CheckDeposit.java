@@ -39,9 +39,7 @@ public class CheckDeposit extends AuditModel{
 
     private String remarks;
     private String status="Posted";
-    private Double recievableAmount;
     
- 
     @ManyToOne
     @JoinColumn(name = "disbursment_id")
     private Disbursment disbursment;
