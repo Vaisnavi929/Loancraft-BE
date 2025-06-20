@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LowCheckDepositDTO {
-	
+
 	private Long requestById;
 	private Long approvedById;
 	private boolean isApproved;
-    private Long repaymentId;
+	private Long repaymentId;
 	private Double recievableMount;
 	private Double requestedAmount;
 }
