@@ -2,6 +2,8 @@ package com.narvee.request.dto;
 
 public interface FetchLowCheckDepositDTO {
 
+	
+	public Long getId();
 	public Double getRecievableAmount();
 
 	public String getApprovedByName();
@@ -9,7 +11,7 @@ public interface FetchLowCheckDepositDTO {
 	public String getRequestedByName();
 
 	public String getFullName();
-
+    public Boolean getIsApproved();
 	public Long getLoanId();
 
 }

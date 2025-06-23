@@ -18,6 +18,6 @@ public interface LowCheckDepositService {
 
 	public List<FetchLowCheckDepositDTO> getLowCheckDepositDetails();
 
-	public boolean updateIsApproved(Long id, Boolean value);
+	public Boolean updateIsApproved(Long id, Boolean value);
 
 }

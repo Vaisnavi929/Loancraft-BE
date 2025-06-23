@@ -65,7 +65,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	}
 
 	@Override
-	public boolean updateIsApproved(Long id, Boolean value) {
+	public Boolean updateIsApproved(Long id, Boolean value) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateIsApproved() ");
 		int updatedCount = approvalRespository.updateIsApproved(id, value);
 		return updatedCount > 0;
