@@ -120,6 +120,10 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice {
 			sortField = "origination_fee";
 		else if (sortField.equalsIgnoreCase("returnOriginationfee"))
 			sortField = "return_originationfee";
+		else if (sortField.equalsIgnoreCase("emiStartDate"))
+			sortField = "emi_start_date";
+		else if (sortField.equalsIgnoreCase("emiEndDate"))
+			sortField = "emi_end_date";
 		else
 			sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;

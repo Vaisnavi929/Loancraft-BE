@@ -6,7 +6,7 @@ import java.util.Date;
 public interface DisbursmentResponseDTO {
 
 	public Long getdisbursmentId();
-
+	public String getdisbRefNo();
 	public Date getdate();
 
 	public String getfirstName();

@@ -29,7 +29,7 @@ public class LowCheckDepositApproval extends AuditModel {
 	private Long id;
 	private Long requestById;
 	private Long approvedById;
-	private boolean isApproved;
+	private Boolean isApproved;
 
 	private Double recievableAmount;
 	private Double requestedAmount;
