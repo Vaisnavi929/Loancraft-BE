@@ -12,7 +12,6 @@ public String getReason();
 public LocalDateTime getCreateddate();
 public LocalDateTime getUpdateddate();
 public String getRemarks();
-public Double getRecievableAmount();
 public String getStatus();
 public Long getDisbursmentId();
 public Long getRepaymentId();
