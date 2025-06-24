@@ -20,6 +20,7 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 		    c.mobile_number AS mobilenumber,
 		    d.disbursed_amount,
 		    d.disbursment_id,
+		    d.disb_ref_no,
 		    d.account_no,
 		    la.application_reference_id AS referenceid,
 		    la.is_requested_file_upload,la.is_file_upload,
@@ -45,6 +46,7 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    c.mobile_number AS mobilenumber,
 			    d.disbursed_amount,
 			    d.disbursment_id,
+			    d.disb_ref_no,
 			    d.account_no,
 			    la.application_reference_id AS referenceid,
 			    la.is_requested_file_upload,la.is_file_upload,
@@ -65,6 +67,7 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    lms_customers_info c ON c.customer_id = la.customer_id
 			WHERE
 			    d.account_no ILIKE '%' || :keyword || '%'
+			    OR d.disb_ref_no ILIKE '%' || :keyword || '%'
 			    OR d.disbursed_amount::text ILIKE '%' || :keyword || '%'
 			    OR d.branch ILIKE '%' || :keyword || '%'
 			    OR TO_CHAR(d.date, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
@@ -83,5 +86,9 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id "
 			+ "join lms_customers_info c ON c.customer_id=la.customer_id", nativeQuery = true)
 	public List<DisbursmentIdDTO> getCustomerDetailsWithDisbursmentId();
+	
+	
+	@Query(value = "select max(amaxnum) as max from lms_disbursment", nativeQuery = true)
+	public Long disbmaxNumber();
 
 }

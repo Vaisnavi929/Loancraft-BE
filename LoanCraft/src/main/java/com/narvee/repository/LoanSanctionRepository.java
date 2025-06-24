@@ -13,7 +13,7 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 
 	@Query(value = "select c.first_name as firstname,  c.last_name as lastname,a.loan_id, a.application_reference_id as referenceid,a.is_requested_file_upload,a.is_file_upload, s.loan_saction_id as sanctionid,s.documentation_charges,s.loan_processing_charges, s.amount_sanctioned,s.number_of_emis,s.rate_of_interest,s.interest_type,s.repayment_mode,s.emi_amount,\r\n"
 
-			+ "s.interest_type,s.payment_freqmuency,s.origination_fee,s.return_originationfee,s.repayment_mode,s.status,date(s.createddate) as createddate,s.updateddate as updateddate from lms_loan_saction s join lms_applications a ON a.loan_id=s.loan_id\r\n"
+			+ "s.interest_type,s.payment_freqmuency,s.origination_fee,s.return_originationfee,s.repayment_mode,s.status,s.emi_start_date,s.emi_end_date,date(s.createddate) as createddate,s.updateddate as updateddate from lms_loan_saction s join lms_applications a ON a.loan_id=s.loan_id\r\n"
 			+ "join lms_customers_info c ON c.customer_id=a.customer_id where s.status='sanctioned' ", nativeQuery = true)
 	public Page<LoanSanctionDTOS> getAllLoansactionWithPagination(Pageable pageable);
 
@@ -35,7 +35,8 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			    s.repayment_mode,
 			    s.emi_amount,
 			    s.payment_freqmuency,
-			    s.status
+			    s.status,
+			    s.emi_start_date,s.emi_end_date
 			FROM
 			    lms_loan_saction s
 			JOIN
@@ -60,6 +61,8 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			        OR s.status ILIKE '%' || :keyword || '%'
 			        OR TO_CHAR(s.updateddate, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
 			        OR TO_CHAR(s.createddate, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
+			        OR TO_CHAR(s.emi_start_date, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
+			        OR TO_CHAR(s.emi_end_date, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
 			    )
 						""", nativeQuery = true)
 	public Page<LoanSanctionDTOS> getAllLoansactionWithSearching(Pageable pageable, @Param("keyword") String keyword);

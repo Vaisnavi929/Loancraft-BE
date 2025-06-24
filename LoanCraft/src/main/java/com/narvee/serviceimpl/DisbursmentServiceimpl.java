@@ -43,6 +43,8 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 	@Autowired
 	private VerificationService verificationService;
 
+	private static final int DIGIT_PADDING = 4;
+	
 	@Override
 	@Transactional
 	public Disbursment saveDisbursment(DisbursmentDTO disbursmentDTO) {
@@ -52,7 +54,20 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
 		loanSanction.setStatus(disbursmentDTO.getStatus());
 		disbursment.setLoanSanction(loanSanction);
+		System.err.println(loanSanction);
 		Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
+		
+		Long amaxnumber = disbursmentRepository.disbmaxNumber();
+		if (amaxnumber == null) {
+			amaxnumber = 0L;
+		}
+
+		String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
+		String value = "DISB" + valueWithPadding;
+		disbursment.setDisbRefNo(value);
+
+		disbursment.setAmaxnum(amaxnumber + 1);
+	
 		if (disbursmentDTO.getStatus().equalsIgnoreCase("disbursed")) {
 			verificationService.updateDisbursed(loanSanction.getApplications().getLoanId(), true);
 		}
