@@ -24,12 +24,12 @@ public interface LowCheckDepositApprovalRespository extends JpaRepository<LowChe
 	@Transactional
 	@Query(value = "UPDATE lms_low_check_deposit_approval SET is_approved=:value WHERE id =:id", nativeQuery = true)
 	int updateIsApproved(@Param("id") Long id, @Param("value") Boolean value);
-	
+
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE lms_low_check_deposit_approval SET remarks=:value WHERE id =:id", nativeQuery = true)
 	int updateRemarks(@Param("id") Long id, @Param("value") String value);
 
+	public LowCheckDepositApproval findByLmsRepaymentRepaymentId(Long repaymentId);
 
 }
-

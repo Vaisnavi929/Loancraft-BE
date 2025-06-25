@@ -18,11 +18,12 @@ import com.narvee.request.dto.RepaymentDropdown;
 import jakarta.transaction.Transactional;
 
 public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long> {
-	
+
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE lms_check_deposit SET status =:status,reason=:reason,updatedby=:userid,updateddate=:updateddate,cheque_return_charges=:charges WHERE id =:id", nativeQuery = true)
-	int updateStatus(@Param("id") Long id, @Param("status") String status, String reason, Long userid,Double charges, LocalDateTime updateddate);
+	int updateStatus(@Param("id") Long id, @Param("status") String status, String reason, Long userid, Double charges,
+			LocalDateTime updateddate);
 
 	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM lms_check_deposit c JOIN lms_disbursment ld "
 			+ "on ld.disbursment_id=c.disbursment_id", nativeQuery = true)
@@ -45,13 +46,31 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 
 	public List<CheckDeposit> findByStatusAndPostingDate(String status, LocalDate postingDate);
 
-	@Query(value = "SELECT r.repayment_id, TO_CHAR(r.due_date, 'FMMonth') || ' ' || TO_CHAR(r.due_date, 'YYYY') AS due_month_year "
-			+ "FROM lms_repayment r " + "JOIN lms_disbursment ld ON r.disbursment_id = ld.disbursment_id "
-			+ "WHERE ld.disbursment_id = :disbursmentId ORDER BY r.due_date ASC", nativeQuery = true)
+	@Query(value = """
+
+						SELECT DISTINCT ON (r.repayment_id)
+			       r.repayment_id,
+			       COALESCE(cda.is_approved, false) AS is_approved,
+			       cda.requested_amount,
+			       r.due_date,
+			       TO_CHAR(r.due_date, 'FMMonth') || ' ' || TO_CHAR(r.due_date, 'YYYY') AS due_month_year
+			FROM loancraft.lms_repayment r
+			JOIN loancraft.lms_disbursment ld ON r.disbursment_id = ld.disbursment_id
+			LEFT JOIN loancraft.lms_low_check_deposit_approval cda ON r.repayment_id = cda.repayment_id
+			WHERE ld.disbursment_id = 25
+			  AND NOT EXISTS (
+			    SELECT 1
+			    FROM loancraft.lms_check_deposit cd
+			    WHERE cd.repayment_id = r.repayment_id
+			      AND cd.disbursment_id = ld.disbursment_id
+			  )
+			ORDER BY r.repayment_id, r.due_date ASC;
+
+												""", nativeQuery = true)
 	public List<RepaymentDropdown> getRepaymentMonthAndYearByDisbursmentId(@Param("disbursmentId") Long disbursmentId);
 
 	boolean existsByLmsRepaymentRepaymentId(Long repaymentId);
-	
-	public CheckDeposit  LmsRepaymentRepaymentId(Long lmsRepayment);
+
+	public CheckDeposit LmsRepaymentRepaymentId(Long lmsRepayment);
 
 }
