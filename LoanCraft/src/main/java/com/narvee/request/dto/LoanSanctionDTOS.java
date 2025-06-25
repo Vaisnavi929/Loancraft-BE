@@ -18,10 +18,6 @@ public interface LoanSanctionDTOS {
 
 	public String getStatus();
 
-	public String getFirstName();
-
-	public String getLastName();
-
 	public String getReferenceid();
 
 	public String getSanctionid();
@@ -42,7 +38,7 @@ public interface LoanSanctionDTOS {
 	public Long getLoanId();
 	public String getEmiStartDate();
 	public String getEmiEndDate();
-	
+	public String getFullName();
 	
 
 }

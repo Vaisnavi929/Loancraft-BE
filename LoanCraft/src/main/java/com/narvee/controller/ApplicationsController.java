@@ -111,6 +111,7 @@ public class ApplicationsController {
 	@RequestMapping(value = "/getAllApplication", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
+
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully fetched laonapplication with searching",
 						applicationService.getAllLoanApplicationPagination(sortingRequestDto)),
@@ -121,6 +122,7 @@ public class ApplicationsController {
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationListWithPagination(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		logger.info("!!! inside class: LoanApplicationController, !! method : getAllLoanApplicationListWithPagination");
+
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
 						applicationService.getAllLoanApplicationListWitApproved(sortingRequestDto)),
@@ -147,19 +149,23 @@ public class ApplicationsController {
 	}
 
 	@RequestMapping(value = "/updateIsRequestedFileUpload/{verifiedId}/{value}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateIsRequestedFileUpload(@PathVariable Long verifiedId, @PathVariable Boolean value) {
+	public ResponseEntity<RestAPIResponse> updateIsRequestedFileUpload(@PathVariable Long verifiedId,
+			@PathVariable Boolean value) {
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update updateIsRequestedFileUpload ",
-				applicationService.updateIsRequestedFileUpload(verifiedId, value)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully update updateIsRequestedFileUpload ",
+						applicationService.updateIsRequestedFileUpload(verifiedId, value)),
+				HttpStatus.OK);
 
 	}
-	
+
 	@RequestMapping(value = "/updateIsFileUpload/{verifiedId}/{value}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateIsFileUpload(@PathVariable Long verifiedId, @PathVariable Boolean value) {
+	public ResponseEntity<RestAPIResponse> updateIsFileUpload(@PathVariable Long verifiedId,
+			@PathVariable Boolean value) {
 		logger.info("!!! inside class: VerificationController, method: updateReviewed");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully update updateIsFileUpload ",
-				applicationService.updateIsFileUpload(verifiedId, value)), HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"successfully update updateIsFileUpload ", applicationService.updateIsFileUpload(verifiedId, value)),
+				HttpStatus.OK);
 
 	}
 }
-

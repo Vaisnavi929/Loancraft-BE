@@ -55,7 +55,7 @@ public class UcrfController {
 			if (consumerInfo.getTelephoneNoResidence() != null && !consumerInfo.getTelephoneNoResidence().isEmpty()) {
 				tel.put("home phone", consumerInfo.getTelephoneNoResidence());
 			}
-			
+
 			UcrfFormatting.append(telephoneSegment.telephoneNumberGenerator(tel));
 			String addressSeg = AddressSegment.splitAddress(consumerInfo.getAddress1(), consumerInfo.getStateCode1(),
 					consumerInfo.getPinCode1(), consumerInfo.getAddressCategory1(), consumerInfo.getResidenceCode1());

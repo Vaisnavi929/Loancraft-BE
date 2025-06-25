@@ -5,12 +5,10 @@ import java.time.LocalDateTime;
 public interface ApplicationDTO {
 
 	public Long getLoanId();
-
-	public String getFirstName();
-
-	public String getLastName();
-
+	
 	public String getEmail();
+	
+	public String getFullName();
 
 	public String getStatus();
 

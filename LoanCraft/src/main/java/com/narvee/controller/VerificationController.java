@@ -36,19 +36,18 @@ public class VerificationController {
 	@RequestMapping(value = "/saveVerification", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveVerification(@RequestBody Verification verification) {
 		logger.info("!!! inside class: VerificationController, method: saveVerification");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
-				"successfully saved Verification Details ", verificationService.saveVerification(verification)),
-				HttpStatus.OK);
+		verificationService.saveVerification(verification);
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully saved Verification Details "), HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/updateVerification", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateVerification(@RequestBody Verification verification) {
 		logger.info("!!! inside class: VerificationController, method: updateVerification");
+		verificationService.updaterificationVerification(verification);
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "successfully updated verification daetails",
-						verificationService.updaterificationVerification(verification)),
-				HttpStatus.OK);
+				new RestAPIResponse("success", "successfully updated verification daetails"), HttpStatus.OK);
 
 	}
 
@@ -137,4 +136,3 @@ public class VerificationController {
 
 	}
 }
-

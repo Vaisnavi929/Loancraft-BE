@@ -77,8 +77,8 @@ public class LoginController {
 		Authentication authentication = null;
 
 		try {
-			authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					authRequest.getUsername(), authRequest.getPassword()));
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
 			logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken inside try block");
 

@@ -139,10 +139,8 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 		if (sortField.equalsIgnoreCase("referenceid"))
 			sortField = "referenceId";
-		if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "first_name";	
-		else if (sortField.equalsIgnoreCase("lastName"))
-			sortField = "last_name";
+		else if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("email"))
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
@@ -180,9 +178,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
 		if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "first_name";
-		else if (sortField.equalsIgnoreCase("lastName"))
-			sortField = "last_name";
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("email"))
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
