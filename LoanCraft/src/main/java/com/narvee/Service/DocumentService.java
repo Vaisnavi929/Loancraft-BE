@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.narvee.entity.Document;
+import com.narvee.request.dto.CustomerDocumentDto;
 import com.narvee.request.dto.LoanAppDocsResponse;
 
 public interface DocumentService {
@@ -29,4 +30,5 @@ public interface DocumentService {
 	public List<Document> getPhysicalVerificationDocuments(Long loanId, String fileType);
 
 	boolean updatePhysicalDocVerified(Long id, Boolean value,Long loanId);
+	public List<CustomerDocumentDto> getAllDocumentsByCustomerId(Long customerId);
 }
