@@ -1,6 +1,7 @@
 package com.narvee.serviceimpl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +22,9 @@ import com.narvee.entity.CheckDeposit;
 import com.narvee.entity.Disbursment;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.repository.CheckDepositRepository;
-import com.narvee.repository.RepaymentRepository;
 import com.narvee.request.dto.CheckDepositDTO;
 import com.narvee.request.dto.CheckDepositResponseDTO;
+import com.narvee.request.dto.RepaymentDropdown;
 
 @Service
 public class CheckDepositServiceImpl implements CheckDepositService {
@@ -32,8 +33,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 
 	@Autowired
 	private CheckDepositRepository depositRepository;
-	@Autowired
-	private RepaymentRepository repaymentRepository;
+//	@Autowired
+//	private RepaymentRepository repaymentRepository;
 
 	@Autowired
 	ModelMapper mapper;
@@ -107,9 +108,17 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	}
 
 	@Override
-	public String updateStatus(Long id, String value) {
+	public String updateStatus(Long id, String status, String reason, Long userid) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateStatus() ");
-		int rows = depositRepository.updateStatus(id, value);
+		LocalDateTime now = LocalDateTime.now();
+		Double chequeReturnCharges = null;
+		if (!status.equalsIgnoreCase("Cleared")) {
+			chequeReturnCharges = 500.00;
+		} else {
+			chequeReturnCharges = 0.0;
+		}
+
+		int rows = depositRepository.updateStatus(id, status, reason, userid, chequeReturnCharges, now);
 		if (rows > 0) {
 			return "Update successful";
 		} else {
@@ -138,9 +147,16 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	}
 
 	@Override
-	public List<Object[]> getRepaymentMonthYear(Long disbursmentId) {
+	public List<RepaymentDropdown> getRepaymentMonthYear(Long disbursmentId) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
 		return depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
+	}
+
+
+	@Override
+	public boolean existsByLmsRepaymentRepaymentId(Long rid) {
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method : ExistsByLmsRepaymentRepaymentId() ");
+		return depositRepository.existsByLmsRepaymentRepaymentId(rid);
 	}
 
 

@@ -250,6 +250,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 	@Scheduled(cron = "0 0 0 * * ?")
 	@Transactional
 	public void updateRepaymentStatusScheduled() {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :updateRepaymentStatusScheduled() ");
 		repaymentRepository.updatePaymentStatus();
 	}
 
