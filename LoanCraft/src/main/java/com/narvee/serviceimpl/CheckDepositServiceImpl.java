@@ -143,5 +143,4 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 		return depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
 	}
 
-
 }

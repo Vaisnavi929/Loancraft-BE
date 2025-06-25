@@ -47,6 +47,7 @@ import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.repository.VerificationRepository;
+import com.narvee.request.dto.CustomerDocumentDto;
 import com.narvee.request.dto.LoanAppDocsResponse;
 import com.narvee.util.EncryptionUtil;
 
@@ -414,6 +415,12 @@ public class DocumentServiceImpl implements DocumentService {
 
 			return dto;
 		}).toList();
+	}
+
+	@Override
+	public List<CustomerDocumentDto> getAllDocumentsByCustomerId(Long customerId) {
+		logger.info("!!! inside class: DocumentServiceImpl, method: getAllDocumentsByCustomerId");
+		return documentRepository.getAllDocumentsByCustomerId(customerId);
 	}
 
 }

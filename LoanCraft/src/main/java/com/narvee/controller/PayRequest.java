@@ -10,18 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PayRequest {
-	
 
-	    private Long did;
+	private Long did;
 
-	    private Double amount;
+	private Double amount;
 
-	    private LocalDate paymentDate;
+	private LocalDate paymentDate;
 
-	    private String paymentMode; // e.g., CASH, UPI, BANK_TRANSFER
+	private String paymentMode; // e.g., CASH, UPI, BANK_TRANSFER
 
-	    private String referenceNumber; // Transaction ID, cheque number, etc.
+	private String referenceNumber; // Transaction ID, cheque number, etc.
 
-	    private String remarks;
+	private String remarks;
 
 }
