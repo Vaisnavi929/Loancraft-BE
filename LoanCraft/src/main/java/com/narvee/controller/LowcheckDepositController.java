@@ -79,4 +79,16 @@ public class LowcheckDepositController {
 				checkDepositService.updateIsApproved(id, value)), HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value = "/updateRemarks/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateRemarks(@PathVariable("id") Long id,
+			@PathVariable("value") String value) {
+		logger.info("!!! inside class :LowcheckDepositController , !! method :updateIsApproved() ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated IsApproved ",
+				checkDepositService.updateRemarks(id, value)), HttpStatus.OK);
+
+		
+		
+		
+	}
 }

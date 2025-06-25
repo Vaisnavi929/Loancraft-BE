@@ -9,7 +9,7 @@ public interface FetchLowCheckDepositDTO {
 	public String getApprovedByName();
 
 	public String getRequestedByName();
-
+    public String getRemarks();
 	public String getFullName();
     public Boolean getIsApproved();
 	public Long getLoanId();
