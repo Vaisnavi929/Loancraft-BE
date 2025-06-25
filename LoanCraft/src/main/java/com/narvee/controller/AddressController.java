@@ -30,8 +30,9 @@ public class AddressController {
 	public ResponseEntity<RestAPIResponse> updateAddress(@RequestBody AddressUpdateRequest addressUpdateRequest,
 			@PathVariable String customerId) throws Exception {
 		logger.info("!!! inside class: AddressServiceImpl, method: updateAddress");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated address",
-				AddressService.updateAddress(addressUpdateRequest, customerId)), HttpStatus.OK);
+		AddressService.updateAddress(addressUpdateRequest, customerId);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated address"),
+				HttpStatus.OK);
 
 	}
 

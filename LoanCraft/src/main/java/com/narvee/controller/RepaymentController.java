@@ -38,8 +38,8 @@ public class RepaymentController {
 	@RequestMapping(value = "/savePayment", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> savePayement(@RequestBody PaymentDTO paymentDTO) {
 		logger.info("!!! inside class : DisbursmentController , method : savepayement() ");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "successfully saved payment", paymentService.saveRepayment(paymentDTO)),
+		paymentService.saveRepayment(paymentDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully saved payment"),
 				HttpStatus.OK);
 
 	}
@@ -47,8 +47,9 @@ public class RepaymentController {
 	@RequestMapping(value = "/updatePayment", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updatePayement(@RequestBody PaymentDTO paymentDTO) {
 		logger.info("!!! inside class : DisbursmentController , method : updatePayement() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated payment",
-				paymentService.updateRepayment(paymentDTO)), HttpStatus.OK);
+		paymentService.saveRepayment(paymentDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated payment"),
+				HttpStatus.OK);
 
 	}
 

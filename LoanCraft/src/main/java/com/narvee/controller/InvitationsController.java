@@ -21,16 +21,17 @@ import jakarta.mail.MessagingException;
 @RequestMapping("/auth/invitations")
 @CrossOrigin("*")
 public class InvitationsController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(InvitationsController.class);
-    
+
 	@Autowired
 	InvitationsService invitationsService;
-	
-	@RequestMapping(value = "/invite",method = RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> saveInvitations(@RequestBody Invitations  invitations) throws MessagingException{
+
+	@RequestMapping(value = "/invite", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> saveInvitations(@RequestBody Invitations invitations)
+			throws MessagingException {
 		logger.info("!!! inside class : InvitationsController , method : saveInvitations");
 		invitationsService.saveInvititions(invitations);
-		return new ResponseEntity<>(new RestAPIResponse("Success","Invitation Saved Succesfully"), HttpStatus.OK);
+		return new ResponseEntity<>(new RestAPIResponse("Success", "Invitation Saved Succesfully"), HttpStatus.OK);
 	}
 }

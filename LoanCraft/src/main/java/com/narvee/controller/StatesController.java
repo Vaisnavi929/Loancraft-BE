@@ -22,41 +22,46 @@ import com.narvee.request.dto.StateCodeDTO;
 @RequestMapping("/auth/statecode")
 @CrossOrigin("*")
 public class StatesController {
-	
-	
+
 	@Autowired
 	private StateCodeService stateCodeService;
-	
-	
-	@PostMapping(value ="/saveStatecode")
-	public ResponseEntity<RestAPIResponse> saveStateCode(@RequestBody StateCodeDTO stateCodeDTO ){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully", stateCodeService.saveStatecode(stateCodeDTO)), HttpStatus.OK);
-		
+
+	@PostMapping(value = "/saveStatecode")
+	public ResponseEntity<RestAPIResponse> saveStateCode(@RequestBody StateCodeDTO stateCodeDTO) {
+		stateCodeService.saveStatecode(stateCodeDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully"), HttpStatus.OK);
+
 	}
-	
+
 	@PutMapping(value = "/updateStatecode")
-	public ResponseEntity<RestAPIResponse> updateStateCode(@RequestBody States stateCode){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully", stateCodeService.updateStatedCode(stateCode)), HttpStatus.OK);
-		
+	public ResponseEntity<RestAPIResponse> updateStateCode(@RequestBody States stateCode) {
+		stateCodeService.updateStatedCode(stateCode);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully"), HttpStatus.OK);
+
 	}
-	
-	@GetMapping(value ="/getById/{stateId}")
-	public ResponseEntity<RestAPIResponse> getById(@RequestParam Long stateId){
-	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetchedById", stateCodeService.getById(stateId)), HttpStatus.OK);
-		
+
+	@GetMapping(value = "/getById/{stateId}")
+	public ResponseEntity<RestAPIResponse> getById(@RequestParam Long stateId) {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully fetchedById", stateCodeService.getById(stateId)),
+				HttpStatus.OK);
+
 	}
-	
-	@GetMapping(value ="/All")
-	public ResponseEntity<RestAPIResponse> getAllStateCode(){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success","successfully fetched all statedcodes ", stateCodeService.getAll()), HttpStatus.OK);
-		
+
+	@GetMapping(value = "/All")
+	public ResponseEntity<RestAPIResponse> getAllStateCode() {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully fetched all statedcodes ", stateCodeService.getAll()),
+				HttpStatus.OK);
+
 	}
-	
+
 	@DeleteMapping("/deleteById/{stateId}")
-	public ResponseEntity<RestAPIResponse> deleteById(@RequestParam Long stateId){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully deleteById", stateCodeService.deltedById(stateId)), HttpStatus.OK);
-		
-		
+	public ResponseEntity<RestAPIResponse> deleteById(@RequestParam Long stateId) {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully deleteById", stateCodeService.deltedById(stateId)),
+				HttpStatus.OK);
+
 	}
 
 }

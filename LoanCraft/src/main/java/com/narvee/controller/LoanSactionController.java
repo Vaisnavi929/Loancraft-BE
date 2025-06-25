@@ -29,16 +29,18 @@ public class LoanSactionController {
 	@RequestMapping(value = "/saveLoanSanction", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveLoanSanction(@RequestBody LoanSanctionDTO loanSanctionDTO) {
 		logger.info("!!! inside class: LoanSactionController , !! method : saveLoanSanction ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loanSanction Successfully",
-				loanSanctionservice.saveLoanSanction(loanSanctionDTO)), HttpStatus.OK);
+		loanSanctionservice.saveLoanSanction(loanSanctionDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "saved loanSanction Successfully"),
+				HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/updateLoanSanction", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateLoanSanction(@RequestBody LoanSanctionDTO loanSanction) {
 		logger.info("!!! inside class :LoanSactionController , !! method : updateLoanSaction");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated loanSanction Successfully",
-				loanSanctionservice.updateLoanSanction(loanSanction)), HttpStatus.OK);
+		loanSanctionservice.updateLoanSanction(loanSanction);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated loanSanction Successfully"),
+				HttpStatus.OK);
 
 	}
 
@@ -69,10 +71,10 @@ public class LoanSactionController {
 	@RequestMapping(value = "/loanSanctionSearch", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
+
+		loanSanctionservice.getAllLoanSanctionWithPAgination(sortingRequestDto);
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("Success", "successfully fetched LoanSanction with searching",
-						loanSanctionservice.getAllLoanSanctionWithPAgination(sortingRequestDto)),
-				HttpStatus.OK);
+				new RestAPIResponse("Success", "successfully fetched LoanSanction with searching"), HttpStatus.OK);
 
 	}
 }

@@ -30,16 +30,18 @@ public class DisbursmentController {
 	@RequestMapping(value = "/saveDisbursment", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveDisbursment(@RequestBody DisbursmentDTO disbursmentDTO) {
 		logger.info("!!! inside class :DisbursmentController , method :saveDisbursment() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully save disbursment! ",
-				disbursmentService.saveDisbursment(disbursmentDTO)), HttpStatus.OK);
+		disbursmentService.saveDisbursment(disbursmentDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully save disbursment! "),
+				HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/updateDisbursment", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateDisbursment(@RequestBody DisbursmentDTO disbursmentDTO) {
 		logger.info("!!! inside class :DisbursmentController , method :saveDisbursment() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated Disbursment!",
-				disbursmentService.updateDisbursment(disbursmentDTO)), HttpStatus.OK);
+		disbursmentService.updateDisbursment(disbursmentDTO);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated Disbursment!"),
+				HttpStatus.OK);
 
 	}
 

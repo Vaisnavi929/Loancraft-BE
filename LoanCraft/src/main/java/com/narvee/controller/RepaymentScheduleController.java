@@ -21,7 +21,7 @@ public class RepaymentScheduleController {
 		EmiCalResponseDTO schedule = EmiCalculatorUtill.calculateRepaymentfloating(request);
 		return ResponseEntity.ok(schedule);
 	}
-	
+
 	@PostMapping("/fixedEmi")
 	public ResponseEntity<EmiCalResponseDTO> calculateFixedEmi(@RequestBody RepaymentScheduleRequest request) {
 		EmiCalResponseDTO response = EmiCalculatorUtill.calculateRepaymentFixed(request);

@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -34,11 +36,14 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
+import com.narvee.request.dto.CustomerDocumentDto;
 import com.narvee.util.EncryptionUtil;
 
 @RestController
 @RequestMapping("/auth/documents")
 public class DocumentController {
+
+	private static final Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
 	@Autowired
 	ApplicationsRepository applicationsRepository;
@@ -58,6 +63,7 @@ public class DocumentController {
 	@PostMapping("/docupload/{loanId}")
 	public ResponseEntity<Document> uploadDocument(@RequestParam("file") MultipartFile file, @PathVariable Long loanId)
 			throws IOException {
+		logger.info("!!! inside class :DocumentController ,!! method :uploadDocument() ");
 		try {
 			Document savedDocument = documentService.saveDocument(file, loanId);
 			return new ResponseEntity<>(savedDocument, HttpStatus.CREATED);
@@ -70,6 +76,7 @@ public class DocumentController {
 	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
 			@RequestParam("customerId") String customerId, @RequestParam("documentType") String documentType,
 			@RequestParam("loanId") Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :uploadFile() ");
 		try {
 			String originalFilename = file.getOriginalFilename();
 			String formattedFileName = documentType.toLowerCase() + "-" + customerId + "_" + originalFilename;
@@ -107,6 +114,7 @@ public class DocumentController {
 
 	@GetMapping("/download-file/{id}")
 	public ResponseEntity<Resource> downloadFileFromDisk(@PathVariable Long id) {
+		logger.info("!!! inside class :DocumentController ,!! method :downloadFileFromDisk() ");
 		try {
 			Document doc = documentRepository.findById(id)
 					.orElseThrow(() -> new FileNotFoundException("File not found with ID: " + id));
@@ -119,7 +127,7 @@ public class DocumentController {
 //			return ResponseEntity.ok().contentType(MediaType.parseMediaType(doc.getFileType()))
 //					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
 //					.body(resource);
-			
+
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(filePath))
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
 					.body(resource);
@@ -131,6 +139,7 @@ public class DocumentController {
 
 	@DeleteMapping("/delete-file/{id}")
 	public ResponseEntity<String> deleteFile(@PathVariable Long id) {
+		logger.info("!!! inside class :DocumentController ,!! method :deleteFile() ");
 		try {
 			Document doc = documentRepository.findById(id)
 					.orElseThrow(() -> new FileNotFoundException("File not found with ID: " + id));
@@ -155,8 +164,6 @@ public class DocumentController {
 		}
 	}
 
-
-
 	@PostMapping("/upload-documents")
 	public ResponseEntity<RestAPIResponse> uploadDocuments(
 			@RequestParam(value = "pan", required = false) MultipartFile panFile,
@@ -165,6 +172,7 @@ public class DocumentController {
 			@RequestParam(value = "payslips", required = false) List<MultipartFile> payslipFiles,
 			@RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
 			@RequestParam("customerId") String customerId, @RequestParam("loanId") Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :uploadDocuments() ");
 
 		System.err.println(UPLOAD_DIR);
 
@@ -238,7 +246,6 @@ public class DocumentController {
 			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents uploaded successfully",
 					"Document Upload Summary: \n " + result.toString()), HttpStatus.OK);
 
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<RestAPIResponse>(
@@ -247,10 +254,10 @@ public class DocumentController {
 		}
 	}
 
-
 	@RequestMapping(value = "/updateDocVerified/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateDocVerified(@PathVariable("id") Long id,
 			@PathVariable("value") Boolean value) {
+		logger.info("!!! inside class :DocumentController ,!! method :updateDocVerified() ");
 		boolean isUpdated = documentService.updateDocVerified(id, value);
 
 		return new ResponseEntity<>(
@@ -259,12 +266,11 @@ public class DocumentController {
 				HttpStatus.OK);
 
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/updatePhysicalDocVerified/{id}/{value}/{loanId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updatePhysicalDocVerified(@PathVariable("id") Long id,
-			@PathVariable("value") Boolean value,@PathVariable("loanId") Long loanId) {
+			@PathVariable("value") Boolean value, @PathVariable("loanId") Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :updatePhysicalDocVerified() ");
 		boolean isUpdated = documentService.updatePhysicalDocVerified(id, value, loanId);
 
 		return new ResponseEntity<>(
@@ -276,6 +282,7 @@ public class DocumentController {
 
 	@RequestMapping(value = "/getLoanAppDocs/{loanId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getLoanAppDocs(@PathVariable Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :getLoanAppDocs() ");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents fetched successfully",
 				documentService.getLoanAppDocs(loanId)), HttpStatus.OK);
 
@@ -284,6 +291,7 @@ public class DocumentController {
 	@RequestMapping(value = "/upload-multiple", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files,
 			@RequestParam("loanId") Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :uploadMultipleFiles() ");
 
 		StringBuilder result = new StringBuilder();
 
@@ -334,7 +342,6 @@ public class DocumentController {
 				doc.setLoanApplication(loanApp);
 				documentRepository.save(doc);
 
-
 				result.append("Uploaded: ").append(storedFilename).append("\n");
 				anyFileUploaded = true;
 			}
@@ -364,6 +371,7 @@ public class DocumentController {
 	public ResponseEntity<String> uploadFilepdf(@RequestParam("file") MultipartFile file,
 			@RequestParam("customerId") String customerId, @RequestParam("documentType") String documentType,
 			@RequestParam("loanId") Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :uploadFilepdf() ");
 		return documentService.uploadPdfFile(file, customerId, documentType, loanId);
 
 	}
@@ -371,6 +379,7 @@ public class DocumentController {
 	@PostMapping(value = "/upload-multiplepdf", produces = "application/json")
 	public ResponseEntity<String> uploadMultipleFilesPdf(@RequestParam("files") List<MultipartFile> files,
 			@RequestParam("loanId") Long loanId) {
+		logger.info("!!! inside class :DocumentController ,!! method :uploadMultipleFilesPdf() ");
 		try {
 			return documentService.uploadMultipleFilesPdf(files, loanId);
 		} catch (Exception e) {
@@ -389,6 +398,7 @@ public class DocumentController {
 			@RequestParam(value = "others", required = false) List<MultipartFile> otherFiles,
 			@RequestParam("customerId") String customerId, @RequestParam("loanId") Long loanId) {
 
+		logger.info("!!! inside class :DocumentController ,!! method :uploadDocumentspdf() ");
 		String result = documentService.uploadDocumentsPdf(panFile, aadhaarFile, bankStatementFiles, payslipFiles,
 				otherFiles, customerId, loanId);
 
@@ -397,10 +407,26 @@ public class DocumentController {
 		}
 		return ResponseEntity.ok("Document Upload Summary:\n" + result);
 	}
+
 	@RequestMapping(value = "/getPhysicalVerificationDocuments/{loanId}/{fileType}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getPhysicalVerificationDocuments(@PathVariable Long loanId, @PathVariable String fileType){
-    	return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Documents fetched By loanid ,fileType ,successfully",
-				documentService.getPhysicalVerificationDocuments(loanId, fileType)), HttpStatus.OK);
-		
+	public ResponseEntity<RestAPIResponse> getPhysicalVerificationDocuments(@PathVariable Long loanId,
+			@PathVariable String fileType) {
+		logger.info("!!! inside class :DocumentController ,!! method :getPhysicalVerificationDocuments() ");
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "Documents fetched By loanid ,fileType ,successfully",
+						documentService.getPhysicalVerificationDocuments(loanId, fileType)),
+				HttpStatus.OK);
+
 	}
+
+	@RequestMapping(value = "/getAllDoc/{customerId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllDocumentByCustomerId(@PathVariable Long customerId) {
+		logger.info("!!! inside class :DocumentController ,!! method :getAllDocumentByCustomerId() ");
+		List<CustomerDocumentDto> documents = documentService.getAllDocumentsByCustomerId(customerId);
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully fetched All Documents By CustomerId", documents),
+				HttpStatus.OK);
+
+	}
+
 }

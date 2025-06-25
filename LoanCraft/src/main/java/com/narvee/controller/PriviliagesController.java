@@ -21,48 +21,48 @@ import com.narvee.request.dto.PrivilegedDTO;
 import com.narvee.vo.PrivilegeVO;
 import com.narvee.vo.RoleToPrivilegesVO;
 
-
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/auth/priviliges")
 public class PriviliagesController {
 
 	private static final Logger logger = LoggerFactory.getLogger(PriviliagesController.class);
-	
+
 	@Autowired
 	private IPrivilegeService privilegeService;
-	
+
 	@RequestMapping(value = "/savePrevileges", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> savePrevg(@RequestBody PrivilegedDTO previleges) {
 		logger.info("!!! inside class: PriviliagesController , !! method: savePrevg");
-		System.err.println("previleges data from ui:"+previleges.getName()+" "+previleges.getType()+" "+previleges.getCardType());
+		System.err.println("previleges data from ui:" + previleges.getName() + " " + previleges.getType() + " "
+				+ previleges.getCardType());
 		privilegeService.savePrevileges(previleges);
 		return new ResponseEntity<>(new RestAPIResponse("success", "Previleges Saved"), HttpStatus.CREATED);
 	}
-	
+
 	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> listAllPrev() {
 		logger.info("!!! inside class: PriviliagesController , !! method: listAllPrev");
 		List<Privilege> privileges = privilegeService.allprev();
 		return new ResponseEntity<>(new RestAPIResponse("Success", "All Roles Fetched", privileges), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/getPrivileges", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllRoles() {
 		logger.info("!!! inside class: PriviliagesController , !! method: getAllRoles");
 		PrivilegeVO privileges = privilegeService.getAllPrivileges();
 		return new ResponseEntity<>(new RestAPIResponse("Success", "All Roles Fetched", privileges), HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/addprevtorole", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> addprevtorole(@RequestBody RoleToPrivilegesVO previleges) {
 		logger.info("!!! inside class: PriviliagesController , !! method: addprevtorole");
-		System.err.println("role to privileges"+ previleges.getPrivilegeIds());
-		System.err.println("roleid:"+previleges.getRoleId());
+		System.err.println("role to privileges" + previleges.getPrivilegeIds());
+		System.err.println("roleid:" + previleges.getRoleId());
 		privilegeService.addPrivilegeToRole(previleges);
 		return new ResponseEntity<>(new RestAPIResponse("Success", "Previleges Saved"), HttpStatus.CREATED);
 	}
-	
+
 	@RequestMapping(value = "/getPrivilegesById/{roleId}", method = RequestMethod.GET)
 	public ResponseEntity<RestAPIResponse> checkPriviliage(@PathVariable long roleId) {
 		logger.info("!!! inside class: PriviliagesController , !! method: checkPriviliage");
@@ -70,6 +70,5 @@ public class PriviliagesController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "priviliges feteched", privileges),
 				HttpStatus.OK);
 	}
-	
-	
+
 }
