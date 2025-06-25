@@ -70,4 +70,15 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		int updatedCount = approvalRespository.updateIsApproved(id, value);
 		return updatedCount > 0;
 	}
+
+	@Override
+	public String updateRemarks(Long id, String value) {
+		int rows = approvalRespository.updateRemarks(id, value);
+		if (rows > 0) {
+			return "Update successful";
+		} else {
+			return "No record found to update";
+		}
+	}
+
 }
