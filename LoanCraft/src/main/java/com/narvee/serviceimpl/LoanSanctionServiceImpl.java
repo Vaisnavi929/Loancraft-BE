@@ -96,10 +96,8 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice {
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-		if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "firstname";
-		else if (sortField.equalsIgnoreCase("lastName"))
-			sortField = "lastname";
+		 if (sortField.equalsIgnoreCase("fullName"))
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("rateOfInterest"))
 			sortField = "rate_Of_interest";
 		else if (sortField.equalsIgnoreCase("numberOfEmis"))

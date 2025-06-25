@@ -70,7 +70,7 @@ public class LoanSactionController {
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
+				new RestAPIResponse("Success", "successfully fetched LoanSanction with searching",
 						loanSanctionservice.getAllLoanSanctionWithPAgination(sortingRequestDto)),
 				HttpStatus.OK);
 
