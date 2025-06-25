@@ -13,11 +13,10 @@ public class CheckDepositDTO {
 	    private Long id;
 	    private String chequeNumber;
 	    private LocalDate postingDate;
-	    private Double amount;
+	    private double amount;
 	    private String reason;
-	    private Double recievableAmount;
 	    private String remarks;
-	    private String status;
+	    private String status ="Posted";
 	    private Long disbursmentId;
 		private Long repaymentId;
 

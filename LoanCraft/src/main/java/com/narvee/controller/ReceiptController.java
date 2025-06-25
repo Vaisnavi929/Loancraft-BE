@@ -44,7 +44,7 @@ public class ReceiptController {
 
 	}
 
-	@RequestMapping(value = "/payLoan", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/payLoan", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> payLoan(@RequestBody PayRequest request) {
 		logger.info("!!! inside class : ReceiptController,method : payLoan{}", request);
 
