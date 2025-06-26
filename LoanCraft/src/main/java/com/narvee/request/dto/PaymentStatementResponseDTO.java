@@ -23,10 +23,10 @@ public interface PaymentStatementResponseDTO {
 
 	public String getLoanAccountNumber();
 
-	public double getInterest();
+	public Double getInterest();
 
-	public double getPrincipalAmount();
+	public Double getPrincipalAmount();
 	
-	public double getAmountSanctioned();
+	public Double getAmountSanctioned();
 
 }
