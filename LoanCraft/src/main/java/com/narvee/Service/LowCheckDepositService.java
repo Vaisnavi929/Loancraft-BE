@@ -20,7 +20,5 @@ public interface LowCheckDepositService {
 
 	public List<FetchLowCheckDepositDTO> getLowCheckDepositDetails();
 
-	public Boolean updateIsApproved(Long id, Boolean value);
-	public String updateRemarks(Long id, String value);
-
+	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks);
 }

@@ -65,20 +65,11 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	}
 
 	@Override
-	public Boolean updateIsApproved(Long id, Boolean value) {
-		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateIsApproved() ");
-		int updatedCount = approvalRespository.updateIsApproved(id, value);
-		return updatedCount > 0;
+	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks) {
+		logger.info("!!! inside class:CheckDepositServiceImpl, method:updateApprovalStatusAndRemarks()");
+		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks);
+		return rows > 0 ? "Update successful" : "No record found to update";
 	}
 
-	@Override
-	public String updateRemarks(Long id, String value) {
-		int rows = approvalRespository.updateRemarks(id, value);
-		if (rows > 0) {
-			return "Update successful";
-		} else {
-			return "No record found to update";
-		}
-	}
 
 }
