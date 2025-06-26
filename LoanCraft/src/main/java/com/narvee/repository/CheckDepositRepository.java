@@ -17,17 +17,18 @@ import jakarta.transaction.Transactional;
 
 public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long> {
 
-	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_deposit c JOIN lms_disbursment ld "
-			+ "on ld.disbursment_id=c.disbursment_id", nativeQuery = true)
+	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id\r\n"
+			+ "FROM lms_check_deposit c JOIN lms_disbursment ld\r\n"
+			+ "on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id \r\n"
+			+ "join lms_customers_info ci on ci.customer_id=a.customer_id ", nativeQuery = true)
 	public Page<CheckDepositResponseDTO> getAllCheckDepositWithPagination(Pageable pageable);
 
-	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id  FROM check_depos"
-			+ "it c JOIN lms_disbursment ld " + "on ld.disbursment_id=c.disbursment_id " + "WHERE "
-			+ "  CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR "
-			+ "  CAST(c.posting_date AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR "
-			+ "c.status ILIKE CONCAT('%','INSUFFICIENT_FUNDS', '%') OR"
-			+ "  c.cheque_number ILIKE CONCAT('%',:keyword, '%') OR " + "  c.reason ILIKE CONCAT('%',:keyword, '%') OR "
-			+ "  c.remarks ILIKE CONCAT('%',:keyword, '%')", nativeQuery = true)
+	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id\r\n"
+			+ "FROM lms_check_deposit c JOIN lms_disbursment ld\r\n"
+			+ "on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id \r\n"
+			+ "join lms_customers_info ci on ci.customer_id=a.customer_id WHERE CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR CAST(c.posting_date AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR \r\n"
+			+ "CONCAT(ci.first_name, ' ', ci.last_name) ILIKE  CONCAT('%', :keyword, '%') OR c.status ILIKE CONCAT('%',:keyword, '%') OR c.cheque_number ILIKE CONCAT('%',:keyword, '%') OR \r\n"
+			+ "c.reason ILIKE CONCAT('%',:keyword, '%') OR c.remarks ILIKE CONCAT('%',:keyword, '%')", nativeQuery = true)
 	public Page<CheckDepositResponseDTO> getAllCheckDepositWithKeyword(Pageable pageable,
 			@Param("keyword") String keyword);
 
