@@ -129,28 +129,29 @@ public class DocumentServiceImpl implements DocumentService {
 		List<Document> pan = new ArrayList<>();
 
 		for (Document doc : allDocs) {
-			String fileName = doc.getFileName().toLowerCase();
+		    String fullFileName = doc.getFileName(); 
+		    String originalName = fullFileName.substring(fullFileName.lastIndexOf("_") + 1);
+		    String prefix = fullFileName.contains("-") ? fullFileName.substring(0, fullFileName.indexOf("-")) : "";
+		    String extension = "";
+		    if (originalName.contains(".")) {
+		        extension = originalName.substring(originalName.lastIndexOf("."));
+		    }
+		    String cleanedName = prefix + extension;
+		    doc.setFileName(cleanedName);
 
-			if (fileName.contains("payslip")) {
-				payslips.add(doc);
-			} else if (fileName.contains("bankstatement")) {
-				bankStatements.add(doc);
-			} else if (fileName.contains("aadhaar")) {
-				aadhaar.add(doc);
-			} else if (fileName.contains("pan")) {
-				pan.add(doc);
-			} else {
-				otherDocs.add(doc);
-			}
+		    String fileName = cleanedName.toLowerCase();
+		    if (fileName.contains("payslip")) {
+		        payslips.add(doc);
+		    } else if (fileName.contains("bankstatement")) {
+		        bankStatements.add(doc);
+		    } else if (fileName.contains("aadhaar")) {
+		        aadhaar.add(doc);
+		    } else if (fileName.contains("pan")) {
+		        pan.add(doc);
+		    } else {
+		        otherDocs.add(doc);
+		    }
 		}
-
-		Comparator<Document> byFileType = Comparator.comparing(Document::getFileType);
-
-		aadhaar.sort(byFileType);
-		pan.sort(byFileType);
-		payslips.sort(byFileType);
-		bankStatements.sort(byFileType);
-		otherDocs.sort(byFileType);
 
 		return new LoanAppDocsResponse(aadhaar, pan, payslips, bankStatements, otherDocs);
 	}

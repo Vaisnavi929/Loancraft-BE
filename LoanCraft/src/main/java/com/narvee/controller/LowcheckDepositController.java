@@ -71,21 +71,13 @@ public class LowcheckDepositController {
 
 	}
 
-	@RequestMapping(value = "/updateIsApproved/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateIsApproved(@PathVariable("id") Long id,
-			@PathVariable("value") boolean value) {
+	@RequestMapping(value = "/updateIsApproved/{id}/{value}/{remarks}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateApprovalStatusAndRemarks(@PathVariable Long id,@PathVariable Boolean value,@PathVariable String remarks) {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :updateIsApproved() ");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated IsApproved ",
-				checkDepositService.updateIsApproved(id, value)), HttpStatus.OK);
+				checkDepositService.updateApprovalStatusAndRemarks(id, value, remarks)), HttpStatus.OK);
 
 	}
 
-	@RequestMapping(value = "/updateRemarks/{id}/{value}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateRemarks(@PathVariable("id") Long id,
-			@PathVariable("value") String value) {
-		logger.info("!!! inside class :LowcheckDepositController , !! method :updateIsApproved() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated IsApproved ",
-				checkDepositService.updateRemarks(id, value)), HttpStatus.OK);
-
-	}
+	
 }
