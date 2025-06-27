@@ -84,4 +84,4 @@ public class CheckDepositController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched ById status", depositService.getRepaymentMonthYear(disbursmentId)), HttpStatus.OK);
 		
 	}
-
+}

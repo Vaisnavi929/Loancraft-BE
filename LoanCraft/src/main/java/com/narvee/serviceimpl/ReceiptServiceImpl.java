@@ -96,6 +96,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 				if (cheque != null) {
 					double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
 					chequeReturnCharge = charges;
+					
 				} else {
 					chequeReturnCharge = 0;
 				}
@@ -118,7 +119,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setLoanAmount(round(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
 		receipetResponse.setTotalPenalty(round(totalPenalty));
-		receipetResponse.setTotalDue(round(totalDue + totalPenalty + chequeReturnCharge));
+		receipetResponse.setTotalDue(round(totalDue + totalPenalty));
 		receipetResponse.setEmiDueAmount(round(totalDue));
 
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() END");
@@ -148,54 +149,59 @@ public class ReceiptServiceImpl implements ReceiptService {
 		for (PaymentStatementDTO paymentStatementDTO : re) {
 			emiCounter++;
 			LocalDate dueDate = paymentStatementDTO.getDueDate();
-			totalInterest += paymentStatementDTO.getInterest();
-			principal += paymentStatementDTO.getPrincipalAmount();
-			repaid += paymentStatementDTO.getAmountPaid();
-			outstanding = (totalInterest + principal) - repaid;
-			loanAmount = paymentStatementDTO.getAmountSanctioned();
+			totalInterest += round(paymentStatementDTO.getInterest());
+			principal += round(paymentStatementDTO.getPrincipalAmount());
+			repaid += round(paymentStatementDTO.getAmountPaid());
+			outstanding = round((totalInterest + principal) - repaid);
+			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
 
 			if ((dueDate.getYear() < now.getYear()
 					|| (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() <= now.getMonthValue()))
 					&& paymentStatementDTO.getDueAmount() != 0) {
 				receipetResponse.setDueDate(dueDate);
-				totalDue += paymentStatementDTO.getDueAmount();
+				totalDue += round(paymentStatementDTO.getDueAmount());
 			}
 
 			if (!dueDate.isAfter(now) && paymentStatementDTO.getDueAmount() != 0) {
 				numberOfEmisDue++;
-				double dueAmount = paymentStatementDTO.getDueAmount();
+				double dueAmount = round(paymentStatementDTO.getDueAmount());
 				long overdueDays = ChronoUnit.DAYS.between(paymentStatementDTO.getDueDate(), now);
-				double dailyPenaltyRate = 0.03 / 30; // 3% per month ≈ 0.1% per day
-				if (overdueDays > 0) {
-					chequeReturnCharge = 500;
+				double dailyPenaltyRate = 0.03 / 30; // ≈ 0.001 per day
+
+				double currentEmiPenalty = round((dueAmount * dailyPenaltyRate) * overdueDays);
+				emiPenalty += currentEmiPenalty;
+
+				CheckDeposit cheque = checkDepositRepository
+						.LmsRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
+
+				if (cheque != null) {
+					double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
+					chequeReturnCharge = charges;
+					
 				} else {
 					chequeReturnCharge = 0;
 				}
 
-				emiPenalty += (dueAmount * dailyPenaltyRate) * overdueDays;
-				totalPenalty += Math.round(emiPenalty + chequeReturnCharge);
+				totalPenalty = round(emiPenalty + chequeReturnCharge);
 
 				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
 
-				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays,
-						paymentStatementDTO.getDueAmount(), chequeReturnCharge, emiPenalty, emiMonth));
-
+				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount,
+						round(chequeReturnCharge), currentEmiPenalty, emiMonth));
 			}
-
 		}
 
-		receipetResponse.setInterest(totalInterest);
-		receipetResponse.setPrincipal(principal);
-		receipetResponse.setRepaid(repaid);
-		receipetResponse.setOutstanding(outstanding);
-		receipetResponse.setTotalDue(totalDue + totalPenalty);
-		receipetResponse.setEmiDueAmount(totalDue);
+		receipetResponse.setInterest(round(totalInterest));
+		receipetResponse.setPrincipal(round(principal));
+		receipetResponse.setRepaid(round(repaid));
+		receipetResponse.setOutstanding(round(outstanding));
+		receipetResponse.setTotalDue(round(totalDue));
 		receipetResponse.setNumberOfEmisDue(numberOfEmisDue);
-		receipetResponse.setLoanAmount(loanAmount);
+		receipetResponse.setLoanAmount(round(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
-		receipetResponse.setTotalPenalty(totalPenalty);
-		// Make sure your DTO has this field
-
+		receipetResponse.setTotalPenalty(round(totalPenalty));
+		receipetResponse.setTotalDue(round(totalDue + totalPenalty));
+		receipetResponse.setEmiDueAmount(round(totalDue));
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 
 		return receipetResponse;

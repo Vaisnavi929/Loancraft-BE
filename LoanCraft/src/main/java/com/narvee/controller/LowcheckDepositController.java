@@ -64,7 +64,7 @@ public class LowcheckDepositController {
 
 	@RequestMapping(value = "/getLowCheckDepositDetails", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getLowCheckDepositDetails() {
-		logger.info("!!! inside class :LowcheckDepositController , !! method :getAllLowCheckDepositArppoval() ");
+		logger.info("!!! inside class :LowcheckDepositController , !! method :getLowCheckDepositDetails() ");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
 				"successfully all LowCheckDepositArppoval ", checkDepositService.getLowCheckDepositDetails()),
 				HttpStatus.OK);

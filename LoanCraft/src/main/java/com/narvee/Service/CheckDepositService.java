@@ -1,13 +1,13 @@
 package com.narvee.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
 import com.narvee.entity.CheckDeposit;
 import com.narvee.request.dto.CheckDepositDTO;
 import com.narvee.request.dto.CheckDepositResponseDTO;
-import com.narvee.request.dto.RepaymentDropdown;
 
 public interface CheckDepositService {
 
@@ -23,7 +23,7 @@ public interface CheckDepositService {
 
 	public void updatePostedChecksToInProgress();
 
-	public List<RepaymentDropdown> getRepaymentMonthYear(Long disbursmentId);
+	public List<Map<String, Object>> getRepaymentMonthYear(Long disbursmentId);
 
 	public boolean existsByLmsRepaymentRepaymentId(Long rid);
 
