@@ -92,6 +92,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			sortField = "status";
 		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("referenceId"))
+			sortField = "referenceId";
 		else
 			sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;

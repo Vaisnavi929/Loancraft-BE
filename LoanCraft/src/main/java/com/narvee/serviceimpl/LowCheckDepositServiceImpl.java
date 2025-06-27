@@ -6,9 +6,14 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.narvee.Service.LowCheckDepositService;
+import com.narvee.Service.SortingRequestDto;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.entity.LowCheckDepositApproval;
 import com.narvee.repository.LowCheckDepositApprovalRespository;
@@ -61,9 +66,45 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	}
 
 	@Override
-	public List<FetchLowCheckDepositDTO> getLowCheckDepositDetails() {
+	public Page<FetchLowCheckDepositDTO> getLowCheckDepositDetails(SortingRequestDto sortingRequestDto) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:getLowCheckDepositDetails() ");
-		return approvalRespository.fetchLowCheckDepositDetails();
+		String sortField = sortingRequestDto.getSortField();
+		String sortOrder = sortingRequestDto.getSortOrder();
+		String keyword = sortingRequestDto.getKeyword();
+		Integer pageNumber = sortingRequestDto.getPageNumber();
+		Integer pageSize = sortingRequestDto.getPageSize();
+		if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "full_name";
+		else if (sortField.equalsIgnoreCase("requestedAmount"))
+			sortField = "requested_amount";
+		else if (sortField.equalsIgnoreCase("remarks"))
+			sortField = "remarks";
+		else if (sortField.equalsIgnoreCase("requestedByName"))
+			sortField = "ru.name";
+		else if (sortField.equalsIgnoreCase("approvedByName"))
+			sortField = "u.name";
+		else if (sortField.equalsIgnoreCase("isApproved"))
+			sortField = "is_approved";
+		else if (sortField.equalsIgnoreCase("recievableAmount"))
+			sortField = "recievable_amount";
+		else if (sortField.equalsIgnoreCase("createddate"))
+			sortField = "createddate";
+		else
+			sortField = "updateddate";
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Sort sort = Sort.by(sortDirection, sortField);
+		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		if (keyword.equalsIgnoreCase("empty")) {
+			return approvalRespository.fetchLowCheckDepositDetails(pageable);
+
+		} else {
+			return approvalRespository.fetchLowCheckDepositDetailsWithKeyword(pageable, keyword);
+
+		}
 	}
 
 	@Override
@@ -72,6 +113,5 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks);
 		return rows > 0 ? "Update successful" : "No record found to update";
 	}
-
 
 }

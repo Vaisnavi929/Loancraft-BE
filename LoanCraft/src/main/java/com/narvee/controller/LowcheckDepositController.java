@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.LowCheckDepositService;
+import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.request.dto.LowCheckDepositDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/LowCheckApproval")
+@RequestMapping("/api/LowCheckApproval")
 public class LowcheckDepositController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LowcheckDepositController.class);
@@ -62,22 +63,21 @@ public class LowcheckDepositController {
 
 	}
 
-	@RequestMapping(value = "/getLowCheckDepositDetails", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getLowCheckDepositDetails() {
-		logger.info("!!! inside class :LowcheckDepositController , !! method :getLowCheckDepositDetails() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
-				"successfully all LowCheckDepositArppoval ", checkDepositService.getLowCheckDepositDetails()),
-				HttpStatus.OK);
+	@RequestMapping(value = "/getLowCheckDepositDetails", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getLowCheckDepositDetails(@RequestBody SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class :LowcheckDepositController , !! method :getAllLowCheckDepositArppoval() ");
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully all LowCheckDepositArppoval ",
+						checkDepositService.getLowCheckDepositDetails(sortingRequestDto)),
 
-	}
 
 	@RequestMapping(value = "/updateIsApproved/{id}/{value}/{remarks}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> updateApprovalStatusAndRemarks(@PathVariable Long id,@PathVariable Boolean value,@PathVariable String remarks) {
+	public ResponseEntity<RestAPIResponse> updateApprovalStatusAndRemarks(@PathVariable Long id,
+			@PathVariable Boolean value, @PathVariable String remarks) {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :updateIsApproved() ");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully updated IsApproved ",
 				checkDepositService.updateApprovalStatusAndRemarks(id, value, remarks)), HttpStatus.OK);
 
 	}
 
-	
 }
