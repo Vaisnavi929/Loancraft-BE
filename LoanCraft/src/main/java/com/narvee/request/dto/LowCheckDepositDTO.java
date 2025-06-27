@@ -13,6 +13,6 @@ public class LowCheckDepositDTO {
 	private Long approvedById;
 	private boolean isApproved;
 	private Long repaymentId;
-	private Double recievableAmount;
+	private Double receivableAmount;
 	private Double requestedAmount;
 }

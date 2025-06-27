@@ -1,8 +1,13 @@
+
 package com.narvee.serviceimpl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -21,9 +26,9 @@ import com.narvee.entity.CheckDeposit;
 import com.narvee.entity.Disbursment;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.repository.CheckDepositRepository;
-import com.narvee.repository.RepaymentRepository;
 import com.narvee.request.dto.CheckDepositDTO;
 import com.narvee.request.dto.CheckDepositResponseDTO;
+import com.narvee.request.dto.RepaymentDropdown;
 
 @Service
 public class CheckDepositServiceImpl implements CheckDepositService {
@@ -32,8 +37,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 
 	@Autowired
 	private CheckDepositRepository depositRepository;
-	@Autowired
-	private RepaymentRepository repaymentRepository;
+//	@Autowired
+//	private RepaymentRepository repaymentRepository;
 
 	@Autowired
 	ModelMapper mapper;
@@ -75,8 +80,6 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 
 		if (sortField.equalsIgnoreCase("Amount"))
 			sortField = "amount";
-		else if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("PostingDate"))
 			sortField = "posting_date";
 		else if (sortField.equalsIgnoreCase("ChequeNumber"))
@@ -111,9 +114,17 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	}
 
 	@Override
-	public String updateStatus(Long id, String value) {
+	public String updateStatus(Long id, String status, String reason, Long userid) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateStatus() ");
-		int rows = depositRepository.updateStatus(id, value);
+		LocalDateTime now = LocalDateTime.now();
+		Double chequeReturnCharges = null;
+		if (!status.equalsIgnoreCase("Cleared")) {
+			chequeReturnCharges = 500.00;
+		} else {
+			chequeReturnCharges = 0.0;
+		}
+
+		int rows = depositRepository.updateStatus(id, status, reason, userid, chequeReturnCharges, now);
 		if (rows > 0) {
 			return "Update successful";
 		} else {
@@ -142,9 +153,46 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	}
 
 	@Override
-	public List<Object[]> getRepaymentMonthYear(Long disbursmentId) {
-		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
-		return depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
+	public List<Map<String, Object>> getRepaymentMonthYear(Long disbursmentId) {
+	    logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
+
+	    List<RepaymentDropdown> repaymentList = depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
+	    List<Map<String, Object>> responseList = new ArrayList<>();
+
+	    for (RepaymentDropdown repaymentDropdown : repaymentList) {
+	        // Build individual repayment info
+	        Map<String, Object> repaymentMap = new LinkedHashMap<>();
+	        repaymentMap.put("repaymentId", repaymentDropdown.getRepaymentId());
+	        repaymentMap.put("dueMonthYear", repaymentDropdown.getDueMonthYear());
+
+	        // Get requests for this repayment
+	        List<Object[]> requests = depositRepository.getlowDepositRequests(repaymentDropdown.getRepaymentId());
+	        List<Map<String, Object>> requestList = new ArrayList<>();
+
+	        for (Object[] req : requests) {
+	            Map<String, Object> requestMap = new HashMap<>();
+	            requestMap.put("repaymentId", req[0]);
+	            requestMap.put("requstedAmount", req[1]);
+	            requestMap.put("isApproved", req[2]);
+	            requestList.add(requestMap);
+	        }
+
+	        // Add requests to the repayment object
+	        repaymentMap.put("requests", requestList);
+
+	        // Add to final list
+	        responseList.add(repaymentMap);
+	    }
+
+	    return responseList;
+	}
+
+
+
+	@Override
+	public boolean existsByLmsRepaymentRepaymentId(Long rid) {
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method : ExistsByLmsRepaymentRepaymentId() ");
+		return depositRepository.existsByLmsRepaymentRepaymentId(rid);
 	}
 
 }

@@ -12,11 +12,9 @@ import com.narvee.request.dto.LoanSanctionDTOS;
 public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long> {
 
 	@Query(value = "select CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.loan_id, a.application_reference_id as referenceid,a.is_requested_file_upload,a.is_file_upload, s.loan_saction_id as sanctionid,s.documentation_charges,s.loan_processing_charges, s.amount_sanctioned,s.number_of_emis,s.rate_of_interest,s.interest_type,s.repayment_mode,s.emi_amount,\r\n"
-
 			+ "s.interest_type,s.payment_freqmuency,s.origination_fee,s.return_originationfee,s.repayment_mode,s.status,s.emi_start_date,s.emi_end_date,date(s.createddate) as createddate,s.updateddate as updateddate from lms_loan_saction s join lms_applications a ON a.loan_id=s.loan_id\r\n"
 			+ "join lms_customers_info c ON c.customer_id=a.customer_id where s.status='sanctioned' ", nativeQuery = true)
 	public Page<LoanSanctionDTOS> getAllLoansactionWithPagination(Pageable pageable);
-
 
 	@Query(value = """
 									SELECT
@@ -47,8 +45,8 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			    (s.status = 'sanctioned')
 			    AND (
 			        a.application_reference_id ILIKE '%' || :keyword || '%'
-			        OR s.interest_type  ILIKE '%' || :keyword || '%'			       
-			        OR CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%'  
+			        OR s.interest_type  ILIKE '%' || :keyword || '%'
+			        OR CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%'
 			        OR c.mobile_number ILIKE '%' || :keyword || '%'
 			        OR s.loan_saction_id::text ILIKE '%' || :keyword || '%'
 			        OR s.amount_sanctioned::text ILIKE '%' || :keyword || '%'

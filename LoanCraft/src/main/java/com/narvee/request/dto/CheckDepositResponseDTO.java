@@ -1,3 +1,4 @@
+
 package com.narvee.request.dto;
 
 import java.time.LocalDate;
@@ -32,4 +33,10 @@ public interface CheckDepositResponseDTO {
 
 	public String getReferenceId();
 
+
+
+
 }
+
+
+

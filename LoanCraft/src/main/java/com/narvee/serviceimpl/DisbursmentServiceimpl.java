@@ -54,7 +54,6 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
 		loanSanction.setStatus(disbursmentDTO.getStatus());
 		disbursment.setLoanSanction(loanSanction);
-		System.err.println(loanSanction);
 		Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
 		
 		Long amaxnumber = disbursmentRepository.disbmaxNumber();

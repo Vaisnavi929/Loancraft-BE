@@ -6,7 +6,9 @@ public interface FetchLowCheckDepositDTO {
 
 	public Long getId();
 
-	public Double getRecievableAmount();
+	public Double getReceivableAmount();
+  
+	public Double getRequestedAmount();
 
 	public String getApprovedByName();
 
