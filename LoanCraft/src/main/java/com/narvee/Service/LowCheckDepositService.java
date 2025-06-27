@@ -2,6 +2,7 @@ package com.narvee.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.LowCheckDepositApproval;
@@ -18,7 +19,7 @@ public interface LowCheckDepositService {
 
 	public List<LowCheckDepositApproval> getAllLowCheckDepositApproval();
 
-	public List<FetchLowCheckDepositDTO> getLowCheckDepositDetails();
+	public Page<FetchLowCheckDepositDTO> getLowCheckDepositDetails(SortingRequestDto sortingRequestDto);
 
 	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks);
 }
