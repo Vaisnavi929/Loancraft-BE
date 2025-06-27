@@ -14,8 +14,6 @@ public interface FetchLowCheckDepositDTO {
 
 	public String getRequestedByName();
 
-	public Double getRequestedAmount();
-
 	public String getRemarks();
 
 	public String getFullName();
