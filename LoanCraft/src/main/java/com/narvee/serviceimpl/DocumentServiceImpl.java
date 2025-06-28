@@ -129,28 +129,28 @@ public class DocumentServiceImpl implements DocumentService {
 		List<Document> pan = new ArrayList<>();
 
 		for (Document doc : allDocs) {
-		    String fullFileName = doc.getFileName(); 
-		    String originalName = fullFileName.substring(fullFileName.lastIndexOf("_") + 1);
-		    String prefix = fullFileName.contains("-") ? fullFileName.substring(0, fullFileName.indexOf("-")) : "";
-		    String extension = "";
-		    if (originalName.contains(".")) {
-		        extension = originalName.substring(originalName.lastIndexOf("."));
-		    }
-		    String cleanedName = prefix + extension;
-		    doc.setFileName(cleanedName);
+			String fullFileName = doc.getFileName();
+			String originalName = fullFileName.substring(fullFileName.lastIndexOf("_") + 1);
+			String prefix = fullFileName.contains("-") ? fullFileName.substring(0, fullFileName.indexOf("-")) : "";
+			String extension = "";
+			if (originalName.contains(".")) {
+				extension = originalName.substring(originalName.lastIndexOf("."));
+			}
+			String cleanedName = prefix + extension;
+			doc.setFileName(cleanedName);
 
-		    String fileName = cleanedName.toLowerCase();
-		    if (fileName.contains("payslip")) {
-		        payslips.add(doc);
-		    } else if (fileName.contains("bankstatement")) {
-		        bankStatements.add(doc);
-		    } else if (fileName.contains("aadhaar")) {
-		        aadhaar.add(doc);
-		    } else if (fileName.contains("pan")) {
-		        pan.add(doc);
-		    } else {
-		        otherDocs.add(doc);
-		    }
+			String fileName = cleanedName.toLowerCase();
+			if (fileName.contains("payslip")) {
+				payslips.add(doc);
+			} else if (fileName.contains("bankstatement")) {
+				bankStatements.add(doc);
+			} else if (fileName.contains("aadhaar")) {
+				aadhaar.add(doc);
+			} else if (fileName.contains("pan")) {
+				pan.add(doc);
+			} else {
+				otherDocs.add(doc);
+			}
 		}
 
 		return new LoanAppDocsResponse(aadhaar, pan, payslips, bankStatements, otherDocs);
@@ -408,8 +408,7 @@ public class DocumentServiceImpl implements DocumentService {
 
 			// Clean the filename (take substring before first underscore and add ".pdf")
 			String original = doc.getFileName();
-			String cleanedFileName = original != null && original.contains("_")
-					? original.split("_")[0] + ".pdf"
+			String cleanedFileName = original != null && original.contains("_") ? original.split("_")[0] + ".pdf"
 					: original;
 
 			dto.setFileName(cleanedFileName);
@@ -419,9 +418,14 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	@Override
-	public List<CustomerDocumentDto> getAllDocumentsByCustomerId(Long customerId) {
+	public List<CustomerDocumentDto> getAllDocumentsByCustomerId(String encryptedCustomerId) {
 		logger.info("!!! inside class: DocumentServiceImpl, method: getAllDocumentsByCustomerId");
-		return documentRepository.getAllDocumentsByCustomerId(customerId);
+		try {
+			long customerId = EncryptionUtil.decrypt(encryptedCustomerId);
+			return documentRepository.getAllDocumentsByCustomerId(customerId);
+		} catch (Exception e) {
+			logger.error("Failed to decrypt customer ID", e);
+			throw new IllegalArgumentException("Invalid encrypted customer ID");
+		}
 	}
-
 }
