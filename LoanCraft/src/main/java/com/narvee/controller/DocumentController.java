@@ -419,10 +419,10 @@ public class DocumentController {
 
 	}
 
-	@RequestMapping(value = "/getAllDoc/{customerId}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getAllDocumentByCustomerId(@PathVariable Long customerId) {
+	@RequestMapping(value = "/getAllDoc/{encryptedCustomerId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllDocumentByCustomerId(@PathVariable String encryptedCustomerId) {
 		logger.info("!!! inside class :DocumentController ,!! method :getAllDocumentByCustomerId() ");
-		List<CustomerDocumentDto> documents = documentService.getAllDocumentsByCustomerId(customerId);
+		List<CustomerDocumentDto> documents = documentService.getAllDocumentsByCustomerId(encryptedCustomerId);
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully fetched All Documents By CustomerId", documents),
 				HttpStatus.OK);
