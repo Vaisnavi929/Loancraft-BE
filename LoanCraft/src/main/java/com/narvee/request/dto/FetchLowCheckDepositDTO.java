@@ -1,7 +1,5 @@
 package com.narvee.request.dto;
 
-import java.time.LocalDateTime;
-
 public interface FetchLowCheckDepositDTO {
 
 	public Long getId();

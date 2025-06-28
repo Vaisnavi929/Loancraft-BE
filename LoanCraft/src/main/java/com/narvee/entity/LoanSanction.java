@@ -1,6 +1,5 @@
 package com.narvee.entity;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import com.narvee.commons.AuditModel;

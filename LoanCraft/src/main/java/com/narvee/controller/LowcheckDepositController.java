@@ -68,9 +68,9 @@ public class LowcheckDepositController {
 		logger.info("!!! inside class :LowcheckDepositController , !! method :getAllLowCheckDepositArppoval() ");
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully all LowCheckDepositArppoval ",
-						checkDepositService.getLowCheckDepositDetails(sortingRequestDto)),
+						checkDepositService.getLowCheckDepositDetails(sortingRequestDto)),HttpStatus.OK);
 
-
+	}
 	@RequestMapping(value = "/updateIsApproved/{id}/{value}/{remarks}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateApprovalStatusAndRemarks(@PathVariable Long id,
 			@PathVariable Boolean value, @PathVariable String remarks) {
