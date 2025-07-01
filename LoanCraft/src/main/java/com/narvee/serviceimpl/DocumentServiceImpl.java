@@ -10,7 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -418,14 +420,34 @@ public class DocumentServiceImpl implements DocumentService {
 	}
 
 	@Override
-	public List<CustomerDocumentDto> getAllDocumentsByCustomerId(String encryptedCustomerId) {
-		logger.info("!!! inside class: DocumentServiceImpl, method: getAllDocumentsByCustomerId");
-		try {
-			long customerId = EncryptionUtil.decrypt(encryptedCustomerId);
-			return documentRepository.getAllDocumentsByCustomerId(customerId);
-		} catch (Exception e) {
-			logger.error("Failed to decrypt customer ID", e);
-			throw new IllegalArgumentException("Invalid encrypted customer ID");
-		}
+	public List<Map<String, Object>> getAllDocumentsByCustomerId(String encryptedCustomerId) {
+	    logger.info("!!! inside class: DocumentServiceImpl, method: getAllDocumentsByCustomerId");
+	    try {
+	        long customerId = EncryptionUtil.decrypt(encryptedCustomerId);
+	        List<CustomerDocumentDto> rawDocs = documentRepository.getAllDocumentsByCustomerId(customerId);
+
+	        return rawDocs.stream().map(doc -> {
+	            Map<String, Object> map = new LinkedHashMap<>();
+	            map.put("id", doc.getId());
+
+	            // Clean fileName
+	            String original = doc.getFileName();
+	            String cleanedFileName = (original != null && original.contains("_"))
+	                    ? original.substring(original.indexOf("_") + 1)
+	                    : original;
+
+	            map.put("fileName", cleanedFileName);
+	            map.put("fileType", doc.getFileType());
+	            map.put("customerId", doc.getCustomerId());
+	            map.put("loanId", doc.getLoanId());
+
+	            return map;
+	        }).toList();
+
+	    } catch (Exception e) {
+	        logger.error("Failed to decrypt customer ID", e);
+	        throw new IllegalArgumentException("Invalid encrypted customer ID");
+	    }
 	}
+
 }
