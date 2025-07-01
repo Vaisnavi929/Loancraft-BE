@@ -1,7 +1,5 @@
 package com.narvee.request.dto;
 
-import java.util.Date;
-
 public interface LoanSanctionDTOS {
 
 	public Double getAmountSanctioned();

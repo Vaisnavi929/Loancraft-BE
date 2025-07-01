@@ -2,7 +2,6 @@ package com.narvee.entity;
 
 import java.time.LocalDate;
 
-
 import com.narvee.commons.AuditModel;
 
 import jakarta.persistence.CascadeType;
