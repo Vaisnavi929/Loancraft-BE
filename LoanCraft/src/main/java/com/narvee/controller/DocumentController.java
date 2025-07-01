@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
@@ -413,7 +414,7 @@ public class DocumentController {
 			@PathVariable String fileType) {
 		logger.info("!!! inside class :DocumentController ,!! method :getPhysicalVerificationDocuments() ");
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "Documents fetched By loanid ,fileType ,successfully",
+				new RestAPIResponse("success", "Documents fetched By loanid ," + "" + "fileType ,successfully",
 						documentService.getPhysicalVerificationDocuments(loanId, fileType)),
 				HttpStatus.OK);
 
@@ -422,7 +423,7 @@ public class DocumentController {
 	@RequestMapping(value = "/getAllDoc/{encryptedCustomerId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllDocumentByCustomerId(@PathVariable String encryptedCustomerId) {
 		logger.info("!!! inside class :DocumentController ,!! method :getAllDocumentByCustomerId() ");
-		List<CustomerDocumentDto> documents = documentService.getAllDocumentsByCustomerId(encryptedCustomerId);
+		List<Map<String, Object>> documents = documentService.getAllDocumentsByCustomerId(encryptedCustomerId);
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully fetched All Documents By CustomerId", documents),
 				HttpStatus.OK);

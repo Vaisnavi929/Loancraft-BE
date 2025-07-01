@@ -2,6 +2,7 @@ package com.narvee.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,5 +33,5 @@ public interface DocumentService {
 
 	boolean updatePhysicalDocVerified(Long id, Boolean value, Long loanId);
 
-	public List<CustomerDocumentDto> getAllDocumentsByCustomerId(String encryptedCustomerId);
+	public List<Map<String, Object>> getAllDocumentsByCustomerId(String encryptedCustomerId);
 }
