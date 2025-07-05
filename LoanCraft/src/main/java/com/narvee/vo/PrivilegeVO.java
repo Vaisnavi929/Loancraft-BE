@@ -48,5 +48,9 @@ public class PrivilegeVO {
 	private List<DropdownVO> applicationTracking;
 
 	private List<DropdownVO> physicalVerification;
+	
+	private List<DropdownVO> chequeDeposit;
+
+	private List<DropdownVO> lowChequeRequests;
 
 }

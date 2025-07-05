@@ -37,7 +37,6 @@ import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
-import com.narvee.request.dto.CustomerDocumentDto;
 import com.narvee.util.EncryptionUtil;
 
 @RestController
@@ -84,6 +83,7 @@ public class DocumentController {
 
 			File uploadDir = new File(UPLOAD_DIR);
 			if (!uploadDir.exists()) {
+
 				uploadDir.mkdirs();
 			}
 

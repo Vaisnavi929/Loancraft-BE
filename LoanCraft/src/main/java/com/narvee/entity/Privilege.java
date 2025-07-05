@@ -20,10 +20,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler" })
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Privilege extends AuditModel{
+public class Privilege extends AuditModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -38,7 +38,8 @@ public class Privilege extends AuditModel{
 	private String type;
 
 	@Column(name = "cardType")
-	private String cardType ="one";  //one/many
+	private String cardType = "one"; // one/many
+
 	
 	@Column(name = "description")
 	private String description;
@@ -50,11 +51,13 @@ public class Privilege extends AuditModel{
 	private Long updatedBy;
 
 	private boolean selected;
-	
+
 	public enum privilegeType {
 
-	USER, ROLES, DASHBOARD, HOME, HRM, CUSTOMER_INFO, CUSTOMER_DASHBOARD,APPLICATIONS, LOANS, APPROVED, SANCTIONED, DISBURSED, REJECTED, RECEIVABLES,CURRENTDUES,RECEIVABLE,APPLICATION_TRACKING,PHYSICAL_VERIFICATION
+		USER, ROLES, DASHBOARD, HOME, HRM, CUSTOMER_INFO, CUSTOMER_DASHBOARD, APPLICATIONS, LOANS, APPROVED, SANCTIONED,
+		DISBURSED, REJECTED, RECEIVABLES, CURRENTDUES, RECEIVABLE, APPLICATION_TRACKING, PHYSICAL_VERIFICATION,
+		CHEQUE_DEPOSIT, LOW_CHEQUE_REQUESTS
 
 	}
-	
+
 }

@@ -84,6 +84,10 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 
 		List<DropdownVO> physicalVerification = new ArrayList<DropdownVO>();
 
+		List<DropdownVO> chequeDeposit = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> lowChequeRequests = new ArrayList<DropdownVO>();
+
 		List<Privilege> privileges = privRepo.findAll();
 
 		for (Privilege singlePrivilege : privileges) {
@@ -224,7 +228,20 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 						singlePrivilege.getCardType()));
 				privilegeVO.setPhysicalVerification(physicalVerification);
 			}
-
+			// CHEQUE_DEPOSIT
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CHEQUE_DEPOSIT.name())) {
+				chequeDeposit.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setChequeDeposit(chequeDeposit);
+			}
+			// LOW_CHEQUE_REQUESTS
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.LOW_CHEQUE_REQUESTS.name())) {
+				lowChequeRequests.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setLowChequeRequests(lowChequeRequests);
+			}
 		}
 
 		return privilegeVO;
@@ -289,6 +306,10 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> applicationTracking = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> physicalVerificaion = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> chequeDeposit = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> lowChequeRequests = new ArrayList<DropdownVO>();
 
 		Set<Privilege> privileges = roles.getPrivileges();
 
@@ -424,6 +445,21 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 				physicalVerificaion.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
 
+			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CHEQUE_DEPOSIT.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				chequeDeposit.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.LOW_CHEQUE_REQUESTS.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				lowChequeRequests.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
 		}
 
 		privilegeVO.setUser(users);
@@ -461,6 +497,10 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		privilegeVO.setApplicationTracking(applicationTracking);
 
 		privilegeVO.setPhysicalVerification(physicalVerificaion);
+
+		privilegeVO.setChequeDeposit(chequeDeposit);
+
+		privilegeVO.setLowChequeRequests(lowChequeRequests);
 
 		return privilegeVO;
 	}

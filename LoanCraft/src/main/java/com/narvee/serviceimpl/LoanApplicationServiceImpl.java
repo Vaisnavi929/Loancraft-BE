@@ -216,7 +216,6 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		loanApplication.setRemarks(remarks);
 		loanApplication.setUpdateddate();
 
-		
 		if (creditScore != null) {
 			loanApplication.setCreditScore(creditScore);
 		}
@@ -255,6 +254,5 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		int updatedCount = applicationRepository.updateIsFileUpload(verifiedId, value);
 		return updatedCount > 0;
 	}
-	
-	
+
 }

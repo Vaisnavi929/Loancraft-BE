@@ -22,17 +22,21 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 
 //	public boolean existsByAadharNumber(String aadharNumber);
 
-	@Query(value = " SELECT \r\n" + "    a.updateddate as updateddate,\r\n" + "    a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
+	@Query(value = " SELECT \r\n" + "    a.updateddate as updateddate,\r\n"
+			+ "    a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
 			+ "    a.application_reference_id AS referenceId,\r\n" + "    a.createddate as createddate ,\r\n" + "    "
-			+ "     c.email,\r\n" + "    a.status,\r\n" + "    c.mobile_number,CONCAT(c.first_name, ' ', c.last_name) AS full_name,"
-			+ "    a.repayment_mode,\r\n" + "    a.loan_amount\r\n" + "FROM \r\n" + "    lms_customers_info c\r\n"
-			+ "JOIN \r\n" + "    lms_applications a \r\n" + "    ON a.customer_id = c.customer_id\r\n"
+			+ "     c.email,\r\n" + "    a.status,\r\n"
+			+ "    c.mobile_number,CONCAT(c.first_name, ' ', c.last_name) AS full_name," + "    a.repayment_mode,\r\n"
+			+ "    a.loan_amount\r\n" + "FROM \r\n" + "    lms_customers_info c\r\n" + "JOIN \r\n"
+			+ "    lms_applications a \r\n" + "    ON a.customer_id = c.customer_id\r\n"
 			+ "WHERE a.status NOT IN ('Approved', 'sanctioned', 'rejected')", nativeQuery = true)
 	public Page<ApplicationDTO> getAllLoanApplication(Pageable pageable);
 
-	@Query(value = "SELECT  a.updateddate as updateddate,\r\n" + "    a.loan_id,  a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
-			+ "    a.application_reference_id AS referenceId,\r\n" + "    a.createddate,\r\n" + "  "
-			+ "   c.email,\r\n" + "    a.status,\r\n" + " c.mobile_number, c.mobile_number,CONCAT(c.first_name, ' ', c.last_name) AS full_name,"
+	@Query(value = "SELECT  a.updateddate as updateddate,\r\n"
+			+ "    a.loan_id,  a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
+			+ "    a.application_reference_id AS referenceId,\r\n" + "    a.createddate,\r\n" + "  " + "   c.email,\r\n"
+			+ "    a.status,\r\n"
+			+ " c.mobile_number, c.mobile_number,CONCAT(c.first_name, ' ', c.last_name) AS full_name,"
 			+ "    a.repayment_mode,\r\n" + "    a.loan_amount\r\n" + "FROM \r\n" + "    lms_customers_info c\r\n"
 			+ "JOIN \r\n" + "    lms_applications a \r\n" + "    ON a.customer_id = c.customer_id\r\n" + "WHERE "
 			+ "    ( CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%'  OR "
@@ -51,20 +55,13 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "WHERE a.status =:status", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListApproved(Pageable pageable, @Param("status") String status);
 
-	@Query(value = "SELECT  \r\n"
-			+ "  a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
+	@Query(value = "SELECT  \r\n" + "  a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
 			+ "  a.application_reference_id AS referenceId,\r\n"
-			+ " CONCAT(c.first_name, ' ', c.last_name) AS full_name,"			
-			+ "  a.updateddate AS updateddate,\r\n"
-			+ "  a.createddate,\r\n"
-			+ "  c.email,\r\n"
-			+ "  a.status,\r\n"
-			+ "  c.mobile_number,\r\n"
-			+ "  a.repayment_mode AS repaymentmode,\r\n"
-			+ "  a.loan_amount AS loanamount,\r\n"
+			+ " CONCAT(c.first_name, ' ', c.last_name) AS full_name," + "  a.updateddate AS updateddate,\r\n"
+			+ "  a.createddate,\r\n" + "  c.email,\r\n" + "  a.status,\r\n" + "  c.mobile_number,\r\n"
+			+ "  a.repayment_mode AS repaymentmode,\r\n" + "  a.loan_amount AS loanamount,\r\n"
 			+ "  COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
-			+ "FROM lms_customers_info c\r\n"
-			+ "JOIN lms_applications a ON a.customer_id = c.customer_id\r\n"
+			+ "FROM lms_customers_info c\r\n" + "JOIN lms_applications a ON a.customer_id = c.customer_id\r\n"
 			+ "LEFT JOIN   lms_verification v ON v.loan_id = a.loan_id\r\n"
 			+ "WHERE (CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%' OR"
 			+ "    c.email ILIKE '%' || :keyword || '%' OR\r\n"
@@ -76,16 +73,11 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,
 			@Param("keyword") String keyword, @Param("status") String status);
 
-	@Query("SELECT la.applicationReferenceId AS applicationReferenceId, " +
-		       "la.loanId AS loanid, " +
-		       "c.mobileNumber AS mobileNumber, " +
-		       "c.firstName AS firstName, " +
-		       "c.email AS email " +
-		       "FROM Applications la " +
-		       "JOIN la.customers c " +
-		       "WHERE la.status <> 'Applied' " +
-		       "ORDER BY la.applicationReferenceId DESC")
-		public List<DisbursmentIdDTO> getReviewedAppDropDown();
+	@Query("SELECT la.applicationReferenceId AS applicationReferenceId, " + "la.loanId AS loanid, "
+			+ "c.mobileNumber AS mobileNumber, " + "c.firstName AS firstName, " + "c.email AS email "
+			+ "FROM Applications la " + "JOIN la.customers c " + "WHERE la.status <> 'Applied' "
+			+ "ORDER BY la.applicationReferenceId DESC")
+	public List<DisbursmentIdDTO> getReviewedAppDropDown();
 
 	@Modifying
 	@Transactional
