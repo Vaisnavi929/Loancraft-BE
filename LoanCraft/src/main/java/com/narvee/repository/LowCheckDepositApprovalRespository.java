@@ -1,4 +1,5 @@
 package com.narvee.repository;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +13,6 @@ import com.narvee.request.dto.FetchLowCheckDepositDTO;
 import jakarta.transaction.Transactional;
 
 public interface LowCheckDepositApprovalRespository extends JpaRepository<LowCheckDepositApproval, Long> {
-
 
 	@Query(value = "SELECT   cd.id,cd.receivable_amount,cd.requested_amount,cd.remarks,cd.createddate,cd.updateddate,u.name AS approved_by_name,ru.name AS requested_by_name,cd.is_approved,\r\n"
 			+ "CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.loan_id FROM lms_low_check_deposit_approval cd JOIN lms_user_info u ON u.user_id = cd.approved_by_id JOIN lms_repayment r ON r.repayment_id = cd.repayment_id \r\n"
@@ -45,11 +45,11 @@ public interface LowCheckDepositApprovalRespository extends JpaRepository<LowChe
 	int updateRemarks(@Param("id") Long id, @Param("value") String value);
 
 	public LowCheckDepositApproval findByLmsRepaymentRepaymentId(Long repaymentId);
-	
+
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE lms_low_check_deposit_approval SET is_approved = :value, remarks = :remarks WHERE id = :id", nativeQuery = true)
-	int updateIsApprovedAndRemarks(@Param("id") Long id, @Param("value") Boolean value, @Param("remarks") String remarks);
+	int updateIsApprovedAndRemarks(@Param("id") Long id, @Param("value") Boolean value,
+			@Param("remarks") String remarks);
 
 }
-

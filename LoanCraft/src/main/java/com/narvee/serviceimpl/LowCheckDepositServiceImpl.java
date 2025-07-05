@@ -39,7 +39,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		LmsRepayment lmsRepayment = new LmsRepayment();
 		lmsRepayment.setRepaymentId(LowCheckDepositDTO.getRepaymentId());
 		lowCheckDepositApproval.setLmsRepayment(lmsRepayment);
-		
+
 		return approvalRespository.save(lowCheckDepositApproval);
 	}
 
