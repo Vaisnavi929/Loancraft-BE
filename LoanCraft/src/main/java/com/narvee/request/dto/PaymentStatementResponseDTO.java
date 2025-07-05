@@ -28,5 +28,8 @@ public interface PaymentStatementResponseDTO {
 	public Double getPrincipalAmount();
 	
 	public Double getAmountSanctioned();
+	
+	public Double getOtherCharges();
+	
 
 }

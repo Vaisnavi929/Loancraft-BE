@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import com.narvee.commons.AuditModel;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

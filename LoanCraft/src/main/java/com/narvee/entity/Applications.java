@@ -1,7 +1,9 @@
 package com.narvee.entity;
 
 import java.util.List;
+
 import com.narvee.commons.AuditModel;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -23,6 +23,7 @@ public class PaymentStatementDTO {
     private double interest;
     private double principalAmount;
     private double amountSanctioned;
+    private double otherCharges;
     
     
 

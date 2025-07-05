@@ -36,10 +36,10 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:saveCheckDepositApproval() ");
 		LowCheckDepositApproval lowCheckDepositApproval = mapper.map(LowCheckDepositDTO, LowCheckDepositApproval.class);
 		lowCheckDepositApproval.setId(null);
+		lowCheckDepositApproval.setStatus("Requested");
 		LmsRepayment lmsRepayment = new LmsRepayment();
 		lmsRepayment.setRepaymentId(LowCheckDepositDTO.getRepaymentId());
 		lowCheckDepositApproval.setLmsRepayment(lmsRepayment);
-
 		return approvalRespository.save(lowCheckDepositApproval);
 	}
 
@@ -79,6 +79,8 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 			sortField = "requested_amount";
 		else if (sortField.equalsIgnoreCase("remarks"))
 			sortField = "remarks";
+		else if (sortField.equalsIgnoreCase("status"))
+			sortField = "status";
 		else if (sortField.equalsIgnoreCase("requestedByName"))
 			sortField = "ru.name";
 		else if (sortField.equalsIgnoreCase("approvedByName"))
@@ -111,6 +113,13 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks) {
 		logger.info("!!! inside class:CheckDepositServiceImpl, method:updateApprovalStatusAndRemarks()");
 		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks);
+		String status = null;
+		if (value) {
+			status = "Accepted";
+		} else {
+			status = "Rejected";
+		}
+		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks, status);
 		return rows > 0 ? "Update successful" : "No record found to update";
 	}
 
