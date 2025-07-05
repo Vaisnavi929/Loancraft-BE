@@ -112,7 +112,6 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	@Override
 	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks) {
 		logger.info("!!! inside class:CheckDepositServiceImpl, method:updateApprovalStatusAndRemarks()");
-		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks);
 		String status = null;
 		if (value) {
 			status = "Accepted";
