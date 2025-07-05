@@ -14,6 +14,8 @@ public class PayRequest {
 	private Long did;
 
 	private Double amount;
+	
+	private Double otherCharges;
 
 	private LocalDate paymentDate;
 

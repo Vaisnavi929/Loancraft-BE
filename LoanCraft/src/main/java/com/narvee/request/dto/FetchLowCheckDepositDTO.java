@@ -23,5 +23,7 @@ public interface FetchLowCheckDepositDTO {
 	public String getCreateddate();
 
 	public String getUpdateddate();
+	
+	public String getStatus();
 
 }

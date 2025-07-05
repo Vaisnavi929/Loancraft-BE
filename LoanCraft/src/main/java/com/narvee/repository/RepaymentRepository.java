@@ -33,7 +33,7 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 
 	@Query(value = """
 
-				SELECT p.repayment_id, p.amount_paid, c.first_name, la.application_reference_id,ls.amount_sanctioned,
+				SELECT p.other_charges,p.repayment_id, p.amount_paid, c.first_name, la.application_reference_id,ls.amount_sanctioned,
 			c.mobile_number, p.amount_status, p.due_amount, p.due_date, p.disbursment_id, p.interest, p.principal_amount
 					FROM lms_repayment p
 					JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id

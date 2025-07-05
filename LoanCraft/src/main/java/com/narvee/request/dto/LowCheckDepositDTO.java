@@ -15,4 +15,5 @@ public class LowCheckDepositDTO {
 	private Long repaymentId;
 	private Double receivableAmount;
 	private Double requestedAmount;
+	
 }

@@ -199,7 +199,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 			statement.setPrincipalAmount(payment.getPrincipalAmount());
 			statement.setApplicationReferenceId(payment.getApplicationReferenceId());
 			statement.setAmountSanctioned(payment.getAmountSanctioned());
-			
+			statement.setOtherCharges(payment.getOtherCharges());
 			statements.add(statement);
 		}
 

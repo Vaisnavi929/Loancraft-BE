@@ -71,7 +71,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 			totalInterest += round(paymentStatementDTO.getInterest());
 			principal += round(paymentStatementDTO.getPrincipalAmount());
 			repaid += round(paymentStatementDTO.getAmountPaid());
-			outstanding = round((totalInterest + principal) - repaid);
+			outstanding = round((totalInterest + principal));
 			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
 
 			if ((dueDate.getYear() < now.getYear()
@@ -96,7 +96,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 				if (cheque != null) {
 					double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
 					chequeReturnCharge = charges;
-					
+
 				} else {
 					chequeReturnCharge = 0;
 				}
@@ -119,7 +119,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setLoanAmount(round(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
 		receipetResponse.setTotalPenalty(round(totalPenalty));
-		receipetResponse.setTotalDue(round(totalDue + totalPenalty));
+		receipetResponse.setTotalDue(round(totalDue));
 		receipetResponse.setEmiDueAmount(round(totalDue));
 
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() END");
@@ -152,7 +152,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 			totalInterest += round(paymentStatementDTO.getInterest());
 			principal += round(paymentStatementDTO.getPrincipalAmount());
 			repaid += round(paymentStatementDTO.getAmountPaid());
-			outstanding = round((totalInterest + principal) - repaid);
+			outstanding = round((totalInterest + principal));
 			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
 
 			if ((dueDate.getYear() < now.getYear()
@@ -177,7 +177,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 				if (cheque != null) {
 					double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
 					chequeReturnCharge = charges;
-					
+
 				} else {
 					chequeReturnCharge = 0;
 				}
@@ -200,7 +200,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setLoanAmount(round(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
 		receipetResponse.setTotalPenalty(round(totalPenalty));
-		receipetResponse.setTotalDue(round(totalDue + totalPenalty));
+		receipetResponse.setTotalDue(round(totalDue));
 		receipetResponse.setEmiDueAmount(round(totalDue));
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 
@@ -216,7 +216,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
 		int emiCounter = 0;
 		double paidAmount = payRequest.getAmount();
-		LocalDate paymentDate = LocalDate.now();
+		LocalDate paymentDate = payRequest.getPaymentDate();
 
 		List<EmiDueInfoDTO> emiDueDetails = new ArrayList<>();
 
@@ -227,74 +227,94 @@ public class ReceiptServiceImpl implements ReceiptService {
 			emiCounter++;
 			LocalDate dueDate = payment.getDueDate();
 
-			if (payment.getDueAmount() != 0) {
-				double dueAmount = payment.getDueAmount();
+			double dueAmount = Math.max(0, payment.getDueAmount());
+			if (dueAmount == 0)
+				continue;
 
-				long overdueDays = ChronoUnit.DAYS.between(dueDate, paymentDate);
-				double dailyPenaltyRate = 0.03 / 30;
-				double emiPenalty = Math.max(0, (dueAmount * dailyPenaltyRate) * overdueDays); // ensure non-negative
-				double chequeReturnCharge = 0;
-				double penalty = Math.round(emiPenalty + chequeReturnCharge);
+			long overdueDays = ChronoUnit.DAYS.between(dueDate, paymentDate);
+			double dailyPenaltyRate = 0.03 / 30;
+			double emiPenalty = Math.max(0, (dueAmount * dailyPenaltyRate) * Math.max(overdueDays, 0));
+			double chequeReturnCharge = 0;
+			double penalty = Math.round(emiPenalty + chequeReturnCharge);
 
-				// Payment breakdown
-				double penaltyPaid = 0, interestPaid = 0, principalPaid = 0;
+			// Payment breakdown
+			double penaltyPaid = 0, interestPaid = 0, principalPaid = 0;
 
-				if (paidAmount > 0) {
-					penaltyPaid = Math.min(paidAmount, penalty);
-					paidAmount -= penaltyPaid;
-				}
-
-				if (paidAmount > 0) {
-					interestPaid = Math.min(paidAmount, payment.getInterest());
-					paidAmount -= interestPaid;
-				}
-
-				if (paidAmount > 0) {
-					principalPaid = Math.min(paidAmount, payment.getPrincipalAmount());
-					paidAmount -= principalPaid;
-				}
-
-				double remainingInterest = payment.getInterest() - interestPaid;
-				double remainingPrincipal = payment.getPrincipalAmount() - principalPaid;
-				double emiPaid = principalPaid + interestPaid;
-				double remainingDue = dueAmount - emiPaid;
-
-				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
-				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount, chequeReturnCharge,
-						emiPenalty, emiMonth));
-
-				LmsRepayment lmsRepayment = repaymentService.getRepaymentById(payment.getRepaymentId());
-
-				RepaymentTransactions transaction = new RepaymentTransactions();
-				transaction.setAmountPaid(emiPaid);
-				transaction.setPaymentMode(payRequest.getPaymentMode());
-				transaction.setInterestComponent(interestPaid);
-				transaction.setPenaltyComponent(penaltyPaid);
-				transaction.setPrincipalComponent(principalPaid);
-				transaction.setPaymentDate(paymentDate);
-				transaction.setDescription("EMI Payment - " + emiMonth);
-				transaction.setRepayment(lmsRepayment);
-
-				// Update repayment
-				lmsRepayment.setInterest(remainingInterest);
-				lmsRepayment.setPrincipalAmount(remainingPrincipal);
-				lmsRepayment.setDueAmount(remainingDue);
-				lmsRepayment.setAmountPaid(payment.getAmountPaid() + emiPaid);
-
-				if (remainingDue == 0) {
-					lmsRepayment.setAmountStatus("Paid");
-				}
-
-				// Save both
-				transactionsRepository.save(transaction);
-				repaymentRepository.save(lmsRepayment);
-
-				if (paidAmount <= 0)
-					break;
+			if (paidAmount > 0) {
+				penaltyPaid = Math.min(paidAmount, penalty);
+				paidAmount -= penaltyPaid;
+			
 			}
+
+			if (paidAmount > 0) {
+				interestPaid = Math.min(paidAmount, payment.getInterest());
+				paidAmount -= interestPaid;
+				
+			}
+
+			if (paidAmount > 0) {
+				principalPaid = Math.min(paidAmount, payment.getPrincipalAmount());
+				paidAmount -= principalPaid;
+			
+			}
+
+			// Enforce non-negativity
+			interestPaid = Math.max(0, interestPaid);
+			principalPaid = Math.max(0, principalPaid);
+			penaltyPaid = Math.max(0, penaltyPaid);
+
+			System.err.println("remainingPrincipal" + (payment.getPrincipalAmount() - principalPaid));
+			System.err.println("getPrincipalAmount" + payment.getPrincipalAmount());
+			System.err.println("principalPaid" + principalPaid);
+			System.err.println(principalPaid);
+
+			double remainingInterest = Math.max(0, payment.getInterest() - interestPaid);
+			double remainingPrincipal = Math.max(0, payment.getPrincipalAmount() - principalPaid);
+			double emiPaid = principalPaid + interestPaid;
+			double remainingDue = Math.max(0, dueAmount - emiPaid);
+
+			String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+			emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount, chequeReturnCharge,
+					emiPenalty, emiMonth));
+
+			LmsRepayment lmsRepayment = repaymentService.getRepaymentById(payment.getRepaymentId());
+
+			RepaymentTransactions transaction = new RepaymentTransactions();
+			transaction.setAmountPaid(emiPaid);
+			transaction.setOtherCharges(payRequest.getOtherCharges());
+			transaction.setPaymentMode(payRequest.getPaymentMode());
+			transaction.setInterestComponent(interestPaid);
+			transaction.setPenaltyComponent(penaltyPaid);
+			transaction.setPrincipalComponent(principalPaid);
+			transaction.setPaymentDate(paymentDate);
+			transaction.setDescription("EMI Payment - " + emiMonth);
+			transaction.setRepayment(lmsRepayment);
+			
+			if(remainingPrincipal==1) {
+				remainingPrincipal=0.0;
+			}
+
+			// Update repayment
+			lmsRepayment.setInterest(remainingInterest);
+			lmsRepayment.setPrincipalAmount(remainingPrincipal);
+			lmsRepayment.setDueAmount(remainingDue);
+			lmsRepayment.setAmountPaid(Math.max(0, payment.getAmountPaid() + emiPaid));
+			lmsRepayment.setOtherCharges(payRequest.getOtherCharges() != null ? payRequest.getOtherCharges() : 0d);
+
+			if (remainingDue <= 0.01) {
+				lmsRepayment.setAmountStatus("Paid");
+				lmsRepayment.setDueAmount(0.0); // Clean up near-zero amounts
+			}
+
+			// Save both
+			transactionsRepository.save(transaction);
+			repaymentRepository.save(lmsRepayment);
+
+			if (paidAmount <= 0.01)
+				break;
 		}
 
-		// You can set response fields like receipt number, paid amount, details, etc.
+//	    // Set response data (optional but useful)
 //	    receiptResponse.setEmiDueDetails(emiDueDetails);
 //	    receiptResponse.setPaidAmount(payRequest.getAmount());
 //	    receiptResponse.setPaymentDate(paymentDate);

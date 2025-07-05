@@ -48,6 +48,8 @@ public class RepaymentTransactions extends AuditModel{
 
     @Column(nullable = true)
     private Double remainingBalance;
+    
+    private Double otherCharges;
 
     @Column(length = 50)
     private String paymentMode; // e.g., UPI, NEFT, Cash, etc.
