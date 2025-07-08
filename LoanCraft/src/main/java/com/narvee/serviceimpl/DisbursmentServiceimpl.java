@@ -44,7 +44,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 	private VerificationService verificationService;
 
 	private static final int DIGIT_PADDING = 4;
-	
+
 	@Override
 	@Transactional
 	public Disbursment saveDisbursment(DisbursmentDTO disbursmentDTO) {
@@ -55,7 +55,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		loanSanction.setStatus(disbursmentDTO.getStatus());
 		disbursment.setLoanSanction(loanSanction);
 		Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
-		
+
 		Long amaxnumber = disbursmentRepository.disbmaxNumber();
 		if (amaxnumber == null) {
 			amaxnumber = 0L;
@@ -66,7 +66,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		disbursment.setDisbRefNo(value);
 
 		disbursment.setAmaxnum(amaxnumber + 1);
-	
+
 		if (disbursmentDTO.getStatus().equalsIgnoreCase("disbursed")) {
 			verificationService.updateDisbursed(loanSanction.getApplications().getLoanId(), true);
 		}
@@ -129,9 +129,11 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobilenumber";
 		else if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "firstname";
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("referenceid"))
 			sortField = "referenceid";
+		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
+			sortField = "loan_account_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
 		else
@@ -159,6 +161,5 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		logger.info("!!! inside class:DisbursmentServiceimpl,method :getCustomerDetailsWithDisbursmentId() ");
 		return disbursmentRepository.getCustomerDetailsWithDisbursmentId();
 	}
-
 
 }

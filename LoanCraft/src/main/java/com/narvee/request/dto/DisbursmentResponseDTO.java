@@ -6,10 +6,12 @@ import java.util.Date;
 public interface DisbursmentResponseDTO {
 
 	public Long getdisbursmentId();
+
 	public String getdisbRefNo();
+
 	public Date getdate();
 
-	public String getfirstName();
+	public String getFullName();
 
 	public String getaccountNo();
 
@@ -32,5 +34,7 @@ public interface DisbursmentResponseDTO {
 	public Boolean getIsRequestedFileUpload();
 
 	public Boolean getIsFileUpload();
+
+	public String getLoanAccountNumber();
 
 }

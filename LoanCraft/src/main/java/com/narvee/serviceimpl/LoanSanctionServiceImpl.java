@@ -116,6 +116,8 @@ public class LoanSanctionServiceImpl implements LoanSanctionservice {
 			sortField = "status";
 		else if (sortField.equalsIgnoreCase("originationFee"))
 			sortField = "origination_fee";
+		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
+			sortField = "loanAccountNumber";
 		else if (sortField.equalsIgnoreCase("returnOriginationfee"))
 			sortField = "return_originationfee";
 		else if (sortField.equalsIgnoreCase("emiStartDate"))

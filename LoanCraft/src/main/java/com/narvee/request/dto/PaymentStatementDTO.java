@@ -11,20 +11,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PaymentStatementDTO {
 	private Long repaymentId;
-    private LocalDate dueDate;
-    private double dueAmount;
-    private Double amountPaid;
-    private String amountStatus;
-    private String firstName;
-    private String mobileNumber;
-    private String applicationReferenceId;
-    private String paymentType;
-    private String loanAccountNumber; 
-    private double interest;
-    private double principalAmount;
-    private double amountSanctioned;
-    private double otherCharges;
-    
-    
+	private LocalDate dueDate;
+	private double dueAmount;
+	private Double amountPaid;
+	private String amountStatus;
+	private String fullName;
+	private String mobileNumber;
+	private String applicationReferenceId;
+	private String paymentType;
+	private String loanAccountNumber;
+	private double interest;
+	private double principalAmount;
+	private double amountSanctioned;
+	private double otherCharges;
 
 }

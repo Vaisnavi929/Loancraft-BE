@@ -191,10 +191,9 @@ public class RepaymentServiceImpl implements RepaymentService {
 			statement.setDueAmount(payment.getDueAmount());
 			statement.setAmountPaid(payment.getAmountPaid());
 			statement.setAmountStatus(payment.getAmountStatus());
-			statement.setFirstName(payment.getFirstName());
+			statement.setFullName(payment.getFullName());
 			statement.setMobileNumber(payment.getMobileNumber());
 			statement.setRepaymentId(payment.getRepaymentId());
-			statement.setPaymentType(payment.getPaymentType());
 			statement.setInterest(payment.getInterest());
 			statement.setPrincipalAmount(payment.getPrincipalAmount());
 			statement.setApplicationReferenceId(payment.getApplicationReferenceId());
@@ -222,12 +221,10 @@ public class RepaymentServiceImpl implements RepaymentService {
 			sortField = "amount_status";
 		else if (sortField.equalsIgnoreCase("dueAmount"))
 			sortField = "due_amount";
-		else if (sortField.equalsIgnoreCase("paymentType"))
-			sortField = "payment_Type";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobilenumber";
 		else if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "firstname";
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
 			sortField = "loanAccountNumber";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
