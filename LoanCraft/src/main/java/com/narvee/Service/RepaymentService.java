@@ -32,4 +32,8 @@ public interface RepaymentService {
 	public Page<PaymentStatementResponseDTO> getMonthlyDueList(SortingRequestDto sortingRequestDto);
 
 	public void updateRepaymentStatusScheduled();
+
+	public void generateRepayment(Long disbursmentId);
+
+	void generate();
 }

@@ -1,5 +1,7 @@
 package com.narvee.serviceimpl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -71,7 +73,13 @@ public class ReceiptServiceImpl implements ReceiptService {
 			totalInterest += round(paymentStatementDTO.getInterest());
 			principal += round(paymentStatementDTO.getPrincipalAmount());
 			repaid += round(paymentStatementDTO.getAmountPaid());
-			outstanding = round((totalInterest + principal));
+//			outstanding += Math.round(paymentStatementDTO.getPrincipalAmount() / 1000.0f) * 1000;
+			outstanding += Math.round(paymentStatementDTO.getPrincipalAmount());
+
+			principal = paymentStatementDTO.getPrincipalAmount(); // BigDecimal
+//			outstanding = outstanding.add(principal.setScale(0, RoundingMode.HALF_UP));
+
+			System.err.println();
 			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
 
 			if ((dueDate.getYear() < now.getYear()
@@ -84,7 +92,9 @@ public class ReceiptServiceImpl implements ReceiptService {
 			if (!dueDate.isAfter(now) && paymentStatementDTO.getDueAmount() != 0) {
 				numberOfEmisDue++;
 				double dueAmount = round(paymentStatementDTO.getDueAmount());
-				long overdueDays = ChronoUnit.DAYS.between(paymentStatementDTO.getDueDate(), now);
+				LocalDate firstOfMonth = dueDate.withDayOfMonth(1);
+				long overdueDays = ChronoUnit.DAYS.between(firstOfMonth, now);
+//				long overdueDays = ChronoUnit.DAYS.between(paymentStatementDTO.getDueDate(), now);
 				double dailyPenaltyRate = 0.03 / 30; // ≈ 0.001 per day
 
 				double currentEmiPenalty = round((dueAmount * dailyPenaltyRate) * overdueDays);
@@ -150,9 +160,11 @@ public class ReceiptServiceImpl implements ReceiptService {
 			emiCounter++;
 			LocalDate dueDate = paymentStatementDTO.getDueDate();
 			totalInterest += round(paymentStatementDTO.getInterest());
-			principal += round(paymentStatementDTO.getPrincipalAmount());
+
 			repaid += round(paymentStatementDTO.getAmountPaid());
-			outstanding = round((totalInterest + principal));
+//			outstanding += Math.round(paymentStatementDTO.getPrincipalAmount() / 1000.0f) * 1000;
+			outstanding += paymentStatementDTO.getPrincipalAmount();
+
 			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
 
 			if ((dueDate.getYear() < now.getYear()
@@ -165,7 +177,8 @@ public class ReceiptServiceImpl implements ReceiptService {
 			if (!dueDate.isAfter(now) && paymentStatementDTO.getDueAmount() != 0) {
 				numberOfEmisDue++;
 				double dueAmount = round(paymentStatementDTO.getDueAmount());
-				long overdueDays = ChronoUnit.DAYS.between(paymentStatementDTO.getDueDate(), now);
+				LocalDate firstOfMonth = dueDate.withDayOfMonth(1);
+				long overdueDays = ChronoUnit.DAYS.between(firstOfMonth, now);
 				double dailyPenaltyRate = 0.03 / 30; // ≈ 0.001 per day
 
 				double currentEmiPenalty = round((dueAmount * dailyPenaltyRate) * overdueDays);
@@ -191,6 +204,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 			}
 		}
 
+		System.err.println(totalDue);
 		receipetResponse.setInterest(round(totalInterest));
 		receipetResponse.setPrincipal(round(principal));
 		receipetResponse.setRepaid(round(repaid));
@@ -200,7 +214,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setLoanAmount(round(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
 		receipetResponse.setTotalPenalty(round(totalPenalty));
-		receipetResponse.setTotalDue(round(totalDue));
+		receipetResponse.setTotalDue(round(totalDue) + round(totalPenalty));
 		receipetResponse.setEmiDueAmount(round(totalDue));
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 
@@ -243,19 +257,19 @@ public class ReceiptServiceImpl implements ReceiptService {
 			if (paidAmount > 0) {
 				penaltyPaid = Math.min(paidAmount, penalty);
 				paidAmount -= penaltyPaid;
-			
+
 			}
 
 			if (paidAmount > 0) {
 				interestPaid = Math.min(paidAmount, payment.getInterest());
 				paidAmount -= interestPaid;
-				
+
 			}
 
 			if (paidAmount > 0) {
 				principalPaid = Math.min(paidAmount, payment.getPrincipalAmount());
 				paidAmount -= principalPaid;
-			
+
 			}
 
 			// Enforce non-negativity
@@ -289,9 +303,9 @@ public class ReceiptServiceImpl implements ReceiptService {
 			transaction.setPaymentDate(paymentDate);
 			transaction.setDescription("EMI Payment - " + emiMonth);
 			transaction.setRepayment(lmsRepayment);
-			
-			if(remainingPrincipal==1) {
-				remainingPrincipal=0.0;
+
+			if (remainingPrincipal == 1) {
+				remainingPrincipal = 0.0;
 			}
 
 			// Update repayment
