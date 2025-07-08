@@ -33,7 +33,7 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 
 	@Query(value = """
 
-				SELECT p.other_charges,p.repayment_id, p.amount_paid, c.first_name, la.application_reference_id,ls.amount_sanctioned,
+				SELECT p.other_charges,p.repayment_id, p.amount_paid,CONCAT(c.first_name, ' ', c.last_name) AS full_name, la.application_reference_id,ls.amount_sanctioned,
 			c.mobile_number, p.amount_status, p.due_amount, p.due_date, p.disbursment_id, p.interest, p.principal_amount
 					FROM lms_repayment p
 					JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id
@@ -52,19 +52,23 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 //  		+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)",nativeQuery =true)
 //  public List<PaymentStatementResponseDTO> getMonthlyDueList();
 
-	@Query(value = "SELECT p.repayment_id,c.first_name as firstname,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber,p.due_amount,p.due_date "
-			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
-			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
-			+ " EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)", nativeQuery = true)
+	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
+			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id \r\n"
+			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE \r\n"
+			+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)", nativeQuery = true)
 	public Page<PaymentStatementResponseDTO> getMonthlyDueList(Pageable pageable);
 
-	@Query(value = "SELECT p.repayment_id,c.first_name as firstname,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date "
-			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id "
-			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE "
-			+ " EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND "
-			+ "( p.amount_paid LIKE CONCAT('%', :keyword, '%')  OR c.mobile_number LIKE CONCAT('%', :keyword, '%') "
-			+ "OR c.first_name LIKE CONCAT('%', :keyword, '%') OR ls.loan_account_number LIKE CONCAT('%', :keyword, '%') OR p.amount_status LIKE CONCAT('%', :keyword, '%')"
-			+ "OR p.due_amount LIKE CONCAT('%', :keyword, '%') OR p.due_date  LIKE CONCAT('%', :keyword, '%'))", nativeQuery = true)
+	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
+			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id \r\n"
+			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE \r\n"
+			+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND \r\n"
+			+ "(p.amount_paid::text ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR c.mobile_number ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR ls.loan_account_number ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR p.amount_status ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR p.due_amount::text ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR p.due_date::text ILIKE '%' || :keyword || '%')", nativeQuery = true)
 	public Page<PaymentStatementResponseDTO> getMonthlyDueListWithKeyword(Pageable pageable,
 			@Param("keyword") String keyword);
 

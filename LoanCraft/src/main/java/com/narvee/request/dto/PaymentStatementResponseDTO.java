@@ -13,11 +13,9 @@ public interface PaymentStatementResponseDTO {
 
 	public String getAmountStatus();
 
-	public String getFirstName();
+	public String getFullName();
 
 	public String getMobileNumber();
-
-	public String getPaymentType();
 
 	public String getApplicationReferenceId();
 
@@ -26,10 +24,9 @@ public interface PaymentStatementResponseDTO {
 	public Double getInterest();
 
 	public Double getPrincipalAmount();
-	
+
 	public Double getAmountSanctioned();
-	
+
 	public Double getOtherCharges();
-	
 
 }
