@@ -217,11 +217,11 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId) {
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId,String remarks) {
 		try {
 			long decryptedId = EncryptionUtil.decrypt(encryptedCustomerId);
 
-			return customerRepository.findApplicationsByCustomerId(decryptedId);
+			return customerRepository.findApplicationsByCustomerId(decryptedId,remarks);
 		} catch (Exception e) {
 			e.printStackTrace(); // Detailed stack trace
 			throw new RuntimeException("Invalid encrypted customer ID", e);

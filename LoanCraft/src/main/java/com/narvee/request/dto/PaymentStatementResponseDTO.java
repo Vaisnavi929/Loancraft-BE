@@ -16,7 +16,6 @@ public interface PaymentStatementResponseDTO {
 	public String getFullName();
 
 	public String getMobileNumber();
-
 	public String getApplicationReferenceId();
 
 	public String getLoanAccountNumber();

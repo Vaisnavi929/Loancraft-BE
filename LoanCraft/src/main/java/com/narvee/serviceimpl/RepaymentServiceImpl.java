@@ -5,7 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,11 +30,13 @@ import com.narvee.entity.LmsRepayment;
 import com.narvee.repository.DisbursmentRepository;
 import com.narvee.repository.RepaymentRepository;
 import com.narvee.request.dto.EmiCalResponseDTO;
+import com.narvee.request.dto.MemberReportDTO;
 import com.narvee.request.dto.PaymentDTO;
 import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
 import com.narvee.request.dto.RepaymentScheduleRequest;
+import com.narvee.request.dto.RepaymentTransactionsDTO;
 import com.narvee.util.DateUtil;
 
 import jakarta.transaction.Transactional;
@@ -251,4 +256,50 @@ public class RepaymentServiceImpl implements RepaymentService {
 		repaymentRepository.updatePaymentStatus();
 	}
 
+	@Override
+	public MemberReportDTO getAllRepaymentTrasactionsBydisbursmentid(Long disbursmentId) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :getAllRepaymentTrasactionsBydisbursmentid() ");
+		List<Map<String, Object>> memberReports= new ArrayList<>();
+		
+		MemberReportDTO memberReportDTO=new MemberReportDTO();
+		List<Object[]> reports = repaymentRepository.getAllRepaymentTrasactionsBydisbursmentid(disbursmentId);
+		for (Object[] objects : reports) {
+			Map<String, Object> memberReport = new LinkedHashMap<>();
+			memberReport.put("id", objects[0]);
+			memberReport.put("amount_paid", objects[1]);
+			memberReport.put("createddate", objects[2]);
+			memberReport.put("description", objects[3]);
+			memberReport.put("interest_component", objects[4]);
+			memberReport.put("other_charges", objects[5]);
+			memberReport.put("payment_date", objects[6]);
+			memberReport.put("payment_mode", objects[7]);
+			memberReport.put("principal_component", objects[8]);
+			memberReport.put("disbursment_id", objects[9]);
+			memberReport.put("remaining_balance", objects[10]);
+			memberReport.put("repayment_id", objects[11]);
+			memberReport.put("updateddate", objects[12]);
+            memberReports.add(memberReport);
+		}
+		
+		Map<String, Object> memberDetails = new LinkedHashMap<>();
+
+		List<Object[]> report = repaymentRepository.getMemeberReport(disbursmentId);
+		for (Object[] objects : report) {
+			memberDetails.put("fullname", objects[0]);
+			memberDetails.put("application_reference_id", objects[1]);
+			memberDetails.put("address", objects[2]);
+			memberDetails.put("city", objects[3]);
+			memberDetails.put("location", objects[4]);
+			memberDetails.put("pincode", objects[5]);
+			memberDetails.put("state", objects[6]);
+			memberDetails.put("email", objects[7]);
+			memberDetails.put("mobile_number", objects[8]);
+			memberDetails.put("status", objects[9]);
+			memberDetails.put("loan_account_number", objects[10]);		
+	}
+		memberReportDTO.setMemberDetails(memberDetails);
+		memberReportDTO.setMemberReports(memberReports);
+		return memberReportDTO;
+	
+	}
 }

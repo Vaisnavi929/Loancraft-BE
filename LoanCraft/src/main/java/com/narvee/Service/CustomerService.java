@@ -27,5 +27,5 @@ public interface CustomerService {
 
 	public boolean isEmailDuplicate(String email);
 
-	public List<ApplicationResponseDto> getApplicationsByCustomerId(String customerId);
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String customerId,String remarks);
 }
