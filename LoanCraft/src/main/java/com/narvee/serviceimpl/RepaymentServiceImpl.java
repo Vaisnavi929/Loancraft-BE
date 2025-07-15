@@ -259,30 +259,52 @@ public class RepaymentServiceImpl implements RepaymentService {
 	@Override
 	public MemberReportDTO getAllRepaymentTrasactionsBydisbursmentid(Long disbursmentId) {
 		logger.info("!!! inside class :PaymentServiceImpl ,method :getAllRepaymentTrasactionsBydisbursmentid() ");
-		List<Map<String, Object>> memberReports= new ArrayList<>();
-		
-		MemberReportDTO memberReportDTO=new MemberReportDTO();
+
+		List<Map<String, Object>> memberReports = new ArrayList<>();
+		MemberReportDTO memberReportDTO = new MemberReportDTO();
+
 		List<Object[]> reports = repaymentRepository.getAllRepaymentTrasactionsBydisbursmentid(disbursmentId);
+
+		double totalInterestComponent = 0.0;
+		double totalPrincipalComponent = 0.0;
+		double totalInterest = 0.0;
+		double totalPrincipalAmount = 0.0;
+
 		for (Object[] objects : reports) {
 			Map<String, Object> memberReport = new LinkedHashMap<>();
 			memberReport.put("id", objects[0]);
 			memberReport.put("amount_paid", objects[1]);
 			memberReport.put("createddate", objects[2]);
 			memberReport.put("description", objects[3]);
-			memberReport.put("interest_component", objects[4]);
+
+			Double interestComponent = objects[4] != null ? Double.parseDouble(objects[4].toString()) : 0.0;
+			totalInterestComponent += interestComponent;
+
+			memberReport.put("interest_component", interestComponent);
 			memberReport.put("other_charges", objects[5]);
 			memberReport.put("payment_date", objects[6]);
 			memberReport.put("payment_mode", objects[7]);
-			memberReport.put("principal_component", objects[8]);
-			memberReport.put("disbursment_id", objects[9]);
-			memberReport.put("remaining_balance", objects[10]);
-			memberReport.put("repayment_id", objects[11]);
-			memberReport.put("updateddate", objects[12]);
-            memberReports.add(memberReport);
-		}
-		
-		Map<String, Object> memberDetails = new LinkedHashMap<>();
+			memberReport.put("penalty_component", objects[8]);
+			Double principalComponent = objects[9] != null ? Double.parseDouble(objects[9].toString()) : 0.0;
+			totalPrincipalComponent += principalComponent;
+			memberReport.put("principal_component", principalComponent);
+			memberReport.put("disbursment_id", objects[10]);
+			memberReport.put("remaining_balance", objects[11]);
+			memberReport.put("repayment_id", objects[12]);
+			memberReport.put("updateddate", objects[13]);
 
+			Double interest = objects[14] != null ? Double.parseDouble(objects[14].toString()) : 0.0;
+			totalInterest += interest;
+			memberReport.put("interest", interest);
+			Double principalAmount = objects[15] != null ? Double.parseDouble(objects[15].toString()) : 0.0;
+			totalPrincipalAmount += principalAmount;
+			memberReport.put("principal_amount", principalAmount);
+
+			memberReports.add(memberReport);
+		}
+
+		// Member details map
+		Map<String, Object> memberDetails = new LinkedHashMap<>();
 		List<Object[]> report = repaymentRepository.getMemeberReport(disbursmentId);
 		for (Object[] objects : report) {
 			memberDetails.put("fullname", objects[0]);
@@ -295,11 +317,26 @@ public class RepaymentServiceImpl implements RepaymentService {
 			memberDetails.put("email", objects[7]);
 			memberDetails.put("mobile_number", objects[8]);
 			memberDetails.put("status", objects[9]);
-			memberDetails.put("loan_account_number", objects[10]);		
-	}
+			memberDetails.put("loan_account_number", objects[10]);
+		}
+
+		Map<String, Object> summaryDetails = new LinkedHashMap<>();
+		summaryDetails.put("total_interest_component", totalInterestComponent);
+		summaryDetails.put("total_principal_component", totalPrincipalComponent);
+
+		double totalRepaymentAmount = totalInterestComponent + totalPrincipalComponent;
+		summaryDetails.put("total_repayment_amount", totalRepaymentAmount);
+
+		summaryDetails.put("total_interest", totalInterest);
+		summaryDetails.put("total_principal_amount", totalPrincipalAmount);
+
+		double totalOutstandingAoumnt = totalInterest + totalPrincipalAmount;
+		summaryDetails.put("total_outstanding_amount", totalOutstandingAoumnt);
+
 		memberReportDTO.setMemberDetails(memberDetails);
 		memberReportDTO.setMemberReports(memberReports);
+		memberReportDTO.setSummaryDetails(summaryDetails);
+
 		return memberReportDTO;
-	
-	}
+	}   
 }

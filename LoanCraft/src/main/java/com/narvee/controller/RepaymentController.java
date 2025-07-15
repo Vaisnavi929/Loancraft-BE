@@ -95,12 +95,12 @@ public class RepaymentController {
 	@RequestMapping(value = "/getAllRepaymentTransactions/{disbursmentId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllRepaymentTransactionsByDisbursmentId(
 			@PathVariable Long disbursmentId) {
-		logger.info("!!! inside class : RepaymentController , method : RepaymentController() ");
+		logger.info("!!! inside class : RepaymentController , method : getAllRepaymentTransactionsByDisbursmentId() ");
 		MemberReportDTO report = paymentService.getAllRepaymentTrasactionsBydisbursmentid(disbursmentId);
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully repayamentTransactions by disubursmentid", report),
 				HttpStatus.OK);
 
-	}	
+	}
 
 }
