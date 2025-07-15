@@ -50,7 +50,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	public Page<ApplicationDTO> getAllLoanApplicationWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
 	@Query(value = "SELECT a.loan_id,a.is_requested_file_upload,a.is_file_upload,application_reference_id as referenceId,CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.updateddate,a.createddate,c.email,"
-			+ "a.status,c.mobile_number,a.repayment_mode as repaymentmode,a.loan_amount as loanamount ,COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
+			+ "a.status,a.remarks, c.mobile_number,a.repayment_mode as repaymentmode,a.loan_amount as loanamount ,COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
 			+ "FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id  LEFT JOIN   lms_verification v ON v.loan_id = a.loan_id "
 			+ "WHERE a.status =:status", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListApproved(Pageable pageable, @Param("status") String status);
@@ -58,7 +58,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	@Query(value = "SELECT  \r\n" + "  a.loan_id,a.is_requested_file_upload,a.is_file_upload,"
 			+ "  a.application_reference_id AS referenceId,\r\n"
 			+ " CONCAT(c.first_name, ' ', c.last_name) AS full_name," + "  a.updateddate AS updateddate,\r\n"
-			+ "  a.createddate,\r\n" + "  c.email,\r\n" + "  a.status,\r\n" + "  c.mobile_number,\r\n"
+			+ "  a.createddate,\r\n" + "  c.email,\r\n" + "  a.status,a.remarks, c.mobile_number,\r\n"
 			+ "  a.repayment_mode AS repaymentmode,\r\n" + "  a.loan_amount AS loanamount,\r\n"
 			+ "  COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
 			+ "FROM lms_customers_info c\r\n" + "JOIN lms_applications a ON a.customer_id = c.customer_id\r\n"
@@ -69,11 +69,12 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "    a.status ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    c.mobile_number ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    a.application_reference_id ILIKE '%' || :keyword || '%'\r\n"
-			+ ")AND a.status = :status\r\n", nativeQuery = true)
+			+ "    a.remarks ILIKE '%' || :keyword || '%'\r\n" + ")AND a.status = :status\r\n", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,
 			@Param("keyword") String keyword, @Param("status") String status);
 
 	@Query("SELECT la.applicationReferenceId AS applicationReferenceId, " + "la.loanId AS loanid, "
+
 			+ "c.mobileNumber AS mobileNumber, CONCAT(c.firstName, ' ', c.lastName) AS fullName,c.email AS email "
 			+ "FROM Applications la " + "JOIN la.customers c " + "WHERE la.status <> 'Applied' "
 			+ "ORDER BY la.applicationReferenceId DESC")

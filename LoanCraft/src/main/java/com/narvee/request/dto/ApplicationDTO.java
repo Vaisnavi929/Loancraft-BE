@@ -30,4 +30,6 @@ public interface ApplicationDTO {
 
 	public Boolean getIsFileUpload();
 
+	public String getRemarks();
+
 }

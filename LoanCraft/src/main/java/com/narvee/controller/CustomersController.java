@@ -182,10 +182,10 @@ public class CustomersController {
 				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
 	}
 
-	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")
-	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId) {
+	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}/{remarks}")
+	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId,String remarks) {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
-				customerService.getApplicationsByCustomerId(customerId)), HttpStatus.OK);
+				customerService.getApplicationsByCustomerId(customerId, remarks)), HttpStatus.OK);
 
 	}
 }

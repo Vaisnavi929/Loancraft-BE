@@ -2,6 +2,7 @@
 package com.narvee.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.RepaymentService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
+import com.narvee.request.dto.MemberReportDTO;
 import com.narvee.request.dto.PaymentDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
@@ -90,6 +92,18 @@ public class RepaymentController {
 		return ResponseEntity.ok(statements);
 	}
 
+
+	@RequestMapping(value = "/getAllRepaymentTransactions/{disbursmentId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getAllRepaymentTransactionsByDisbursmentId(
+			@PathVariable Long disbursmentId) {
+		logger.info("!!! inside class : RepaymentController , method : getAllRepaymentTransactionsByDisbursmentId() ");
+		MemberReportDTO report = paymentService.getAllRepaymentTrasactionsBydisbursmentid(disbursmentId);
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully repayamentTransactions by disubursmentid", report),
+				HttpStatus.OK);
+
+	}
+
 	@GetMapping("/generateRepayment/{disbursmentId}")
 	public ResponseEntity<String> generateRepayment(@PathVariable Long disbursmentId) {
 		logger.info("!!! inside class : RepaymentController , method : generateRepayment() ");
@@ -104,4 +118,5 @@ public class RepaymentController {
 		return ResponseEntity.ok("success");
 	}
 	
+
 }

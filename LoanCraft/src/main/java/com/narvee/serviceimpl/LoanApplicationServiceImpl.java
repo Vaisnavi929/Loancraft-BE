@@ -188,6 +188,8 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
 			sortField = "a.status";
+		else if (sortField.equalsIgnoreCase("remarks"))
+			sortField = "remarks";
 		else
 			sortField = "updateddate";
 

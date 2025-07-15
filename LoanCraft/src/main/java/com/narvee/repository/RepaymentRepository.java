@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
+import com.narvee.request.dto.RepaymentTransactionsDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -52,13 +53,13 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 //  		+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)",nativeQuery =true)
 //  public List<PaymentStatementResponseDTO> getMonthlyDueList();
 
-	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
+	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status,la.application_reference_id, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
 			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id \r\n"
 			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE \r\n"
 			+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)", nativeQuery = true)
 	public Page<PaymentStatementResponseDTO> getMonthlyDueList(Pageable pageable);
 
-	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
+	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status,la.application_reference_id, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
 			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id \r\n"
 			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE \r\n"
 			+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND \r\n"
@@ -80,4 +81,16 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 			+ "    WHEN due_date = CURRENT_DATE - INTERVAL '3 days' AND amount_status IN ('Unpaid', 'Due') THEN 'Overdue'\r\n"
 			+ "    ELSE amount_status\r\n" + "END", nativeQuery = true)
 	public int updatePaymentStatus();
+
+	@Query(value = "SELECT rt.id,rt.amount_paid,rt.createddate,rt.description,rt.interest_component,rt.other_charges,rt.payment_date,rt.payment_mode,rt.penalty_component,rt.principal_component,d.disbursment_id,\r\n"
+			+ "rt.remaining_balance,rt.repayment_id,rt.updateddate,r.interest,r.principal_amount FROM lms_repayment_transactions rt  join lms_repayment r on r.repayment_id=rt.repayment_id join lms_disbursment d \r\n"
+			+ "on d.disbursment_id =r.disbursment_id where d.disbursment_id=:disbursmentId", nativeQuery = true)
+	public List<Object[]> getAllRepaymentTrasactionsBydisbursmentid(@Param("disbursmentId") Long disbursmentId);
+
+	@Query(value = "SELECT CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.application_reference_id,ca.address,ca.city,ca.location,ca.pincode,st.state,c.email,c.mobile_number,a.status,s.loan_account_number\r\n"
+			+ "FROM lms_disbursment d join lms_loan_saction s on s.loan_saction_id = d.loan_saction_id join lms_applications a ON a.loan_id = s.loan_id\r\n"
+			+ "join lms_customers_info c on c.customer_id=a.customer_id join lms_current_address ca on ca.customer_id = c.customer_id join states st \r\n"
+			+ "ON st.state_id = ca.state_id where d.disbursment_id=:disbursmentId", nativeQuery = true)
+	public List<Object[]> getMemeberReport(@Param("disbursmentId") Long disbursmentId);
+
 }

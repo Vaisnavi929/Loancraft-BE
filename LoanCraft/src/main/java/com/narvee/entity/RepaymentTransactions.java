@@ -35,6 +35,7 @@ public class RepaymentTransactions extends AuditModel {
 	private LocalDate paymentDate;
 
 	@Column(nullable = false)
+
 	private Double amountPaid = 0.0;
 
 	@Column(nullable = false)

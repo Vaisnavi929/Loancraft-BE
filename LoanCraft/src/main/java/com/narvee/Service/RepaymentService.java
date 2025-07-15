@@ -1,17 +1,20 @@
 
 package com.narvee.Service;
 
-
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.Disbursment;
 import com.narvee.entity.LmsRepayment;
+import com.narvee.request.dto.MemberReportDTO;
 import com.narvee.request.dto.PaymentDTO;
 import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
+import com.narvee.request.dto.RepaymentTransactionsDTO;
 
 public interface RepaymentService {
 
@@ -33,7 +36,10 @@ public interface RepaymentService {
 
 	public void updateRepaymentStatusScheduled();
 
+	public MemberReportDTO getAllRepaymentTrasactionsBydisbursmentid(Long disbursmentId);
+
 	public void generateRepayment(Long disbursmentId);
 
 	void generate();
+
 }

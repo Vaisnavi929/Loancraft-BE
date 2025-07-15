@@ -19,5 +19,6 @@ public interface ApplicationResponseDto {
 	  public Double getLoanAmount();
 	  public Boolean getIsRequestedFileUpload();
 	  public Boolean getIsFileUpload();
+	  public String getRemarks();
 
 }
