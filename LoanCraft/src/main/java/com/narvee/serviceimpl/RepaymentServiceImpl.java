@@ -171,8 +171,8 @@ public class RepaymentServiceImpl implements RepaymentService {
 			payment.setAmountPaid(amountPaid);
 			payment.setAmountStatus(amountStatus);
 			payment.setDisbursment(disbursment);
-			payment.setInterest(repayment.getInterest().doubleValue());
-			payment.setPrincipalAmount(repayment.getPrincipalRepaid().doubleValue());
+			payment.setInterest(repayment.getInterest());
+			payment.setPrincipalAmount(repayment.getPrincipalRepaid());
 
 			payments.add(payment);
 
@@ -221,10 +221,12 @@ public class RepaymentServiceImpl implements RepaymentService {
 			sortField = "amount_status";
 		else if (sortField.equalsIgnoreCase("dueAmount"))
 			sortField = "due_amount";
+		else if (sortField.equalsIgnoreCase("paymentType"))
+			sortField = "payment_Type";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobilenumber";
 		else if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "full_name";
+			sortField = "firstname";
 		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
 			sortField = "loanAccountNumber";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -300,8 +302,8 @@ public class RepaymentServiceImpl implements RepaymentService {
 			payment.setAmountPaid(amountPaid);
 			payment.setAmountStatus(amountStatus);
 			payment.setDisbursment(disbursment);
-			payment.setInterest(repayment.getInterest().doubleValue());
-			payment.setPrincipalAmount(repayment.getPrincipalRepaid().doubleValue());
+			payment.setInterest(repayment.getInterest());
+			payment.setPrincipalAmount(repayment.getPrincipalRepaid());
 
 			payments.add(payment);
 

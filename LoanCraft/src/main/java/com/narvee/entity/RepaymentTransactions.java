@@ -24,45 +24,52 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class RepaymentTransactions extends AuditModel{
+public class RepaymentTransactions extends AuditModel {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(nullable = false)
-    private LocalDate paymentDate;
+	@Column(nullable = false)
+	private LocalDate paymentDate;
 
-    @Column(nullable = false)
-    private Double amountPaid;
+	@Column(nullable = false)
+	private Double amountPaid = 0.0;
 
-    @Column(nullable = false)
-    private Double principalComponent;
+	@Column(nullable = false)
+	private Double principalComponent = 0.0;
 
-    @Column(nullable = false)
-    private Double interestComponent;
+	@Column(nullable = false)
+	private Double interestComponent = 0.0;
 
-    @Column(nullable = false)
-    private Double penaltyComponent;
+	@Column(nullable = false)
+	private Double penaltyComponent = 0.0;
 
-    @Column(nullable = true)
-    private Double remainingBalance;
-    
-    private Double otherCharges;
+//	@Column(nullable = true)
+//	private Double remainingBalance = 0.0;
 
-    @Column(length = 50)
-    private String paymentMode; // e.g., UPI, NEFT, Cash, etc.
+	private Double otherCharges = 0.0;
+	
+	private String otherChargesType;
+	
+	@Column(nullable = false)
+	private Double latePenalty = 0.0;
+	
+	private Double chequeReturnCharges = 0.0;
+
+	@Column(length = 50)
+	private String paymentMode; // e.g., UPI, NEFT, Cash, etc.
 
 //    @Column(length = 100)
 //    private String receiptNumber;
 
-    @Column(length = 255)
-    private String description;
-    
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "repayment_id")
-    @JsonBackReference
-    private LmsRepayment repayment;
-    
+	@Column(length = 255)
+	private String description;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "repayment_id")
+	@JsonBackReference
+	private LmsRepayment repayment;
+
 }

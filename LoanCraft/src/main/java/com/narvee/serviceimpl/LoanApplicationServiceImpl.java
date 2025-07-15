@@ -65,6 +65,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		});
 
 		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
+		loan.setLoanId(null);
 
 		// Fetch customer using decrypted ID
 		Optional<CustomersInfo> customerOptional = customerRepository
