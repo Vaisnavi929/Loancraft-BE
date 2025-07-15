@@ -348,7 +348,7 @@ public class DocumentController {
 			}
 
 			if (anyFileUploaded) {
-				boolean isUpdated = verificationService.updatePhysicalLocationVerified(loanId, true);
+				boolean isUpdated = verificationService.updatePhysicalLocationVerified(loanId, false);
 				if (isUpdated) {
 					result.append("Verification status updated successfully.\n");
 				} else {

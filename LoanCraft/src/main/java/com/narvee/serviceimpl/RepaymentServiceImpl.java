@@ -176,8 +176,8 @@ public class RepaymentServiceImpl implements RepaymentService {
 			payment.setAmountPaid(amountPaid);
 			payment.setAmountStatus(amountStatus);
 			payment.setDisbursment(disbursment);
-			payment.setInterest(repayment.getInterest().doubleValue());
-			payment.setPrincipalAmount(repayment.getPrincipalRepaid().doubleValue());
+			payment.setInterest(repayment.getInterest());
+			payment.setPrincipalAmount(repayment.getPrincipalRepaid());
 
 			payments.add(payment);
 
@@ -226,10 +226,12 @@ public class RepaymentServiceImpl implements RepaymentService {
 			sortField = "amount_status";
 		else if (sortField.equalsIgnoreCase("dueAmount"))
 			sortField = "due_amount";
+		else if (sortField.equalsIgnoreCase("paymentType"))
+			sortField = "payment_Type";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobilenumber";
 		else if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "full_name";
+			sortField = "firstname";
 		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
 			sortField = "loanAccountNumber";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -340,3 +342,75 @@ public class RepaymentServiceImpl implements RepaymentService {
 		return memberReportDTO;
 	}   
 }
+
+	public void generateRepayment(Long disbursmentId) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :generatePayments() ");
+		Disbursment disbursment = disbursmentRepository.findById(disbursmentId).get();
+
+		LocalDate currentDate = LocalDate.now();
+		Month currentMonth = currentDate.getMonth();
+		int currentYear = currentDate.getYear();
+
+		List<LmsRepayment> payments = new ArrayList<>();
+		RepaymentScheduleRequest request = new RepaymentScheduleRequest();
+		LocalDateTime emiStartDate = DateUtil.convertToLocalDateTime(disbursment.getLoanSanction().getEmiStartDate());
+
+		request.setStartDate(emiStartDate);
+		request.setInstallmentTenor(disbursment.getLoanSanction().getNumberOfEmis());
+		request.setAnnualInterestRate(disbursment.getLoanSanction().getRateOfInterest());
+		request.setLoanAmount(disbursment.getLoanSanction().getAmountSanctioned());
+
+		EmiCalResponseDTO schedule = null;
+		if (disbursment.getLoanSanction().getInterestType().equalsIgnoreCase("Fixed")) {
+			logger.info("!!! inside class :PaymentServiceImpl ,Fixed ");
+			schedule = EmiCalculatorUtill.calculateRepaymentFixed(request);
+
+		} else {
+			logger.info("!!! inside class :PaymentServiceImpl ,floating ");
+			schedule = EmiCalculatorUtill.calculateRepaymentfloating(request);
+
+		}
+
+		List<RepaymentSchedule> repaymentSchedule = schedule.getRepaymentSchedules();
+
+		for (RepaymentSchedule repayment : repaymentSchedule) {
+
+			String amountStatus;
+			if (repayment.getDueDate().getMonth() == currentMonth && repayment.getDueDate().getYear() == currentYear) {
+				amountStatus = "pending";
+			} else if (repayment.getDueDate().isBefore(currentDate)) {
+				amountStatus = "Due";
+			} else {
+				amountStatus = "upcoming";
+			}
+
+			Double amountPaid = 0.0;
+			LmsRepayment payment = new LmsRepayment();
+			payment.setDueAmount(disbursment.getLoanSanction().getEmiAmount());
+			payment.setDueDate(repayment.getDueDate());
+			payment.setAmountPaid(amountPaid);
+			payment.setAmountStatus(amountStatus);
+			payment.setDisbursment(disbursment);
+			payment.setInterest(repayment.getInterest());
+			payment.setPrincipalAmount(repayment.getPrincipalRepaid());
+
+			payments.add(payment);
+
+		}
+
+		repaymentRepository.saveAll(payments);
+	}
+	
+
+	@Override
+	public void generate() {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :generate() ");
+		List<Disbursment> dis = disbursmentRepository.findAll();
+		for (Disbursment disbursment : dis) {
+			generateRepayment(disbursment.getDisbursmentId());
+		}
+
+	}
+
+}
+

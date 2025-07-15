@@ -92,6 +92,7 @@ public class RepaymentController {
 		return ResponseEntity.ok(statements);
 	}
 
+
 	@RequestMapping(value = "/getAllRepaymentTransactions/{disbursmentId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllRepaymentTransactionsByDisbursmentId(
 			@PathVariable Long disbursmentId) {
@@ -102,5 +103,20 @@ public class RepaymentController {
 				HttpStatus.OK);
 
 	}
+
+	@GetMapping("/generateRepayment/{disbursmentId}")
+	public ResponseEntity<String> generateRepayment(@PathVariable Long disbursmentId) {
+		logger.info("!!! inside class : RepaymentController , method : generateRepayment() ");
+		paymentService.generateRepayment(disbursmentId);
+		return ResponseEntity.ok("success");
+	}
+	
+	@GetMapping("/generate")
+	public ResponseEntity<String> generate() {
+		logger.info("!!! inside class : RepaymentController , method : generateRepayment() ");
+		paymentService.generate();
+		return ResponseEntity.ok("success");
+	}
+	
 
 }

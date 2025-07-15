@@ -38,4 +38,8 @@ public interface RepaymentService {
 
 	public MemberReportDTO getAllRepaymentTrasactionsBydisbursmentid(Long disbursmentId);
 
+	public void generateRepayment(Long disbursmentId);
+
+	void generate();
+
 }

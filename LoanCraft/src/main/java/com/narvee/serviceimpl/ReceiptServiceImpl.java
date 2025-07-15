@@ -1,5 +1,7 @@
 package com.narvee.serviceimpl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -40,27 +42,26 @@ public class ReceiptServiceImpl implements ReceiptService {
 	@Autowired
 	private RepaymentTransactionsRepository transactionsRepository;
 
-	private double round(double value) {
-		return Math.round(value);
-	}
-
 	@Override
 	public ReceiptResponse getReceiptInfo(Long dId) {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() ");
 
 		ReceiptResponse receipetResponse = new ReceiptResponse();
 		List<PaymentStatementDTO> re = repaymentService.getRepaymentStatement(dId);
-		double totalInterest = 0;
-		double principal = 0;
-		double repaid = 0;
-		double outstanding = 0;
-		double totalDue = 0;
-		double loanAmount = 0;
+
+		BigDecimal totalInterest = BigDecimal.ZERO;
+		BigDecimal principal = BigDecimal.ZERO;
+		BigDecimal repaid = BigDecimal.ZERO;
+		BigDecimal outstanding = BigDecimal.ZERO;
+		BigDecimal totalDue = BigDecimal.ZERO;
+		BigDecimal loanAmount = BigDecimal.ZERO;
+		BigDecimal emiPenalty = BigDecimal.ZERO;
+		BigDecimal totalPenalty = BigDecimal.ZERO;
+		BigDecimal chequeReturnCharge = BigDecimal.ZERO;
+		BigDecimal latePenalty = BigDecimal.ZERO;
+
 		int emiCounter = 0;
-		double emiPenalty = 0;
-		double totalPenalty = 0;
 		int numberOfEmisDue = 0;
-		double chequeReturnCharge = 0;
 
 		LocalDate now = LocalDate.now();
 		List<EmiDueInfoDTO> emiDueDetails = new ArrayList<>();
@@ -68,59 +69,100 @@ public class ReceiptServiceImpl implements ReceiptService {
 		for (PaymentStatementDTO paymentStatementDTO : re) {
 			emiCounter++;
 			LocalDate dueDate = paymentStatementDTO.getDueDate();
-			totalInterest += round(paymentStatementDTO.getInterest());
-			principal += round(paymentStatementDTO.getPrincipalAmount());
-			repaid += round(paymentStatementDTO.getAmountPaid());
-			outstanding = round((totalInterest + principal));
-			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
+
+			List<RepaymentTransactions> checkLatePenalty = transactionsRepository
+					.findByRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
+			double totalLatePenalty = checkLatePenalty.stream()
+					.filter(p -> p.getLatePenalty() != null && p.getLatePenalty() > 0)
+					.mapToDouble(p -> p.getLatePenalty()).sum();
+
+			double paidCheckBouce = checkLatePenalty.stream()
+					.filter(p -> p.getChequeReturnCharges() != null && p.getChequeReturnCharges() > 0)
+					.mapToDouble(p -> p.getChequeReturnCharges()).sum();
+
+			BigDecimal interest = BigDecimal.valueOf(paymentStatementDTO.getInterest()).setScale(2,
+					RoundingMode.HALF_UP);
+			BigDecimal principalAmt = BigDecimal.valueOf(paymentStatementDTO.getPrincipalAmount()).setScale(2,
+					RoundingMode.HALF_UP);
+			BigDecimal amountPaid = BigDecimal.valueOf(paymentStatementDTO.getAmountPaid()).setScale(2,
+					RoundingMode.HALF_UP);
+			BigDecimal dueAmount = BigDecimal.valueOf(paymentStatementDTO.getDueAmount()).setScale(2,
+					RoundingMode.HALF_UP);
+
+			totalInterest = totalInterest.add(interest);
+			repaid = repaid.add(amountPaid);
+			outstanding = outstanding.add(principalAmt);
+
+			loanAmount = BigDecimal.valueOf(paymentStatementDTO.getAmountSanctioned()).setScale(2,
+					RoundingMode.HALF_UP);
 
 			if ((dueDate.getYear() < now.getYear()
 					|| (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() <= now.getMonthValue()))
-					&& paymentStatementDTO.getDueAmount() != 0) {
+					&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
 				receipetResponse.setDueDate(dueDate);
-				totalDue += round(paymentStatementDTO.getDueAmount());
+				totalDue = totalDue.add(dueAmount);
 			}
 
-			if (!dueDate.isAfter(now) && paymentStatementDTO.getDueAmount() != 0) {
-				numberOfEmisDue++;
-				double dueAmount = round(paymentStatementDTO.getDueAmount());
-				long overdueDays = ChronoUnit.DAYS.between(paymentStatementDTO.getDueDate(), now);
-				double dailyPenaltyRate = 0.03 / 30; // ≈ 0.001 per day
+			// Reset latePenalty and cheque return for each iteration
+			latePenalty = BigDecimal.ZERO;
+			chequeReturnCharge = BigDecimal.ZERO;
 
-				double currentEmiPenalty = round((dueAmount * dailyPenaltyRate) * overdueDays);
-				emiPenalty += currentEmiPenalty;
+			CheckDeposit cheque = checkDepositRepository.LmsRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
 
-				CheckDeposit cheque = checkDepositRepository
-						.LmsRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
+			if (cheque != null && !cheque.getStatus().equalsIgnoreCase("Cleared")
+					&& !paymentStatementDTO.getAmountStatus().equalsIgnoreCase("PAID") && paidCheckBouce < 500) {
+				double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
+				chequeReturnCharge = BigDecimal.valueOf(charges).setScale(2, RoundingMode.HALF_UP);
+			} else {
 
-				if (cheque != null) {
-					double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
-					chequeReturnCharge = charges;
+				if (now.isAfter(dueDate) && totalLatePenalty < 500 && paidCheckBouce < 500
+						&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+					latePenalty = BigDecimal.valueOf(500 - totalLatePenalty);
 
-				} else {
-					chequeReturnCharge = 0;
 				}
+			}
 
-				totalPenalty = round(emiPenalty + chequeReturnCharge);
+			if (now.isAfter(dueDate) && dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+				numberOfEmisDue++;
+				LocalDate firstOfMonth = dueDate.withDayOfMonth(1);
+				long overdueDays = ChronoUnit.DAYS.between(firstOfMonth, now);
+				double dailyPenaltyRate = 0.03 / 30;
+
+				BigDecimal currentEmiPenalty = dueAmount.multiply(BigDecimal.valueOf(dailyPenaltyRate))
+						.multiply(BigDecimal.valueOf(overdueDays)).setScale(2, RoundingMode.HALF_UP);
+
+				emiPenalty = emiPenalty.add(currentEmiPenalty);
+				totalPenalty = totalPenalty.add(currentEmiPenalty).add(chequeReturnCharge).add(latePenalty).setScale(2,
+						RoundingMode.HALF_UP);
 
 				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount.doubleValue(),
+						chequeReturnCharge.doubleValue(), currentEmiPenalty.doubleValue(), emiMonth,
+						latePenalty.doubleValue()));
+			} else if (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() == now.getMonthValue()
+					&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+				numberOfEmisDue++;
+				long overdueDays = 0;
+				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount.doubleValue(),
+						chequeReturnCharge.doubleValue(), 0, emiMonth, latePenalty.doubleValue()));
 
-				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount,
-						round(chequeReturnCharge), currentEmiPenalty, emiMonth));
 			}
-		}
 
-		receipetResponse.setInterest(round(totalInterest));
-		receipetResponse.setPrincipal(round(principal));
-		receipetResponse.setRepaid(round(repaid));
-		receipetResponse.setOutstanding(round(outstanding));
-		receipetResponse.setTotalDue(round(totalDue));
+			totalLatePenalty = 0;
+		}
+		// Set values with rounding
+		receipetResponse.setInterest(roundToNearestRupee(totalInterest));
+		receipetResponse.setPrincipal(roundToNearestRupee(principal));
+		receipetResponse.setRepaid(roundToNearestRupee(repaid));
+		receipetResponse.setOutstanding(roundToNearestRupee(outstanding));
+		receipetResponse.setTotalDue(roundToNearestRupee(totalDue));
 		receipetResponse.setNumberOfEmisDue(numberOfEmisDue);
-		receipetResponse.setLoanAmount(round(loanAmount));
+		receipetResponse.setLoanAmount(roundToNearestRupee(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
-		receipetResponse.setTotalPenalty(round(totalPenalty));
-		receipetResponse.setTotalDue(round(totalDue));
-		receipetResponse.setEmiDueAmount(round(totalDue));
+		receipetResponse.setTotalPenalty(roundToNearestRupee(totalPenalty));
+		receipetResponse.setTotalDue(roundToNearestRupee(totalDue.add(totalPenalty)));
+		receipetResponse.setEmiDueAmount(roundToNearestRupee(totalDue));
 
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() END");
 		return receipetResponse;
@@ -131,17 +173,20 @@ public class ReceiptServiceImpl implements ReceiptService {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 		ReceiptResponse receipetResponse = new ReceiptResponse();
 		List<PaymentStatementDTO> re = repaymentService.getRepaymentStatement(dId);
-		double totalInterest = 0;
-		double principal = 0;
-		double repaid = 0;
-		double outstanding = 0;
-		double totalDue = 0;
-		double loanAmount = 0;
+
+		BigDecimal totalInterest = BigDecimal.ZERO;
+		BigDecimal principal = BigDecimal.ZERO;
+		BigDecimal repaid = BigDecimal.ZERO;
+		BigDecimal outstanding = BigDecimal.ZERO;
+		BigDecimal totalDue = BigDecimal.ZERO;
+		BigDecimal loanAmount = BigDecimal.ZERO;
+		BigDecimal emiPenalty = BigDecimal.ZERO;
+		BigDecimal totalPenalty = BigDecimal.ZERO;
+		BigDecimal chequeReturnCharge = BigDecimal.ZERO;
+		BigDecimal latePenalty = BigDecimal.ZERO;
+
 		int emiCounter = 0;
-		double emiPenalty = 0;
-		double totalPenalty = 0;
 		int numberOfEmisDue = 0;
-		double chequeReturnCharge = 0;
 
 		LocalDate now = localDate;
 		List<EmiDueInfoDTO> emiDueDetails = new ArrayList<>();
@@ -149,178 +194,248 @@ public class ReceiptServiceImpl implements ReceiptService {
 		for (PaymentStatementDTO paymentStatementDTO : re) {
 			emiCounter++;
 			LocalDate dueDate = paymentStatementDTO.getDueDate();
-			totalInterest += round(paymentStatementDTO.getInterest());
-			principal += round(paymentStatementDTO.getPrincipalAmount());
-			repaid += round(paymentStatementDTO.getAmountPaid());
-			outstanding = round((totalInterest + principal));
-			loanAmount = round(paymentStatementDTO.getAmountSanctioned());
+
+			List<RepaymentTransactions> checkLatePenalty = transactionsRepository
+					.findByRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
+			double totalLatePenalty = checkLatePenalty.stream()
+					.filter(p -> p.getLatePenalty() != null && p.getLatePenalty() > 0)
+					.mapToDouble(p -> p.getLatePenalty()).sum();
+
+			double paidCheckBouce = checkLatePenalty.stream()
+					.filter(p -> p.getChequeReturnCharges() != null && p.getChequeReturnCharges() > 0)
+					.mapToDouble(p -> p.getChequeReturnCharges()).sum();
+
+			BigDecimal interest = BigDecimal.valueOf(paymentStatementDTO.getInterest()).setScale(2,
+					RoundingMode.HALF_UP);
+			BigDecimal principalAmt = BigDecimal.valueOf(paymentStatementDTO.getPrincipalAmount()).setScale(2,
+					RoundingMode.HALF_UP);
+			BigDecimal amountPaid = BigDecimal.valueOf(paymentStatementDTO.getAmountPaid()).setScale(2,
+					RoundingMode.HALF_UP);
+			BigDecimal dueAmount = BigDecimal.valueOf(paymentStatementDTO.getDueAmount()).setScale(2,
+					RoundingMode.HALF_UP);
+
+			totalInterest = totalInterest.add(interest);
+			repaid = repaid.add(amountPaid);
+			outstanding = outstanding.add(principalAmt);
+
+			loanAmount = BigDecimal.valueOf(paymentStatementDTO.getAmountSanctioned()).setScale(2,
+					RoundingMode.HALF_UP);
 
 			if ((dueDate.getYear() < now.getYear()
 					|| (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() <= now.getMonthValue()))
-					&& paymentStatementDTO.getDueAmount() != 0) {
+					&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
 				receipetResponse.setDueDate(dueDate);
-				totalDue += round(paymentStatementDTO.getDueAmount());
+				totalDue = totalDue.add(dueAmount);
 			}
 
-			if (!dueDate.isAfter(now) && paymentStatementDTO.getDueAmount() != 0) {
-				numberOfEmisDue++;
-				double dueAmount = round(paymentStatementDTO.getDueAmount());
-				long overdueDays = ChronoUnit.DAYS.between(paymentStatementDTO.getDueDate(), now);
-				double dailyPenaltyRate = 0.03 / 30; // ≈ 0.001 per day
+			// Reset latePenalty and cheque return for each iteration
+			latePenalty = BigDecimal.ZERO;
+			chequeReturnCharge = BigDecimal.ZERO;
 
-				double currentEmiPenalty = round((dueAmount * dailyPenaltyRate) * overdueDays);
-				emiPenalty += currentEmiPenalty;
+			CheckDeposit cheque = checkDepositRepository.LmsRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
 
-				CheckDeposit cheque = checkDepositRepository
-						.LmsRepaymentRepaymentId(paymentStatementDTO.getRepaymentId());
+			if (cheque != null && !cheque.getStatus().equalsIgnoreCase("Cleared")
+					&& !paymentStatementDTO.getAmountStatus().equalsIgnoreCase("PAID") && paidCheckBouce < 500) {
+				double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
+				chequeReturnCharge = BigDecimal.valueOf(charges).setScale(2, RoundingMode.HALF_UP);
+			} else {
 
-				if (cheque != null) {
-					double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
-					chequeReturnCharge = charges;
+				if (now.isAfter(dueDate) && totalLatePenalty < 500 && paidCheckBouce < 500
+						&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+					latePenalty = BigDecimal.valueOf(500 - totalLatePenalty);
 
-				} else {
-					chequeReturnCharge = 0;
 				}
+			}
 
-				totalPenalty = round(emiPenalty + chequeReturnCharge);
+			if (now.isAfter(dueDate) && dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+				numberOfEmisDue++;
+				LocalDate firstOfMonth = dueDate.withDayOfMonth(1);
+				long overdueDays = ChronoUnit.DAYS.between(firstOfMonth, now);
+				double dailyPenaltyRate = 0.03 / 30;
+
+				BigDecimal currentEmiPenalty = dueAmount.multiply(BigDecimal.valueOf(dailyPenaltyRate))
+						.multiply(BigDecimal.valueOf(overdueDays)).setScale(2, RoundingMode.HALF_UP);
+
+				emiPenalty = emiPenalty.add(currentEmiPenalty);
+				totalPenalty = totalPenalty.add(currentEmiPenalty).add(chequeReturnCharge).add(latePenalty).setScale(2,
+						RoundingMode.HALF_UP);
 
 				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount.doubleValue(),
+						chequeReturnCharge.doubleValue(), currentEmiPenalty.doubleValue(), emiMonth,
+						latePenalty.doubleValue()));
+			} else if (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() == now.getMonthValue()
+					&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+				numberOfEmisDue++;
+				long overdueDays = 0;
+				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount.doubleValue(),
+						chequeReturnCharge.doubleValue(), 0, emiMonth, latePenalty.doubleValue()));
 
-				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount,
-						round(chequeReturnCharge), currentEmiPenalty, emiMonth));
 			}
+
+			totalLatePenalty = 0;
 		}
 
-		receipetResponse.setInterest(round(totalInterest));
-		receipetResponse.setPrincipal(round(principal));
-		receipetResponse.setRepaid(round(repaid));
-		receipetResponse.setOutstanding(round(outstanding));
-		receipetResponse.setTotalDue(round(totalDue));
+		// Set values with rounding
+		receipetResponse.setInterest(roundToNearestRupee(totalInterest));
+		receipetResponse.setPrincipal(roundToNearestRupee(principal));
+		receipetResponse.setRepaid(roundToNearestRupee(repaid));
+		receipetResponse.setOutstanding(roundToNearestRupee(outstanding));
+		receipetResponse.setTotalDue(roundToNearestRupee(totalDue));
 		receipetResponse.setNumberOfEmisDue(numberOfEmisDue);
-		receipetResponse.setLoanAmount(round(loanAmount));
+		receipetResponse.setLoanAmount(roundToNearestRupee(loanAmount));
 		receipetResponse.setEmiDueInfo(emiDueDetails);
-		receipetResponse.setTotalPenalty(round(totalPenalty));
-		receipetResponse.setTotalDue(round(totalDue));
-		receipetResponse.setEmiDueAmount(round(totalDue));
-		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
+		receipetResponse.setTotalPenalty(roundToNearestRupee(totalPenalty));
+		receipetResponse.setTotalDue(roundToNearestRupee(totalDue.add(totalPenalty)));
+		receipetResponse.setEmiDueAmount(roundToNearestRupee(totalDue));
 
+		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 		return receipetResponse;
 	}
 
 	@Override
 	public ReceiptResponse payLoan(PayRequest payRequest) {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: payLoan");
-
 		ReceiptResponse receiptResponse = new ReceiptResponse();
 		List<PaymentStatementDTO> repaymentList = repaymentService.getRepaymentStatement(payRequest.getDid());
 
-		int emiCounter = 0;
-		double paidAmount = payRequest.getAmount();
+		BigDecimal paidAmount = BigDecimal.valueOf(payRequest.getAmount());
 		LocalDate paymentDate = payRequest.getPaymentDate();
 
-		List<EmiDueInfoDTO> emiDueDetails = new ArrayList<>();
-
-		// Sort the EMIs by due date (ascending)
 		repaymentList.sort(Comparator.comparing(PaymentStatementDTO::getDueDate));
 
 		for (PaymentStatementDTO payment : repaymentList) {
-			emiCounter++;
 			LocalDate dueDate = payment.getDueDate();
 
-			double dueAmount = Math.max(0, payment.getDueAmount());
-			if (dueAmount == 0)
+			CheckDeposit cheque = checkDepositRepository.LmsRepaymentRepaymentId(payment.getRepaymentId());
+			List<RepaymentTransactions> checkLatePenalty = transactionsRepository
+					.findByRepaymentRepaymentId(payment.getRepaymentId());
+			double totalLatePenalty = checkLatePenalty.stream()
+					.filter(p -> p.getLatePenalty() != null && p.getLatePenalty() > 0)
+					.mapToDouble(p -> p.getLatePenalty()).sum();
+
+			double paidCheckBouce = checkLatePenalty.stream()
+					.filter(p -> p.getChequeReturnCharges() != null && p.getChequeReturnCharges() > 0)
+					.mapToDouble(p -> p.getChequeReturnCharges()).sum();
+
+			BigDecimal chequeReturnCharge;
+			BigDecimal latePenalty = BigDecimal.ZERO;
+
+			if (cheque != null && !cheque.getStatus().equalsIgnoreCase("Cleared")
+					&& !payment.getAmountStatus().equalsIgnoreCase("PAID") && paidCheckBouce < 500) {
+				double charges = cheque.getChequeReturnCharges() != null ? cheque.getChequeReturnCharges() : 0.0;
+				chequeReturnCharge = BigDecimal.valueOf(charges).setScale(2, RoundingMode.HALF_UP);
+			} else {
+				chequeReturnCharge = BigDecimal.ZERO;
+				if (paymentDate.isAfter(dueDate) && totalLatePenalty < 500 && paidCheckBouce < 500
+						&& payment.getDueAmount() != 0) {
+					latePenalty = BigDecimal.valueOf(500 - totalLatePenalty);
+
+				}
+			}
+
+			BigDecimal dueAmount = BigDecimal.valueOf(Math.max(0, payment.getDueAmount()));
+			if (dueAmount.compareTo(BigDecimal.ZERO) == 0)
 				continue;
-
-			long overdueDays = ChronoUnit.DAYS.between(dueDate, paymentDate);
-			double dailyPenaltyRate = 0.03 / 30;
-			double emiPenalty = Math.max(0, (dueAmount * dailyPenaltyRate) * Math.max(overdueDays, 0));
-			double chequeReturnCharge = 0;
-			double penalty = Math.round(emiPenalty + chequeReturnCharge);
-
-			// Payment breakdown
-			double penaltyPaid = 0, interestPaid = 0, principalPaid = 0;
-
-			if (paidAmount > 0) {
-				penaltyPaid = Math.min(paidAmount, penalty);
-				paidAmount -= penaltyPaid;
-			
+			BigDecimal emiPenalty = BigDecimal.ZERO;
+			if (paymentDate.isAfter(dueDate) && dueAmount.compareTo(BigDecimal.ZERO) != 0) {
+				LocalDate firstOfMonth = dueDate.withDayOfMonth(1);
+				long overdueDays = ChronoUnit.DAYS.between(firstOfMonth, paymentDate);
+				double dailyPenaltyRate = 0.03 / 30;
+				emiPenalty = dueAmount.multiply(BigDecimal.valueOf(dailyPenaltyRate))
+						.multiply(BigDecimal.valueOf(Math.max(overdueDays, 0)));
+				emiPenalty = BigDecimal.valueOf(roundToNearestRupee(emiPenalty));
 			}
 
-			if (paidAmount > 0) {
-				interestPaid = Math.min(paidAmount, payment.getInterest());
-				paidAmount -= interestPaid;
-				
+			BigDecimal penaltyComponent = emiPenalty;
+			BigDecimal chequeReturnChargesComponent = chequeReturnCharge;
+			BigDecimal latePenaltyComponent = latePenalty;
+
+			BigDecimal penaltyPaid = BigDecimal.ZERO;
+			BigDecimal chequeReturnChargesPaid = BigDecimal.ZERO;
+			BigDecimal latePenaltyPaid = BigDecimal.ZERO;
+			BigDecimal interestPaid = BigDecimal.ZERO;
+			BigDecimal principalPaid = BigDecimal.ZERO;
+
+			// Deduct penalty
+			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				penaltyPaid = paidAmount.min(penaltyComponent);
+				paidAmount = paidAmount.subtract(penaltyPaid);
 			}
 
-			if (paidAmount > 0) {
-				principalPaid = Math.min(paidAmount, payment.getPrincipalAmount());
-				paidAmount -= principalPaid;
-			
+			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				chequeReturnChargesPaid = paidAmount.min(chequeReturnChargesComponent);
+				paidAmount = paidAmount.subtract(chequeReturnChargesPaid);
 			}
 
-			// Enforce non-negativity
-			interestPaid = Math.max(0, interestPaid);
-			principalPaid = Math.max(0, principalPaid);
-			penaltyPaid = Math.max(0, penaltyPaid);
+			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				latePenaltyPaid = paidAmount.min(latePenaltyComponent);
+				paidAmount = paidAmount.subtract(latePenaltyPaid);
+			}
 
-			System.err.println("remainingPrincipal" + (payment.getPrincipalAmount() - principalPaid));
-			System.err.println("getPrincipalAmount" + payment.getPrincipalAmount());
-			System.err.println("principalPaid" + principalPaid);
-			System.err.println(principalPaid);
+			BigDecimal interest = BigDecimal.valueOf(payment.getInterest());
+			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				interestPaid = paidAmount.min(interest);
+				paidAmount = paidAmount.subtract(interestPaid);
+			}
 
-			double remainingInterest = Math.max(0, payment.getInterest() - interestPaid);
-			double remainingPrincipal = Math.max(0, payment.getPrincipalAmount() - principalPaid);
-			double emiPaid = principalPaid + interestPaid;
-			double remainingDue = Math.max(0, dueAmount - emiPaid);
+			BigDecimal principal = BigDecimal.valueOf(payment.getPrincipalAmount());
+			if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
+				principalPaid = paidAmount.min(principal);
+				paidAmount = paidAmount.subtract(principalPaid);
+			}
+
+			BigDecimal remainingInterest = interest.subtract(interestPaid).max(BigDecimal.ZERO);
+			BigDecimal remainingPrincipal = principal.subtract(principalPaid).max(BigDecimal.ZERO);
+			BigDecimal emiPaid = principalPaid.add(interestPaid);
+			BigDecimal remainingDue = dueAmount.subtract(emiPaid).max(BigDecimal.ZERO);
 
 			String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
-			emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount, chequeReturnCharge,
-					emiPenalty, emiMonth));
-
 			LmsRepayment lmsRepayment = repaymentService.getRepaymentById(payment.getRepaymentId());
 
 			RepaymentTransactions transaction = new RepaymentTransactions();
-			transaction.setAmountPaid(emiPaid);
+			transaction.setAmountPaid(roundToNearestRupee(emiPaid));
 			transaction.setOtherCharges(payRequest.getOtherCharges());
 			transaction.setPaymentMode(payRequest.getPaymentMode());
-			transaction.setInterestComponent(interestPaid);
-			transaction.setPenaltyComponent(penaltyPaid);
-			transaction.setPrincipalComponent(principalPaid);
+			transaction.setInterestComponent(roundToNearestRupee(interestPaid));
+			transaction.setPenaltyComponent(roundToNearestRupee(penaltyPaid));
+			transaction.setPrincipalComponent(roundToNearestRupee(principalPaid));
+			transaction.setLatePenalty(roundToNearestRupee(latePenaltyPaid));
+			transaction.setChequeReturnCharges(roundToNearestRupee(chequeReturnChargesPaid));
 			transaction.setPaymentDate(paymentDate);
 			transaction.setDescription("EMI Payment - " + emiMonth);
 			transaction.setRepayment(lmsRepayment);
-			
-			if(remainingPrincipal==1) {
-				remainingPrincipal=0.0;
-			}
 
-			// Update repayment
-			lmsRepayment.setInterest(remainingInterest);
-			lmsRepayment.setPrincipalAmount(remainingPrincipal);
-			lmsRepayment.setDueAmount(remainingDue);
-			lmsRepayment.setAmountPaid(Math.max(0, payment.getAmountPaid() + emiPaid));
+			if (roundToNearestRupee(remainingPrincipal) == 1.0) {
+				remainingPrincipal = BigDecimal.ZERO;
+			}
+			lmsRepayment.setInterest(roundToNearestRupee(remainingInterest));
+			lmsRepayment.setPrincipalAmount(roundToNearestRupee(remainingPrincipal));
+			lmsRepayment.setDueAmount(roundToNearestRupee(remainingDue));
+			lmsRepayment.setAmountPaid(roundToNearestRupee(BigDecimal.valueOf(payment.getAmountPaid()).add(emiPaid)));
 			lmsRepayment.setOtherCharges(payRequest.getOtherCharges() != null ? payRequest.getOtherCharges() : 0d);
 
-			if (remainingDue <= 0.01) {
+			if (remainingDue.compareTo(BigDecimal.valueOf(1.00)) <= 0) {
 				lmsRepayment.setAmountStatus("Paid");
-				lmsRepayment.setDueAmount(0.0); // Clean up near-zero amounts
+				lmsRepayment.setDueAmount(0.0);
 			}
 
-			// Save both
 			transactionsRepository.save(transaction);
 			repaymentRepository.save(lmsRepayment);
 
-			if (paidAmount <= 0.01)
+//			System.err.println("Repayment:" + lmsRepayment);
+//			System.err.println("transaction:" + transaction);
+
+			if (paidAmount.compareTo(BigDecimal.ONE) < 0)
 				break;
 		}
 
-//	    // Set response data (optional but useful)
-//	    receiptResponse.setEmiDueDetails(emiDueDetails);
-//	    receiptResponse.setPaidAmount(payRequest.getAmount());
-//	    receiptResponse.setPaymentDate(paymentDate);
-//	    receiptResponse.setMessage("Payment processed successfully");
-
 		return receiptResponse;
+	}
+
+	private double roundToNearestRupee(BigDecimal amount) {
+		return amount.setScale(0, RoundingMode.HALF_UP).doubleValue();
 	}
 
 }
