@@ -14,7 +14,6 @@ import org.springframework.data.repository.query.Param;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
-import com.narvee.request.dto.RepaymentTransactionsDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -83,7 +82,7 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 	public int updatePaymentStatus();
 
 	@Query(value = "SELECT rt.id,rt.amount_paid,rt.createddate,rt.description,rt.interest_component,rt.other_charges,rt.payment_date,rt.payment_mode,rt.penalty_component,rt.principal_component,d.disbursment_id,\r\n"
-			+ "rt.remaining_balance,rt.repayment_id,rt.updateddate,r.interest,r.principal_amount FROM lms_repayment_transactions rt  join lms_repayment r on r.repayment_id=rt.repayment_id join lms_disbursment d \r\n"
+			+ "rt.repayment_id,rt.updateddate,r.interest,r.principal_amount FROM lms_repayment_transactions rt right join lms_repayment r on r.repayment_id=rt.repayment_id join lms_disbursment d \r\n"
 			+ "on d.disbursment_id =r.disbursment_id where d.disbursment_id=:disbursmentId", nativeQuery = true)
 	public List<Object[]> getAllRepaymentTrasactionsBydisbursmentid(@Param("disbursmentId") Long disbursmentId);
 
