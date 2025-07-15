@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RepaymentSchedule {
-    private Long outstanding;
-    private Long installment;
-    private Long interest;
-    private Long principalRepaid;
-    private Long remainingPrincipalAmount;
+    private double outstanding;
+    private double installment;
+    private double interest;
+    private double principalRepaid;
+    private double remainingPrincipalAmount;
     private LocalDate dueDate;
     
     

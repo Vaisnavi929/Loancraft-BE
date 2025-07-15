@@ -24,5 +24,9 @@ public class PayRequest {
 	private String referenceNumber; // Transaction ID, cheque number, etc.
 
 	private String remarks;
+	
+	private String otherChargesType;
+	
+	
 
 }

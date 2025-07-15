@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
 import com.narvee.request.dto.RepaymentScheduleRequest;
-import com.narvee.request.dto.RepaymentTransactionsDTO;
 import com.narvee.util.DateUtil;
 
 import jakarta.transaction.Transactional;
@@ -176,8 +174,8 @@ public class RepaymentServiceImpl implements RepaymentService {
 			payment.setAmountPaid(amountPaid);
 			payment.setAmountStatus(amountStatus);
 			payment.setDisbursment(disbursment);
-			payment.setInterest(repayment.getInterest().doubleValue());
-			payment.setPrincipalAmount(repayment.getPrincipalRepaid().doubleValue());
+			payment.setInterest(repayment.getInterest());
+			payment.setPrincipalAmount(repayment.getPrincipalRepaid());
 
 			payments.add(payment);
 
@@ -226,10 +224,12 @@ public class RepaymentServiceImpl implements RepaymentService {
 			sortField = "amount_status";
 		else if (sortField.equalsIgnoreCase("dueAmount"))
 			sortField = "due_amount";
+		else if (sortField.equalsIgnoreCase("paymentType"))
+			sortField = "payment_Type";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobilenumber";
 		else if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "full_name";
+			sortField = "firstname";
 		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
 			sortField = "loanAccountNumber";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -265,10 +265,10 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 		List<Object[]> reports = repaymentRepository.getAllRepaymentTrasactionsBydisbursmentid(disbursmentId);
 
-		double totalInterestComponent = 0.0;
-		double totalPrincipalComponent = 0.0;
-		double totalInterest = 0.0;
-		double totalPrincipalAmount = 0.0;
+		double totalInterestPaid = 0.0;
+		double totalPrincipalPaid = 0.0;
+		double totalInterestDue = 0.0;
+		double totalPrincipalAmountDue = 0.0;
 
 		for (Object[] objects : reports) {
 			Map<String, Object> memberReport = new LinkedHashMap<>();
@@ -278,7 +278,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 			memberReport.put("description", objects[3]);
 
 			Double interestComponent = objects[4] != null ? Double.parseDouble(objects[4].toString()) : 0.0;
-			totalInterestComponent += interestComponent;
+			totalInterestPaid += interestComponent;
 
 			memberReport.put("interest_component", interestComponent);
 			memberReport.put("other_charges", objects[5]);
@@ -286,21 +286,21 @@ public class RepaymentServiceImpl implements RepaymentService {
 			memberReport.put("payment_mode", objects[7]);
 			memberReport.put("penalty_component", objects[8]);
 			Double principalComponent = objects[9] != null ? Double.parseDouble(objects[9].toString()) : 0.0;
-			totalPrincipalComponent += principalComponent;
+			totalPrincipalPaid += principalComponent;
 			memberReport.put("principal_component", principalComponent);
 			memberReport.put("disbursment_id", objects[10]);
-			memberReport.put("remaining_balance", objects[11]);
-			memberReport.put("repayment_id", objects[12]);
-			memberReport.put("updateddate", objects[13]);
+			memberReport.put("repayment_id", objects[11]);
+			memberReport.put("updateddate", objects[12]);
 
-			Double interest = objects[14] != null ? Double.parseDouble(objects[14].toString()) : 0.0;
-			totalInterest += interest;
+			Double interest = objects[13] != null ? Double.parseDouble(objects[13].toString()) : 0.0;
+			totalInterestDue += interest;
 			memberReport.put("interest", interest);
-			Double principalAmount = objects[15] != null ? Double.parseDouble(objects[15].toString()) : 0.0;
-			totalPrincipalAmount += principalAmount;
+			Double principalAmount = objects[14] != null ? Double.parseDouble(objects[14].toString()) : 0.0;
+			totalPrincipalAmountDue += principalAmount;
 			memberReport.put("principal_amount", principalAmount);
-
+			if (objects[0] != null) {
 			memberReports.add(memberReport);
+           }
 		}
 
 		// Member details map
@@ -321,17 +321,18 @@ public class RepaymentServiceImpl implements RepaymentService {
 		}
 
 		Map<String, Object> summaryDetails = new LinkedHashMap<>();
-		summaryDetails.put("total_interest_component", totalInterestComponent);
-		summaryDetails.put("total_principal_component", totalPrincipalComponent);
+		
+		summaryDetails.put("totalInterestPaid", totalInterestPaid);
+		summaryDetails.put("totalPrincipalPaid", totalPrincipalPaid);
 
-		double totalRepaymentAmount = totalInterestComponent + totalPrincipalComponent;
-		summaryDetails.put("total_repayment_amount", totalRepaymentAmount);
+		double totalRepaymentAmountPaid = totalInterestPaid + totalPrincipalPaid;
+		summaryDetails.put("totalRepaymentAmount", Math.round(totalRepaymentAmountPaid));
 
-		summaryDetails.put("total_interest", totalInterest);
-		summaryDetails.put("total_principal_amount", totalPrincipalAmount);
+		summaryDetails.put("totalInterestDue", Math.round(totalInterestDue));
+		summaryDetails.put("totalPrincipalAmountDue", Math.round(totalPrincipalAmountDue));
 
-		double totalOutstandingAoumnt = totalInterest + totalPrincipalAmount;
-		summaryDetails.put("total_outstanding_amount", totalOutstandingAoumnt);
+		double totalOutstandingAoumnt = totalInterestDue + totalPrincipalAmountDue;
+		summaryDetails.put("totalOutstandingAmount", Math.round(totalOutstandingAoumnt));
 
 		memberReportDTO.setMemberDetails(memberDetails);
 		memberReportDTO.setMemberReports(memberReports);
@@ -339,4 +340,75 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 		return memberReportDTO;
 	}   
+
+	public void generateRepayment(Long disbursmentId) {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :generatePayments() ");
+		Disbursment disbursment = disbursmentRepository.findById(disbursmentId).get();
+
+		LocalDate currentDate = LocalDate.now();
+		Month currentMonth = currentDate.getMonth();
+		int currentYear = currentDate.getYear();
+
+		List<LmsRepayment> payments = new ArrayList<>();
+		RepaymentScheduleRequest request = new RepaymentScheduleRequest();
+		LocalDateTime emiStartDate = DateUtil.convertToLocalDateTime(disbursment.getLoanSanction().getEmiStartDate());
+
+		request.setStartDate(emiStartDate);
+		request.setInstallmentTenor(disbursment.getLoanSanction().getNumberOfEmis());
+		request.setAnnualInterestRate(disbursment.getLoanSanction().getRateOfInterest());
+		request.setLoanAmount(disbursment.getLoanSanction().getAmountSanctioned());
+
+		EmiCalResponseDTO schedule = null;
+		if (disbursment.getLoanSanction().getInterestType().equalsIgnoreCase("Fixed")) {
+			logger.info("!!! inside class :PaymentServiceImpl ,Fixed ");
+			schedule = EmiCalculatorUtill.calculateRepaymentFixed(request);
+
+		} else {
+			logger.info("!!! inside class :PaymentServiceImpl ,floating ");
+			schedule = EmiCalculatorUtill.calculateRepaymentfloating(request);
+
+		}
+
+		List<RepaymentSchedule> repaymentSchedule = schedule.getRepaymentSchedules();
+
+		for (RepaymentSchedule repayment : repaymentSchedule) {
+
+			String amountStatus;
+			if (repayment.getDueDate().getMonth() == currentMonth && repayment.getDueDate().getYear() == currentYear) {
+				amountStatus = "pending";
+			} else if (repayment.getDueDate().isBefore(currentDate)) {
+				amountStatus = "Due";
+			} else {
+				amountStatus = "upcoming";
+			}
+
+			Double amountPaid = 0.0;
+			LmsRepayment payment = new LmsRepayment();
+			payment.setDueAmount(disbursment.getLoanSanction().getEmiAmount());
+			payment.setDueDate(repayment.getDueDate());
+			payment.setAmountPaid(amountPaid);
+			payment.setAmountStatus(amountStatus);
+			payment.setDisbursment(disbursment);
+			payment.setInterest(repayment.getInterest());
+			payment.setPrincipalAmount(repayment.getPrincipalRepaid());
+
+			payments.add(payment);
+
+		}
+
+		repaymentRepository.saveAll(payments);
+	}
+	
+
+	@Override
+	public void generate() {
+		logger.info("!!! inside class :PaymentServiceImpl ,method :generate() ");
+		List<Disbursment> dis = disbursmentRepository.findAll();
+		for (Disbursment disbursment : dis) {
+			generateRepayment(disbursment.getDisbursmentId());
+		}
+
+	}
+
 }
+
