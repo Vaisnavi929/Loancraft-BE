@@ -59,5 +59,8 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	@Query(value = "SELECT a.updateddate as updateddate,a.loan_id,a.is_requested_file_upload,a.is_file_upload,a.application_reference_id AS referenceId,  a.createddate, c.first_name, c.last_name,c.email,a.status,a.remarks,c.mobile_number,\n"
 			+ "	a.repayment_mode,a.loan_amount FROM lms_applications a JOIN lms_customers_info c ON a.customer_id = c.customer_id WHERE c.customer_id = :customerId  and a.remarks=:remarks", nativeQuery = true)
 	List<ApplicationResponseDto> findApplicationsByCustomerId(@Param("customerId") Long customerId,@Param("remarks") String remarks);
+	
+	@Query(value ="SELECT sum(c.customer_id) FROM lms_customers_info c ",nativeQuery =true)
+	List<Object[]> findAllCustomersCountList();
 
 }
