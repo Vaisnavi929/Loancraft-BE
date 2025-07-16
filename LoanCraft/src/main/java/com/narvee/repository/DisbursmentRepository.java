@@ -90,4 +90,6 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 	@Query(value = "select max(amaxnum) as max from lms_disbursment", nativeQuery = true)
 	public Long disbmaxNumber();
 
+	@Query(value ="SELECT d.disbursment_id,d.disbursed_amount FROM lms_disbursment d",nativeQuery =true)
+	List<Object[]> findAllDisbursedIdAndAmounts();
 }
