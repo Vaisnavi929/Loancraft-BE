@@ -44,7 +44,7 @@ public class ApplicationsController {
 
 			// Save the loan application
 			Applications savedApplication = applicationService.saveLoanApplication(loanApplicationDto);
-			
+
 			logger.info("Loan application saved successfully.", savedApplication);
 			return ResponseEntity
 					.ok(new RestAPIResponse("success", "Application Submitted Successfully", savedApplication));

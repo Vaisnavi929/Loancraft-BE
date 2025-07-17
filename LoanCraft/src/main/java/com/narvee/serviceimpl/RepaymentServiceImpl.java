@@ -338,5 +338,5 @@ public class RepaymentServiceImpl implements RepaymentService {
 		memberReportDTO.setSummaryDetails(summaryDetails);
 
 		return memberReportDTO;
-	}   
+	}
 }
