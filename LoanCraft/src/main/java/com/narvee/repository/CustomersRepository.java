@@ -36,7 +36,7 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 			+ "highest_qualification LIKE CONCAT('%', :keyword, '%') OR " + "dob LIKE CONCAT('%', :keyword, '%') OR "
 			+ "adhaar_number LIKE CONCAT('%', :keyword, '%') OR " + "account_number LIKE CONCAT('%', :keyword, '%') OR "
 			+ "fathers_or_spouses_name LIKE CONCAT('%', :keyword, '%') OR "
-			+ "middle_name LIKE CONCAT('%', :keyword, '%') OR ", nativeQuery = true)
+			+ "middle_name LIKE CONCAT('%', :keyword, '%')  ", nativeQuery = true)
 	Page<SearchingDTO> findCustomersByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 	@Query(value = "SELECT CASE  WHEN c.account_number IS NOT NULL AND c.adhaar_number IS NOT NULL "
