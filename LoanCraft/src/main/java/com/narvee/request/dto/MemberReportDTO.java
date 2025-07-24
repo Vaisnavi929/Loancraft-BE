@@ -14,6 +14,8 @@ public class MemberReportDTO {
 	private Map<String, Object> memberDetails;
 	private List<Map<String, Object>> memberReports;
 	private Map<String, Object> summaryDetails;
-	
+	private Map<String, Object> disbursedDetails;
+	private Map<String, Object> dueDetails;
+	private Map<String, Object> referencesDetails;
 
 }

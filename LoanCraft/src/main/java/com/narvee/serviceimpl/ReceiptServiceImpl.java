@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() ");
 
 		ReceiptResponse receipetResponse = new ReceiptResponse();
+		Date lastPaidDate=  transactionsRepository.findLastPaidDateByDisbursmentId(dId);
 		List<PaymentStatementDTO> re = repaymentService.getRepaymentStatement(dId);
 
 		BigDecimal totalInterest = BigDecimal.ZERO;
@@ -163,6 +165,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setTotalPenalty(roundToNearestRupee(totalPenalty));
 		receipetResponse.setTotalDue(roundToNearestRupee(totalDue.add(totalPenalty)));
 		receipetResponse.setEmiDueAmount(roundToNearestRupee(totalDue));
+		receipetResponse.setLastPaidDate(lastPaidDate);
 
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() END");
 		return receipetResponse;
@@ -173,6 +176,8 @@ public class ReceiptServiceImpl implements ReceiptService {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 		ReceiptResponse receipetResponse = new ReceiptResponse();
 		List<PaymentStatementDTO> re = repaymentService.getRepaymentStatement(dId);
+		
+		Date lastPaidDate=  transactionsRepository.findLastPaidDateByDisbursmentId(dId);
 
 		BigDecimal totalInterest = BigDecimal.ZERO;
 		BigDecimal principal = BigDecimal.ZERO;
@@ -289,6 +294,9 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setTotalPenalty(roundToNearestRupee(totalPenalty));
 		receipetResponse.setTotalDue(roundToNearestRupee(totalDue.add(totalPenalty)));
 		receipetResponse.setEmiDueAmount(roundToNearestRupee(totalDue));
+		receipetResponse.setLastPaidDate(lastPaidDate);
+		
+		
 
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfoByReceiptDate");
 		return receipetResponse;

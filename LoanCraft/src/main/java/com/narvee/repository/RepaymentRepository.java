@@ -81,16 +81,71 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 			+ "    ELSE amount_status\r\n" + "END", nativeQuery = true)
 	public int updatePaymentStatus();
 
-
-	@Query(value = "SELECT rt.id,rt.amount_paid,TO_CHAR(rt.createddate, 'YYYY-MM-DD HH24:MI:SS') AS createddate,rt.description,rt.interest_component,rt.other_charges, TO_CHAR(rt.payment_date, 'YYYY-MM-DD HH24:MI:SS') AS payment_date,rt.payment_mode,rt.penalty_component,rt.principal_component,d.disbursment_id,\r\n"
-			+ "rt.remaining_balance,rt.repayment_id,  TO_CHAR(rt.updateddate, 'YYYY-MM-DD HH24:MI:SS') AS updateddate,r.interest,r.principal_amount FROM lms_repayment_transactions rt  join lms_repayment r on r.repayment_id=rt.repayment_id join lms_disbursment d \r\n"
-			+ "on d.disbursment_id =r.disbursment_id where d.disbursment_id=:disbursmentId", nativeQuery = true)
+	@Query(value = """
+						SELECT
+			    rt.id,
+			    rt.amount_paid,
+			    TO_CHAR(rt.createddate, 'YYYY-MM-DD HH24:MI:SS') AS createddate,
+			    rt.description,
+			    rt.interest_component,
+			    rt.other_charges,
+			    TO_CHAR(rt.payment_date, 'YYYY-MM-DD HH24:MI:SS') AS payment_date,
+			    rt.payment_mode,
+			    rt.penalty_component,
+			    rt.principal_component,
+			    d.disbursment_id,
+			    rt.repayment_id,
+			    TO_CHAR(rt.updateddate, 'YYYY-MM-DD HH24:MI:SS') AS updateddate,
+			    r.interest,
+			    r.principal_amount
+			FROM
+			    loancraft.lms_repayment_transactions rt
+			    RIGHT JOIN loancraft.lms_repayment r ON r.repayment_id = rt.repayment_id
+			    JOIN loancraft.lms_disbursment d ON d.disbursment_id = r.disbursment_id
+			WHERE
+			    d.disbursment_id = :disbursmentId
+			ORDER BY
+			    rt.payment_date ASC;
+						""", nativeQuery = true)
 	public List<Object[]> getAllRepaymentTrasactionsBydisbursmentid(@Param("disbursmentId") Long disbursmentId);
 
-	@Query(value = "SELECT CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.application_reference_id,ca.address,ca.city,ca.location,ca.pincode,st.state,c.email,c.mobile_number,a.status,s.loan_account_number\r\n"
-			+ "FROM lms_disbursment d join lms_loan_saction s on s.loan_saction_id = d.loan_saction_id join lms_applications a ON a.loan_id = s.loan_id\r\n"
-			+ "join lms_customers_info c on c.customer_id=a.customer_id join lms_current_address ca on ca.customer_id = c.customer_id join states st \r\n"
-			+ "ON st.state_id = ca.state_id where d.disbursment_id=:disbursmentId", nativeQuery = true)
-	public List<Object[]> getMemeberReport(@Param("disbursmentId") Long disbursmentId);
+	@Query(value = """
+
+			SELECT
+			  CONCAT(c.first_name, ' ', c.last_name) AS full_name,
+			  a.application_reference_id,
+			  ca.address,
+			  ca.city,
+			  ca.location,	
+			  ca.pincode,
+			  st.state,
+			  c.email,
+			  c.mobile_number,
+			  s.status,
+			  s.loan_account_number,
+			  d.disbursed_amount,
+			  s.amount_sanctioned,
+			  s.rate_of_interest,
+			  s.emi_amount,
+			  s.number_of_emis,
+			  s.documentation_charges,
+			  s.loan_processing_charges,
+			  d.date,
+			  r.full_name as reference_full_name,
+			  r.known_for_years,
+			  r.mobilenumber,
+			  r.relationship
+			FROM
+			  loancraft.lms_disbursment d
+			  JOIN loancraft.lms_loan_saction s ON s.loan_saction_id = d.loan_saction_id
+			  JOIN loancraft.lms_applications a ON a.loan_id = s.loan_id
+			  JOIN loancraft.lms_customers_info c ON c.customer_id = a.customer_id
+			  JOIN loancraft.lms_current_address ca ON ca.customer_id = c.customer_id
+			  JOIN loancraft.states st ON st.state_id = ca.state_id
+			  JOIN loancraft.lms_reference r ON a.loan_id = r.loan_id
+			WHERE
+			  d.disbursment_id = :disbursmentId
+									""", nativeQuery = true)
+	public List<Object[]> getMemeberDetails(@Param("disbursmentId") Long disbursmentId);
 
 }

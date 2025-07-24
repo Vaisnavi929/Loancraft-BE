@@ -1,6 +1,7 @@
 package com.narvee.response;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import com.narvee.helpers.EmiDueInfoDTO;
@@ -24,6 +25,7 @@ public class ReceiptResponse {
 	private double emiDueAmount;
 	private double totalDue;
 	private double totalPenalty;
+	private Date lastPaidDate;
 	private List<EmiDueInfoDTO> emiDueInfo;
 
 	
