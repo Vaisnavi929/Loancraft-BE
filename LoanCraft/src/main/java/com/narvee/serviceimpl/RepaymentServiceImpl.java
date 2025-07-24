@@ -399,6 +399,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 		return memberReportDTO;
 	}
 
+
 	public void generateRepayment(Long disbursmentId) {
 		logger.info("!!! inside class :PaymentServiceImpl ,method :generatePayments() ");
 		Disbursment disbursment = disbursmentRepository.findById(disbursmentId).get();
@@ -468,3 +469,4 @@ public class RepaymentServiceImpl implements RepaymentService {
 	}
 
 }
+

@@ -52,7 +52,7 @@ public class CheckDeposit extends AuditModel {
 	@JoinColumn(name = "disbursment_id")
 	private Disbursment disbursment;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "repayment_id")
 	private LmsRepayment lmsRepayment;
 
