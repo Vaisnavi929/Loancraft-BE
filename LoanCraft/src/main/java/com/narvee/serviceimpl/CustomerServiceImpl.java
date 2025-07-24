@@ -68,9 +68,8 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
 
 		CustomersInfo savedCustomer = customerRepository.save(customer);
-
+         
 		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
-
 		return savedCustomer;
 	}
 
@@ -136,6 +135,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (keyword.equalsIgnoreCase("empty")) {
 			customerPage = customerRepository.findAllApplicants(pageable);
 		} else {
+			logger.info("Inside ApplicantServiceImpl: getAllApplicants, searching ");
 			customerPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
 		}
 		Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
@@ -217,11 +217,11 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId,String remarks) {
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId) {
 		try {
 			long decryptedId = EncryptionUtil.decrypt(encryptedCustomerId);
 
-			return customerRepository.findApplicationsByCustomerId(decryptedId,remarks);
+			return customerRepository.findApplicationsByCustomerId(decryptedId);
 		} catch (Exception e) {
 			e.printStackTrace(); // Detailed stack trace
 			throw new RuntimeException("Invalid encrypted customer ID", e);

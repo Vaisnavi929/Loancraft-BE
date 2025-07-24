@@ -17,4 +17,5 @@ public class EmiDueInfoDTO {
 	private double chequeReturnCharge;
 	private double penalty;
 	private String emiMonth;
+	private double latePenalty;
 }

@@ -35,21 +35,29 @@ public class RepaymentTransactions extends AuditModel {
 	private LocalDate paymentDate;
 
 	@Column(nullable = false)
-	private Double amountPaid;
+
+	private Double amountPaid = 0.0;
 
 	@Column(nullable = false)
-	private Double principalComponent;
+	private Double principalComponent = 0.0;
 
 	@Column(nullable = false)
-	private Double interestComponent;
+	private Double interestComponent = 0.0;
 
 	@Column(nullable = false)
-	private Double penaltyComponent;
+	private Double penaltyComponent = 0.0;
 
-	@Column(nullable = true)
-	private Double remainingBalance;
+//	@Column(nullable = true)
+//	private Double remainingBalance = 0.0;
 
-	private Double otherCharges;
+	private Double otherCharges = 0.0;
+	
+	private String otherChargesType;
+	
+	@Column(nullable = false)
+	private Double latePenalty = 0.0;
+	
+	private Double chequeReturnCharges = 0.0;
 
 	@Column(length = 50)
 	private String paymentMode; // e.g., UPI, NEFT, Cash, etc.
