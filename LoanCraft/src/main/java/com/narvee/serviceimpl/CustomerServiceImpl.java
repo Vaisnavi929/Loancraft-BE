@@ -68,9 +68,8 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
 
 		CustomersInfo savedCustomer = customerRepository.save(customer);
-
+         
 		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
-
 		return savedCustomer;
 	}
 

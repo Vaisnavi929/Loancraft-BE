@@ -68,7 +68,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "    CAST(a.createddate AS TEXT) ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    a.status ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    c.mobile_number ILIKE '%' || :keyword || '%' OR\r\n"
-			+ "    a.application_reference_id ILIKE '%' || :keyword || '%'\r\n"
+			+ "    a.application_reference_id ILIKE '%' || :keyword || '%' OR "
 			+ "    a.remarks ILIKE '%' || :keyword || '%'\r\n" + ")AND a.status = :status\r\n", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,
 			@Param("keyword") String keyword, @Param("status") String status);
