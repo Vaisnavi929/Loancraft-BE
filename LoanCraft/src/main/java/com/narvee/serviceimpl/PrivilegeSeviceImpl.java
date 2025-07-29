@@ -34,7 +34,7 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		priv.setCardType(privilege.getCardType());
 		priv.setName(privilege.getName());
 		priv.setType(privilege.getType());
-		
+
 		return privRepo.save(priv);
 	}
 
@@ -67,12 +67,26 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> loans = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> approved = new ArrayList<DropdownVO>();
-		
+
 		List<DropdownVO> sanctioned = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> disbursed = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> rejected = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> receivables = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> currentDues = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> receivable = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> applicationTracking = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> physicalVerification = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> chequeDeposit = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> lowChequeRequests = new ArrayList<DropdownVO>();
 
 		List<Privilege> privileges = privRepo.findAll();
 
@@ -115,21 +129,24 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 			}
 
 			// Customer Info
-			if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CUSTOMER_INFO.name())) {
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CUSTOMER_INFO.name())) {
 				customerinfo.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
 						singlePrivilege.getCardType()));
 				privilegeVO.setCustomerinfo(customerinfo);
 			}
 
 			// Pricing
-			if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CUSTOMER_DASHBOARD.name())) {
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CUSTOMER_DASHBOARD.name())) {
 				customer_dashboard.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
 						singlePrivilege.getCardType()));
 				privilegeVO.setCustomer_dashboard(customer_dashboard);
 			}
-			
+
 			// Applications
-			if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATIONS.name())) {
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATIONS.name())) {
 				applications.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
 						singlePrivilege.getCardType()));
 				privilegeVO.setApplications(applications);
@@ -150,14 +167,16 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 			}
 
 			// Sanctioned
-			if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.SANCTIONED.name())) {
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.SANCTIONED.name())) {
 				sanctioned.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
 						singlePrivilege.getCardType()));
 				privilegeVO.setSanctioned(sanctioned);
 			}
 
 			// Disbursed
-			if (singlePrivilege.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.DISBURSED.name())) {
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.DISBURSED.name())) {
 				disbursed.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
 						singlePrivilege.getCardType()));
 				privilegeVO.setDisbursed(disbursed);
@@ -169,7 +188,60 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 						singlePrivilege.getCardType()));
 				privilegeVO.setRejected(rejected);
 			}
-		
+
+			// Rejected
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.RECEIVABLES.name())) {
+				receivables.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setReceivables(receivables);
+			}
+
+			// currentDues
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CURRENTDUES.name())) {
+				currentDues.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setCurrentDues(currentDues);
+			}
+
+			// RECEIVABLE
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.RECEIVABLE.name())) {
+				receivable.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setReceivable(receivable);
+			}
+
+			// APPLICATION_TRACKING
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATION_TRACKING.name())) {
+				applicationTracking.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setApplicationTracking(applicationTracking);
+			}
+
+			// PHYSICAL_VERIFICATION
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.PHYSICAL_VERIFICATION.name())) {
+				physicalVerification.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setPhysicalVerification(physicalVerification);
+			}
+			// CHEQUE_DEPOSIT
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CHEQUE_DEPOSIT.name())) {
+				chequeDeposit.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setChequeDeposit(chequeDeposit);
+			}
+			// LOW_CHEQUE_REQUESTS
+			if (singlePrivilege.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.LOW_CHEQUE_REQUESTS.name())) {
+				lowChequeRequests.add(new DropdownVO(singlePrivilege.getId(), singlePrivilege.getName(),
+						singlePrivilege.getCardType()));
+				privilegeVO.setLowChequeRequests(lowChequeRequests);
+			}
 		}
 
 		return privilegeVO;
@@ -212,7 +284,7 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> customerinfo = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> customer_dashboard = new ArrayList<DropdownVO>();
-		
+
 		List<DropdownVO> applications = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> loans = new ArrayList<DropdownVO>();
@@ -224,6 +296,20 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		List<DropdownVO> disbursed = new ArrayList<DropdownVO>();
 
 		List<DropdownVO> rejected = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> receivables = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> currentDues = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> receivable = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> applicationTracking = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> physicalVerificaion = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> chequeDeposit = new ArrayList<DropdownVO>();
+
+		List<DropdownVO> lowChequeRequests = new ArrayList<DropdownVO>();
 
 		Set<Privilege> privileges = roles.getPrivileges();
 
@@ -250,7 +336,7 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 				}
 				dashboard.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
-			
+
 			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.HOME.name())) {
 				if (single.getId() != null || single.getId() != 0) {
 					flg = true;
@@ -272,14 +358,14 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 				customerinfo.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
 
-			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CUSTOMER_DASHBOARD.name())) {
+			if (single.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CUSTOMER_DASHBOARD.name())) {
 				if (single.getId() != null || single.getId() != 0) {
 					flg = true;
 				}
 				customer_dashboard.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
 
-			
 			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATIONS.name())) {
 				if (single.getId() != null || single.getId() != 0) {
 					flg = true;
@@ -314,12 +400,64 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 				}
 				disbursed.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
-			
+
 			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.REJECTED.name())) {
 				if (single.getId() != null || single.getId() != 0) {
 					flg = true;
 				}
 				rejected.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.RECEIVABLES.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				receivables.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CURRENTDUES.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				currentDues.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.RECEIVABLE.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				receivable.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.APPLICATION_TRACKING.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				applicationTracking.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.PHYSICAL_VERIFICATION.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				physicalVerificaion.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType().equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.CHEQUE_DEPOSIT.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				chequeDeposit.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
+			}
+
+			if (single.getType()
+					.equalsIgnoreCase(com.narvee.entity.Privilege.privilegeType.LOW_CHEQUE_REQUESTS.name())) {
+				if (single.getId() != null || single.getId() != 0) {
+					flg = true;
+				}
+				lowChequeRequests.add(new DropdownVO(single.getId(), single.getName(), flg, single.getCardType()));
 			}
 
 		}
@@ -341,7 +479,7 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		privilegeVO.setApplications(applications);
 
 		privilegeVO.setLoans(loans);
-		
+
 		privilegeVO.setApproved(approved);
 
 		privilegeVO.setSanctioned(sanctioned);
@@ -349,6 +487,20 @@ public class PrivilegeSeviceImpl implements IPrivilegeService {
 		privilegeVO.setDisbursed(disbursed);
 
 		privilegeVO.setRejected(rejected);
+
+		privilegeVO.setReceivables(receivables);
+
+		privilegeVO.setCurrentDues(currentDues);
+
+		privilegeVO.setReceivable(receivable);
+
+		privilegeVO.setApplicationTracking(applicationTracking);
+
+		privilegeVO.setPhysicalVerification(physicalVerificaion);
+
+		privilegeVO.setChequeDeposit(chequeDeposit);
+
+		privilegeVO.setLowChequeRequests(lowChequeRequests);
 
 		return privilegeVO;
 	}

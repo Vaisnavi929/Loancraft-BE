@@ -1,9 +1,11 @@
 package com.narvee.entity;
 
 import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.narvee.commons.AuditModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -59,6 +61,15 @@ public class CustomersInfo extends AuditModel {
 
 	@Column(name = "email")
 	private String email;
+	
+	@Column(name="location")
+	private String location;
+	
+	@Column(name="occupation")
+	private String Occupation;
+	
+	@Column(name="laon_required")
+	private String loanRequired;
 
 	@Column(name = "password")
 	@JsonIgnore

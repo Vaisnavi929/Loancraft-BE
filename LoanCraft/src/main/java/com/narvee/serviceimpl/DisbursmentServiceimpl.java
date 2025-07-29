@@ -14,8 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.narvee.Service.DisbursmentService;
-import com.narvee.Service.PaymentService;
+import com.narvee.Service.RepaymentService;
 import com.narvee.Service.SortingRequestDto;
+import com.narvee.Service.VerificationService;
 import com.narvee.entity.Disbursment;
 import com.narvee.entity.LoanSanction;
 import com.narvee.repository.DisbursmentRepository;
@@ -26,55 +27,75 @@ import com.narvee.request.dto.DisbursmentResponseDTO;
 
 @Service
 public class DisbursmentServiceimpl implements DisbursmentService {
-	
-	private static final Logger logger=LoggerFactory.getLogger(DisbursmentServiceimpl.class);
+
+	private static final Logger logger = LoggerFactory.getLogger(DisbursmentServiceimpl.class);
 	@Autowired
 	ModelMapper mapper;
 	@Autowired
 	private DisbursmentRepository disbursmentRepository;
-	
+
 	@Autowired
-	private PaymentService paymentService;
-	
+	private RepaymentService repaymentService;
+
 	@Autowired
 	private LoanSanctionRepository loanSanctionRepository;
+
+	@Autowired
+	private VerificationService verificationService;
+
+	private static final int DIGIT_PADDING = 4;
 
 	@Override
 	@Transactional
 	public Disbursment saveDisbursment(DisbursmentDTO disbursmentDTO) {
-	    logger.info("!!! inside class: DisbursmentServiceImpl, method: saveDisbursment()");
-	    Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
-	    LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
-	            .orElseThrow(() -> new RuntimeException("Loan Application not found"));
-	    disbursment.setLoanSanction(loanSanction);
-	    Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
-    paymentService.generatePayments(savedDisbursment);
-	    return savedDisbursment;
-	    	    
-	}
+		logger.info("!!! inside class: DisbursmentServiceImpl, method: saveDisbursment()");
+		Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
+		LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
+				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		loanSanction.setStatus(disbursmentDTO.getStatus());
+		disbursment.setLoanSanction(loanSanction);
+		Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
 
+		Long amaxnumber = disbursmentRepository.disbmaxNumber();
+		if (amaxnumber == null) {
+			amaxnumber = 0L;
+		}
+
+		String valueWithPadding = String.format("%0" + DIGIT_PADDING + "d", amaxnumber + 1);
+		String value = "DISB" + valueWithPadding;
+		disbursment.setDisbRefNo(value);
+
+		disbursment.setAmaxnum(amaxnumber + 1);
+
+		if (disbursmentDTO.getStatus().equalsIgnoreCase("disbursed")) {
+			verificationService.updateDisbursed(loanSanction.getApplications().getLoanId(), true);
+		}
+		repaymentService.generateRepayment(savedDisbursment);
+		return savedDisbursment;
+
+	}
 
 	@Override
 	public Disbursment updateDisbursment(DisbursmentDTO disbursmentDTO) {
-	logger.info("!!! inside class:DisbursmentServiceimpl,method :updateDisbursment() ");
-	Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
-	LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
-			.orElseThrow(() -> new RuntimeException("Loan Application not found"));
-	disbursment.setLoanSanction(loanSanction);
-	 Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
-	    paymentService.generatePayments(savedDisbursment);
-		    return savedDisbursment;
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :updateDisbursment() ");
+		Disbursment disbursment = mapper.map(disbursmentDTO, Disbursment.class);
+		LoanSanction loanSanction = loanSanctionRepository.findById(disbursmentDTO.getLoanSactionId())
+				.orElseThrow(() -> new RuntimeException("Loan Application not found"));
+		disbursment.setLoanSanction(loanSanction);
+		Disbursment savedDisbursment = disbursmentRepository.save(disbursment);
+		repaymentService.generateRepayment(savedDisbursment);
+		return savedDisbursment;
 	}
 
 	@Override
 	public Disbursment getById(Long disbursmentId) {
-	logger.info("!!! inside class:DisbursmentServiceimpl,method :getById() ");
-	return disbursmentRepository.findById(disbursmentId).get();
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :getById() ");
+		return disbursmentRepository.findById(disbursmentId).get();
 	}
 
 	@Override
 	public List<Disbursment> getAll() {
-    logger.info("!!! inside class:DisbursmentServiceimpl,method :getAll() ");
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :getAll() ");
 		return disbursmentRepository.findAll();
 	}
 
@@ -87,35 +108,38 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 
 	@Override
 	public Page<DisbursmentResponseDTO> getAllDisbursmentWithPagination(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :getAllDisbursmentWithPagination() ");
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-	    if (sortField.equalsIgnoreCase("accountNo"))
+		if (sortField.equalsIgnoreCase("accountNo"))
 			sortField = "account_no";
 		else if (sortField.equalsIgnoreCase("isfc"))
-	     sortField = "isfc";
+			sortField = "isfc";
 		else if (sortField.equalsIgnoreCase("date"))
-		     sortField = "date";
+			sortField = "date";
 		else if (sortField.equalsIgnoreCase("disbursedAmount"))
-		     sortField = "disbursed_amount";
+			sortField = "disbursed_amount";
 		else if (sortField.equalsIgnoreCase("remarks"))
-		     sortField = "remarks";
+			sortField = "remarks";
 		else if (sortField.equalsIgnoreCase("branch"))
-		     sortField = "branch";
+			sortField = "branch";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
-		     sortField = "mobilenumber";
+			sortField = "mobilenumber";
 		else if (sortField.equalsIgnoreCase("firstName"))
-		     sortField = "firstname";
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("referenceid"))
-		     sortField = "referenceid";
+			sortField = "referenceid";
+		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
+			sortField = "loan_account_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-		     sortField = "createddate";
+			sortField = "createddate";
 		else
 			sortField = "updateddate";
-	    
-	    Sort.Direction sortDirection = Sort.Direction.ASC;
+
+		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
 		}
@@ -124,18 +148,18 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		if (keyword.equalsIgnoreCase("empty")) {
 			return disbursmentRepository.getAllDisbursmentWithPagination(pageable);
-			
+
 		} else {
 			return disbursmentRepository.getAllDisbursmentWithkeyword(pageable, keyword);
 
 		}
- 
 
 	}
-
 
 	@Override
-	public List<DisbursmentIdDTO> getCustomerDetailsWithDisbursmentId() {		
+	public List<DisbursmentIdDTO> getCustomerDetailsWithDisbursmentId() {
+		logger.info("!!! inside class:DisbursmentServiceimpl,method :getCustomerDetailsWithDisbursmentId() ");
 		return disbursmentRepository.getCustomerDetailsWithDisbursmentId();
 	}
+
 }

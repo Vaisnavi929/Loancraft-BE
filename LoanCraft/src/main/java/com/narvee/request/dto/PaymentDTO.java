@@ -18,9 +18,14 @@ public class PaymentDTO {
     private Long paymentId;
     private Double dueAmount;
     private LocalDate dueDate;
-    private String amountPaid;
+    private Double amountPaid;
     private String amountStatus;
     private Long disbursmentId; 
+	private String paymentType;
+	private Double intrest ;
+	private String paymentmode;
+	private String remarks;
+	private String checkBouns;
 }
 
 

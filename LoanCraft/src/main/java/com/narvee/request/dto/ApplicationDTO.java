@@ -6,11 +6,9 @@ public interface ApplicationDTO {
 
 	public Long getLoanId();
 
-	public String getFirstName();
-
-	public String getLastName();
-
 	public String getEmail();
+
+	public String getFullName();
 
 	public String getStatus();
 
@@ -25,5 +23,13 @@ public interface ApplicationDTO {
 	public Double getLoanamount();
 
 	public String getReferenceid();
+
+	public Boolean getPhysicalVerification();
+
+	public Boolean getIsRequestedFileUpload();
+
+	public Boolean getIsFileUpload();
+
+	public String getRemarks();
 
 }

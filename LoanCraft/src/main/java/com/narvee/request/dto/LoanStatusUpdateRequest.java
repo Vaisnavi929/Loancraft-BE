@@ -11,5 +11,8 @@ public class LoanStatusUpdateRequest {
     private String status;
     private String remarks;
     private Long loanId;
+    private Long cbilScore;
+    
+    
 	
 }

@@ -27,7 +27,7 @@ import com.narvee.util.EncryptionUtil;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/customer")
+@RequestMapping("/auth/customer")
 @CrossOrigin("*")
 public class CustomersController {
 
@@ -48,7 +48,7 @@ public class CustomersController {
 		try {
 			customerService.save(register);
 
-			Object authenticate = authenticationService.authenticate(register.getEmail(), register.getPassword());
+			Object authenticate = authenticationService.authenticate(register.getEmail());
 			logger.info("customer saved and authenticated successfully: {}", register.getEmail());
 
 			return ResponseEntity
@@ -180,6 +180,12 @@ public class CustomersController {
 		}
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
+	}
+
+	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")
+	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId) {
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
+				customerService.getApplicationsByCustomerId(customerId)), HttpStatus.OK);
 
 	}
 }

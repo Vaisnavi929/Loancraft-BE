@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/app")
+@RequestMapping("/auth/app")
 public class ApplicationsController {
 	public static final Logger logger = LoggerFactory.getLogger(ApplicationsController.class);
 
@@ -111,17 +111,18 @@ public class ApplicationsController {
 	@RequestMapping(value = "/getAllApplication", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationWithSearching(
 			@RequestBody SortingRequestDto sortingRequestDto) {
+
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
+				new RestAPIResponse("success", "successfully fetched laonapplication with searching",
 						applicationService.getAllLoanApplicationPagination(sortingRequestDto)),
 				HttpStatus.OK);
-
 	}
 
 	@RequestMapping(value = "/getAllApporved", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> getAllLoanApplicationListWithPagination(
 			@RequestBody SortingRequestDto sortingRequestDto) {
 		logger.info("!!! inside class: LoanApplicationController, !! method : getAllLoanApplicationListWithPagination");
+
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("Success", "successfully fetched laonapplication with searching",
 						applicationService.getAllLoanApplicationListWitApproved(sortingRequestDto)),
@@ -131,10 +132,40 @@ public class ApplicationsController {
 
 	@RequestMapping(value = "/updatestatus", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateLoanStatusWithRemarks(@RequestBody LoanStatusUpdateRequest request) {
-		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks());
+		applicationService.updateLoanStatus(request.getLoanId(), request.getStatus(), request.getRemarks(),
+				request.getCbilScore());
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Loan status updated successfully! "),
 				HttpStatus.OK);
 
 	}
 
+	@RequestMapping(value = "/getReviewedAppDropDown", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getReviewedAppDropDown() {
+		logger.info("!!! inside class: LoanApplicationController, !! method : getReviewedAppDropDown");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"ReviewedAppDropDown fetched successfully", applicationService.getReviewedAppDropDown()),
+				HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/updateIsRequestedFileUpload/{verifiedId}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateIsRequestedFileUpload(@PathVariable Long verifiedId,
+			@PathVariable Boolean value) {
+		logger.info("!!! inside class: VerificationController, method: updateReviewed");
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "successfully update updateIsRequestedFileUpload ",
+						applicationService.updateIsRequestedFileUpload(verifiedId, value)),
+				HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/updateIsFileUpload/{verifiedId}/{value}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateIsFileUpload(@PathVariable Long verifiedId,
+			@PathVariable Boolean value) {
+		logger.info("!!! inside class: VerificationController, method: updateReviewed");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success",
+				"successfully update updateIsFileUpload ", applicationService.updateIsFileUpload(verifiedId, value)),
+				HttpStatus.OK);
+
+	}
 }

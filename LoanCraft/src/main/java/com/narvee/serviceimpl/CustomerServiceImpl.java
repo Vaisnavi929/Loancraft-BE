@@ -1,5 +1,6 @@
 package com.narvee.serviceimpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -20,6 +21,7 @@ import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.request.dto.ApplicationResponseDto;
 import com.narvee.request.dto.CustomerResponseDTO;
 import com.narvee.request.dto.CustomerResponseDTOS;
 import com.narvee.request.dto.CustomerUpdateRequest;
@@ -48,7 +50,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 	public CustomersInfo save(RegisterVO register) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
-		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmailOrMobileNumber(register.getEmail(),register.getEmail());
+		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmailOrMobileNumber(register.getEmail(),
+				register.getEmail());
 
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
@@ -65,9 +68,8 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
 
 		CustomersInfo savedCustomer = customerRepository.save(customer);
-
+         
 		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
-
 		return savedCustomer;
 	}
 
@@ -110,17 +112,15 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNumber = sortingDTO.getPageNumber();
 		Integer pageSize = sortingDTO.getPageSize();
 
-		 if (sortField.equalsIgnoreCase("lastName")) {
-			sortField = "last_name";
+		if (sortField.equalsIgnoreCase("firstName")) {
+			sortField = "full_name";
 		} else if (sortField.equalsIgnoreCase("Email")) {
 			sortField = "email";
 		} else if (sortField.equalsIgnoreCase("MobileNumber")) {
 			sortField = "mobile_number";
 		} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
 			sortField = "account_number";
-		} else if(sortField.equalsIgnoreCase("firstname")) {
-			sortField = "first_name";
-		}else {
+		} else {
 			sortField = "updateddate";
 		}
 
@@ -133,32 +133,26 @@ public class CustomerServiceImpl implements CustomerService {
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
 		Page<CustomerResponseDTO> customerPage;
 		if (keyword.equalsIgnoreCase("empty")) {
-			customerPage= customerRepository.findAllApplicants(pageable);
+			customerPage = customerRepository.findAllApplicants(pageable);
 		} else {
-			customerPage= customerRepository.findApplicantsByKeyword(keyword, pageable);
+			logger.info("Inside ApplicantServiceImpl: getAllApplicants, searching ");
+			customerPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
 		}
-		 Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
-	            // Encrypt the customerId (convert to String first)
-	            String encryptedId=null;
-				try {
-					encryptedId = EncryptionUtil.encrypt(dto.getcustomerId());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-	            return new CustomerResponseDTOS(
-	                    encryptedId,
-	                    dto.getemail(),
-	                    dto.getaccountNumber(),
-	                    dto.getfirstName(),
-	                    dto.getlastName(),
-	                    dto.getmobileNumber()
-	            );
-	        });
+		Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
+			// Encrypt the customerId (convert to String first)
+			String encryptedId = null;
+			try {
+				encryptedId = EncryptionUtil.encrypt(dto.getCustomerId());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
+					dto.getMobileNumber());
+		});
 
-	        return encryptedPage;
-	    }
-	
+		return encryptedPage;
+	}
 
 	@Override
 	public boolean deleteById(Long id) {
@@ -179,11 +173,9 @@ public class CustomerServiceImpl implements CustomerService {
 			long decryptedCustomerId = Long.parseLong(customerUpdateDto.getCustomerId());
 			logger.info("Decrypted customer ID: {}", decryptedCustomerId);
 
-
 			// Fetch the customer by ID or throw an exception if not found
 			CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 					.orElseThrow(() -> new RuntimeException("Customer not found with ID: " + decryptedCustomerId));
-
 
 			logger.info("Fetched customer: {}", customer);
 
@@ -220,10 +212,20 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public boolean isEmailDuplicate(String email) {
-		
+
 		return customerRepository.existsByEmail(email);
 	}
 
+	@Override
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId) {
+		try {
+			long decryptedId = EncryptionUtil.decrypt(encryptedCustomerId);
 
+			return customerRepository.findApplicationsByCustomerId(decryptedId);
+		} catch (Exception e) {
+			e.printStackTrace(); // Detailed stack trace
+			throw new RuntimeException("Invalid encrypted customer ID", e);
+		}
+	}
 
 }

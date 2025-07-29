@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.narvee.commons.AuditModel;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,9 +31,13 @@ public class Disbursment extends AuditModel{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long disbursmentId;
-
+	@Column(name ="disb_ref_no")
+	private String disbRefNo;
     private LocalDate date;
-
+    
+	@Column(name = "amaxnum")
+	private Long amaxnum;
+    
     private String accountNo;
     
     private String isfc;
@@ -44,6 +49,7 @@ public class Disbursment extends AuditModel{
     private String branch;
     
     private String status;
+    
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "loanSactionId")

@@ -10,23 +10,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DisbursmentDTO {
-	
+
 	private Long disbursmentId;
 
-    private LocalDate date;
+	private String disbRefNo;
 
-    private String accountNo;
-    
-    private String isfc;
+	private LocalDate date;
 
-    private Double disbursedAmount;
+	private String accountNo;
 
-    private String remarks;
+	private String isfc;
 
-    private String branch;
-    
-    private Long loanSactionId;
-    
-    private String status;
+	private Double disbursedAmount;
+
+	private String remarks;
+
+	private String branch;
+
+	private Long loanSactionId;
+
+	private String status;
 
 }

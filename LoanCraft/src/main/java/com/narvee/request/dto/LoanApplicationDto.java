@@ -6,7 +6,12 @@ import com.narvee.entity.IdentityProof;
 import com.narvee.entity.Reference;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -65,5 +70,10 @@ public class LoanApplicationDto {
 	@Valid
 	private IdentityProof identityProof;
 
-
+	private String employmentCategory;
+	private String empOthterDeatils;
+	
+	private Boolean isRequestedFileUpload;
+	
+	private Boolean isFileUpload;
 }

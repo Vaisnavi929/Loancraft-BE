@@ -1,7 +1,9 @@
 package com.narvee.entity;
 
 import java.util.List;
+
 import com.narvee.commons.AuditModel;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -70,10 +72,21 @@ public class Applications extends AuditModel {
 
 	@Column(name = "updatedby")
 	private String updatedBy;
+	
+	@Column(name = "emp_othter_deatils")
+	private String empOthterDeatils;
+	
+	@Column(name = "employment_category")
+	private String employmentCategory;
+	
+	@Column(name = "creditScore")
+	private Long creditScore;
 
 	@ManyToOne
 	@JoinColumn(name = "customerId")
 	private CustomersInfo customers;
+	
+	
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "loan_id")
@@ -82,5 +95,11 @@ public class Applications extends AuditModel {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "identity_id")
 	private IdentityProof identityProof;
+	
+	@Column(name = "is_requested_file_upload")
+	private Boolean isRequestedFileUpload=false;
+	
+	@Column(name = "is_file_upload")
+	private Boolean isFileUpload=false;
 
 }

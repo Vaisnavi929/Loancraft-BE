@@ -20,9 +20,12 @@ import com.narvee.Service.SortingRequestDto;
 import com.narvee.config.MapperConfig;
 import com.narvee.entity.Applications;
 import com.narvee.entity.CustomersInfo;
+import com.narvee.entity.Verification;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.CustomersRepository;
+import com.narvee.repository.VerificationRepository;
 import com.narvee.request.dto.ApplicationDTO;
+import com.narvee.request.dto.DisbursmentIdDTO;
 import com.narvee.request.dto.LoanApplicationDto;
 import com.narvee.request.dto.LoanApplicationUpdateDto;
 
@@ -33,13 +36,16 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class LoanApplicationServiceImpl implements ApplicationsService {
 
-	public static final Logger logger = LoggerFactory.getLogger(CustomerS.class);
+	public static final Logger logger = LoggerFactory.getLogger(LoanApplicationServiceImpl.class);
 
 	@Autowired
 	private ApplicationsRepository applicationRepository;
 
 	@Autowired
 	private CustomersRepository customerRepository;
+
+	@Autowired
+	private VerificationRepository verificationRepository;
 
 	private static final int DIGIT_PADDING = 4;
 
@@ -59,6 +65,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		});
 
 		Applications loan = modelMapper.map(loanApplicationDto, Applications.class);
+		loan.setLoanId(null);
 
 		// Fetch customer using decrypted ID
 		Optional<CustomersInfo> customerOptional = customerRepository
@@ -112,7 +119,7 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Applications loan = mapper.map(loanApplication, Applications.class);
 		Applications applications = applicationRepository.save(loan);
 		LoanApplicationUpdateDto applicationUpdateDto = mapper.map(applications, LoanApplicationUpdateDto.class);
-		
+
 		return applicationUpdateDto;
 	}
 
@@ -124,24 +131,25 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Override
 	public Page<ApplicationDTO> getAllLoanApplicationPagination(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getAllLoanApplicationPagination");
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
-		
-		if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "first_name";
-		else if (sortField.equalsIgnoreCase("lastName"))
-			sortField = "last_name";
+
+		if (sortField.equalsIgnoreCase("referenceid"))
+			sortField = "referenceId";
+		else if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("email"))
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-		     sortField = "createddate";
+			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-		     sortField = "a.status";
+			sortField = "a.status";
 		else
 			sortField = "updateddate";
 
@@ -163,24 +171,25 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 	@Override
 	public Page<ApplicationDTO> getAllLoanApplicationListWitApproved(SortingRequestDto sortingRequestDto) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getAllLoanApplicationListWitApproved");
 		String sortField = sortingRequestDto.getSortField();
 		String sortOrder = sortingRequestDto.getSortOrder();
 		String keyword = sortingRequestDto.getKeyword();
-        String status=sortingRequestDto.getStatus();
+		String status = sortingRequestDto.getStatus();
 		Integer pageNumber = sortingRequestDto.getPageNumber();
 		Integer pageSize = sortingRequestDto.getPageSize();
 		if (sortField.equalsIgnoreCase("firstName"))
-			sortField = "first_name";
-		else if (sortField.equalsIgnoreCase("lastName"))
-			sortField = "last_name";
+			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("email"))
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))
 			sortField = "mobile_number";
 		else if (sortField.equalsIgnoreCase("createddate"))
-		     sortField = "createddate";
+			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("status"))
-		     sortField = "a.status";
+			sortField = "a.status";
+		else if (sortField.equalsIgnoreCase("remarks"))
+			sortField = "remarks";
 		else
 			sortField = "updateddate";
 
@@ -197,17 +206,56 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 
 			return applicationRepository.getallApplicationListWithKewordApproved(pageable, keyword, status);
 
-
 		}
 	}
 
 	@Transactional
 	@Override
-	public void updateLoanStatus(Long loanId, String status, String remarks) {
+	public void updateLoanStatus(Long loanId, String status, String remarks, Long creditScore) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: updateLoanStatus");
 		Applications loanApplication = applicationRepository.findById(loanId)
 				.orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 		loanApplication.setStatus(status);
 		loanApplication.setRemarks(remarks);
+		loanApplication.setUpdateddate();
+
+		if (creditScore != null) {
+			loanApplication.setCreditScore(creditScore);
+		}
+
+		if (status.equalsIgnoreCase("reviewed")) {
+			Verification verification = new Verification();
+			verification.setCibil(true);
+			verification.setDisbursed(false);
+			verification.setSanction(false);
+			verification.setPhysicalLocationVerified(false);
+			verification.setReviewed(true);
+			verification.setPhysicalLocationVerified(false);
+			verification.setApplications(loanApplication);
+			verificationRepository.save(verification);
+		}
+
 		applicationRepository.save(loanApplication);
 	}
+
+	@Override
+	public List<DisbursmentIdDTO> getReviewedAppDropDown() {
+		logger.info("!!! inside class: LoanApplicationserviceimpl , !! method: getReviewedAppDropDown");
+		return applicationRepository.getReviewedAppDropDown();
+	}
+
+	@Override
+	public boolean updateIsRequestedFileUpload(Long verifiedId, Boolean value) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl, method: updateIsRequestedFileUpload");
+		int updatedCount = applicationRepository.updateIsRequestedFileUpload(verifiedId, value);
+		return updatedCount > 0;
+	}
+
+	@Override
+	public boolean updateIsFileUpload(Long verifiedId, Boolean value) {
+		logger.info("!!! inside class: LoanApplicationserviceimpl, method: updateIsFileUpload");
+		int updatedCount = applicationRepository.updateIsFileUpload(verifiedId, value);
+		return updatedCount > 0;
+	}
+
 }

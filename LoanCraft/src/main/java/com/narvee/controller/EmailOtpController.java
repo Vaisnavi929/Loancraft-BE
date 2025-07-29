@@ -27,7 +27,7 @@ import com.narvee.request.dto.CustomerEmailDTo;
 import jakarta.mail.MessagingException;
 
 @RestController
-@RequestMapping("/api/otp")
+@RequestMapping("/auth/otp")
 @CrossOrigin("*")
 public class EmailOtpController {
 
@@ -79,7 +79,8 @@ public class EmailOtpController {
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> changePassword(@RequestBody ApplicantDto applicant)
 			throws MessagingException {
-		Optional<CustomersInfo> optionalApplicant = customersRepository.findByEmailOrMobileNumber(applicant.getEmail(),applicant.getEmail());
+		Optional<CustomersInfo> optionalApplicant = customersRepository.findByEmailOrMobileNumber(applicant.getEmail(),
+				applicant.getEmail());
 
 		if (!optionalApplicant.isPresent()) {
 			return new ResponseEntity<>(new RestAPIResponse("mailerror", "Email not Registered"), HttpStatus.OK);
@@ -95,22 +96,21 @@ public class EmailOtpController {
 					HttpStatus.OK);
 		}
 	}
+
 	@PostMapping("/notify")
-    public ResponseEntity<String> notifyCustomer(@RequestBody CustomerEmailDTo customerEmailDTo) {
-        try {
-        	String applicationReferenceId = customerEmailDTo.getApplicationReferenceId();
-            String status = customerEmailDTo.getStatus();
-            CustomerDto customer = customerEmailDTo.getCustomer();
+	public ResponseEntity<String> notifyCustomer(@RequestBody CustomerEmailDTo customerEmailDTo) {
+		try {
+			String applicationReferenceId = customerEmailDTo.getApplicationReferenceId();
+			String status = customerEmailDTo.getStatus();
+			CustomerDto customer = customerEmailDTo.getCustomer();
 
-            emailOtpService.sendLoanApplicationNotification(applicationReferenceId, status, customer.getFirstName(),
-                    customer.getLastName(),
-                    customer.getEmail());
+			emailOtpService.sendLoanApplicationNotification(applicationReferenceId, status, customer.getFirstName(),
+					customer.getLastName(), customer.getEmail());
 
-            return ResponseEntity.ok("Notification sent successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to send notification: " + e.getMessage());
-        }
-    }
+			return ResponseEntity.ok("Notification sent successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Failed to send notification: " + e.getMessage());
+		}
+	}
 }
-

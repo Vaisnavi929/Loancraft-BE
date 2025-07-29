@@ -3,6 +3,7 @@ package com.narvee.controller;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -30,9 +32,11 @@ import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Privilege;
 import com.narvee.entity.Roles;
 import com.narvee.entity.UserInfo;
+import com.narvee.exception.UserDoesNotExist;
 import com.narvee.repository.IRolesRepository;
 import com.narvee.repository.UserRepository;
 import com.narvee.request.dto.AuthRequest;
+import com.narvee.request.dto.AuthResponse;
 import com.narvee.request.dto.LoginRequest;
 import com.narvee.response.Response;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;
@@ -40,7 +44,7 @@ import com.narvee.util.JwtUtil;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth/")
 public class LoginController {
 	public static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
@@ -49,7 +53,7 @@ public class LoginController {
 
 	@Autowired
 	private UserRepository repository;
-	
+
 	@Autowired
 	private IRolesRepository Rolesrepository;
 
@@ -63,106 +67,125 @@ public class LoginController {
 	private IlogoutService ilogoutService;
 
 	@PostMapping("/generateToken")
-	public ResponseEntity<RestAPIResponse> authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws BadCredentialsException {
-		
+	public ResponseEntity<RestAPIResponse> authenticateAndGetToken(@RequestBody AuthRequest authRequest)
+			throws BadCredentialsException {
 		logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken");
 
-		
-	   UserInfo userDetails = repository.findByEmail(authRequest.getUsername()).get();
-		Authentication authentication=null;
+		UserInfo userDetails = repository.findByEmail(authRequest.getUsername()).orElseThrow(
+				() -> new UserDoesNotExist("User does not exist with email: " + authRequest.getUsername()));
 
-
+		Authentication authentication = null;
 
 		try {
-			 authentication = authenticationManager.authenticate(
+			authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
 			logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken inside try block");
 
 		} catch (BadCredentialsException e) {
 			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => Invalid Credentials");
-			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed","Invalid Credentials"),HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed", "Invalid Credentials"),
+					HttpStatus.UNAUTHORIZED);
+		} catch (UserDoesNotExist e) {
+			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => UserDoesNotExist");
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "User does not exist with email: " + authRequest.getUsername()),
+					HttpStatus.NOT_FOUND);
 		} catch (UsernameNotFoundException e) {
 			logger.error("Username not found: {}", authRequest.getUsername());
-			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "User with email " , e), HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "User with email ", e),
+					HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			logger.error("An error occurred: {}", e.getMessage());
-			 return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e), HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e),
+					HttpStatus.UNAUTHORIZED);
 
 		}
-		 
-		    Response response= new Response();
-			String token = jwtUtil.generateToken(authRequest.getUsername());
-			response.setToken(token);
-			
-			User user = (User) authentication.getPrincipal();
-			
+
+		Response response = new Response();
+		String token = jwtUtil.generateToken(authRequest.getUsername());
+		response.setToken(token);
+
+		User user = (User) authentication.getPrincipal();
+
 //			Set<String> roles = user.getAuthorities().stream().map(r -> r.getAuthority()).collect(Collectors.toSet());
 //			roles.forEach(rl -> {
 //				response.setRoles(rl);
 //			});
-			
-			Set<String> roles = user.getAuthorities().stream()
-				    .map(r -> r.getAuthority().replace("ROLE_", "")) // Remove "ROLE_" if present
-				    .collect(Collectors.toSet());
 
-				roles.forEach(rl -> {
-				    response.setRoles(rl);
-				});
-				
-			List<String> rolePrivileges = new ArrayList<>();
-			System.err.println("roles data:"+roles);
-			String sb=new String();
-			sb=roles.toString();
-			sb=sb.replace("[", "");
-			sb=sb.replace("]", "");
-			Set<Roles> userRole = userDetails.getRoles();
-			Collection<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-			Roles existRole = Rolesrepository.findByRoleNameIgnoreCase(sb).get();
-			response.setUserid(userDetails.getUserId());
-			response.setFullname(userDetails.getName());
-			response.setRoleno(existRole.getRoleId());
-			if (null != existRole) {
-				for (Privilege privilege : existRole.getPrivileges()) {
-					authorities.add(new SimpleGrantedAuthority(privilege.getName()));
+		Set<String> roles = user.getAuthorities().stream().map(r -> r.getAuthority().replace("ROLE_", "")) // Remove
+																											// "ROLE_"
+																											// if
+																											// present
+				.collect(Collectors.toSet());
+
+		roles.forEach(rl -> {
+			response.setRoles(rl);
+		});
+
+		List<String> rolePrivileges = new ArrayList<>();
+		String sb = new String();
+		sb = roles.toString();
+		sb = sb.replace("[", "");
+		sb = sb.replace("]", "");
+		Set<Roles> userRole = userDetails.getRoles();
+		Collection<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+		Roles existRole = Rolesrepository.findByRoleNameIgnoreCase(sb).get();
+		response.setUserid(userDetails.getUserId());
+		response.setFullname(userDetails.getName());
+		response.setRoleno(existRole.getRoleId());
+		if (null != existRole) {
+			for (Privilege privilege : existRole.getPrivileges()) {
+				authorities.add(new SimpleGrantedAuthority(privilege.getName()));
 //					rolePrivileges.add(privilege.getName());
-					rolePrivileges.add(privilege.getName().replaceAll("\\d", ""));
-				}
+				rolePrivileges.add(privilege.getName().replaceAll("\\d", ""));
 			}
-			
-			response.setRolePrivileges(rolePrivileges);;
-			
-			return new ResponseEntity<>(new RestAPIResponse("success", "User logged in successful", response), HttpStatus.OK);
+		}
+
+		response.setRolePrivileges(rolePrivileges);
+		;
+
+		return new ResponseEntity<>(new RestAPIResponse("success", "User logged in successful", response),
+				HttpStatus.OK);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<RestAPIResponse> login(@RequestBody LoginRequest request) {
 		logger.info("Login attempt for: {}", request.getUsernameOrEmail());
 
+		Authentication authentication = null;
+
 		try {
-			Object userOrApplicant = authenticationService.authenticate(request.getUsernameOrEmail(),
-					request.getPassword());
-			logger.info("Login successful for: {}", request.getUsernameOrEmail());
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success", "fetched all loan application details ", userOrApplicant),
-					HttpStatus.OK);
-		} catch (IllegalArgumentException e) {
-			logger.warn("Invalid user type for: {}", request.getUsernameOrEmail());
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("failed", "Invalid user type"),
-					HttpStatus.BAD_REQUEST);
-			
+			authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+					request.getUsernameOrEmail() + "|Customer", request.getPassword()));
+
+			logger.info("!!! inside class : LoginController, !! method : authenticateAndGetToken inside try block");
+
 		} catch (BadCredentialsException e) {
-			logger.warn("Invalid login credentials for: {}", request.getUsernameOrEmail());
+			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => Invalid Credentials");
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed", "Invalid Credentials"),
+					HttpStatus.UNAUTHORIZED);
+		} catch (UserDoesNotExist e) {
+			logger.info("!!! inside class: LoginController, !! method: generateJwtToken => UserDoesNotExist");
 			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("failed","Invalid username/email or password"),
+					new RestAPIResponse("failed", "User does not exist with email: " + request.getUsernameOrEmail()),
+					HttpStatus.NOT_FOUND);
+		} catch (UsernameNotFoundException e) {
+			logger.error("Username not found: {}", request.getUsernameOrEmail());
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "User with email ", e),
 					HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
-			logger.error("An unexpected error occurred during login: {}", e.getMessage());
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("failed","Invalid username/email or password","An error occurred: " + e.getMessage()),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("An error occurred: {}", e.getMessage());
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "An error occurred: ", e),
+					HttpStatus.UNAUTHORIZED);
+
 		}
+
+		AuthResponse auth = authenticationService.authenticate(request.getUsernameOrEmail());
+
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "fetched all loan application details ", auth), HttpStatus.OK);
+
 	}
 
 	@PostMapping("/logout")
@@ -171,7 +194,8 @@ public class LoginController {
 
 		if (token == null || !token.startsWith("Bearer ")) {
 			logger.warn("Invalid token format received");
-			return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("failed","Invalid token format"),HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed", "Invalid token format"),
+					HttpStatus.BAD_REQUEST);
 		}
 
 		String jwtToken = token.substring(7);
@@ -181,12 +205,22 @@ public class LoginController {
 
 		if (!isLoggedOut) {
 			logger.warn("Token already blacklisted: {}", jwtToken);
-			return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("failed","Token already blacklisted"),HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed", "Token already blacklisted"),
+					HttpStatus.BAD_REQUEST);
 		}
 
 		logger.info("Logout successful for token: {}", jwtToken);
-		
-		return new ResponseEntity<RestAPIResponse>( new RestAPIResponse("success","Token already blacklisted"),HttpStatus.BAD_REQUEST);
+
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Token already blacklisted"),
+				HttpStatus.BAD_REQUEST);
 	}
 
+	@GetMapping("/get")
+	public UserInfo test()
+
+	{
+		Optional<UserInfo> u = repository.findByEmail("shanpasha@narveetech.com");
+		return u.get();
+
+	}
 }

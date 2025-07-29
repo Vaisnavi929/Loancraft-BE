@@ -19,41 +19,52 @@ import com.narvee.request.dto.LedgerDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/ledger")
+@RequestMapping("/auth/ledger")
 public class LedgerController {
-	
-	public static final Logger logger=LoggerFactory.getLogger(LedgerController.class);
-	
+
+	public static final Logger logger = LoggerFactory.getLogger(LedgerController.class);
+
 	@Autowired
 	private LedgerService ledgerService;
-	
-	@RequestMapping(value = "/saveledger",method = RequestMethod.POST,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> saveLedger(@RequestBody LedgerDTO ledger){
+
+	@RequestMapping(value = "/saveledger", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> saveLedger(@RequestBody LedgerDTO ledger) {
 		logger.info("!!! inside class : LedgerController , method : saveLedger");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success","saved Ledger Successfully", ledgerService.saveLedger(ledger)), HttpStatus.OK);
-		
+		ledgerService.saveLedger(ledger);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "saved Ledger Successfully"),
+				HttpStatus.OK);
+
 	}
-	@RequestMapping(value ="/updateLedger",method = RequestMethod.PUT,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> updateLedger(@RequestBody Ledger ledger){
+
+	@RequestMapping(value = "/updateLedger", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateLedger(@RequestBody Ledger ledger) {
 		logger.info("!!! inside class : LedgerController, method : updateLedger");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "updated ledger successfully", ledgerService.updateLedger(ledger)), HttpStatus.OK);
-		
+		ledgerService.updateLedger(ledger);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("Success", "updated ledger successfully"),
+				HttpStatus.OK);
+
 	}
-	                                          
-	@RequestMapping(value ="/get/{ledgerId}",method = RequestMethod.GET,produces = "application/json")
-	public ResponseEntity<RestAPIResponse> getByIdledger(@PathVariable Long  ledgerId){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "fetched by id successfully", ledgerService.getById(ledgerId)), HttpStatus.OK);
-		
+
+	@RequestMapping(value = "/get/{ledgerId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getByIdledger(@PathVariable Long ledgerId) {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "fetched by id successfully", ledgerService.getById(ledgerId)),
+				HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value = "/getAll",method =RequestMethod.GET,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> getllLedger(){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "fetched all ledger details successfully", ledgerService.getAll()), HttpStatus.OK);
-		
+
+	@RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> getllLedger() {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "fetched all ledger details successfully", ledgerService.getAll()),
+				HttpStatus.OK);
+
 	}
-	
-	@RequestMapping(value ="/delete/{ledgerId}",method =RequestMethod.DELETE,produces ="application/json")
-	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long ledgerId){
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "deleted by id successfully", ledgerService.deleteById(ledgerId)), HttpStatus.OK);		
+
+	@RequestMapping(value = "/delete/{ledgerId}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long ledgerId) {
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "deleted by id successfully", ledgerService.deleteById(ledgerId)),
+				HttpStatus.OK);
 	}
 }

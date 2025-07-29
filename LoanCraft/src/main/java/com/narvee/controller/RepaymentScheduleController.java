@@ -13,13 +13,19 @@ import com.narvee.request.dto.RepaymentScheduleRequest;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
+@RequestMapping("/auth")
 public class RepaymentScheduleController {
 
-	@PostMapping("/calculateschedule")
+	@PostMapping("/floatingEmi")
 	public ResponseEntity<EmiCalResponseDTO> calculateRepaymentSchedule(@RequestBody RepaymentScheduleRequest request) {
-		EmiCalResponseDTO schedule = EmiCalculatorUtill.calculateRepaymentSchedule(request);
+		EmiCalResponseDTO schedule = EmiCalculatorUtill.calculateRepaymentfloating(request);
 		return ResponseEntity.ok(schedule);
+	}
+
+	@PostMapping("/fixedEmi")
+	public ResponseEntity<EmiCalResponseDTO> calculateFixedEmi(@RequestBody RepaymentScheduleRequest request) {
+		EmiCalResponseDTO response = EmiCalculatorUtill.calculateRepaymentFixed(request);
+		return ResponseEntity.ok(response);
 	}
 
 }

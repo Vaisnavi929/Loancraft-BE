@@ -12,13 +12,9 @@ public interface LoanSanctionDTOS {
 
 	public Double getEmiAmount();
 
-	public String getrepaymentMode();
+	public String getRepaymentMode();
 
 	public String getStatus();
-
-	public String getFirstName();
-
-	public String getLastName();
 
 	public String getReferenceid();
 
@@ -31,6 +27,16 @@ public interface LoanSanctionDTOS {
 	public String getDocumentationCharges();
 	
 	public String getLoanProcessingCharges();
+	
+	public String getLoanAccountNumber();
+	
+	public Boolean getIsRequestedFileUpload();
+
+	public Boolean getIsFileUpload();
+	public Long getLoanId();
+	public String getEmiStartDate();
+	public String getEmiEndDate();
+	public String getFullName();
 	
 
 }
