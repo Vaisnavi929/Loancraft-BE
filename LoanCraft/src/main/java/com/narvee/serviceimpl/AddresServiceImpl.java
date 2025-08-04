@@ -69,7 +69,7 @@ public class AddresServiceImpl implements AddressServices {
 	}
 
 	public AddressUpdateRequest updateAddress(AddressUpdateRequest updateRequest, String customerId) throws Exception {
-		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
+		logger.info("!!! inside class: AddressServiceImpl, method: updateAddress");
 		CurrentAddress currentAddress = mapper.map(updateRequest.getCurrentAddress(), CurrentAddress.class);
 		PermanentAddress permanentAddress = mapper.map(updateRequest.getPermanentAddress(), PermanentAddress.class);
 		Long customreId = EncryptionUtil.decrypt(customerId);
@@ -143,7 +143,7 @@ public class AddresServiceImpl implements AddressServices {
 
 	@Override
 	public PermanentAddress getBypermanentId(Long pAddressId) {
-		logger.info("!!! inside class: AddressServiceImpl, method: savePermanentAddress");
+		logger.info("!!! inside class: AddressServiceImpl, method: getBypermanentId");
 		return permanentAddressRepository.findById(pAddressId).get();
 	}
 
