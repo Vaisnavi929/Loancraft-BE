@@ -19,7 +19,7 @@ public class CustomerRelationshipMangement {
  @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long crmId;
 	private String customerName;
-	private String moblieNumber;
+	private String mobileNumber;
 	private String email;
 	
 	

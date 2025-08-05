@@ -5,6 +5,7 @@ import com.narvee.commons.AuditModel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +32,7 @@ public class CustomerCallTracking extends AuditModel {
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;
 	private String status;
+	
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name ="crm_Id" )
