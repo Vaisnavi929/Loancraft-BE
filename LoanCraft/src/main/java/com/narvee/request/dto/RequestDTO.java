@@ -14,5 +14,6 @@ public class RequestDTO {
 	private String sortField;
 	private String sortOrder;
 	private String keyword;
+	private Long crmId;
 
 }

@@ -29,6 +29,7 @@ public class CustomerCallTracking extends AuditModel {
 	private Long cCtid;
 	private String startTime;
 	private String endTime;
+	private String duration;
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;
 	private String status;
