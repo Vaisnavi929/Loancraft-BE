@@ -70,7 +70,7 @@ public class CustomersController {
 		logger.info("Fetching customer by encrypted ID: {}", id);
 		// Call service method to fetch the customer by decrypted ID
 		CustomersInfo customer = customerService.getById(id);
-		System.out.println();
+		System.out.println(); 
 
 		if (customer != null) {
 			String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId());

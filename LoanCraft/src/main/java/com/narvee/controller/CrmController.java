@@ -24,7 +24,7 @@ import com.narvee.entity.CustomerRelationshipMangement;
 import com.narvee.request.dto.RequestDTO;
 
 @RestController
-@RequestMapping("/api/crm")
+@RequestMapping("/auth/crm")
 public class CrmController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CrmController.class);
@@ -107,7 +107,7 @@ public class CrmController {
 		logger.info("!!! inside class:CrmController,!! method:updateByIdCrm() ");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("done", "updated successfuly",cRms.update(crm)),HttpStatus.OK);
 	}
-	
+															
 	@DeleteMapping("/deleteById/{crmId}")
 	public ResponseEntity<RestAPIResponse>deleteByIdcrm(@PathVariable Long crmId ){
 		logger.info("!!! inside class:CrmController,!! method:deleteByIdcrm() ");

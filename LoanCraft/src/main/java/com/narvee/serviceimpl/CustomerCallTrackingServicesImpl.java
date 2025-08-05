@@ -52,49 +52,49 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 		return customerCallTrackingRepo.findAll();
 	}
 
-	@Override
-	public Page<CustomerCallTracking> findAllCrm(RequestDTO CctRequestDto) {
-		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: findAllCrm()  ");
-
-		int pageNo = CctRequestDto.getPageNumber();
-		int pageSize = CctRequestDto.getPageSize();
-		String sortOrder = CctRequestDto.getSortOrder();
-		String sortField = CctRequestDto.getSortField();
-		String keyword = CctRequestDto.getKeyword();
-
-		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-		if (sortField.equalsIgnoreCase("CREATEDATE")) {
-			sortField = "createddate";
-		} else if (sortField.equalsIgnoreCase("UPDATE")) {
-			sortField = "updateddate";
-		} else if (sortField.equalsIgnoreCase("END TIME")) {
-			sortField = "end_time";
-		} else if (sortField.equalsIgnoreCase("FEED BACK")) {
-			sortField = "feed_back";
-		} else if (sortField.equalsIgnoreCase("START TIME")) {
-			sortField = "start_time";
-
-		} else {
-			sortField = "status";
-		}
-		Sort.Direction sortDirection = Sort.Direction.ASC;
-
-		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
-			sortDirection = Sort.Direction.DESC;
-		}
-
-		Sort sort = Sort.by(sortDirection, sortField);
-		pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-
-		if (keyword.equalsIgnoreCase("empty")) {
-
-			return customerCallTrackingRepo.findAll(pageable);
-		} else {
-			return customerCallTrackingRepo.getAllCctWithSearching(keyword, pageable);
-		}
-
-	}
+//	@Override
+//	public Page<CustomerCallTracking> findAllCct(RequestDTO CctRequestDto) {
+//		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: findAllCrm()  ");
+//
+//		int pageNo = CctRequestDto.getPageNumber();
+//		int pageSize = CctRequestDto.getPageSize();
+//		String sortOrder = CctRequestDto.getSortOrder();
+//		String sortField = CctRequestDto.getSortField();
+//		String keyword = CctRequestDto.getKeyword();
+//
+//		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+//
+//		if (sortField.equalsIgnoreCase("CREATEDATE")) {
+//			sortField = "createddate";
+//		} else if (sortField.equalsIgnoreCase("UPDATE")) {
+//			sortField = "updateddate";
+//		} else if (sortField.equalsIgnoreCase("END TIME")) {
+//			sortField = "end_time";
+//		} else if (sortField.equalsIgnoreCase("FEED BACK")) {
+//			sortField = "feed_back";
+//		} else if (sortField.equalsIgnoreCase("START TIME")) {
+//			sortField = "start_time";
+//
+//		} else {
+//			sortField = "status";
+//		}
+//		Sort.Direction sortDirection = Sort.Direction.ASC;
+//
+//		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+//			sortDirection = Sort.Direction.DESC;
+//		}
+//
+//		Sort sort = Sort.by(sortDirection, sortField);
+//		pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+//
+//		if (keyword.equalsIgnoreCase("empty")) {
+//
+//			return customerCallTrackingRepo.findAll(pageable);
+//		} else {
+//			return customerCallTrackingRepo.getAllCctWithSearching(keyword, pageable);
+//		}
+//
+//	}
 
 	@Override
 	public CustomerCallTracking updateCct(CustomerCallTracking callTracking) {
@@ -108,8 +108,49 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	}
 
 	@Override
-	public List<CustomerCallTracking> getById(Long crmId) {
-		return customerCallTrackingRepo.findByCustomerRelationshipMangement_CrmId(crmId);
+	public Page<CustomerCallTracking>getCctByCrmId(RequestDTO CctRequestDto){
+		
+		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: getCctByCrmId()  ");
+		int pageNo = CctRequestDto.getPageNumber();
+		int pageSize = CctRequestDto.getPageSize();
+		String sortOrder = CctRequestDto.getSortOrder();
+		String sortField = CctRequestDto.getSortField();
+		String keyword = CctRequestDto.getKeyword();
+
+		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+		if (sortField.equalsIgnoreCase("createdDate")) {
+			sortField = "createddate";
+		} else if (sortField.equalsIgnoreCase("updateDate")) {
+			sortField = "updateddate";
+		} else if (sortField.equalsIgnoreCase("endTime")) {
+			sortField = "end_time";
+		} else if (sortField.equalsIgnoreCase("feedBack")) {
+			sortField = "feed_back";
+		} else if (sortField.equalsIgnoreCase("startTime")) {
+			sortField = "start_time";
+		}else if (sortField.equalsIgnoreCase("duracTion")) {
+			sortField ="duration";
+		}
+		else {
+			sortField = "status";
+		}
+		Sort.Direction sortDirection = Sort.Direction.ASC;
+
+		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+			sortDirection = Sort.Direction.DESC;
+		}
+
+		Sort sort = Sort.by(sortDirection, sortField);
+		pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+
+		if (keyword.equalsIgnoreCase("empty")) {
+
+			return customerCallTrackingRepo.getAllCctByCrmId(CctRequestDto.getCrmId(),pageable);
+		} else {
+			return customerCallTrackingRepo.getAllCctByCrmIdWithSearching(keyword,pageable,CctRequestDto.getCrmId());
+		}
+		
 	}
 
 }

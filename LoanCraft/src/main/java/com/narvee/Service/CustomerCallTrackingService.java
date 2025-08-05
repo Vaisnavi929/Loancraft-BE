@@ -16,12 +16,12 @@ public interface CustomerCallTrackingService {
 
 	public List<CustomerCallTracking> getCctAll();
 	
-	public Page<CustomerCallTracking> findAllCrm (RequestDTO CctRequestDto);
+	//public Page<CustomerCallTracking> findAllCct (RequestDTO CctRequestDto);
 	
 	public CustomerCallTracking updateCct(CustomerCallTracking callTracking);
 	
 	public boolean deleteById(Long cCtid);
 	
-	public List<CustomerCallTracking>getById(Long crmId);
+	public Page<CustomerCallTracking>getCctByCrmId(RequestDTO requestDTO);
 
 }
