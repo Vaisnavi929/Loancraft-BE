@@ -31,7 +31,7 @@ public class CustomerCallTracking extends AuditModel {
 	private Long cCtid;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
-	private LocalDateTime duration;
+	private String duration;
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;
 	private String status;
