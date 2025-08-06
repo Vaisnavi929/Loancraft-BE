@@ -7,14 +7,15 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import com.narvee.entity.CustomerCallTracking;
-
+import com.narvee.request.dto.CctResponsesDTO;
+import com.narvee.request.dto.CrmRquestDto;
 import com.narvee.request.dto.RequestDTO;
 
 public interface CustomerCallTrackingService {
 
 	public CustomerCallTracking saveCctAll(CustomerCallTracking customerCallTracking);
-
-	public List<CustomerCallTracking> getCctAll();
+//
+//	public List<CrmRquestDto> getCctAll();
 	
 	//public Page<CustomerCallTracking> findAllCct (RequestDTO CctRequestDto);
 	
@@ -22,6 +23,6 @@ public interface CustomerCallTrackingService {
 	
 	public boolean deleteById(Long cCtid);
 	
-	public Page<CustomerCallTracking>getCctByCrmId(RequestDTO requestDTO);
+	public Page<CctResponsesDTO>getCctByCrmId(RequestDTO requestDTO);
 
 }

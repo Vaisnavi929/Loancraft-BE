@@ -1,5 +1,7 @@
 package com.narvee.entity;
 
+import java.time.LocalDateTime;
+
 import com.narvee.commons.AuditModel;
 
 import jakarta.persistence.CascadeType;
@@ -27,8 +29,8 @@ public class CustomerCallTracking extends AuditModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long cCtid;
-	private String startTime;
-	private String endTime;
+	private LocalDateTime startTime;
+	private LocalDateTime endTime;
 	private String duration;
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;

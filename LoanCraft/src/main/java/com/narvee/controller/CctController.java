@@ -39,19 +39,19 @@ public class CctController {
 		}
 	}
 
-	@GetMapping("/getCct")
-	public ResponseEntity<RestAPIResponse> getAllCct() {
-		logger.info("!!! inside class:CctController,!! method:getAllCct() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "the list of cct", cCts.getCctAll()),
-				HttpStatus.OK);
-	}
-
-	@PostMapping("/cCtBySearching")
-	public ResponseEntity<RestAPIResponse> getAllCct(@RequestBody RequestDTO request) {
-		logger.info("!!! inside class:CrmController,!! method:getAllCct() ");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "CCt searching successfully ", cCts.getCctAll()), HttpStatus.OK);
-	}
+//	@GetMapping("/getCct")
+//	public ResponseEntity<RestAPIResponse> getAllCct() {
+//		logger.info("!!! inside class:CctController,!! method:getAllCct() ");
+//		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "the list of cct", cCts.getCctAll()),
+//				HttpStatus.OK);
+//	}
+//
+//	@PostMapping("/cCtBySearching")
+//	public ResponseEntity<RestAPIResponse> getAllCct(@RequestBody RequestDTO request) {
+//		logger.info("!!! inside class:CrmController,!! method:getAllCct() ");
+//		return new ResponseEntity<RestAPIResponse>(
+//				new RestAPIResponse("success", "CCt searching successfully ", cCts.getCctAll()), HttpStatus.OK);
+//	}
 
 	@PutMapping("/updateCct")
 	public ResponseEntity<RestAPIResponse> updateCct(@RequestBody CustomerCallTracking callTracking) {

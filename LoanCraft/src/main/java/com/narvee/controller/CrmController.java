@@ -1,12 +1,8 @@
 package com.narvee.controller;
 
-import java.util.List;
-
-import org.apache.bcel.generic.NEW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.narvee.Service.CustomerRelationshipMangementService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.CustomerRelationshipMangement;
@@ -65,9 +60,10 @@ public class CrmController {
 
 	@GetMapping("/duplicateCheckEmail/{email}")
 	public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
-
 		logger.info("!!! inside class:CrmController,!! method:checkDuplicateEmail() ");
+		
 		boolean exists = cRms.existsByEmail(email);
+		
 		System.err.println(email);
 
 		if (exists) {
@@ -79,11 +75,11 @@ public class CrmController {
 		}
 	}
 
-	@GetMapping("/duplicateCheckMobleNumber/{moblieNumber}")
-	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String moblieNumber) {
-
+	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
+	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
 		logger.info("!!! inside class:CrmController,!! method:checkDuplicateMoblieNumber() ");
-		boolean existsMoblieNum = cRms.existsByMoblieNumber(moblieNumber);
+		
+		boolean existsMoblieNum = cRms.existsByMoblieNumber(mobileNumber);
 
 		if (existsMoblieNum) {
 			return new ResponseEntity<RestAPIResponse>(
