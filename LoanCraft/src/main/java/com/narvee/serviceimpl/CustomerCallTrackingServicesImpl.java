@@ -16,6 +16,7 @@ import com.narvee.entity.CustomerCallTracking;
 import com.narvee.entity.CustomerRelationshipMangement;
 import com.narvee.repository.CustomerCallTrackingRepo;
 import com.narvee.repository.CustomerRelationshipMangementRepo;
+import com.narvee.request.dto.CctResponsesDTO;
 import com.narvee.request.dto.RequestDTO;
 
 @Repository
@@ -32,6 +33,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	@Override
 	public CustomerCallTracking saveCctAll(CustomerCallTracking cct) {
 		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: saveCctAll()  ");
+		
 		Long crmId = cct.getCustomerRelationshipMangement().getCrmId();
         Optional<CustomerRelationshipMangement> crmOpt = mangementRepo.findById(crmId);
 
@@ -46,11 +48,11 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
     }
 	
 
-	@Override
-	public List<CustomerCallTracking> getCctAll() {
-		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: getCctAll()  ");
-		return customerCallTrackingRepo.findAll();
-	}
+//	@Override
+//	public List<CctResponsesDTO> getCctAll() {
+//		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: getCctAll()  ");
+//		return customerCallTrackingRepo.findAll();
+//	}
 
 //	@Override
 //	public Page<CustomerCallTracking> findAllCct(RequestDTO CctRequestDto) {
@@ -108,22 +110,17 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	}
 
 	@Override
-	public Page<CustomerCallTracking>getCctByCrmId(RequestDTO CctRequestDto){
-		
+	public Page<CctResponsesDTO>getCctByCrmId(RequestDTO CctRequestDto){
 		logger.info("!!! inside class : CustomerCallTrackingServicesImpl,!! method: getCctByCrmId()  ");
+		
 		int pageNo = CctRequestDto.getPageNumber();
 		int pageSize = CctRequestDto.getPageSize();
 		String sortOrder = CctRequestDto.getSortOrder();
 		String sortField = CctRequestDto.getSortField();
 		String keyword = CctRequestDto.getKeyword();
-
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-		if (sortField.equalsIgnoreCase("createdDate")) {
-			sortField = "createddate";
-		} else if (sortField.equalsIgnoreCase("updateDate")) {
-			sortField = "updateddate";
-		} else if (sortField.equalsIgnoreCase("endTime")) {
+		 if (sortField.equalsIgnoreCase("endTime")) {
 			sortField = "end_time";
 		} else if (sortField.equalsIgnoreCase("feedBack")) {
 			sortField = "feed_back";
@@ -131,21 +128,21 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 			sortField = "start_time";
 		}else if (sortField.equalsIgnoreCase("duracTion")) {
 			sortField ="duration";
+		}else if (sortField.equalsIgnoreCase("status")) {
+			sortField ="status";
 		}
-		else {
-			sortField = "status";
+		 else {
+			sortField = "c_ctid";
 		}
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
 		}
-
 		Sort sort = Sort.by(sortDirection, sortField);
 		pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
 		if (keyword.equalsIgnoreCase("empty")) {
-
 			return customerCallTrackingRepo.getAllCctByCrmId(CctRequestDto.getCrmId(),pageable);
 		} else {
 			return customerCallTrackingRepo.getAllCctByCrmIdWithSearching(keyword,pageable,CctRequestDto.getCrmId());

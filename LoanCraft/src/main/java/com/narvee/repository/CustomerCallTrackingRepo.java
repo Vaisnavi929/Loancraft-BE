@@ -8,40 +8,40 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.narvee.entity.CustomerCallTracking;
+import com.narvee.request.dto.CctResponsesDTO;
+import com.narvee.request.dto.CrmRquestDto;
 
 @Repository
 public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTracking, Long> {
 
 	@Query(value = "SELECT c_ctid, createddate,updateddate,end_time,feed_back,start_time,status FROM  loancraft.lms_customer_call_tracking"
 			+ "", nativeQuery = true)
-
-	Page<CustomerCallTracking> getcctinfo(Pageable pageable);
+	Page<CctResponsesDTO> getcctinfo(Pageable pageable);
 
 	@Query(value = "SELECT  c_ctid, createddate,updateddate,end_time,feed_back,start_time,status " + " FROM lms_crm n "
-
 			+ " WHERE LOWER(createddate) LIKE LOWER(CONCAT('%', :keyword, '%')) "
 			+ " OR LOWER(updateddate) LIKE LOWER(CONCAT('%', :keyword, '%')) "
 			+ " OR LOWER(end_time) LIKE LOWER(CONCAT('%', :keyword, '%')) "
 			+ "OR LOWER(feed_back) LIKE LOWER(CONCAT('%', :keyword, '%'))"
 			+ "OR LOWER(start_time) LIKE LOWER(CONCAT('%', :keyword, '%'))"
+			+ "OR LOWER(duration) LIKE LOWER(CONCAT('%', :keyword, '%'))"
 			+ "OR LOWER(status) LIKE LOWER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
+	Page<CctResponsesDTO> getAllCctWithSearching(String keyword, Pageable pageable);
 
-	Page<CustomerCallTracking> getAllCctWithSearching(String keyword, Pageable pageable);
-
-	@Query(value = "SELECT c_ctid, createddate,updateddate,end_time,feed_back,start_time,status FROM  loancraft.lms_customer_call_tracking WHERE crm_id = :crmId"
+	@Query(value = "SELECT crm_id,c_ctid,createddate,updateddate,end_time,feed_back,start_time,status,duration FROM  lms_customer_call_tracking WHERE crm_id = :crmId "
 			+ "", nativeQuery = true)
-	Page<CustomerCallTracking> getAllCctByCrmId(Long crmId, Pageable pageable);
+	Page<CctResponsesDTO> getAllCctByCrmId(Long crmId, Pageable pageable);
 
 	@Query(value = """
-		    SELECT * FROM lms_customer_call_tracking
+		    SELECT * FROM loancraft.lms_customer_call_tracking
 		    WHERE crm_id = :crmId
 		      AND (
-		        CAST(end_time AS TEXT) ILIKE %:keyword% OR
-		        LOWER(feed_back) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
 		        CAST(start_time AS TEXT) ILIKE %:keyword% OR
+		        CAST(end_time AS TEXT) ILIKE %:keyword% OR
+		        CAST(duration AS TEXT) ILIKE %:keyword% OR
+		        LOWER(feed_back) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
 		        LOWER(status) LIKE LOWER(CONCAT('%', :keyword, '%'))
-		      )
-		""", nativeQuery = true)
-	Page<CustomerCallTracking> getAllCctByCrmIdWithSearching(String keyword, Pageable pageable, Long crmId);
+		      )""", nativeQuery = true)
+	Page<CctResponsesDTO> getAllCctByCrmIdWithSearching(String keyword, Pageable pageable, Long crmId);
 
 }

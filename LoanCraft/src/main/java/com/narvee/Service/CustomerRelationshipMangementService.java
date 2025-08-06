@@ -15,9 +15,9 @@ public interface CustomerRelationshipMangementService {
 
 	public boolean existsByEmail(String email);
 	
-	public boolean existsByMoblieNumber(String moblieNumber);
+	public boolean existsByMoblieNumber(String mobileNumber);
 	
-	public Page<CustomerRelationshipMangement> findAllCrm (RequestDTO CrmRequestDto);
+	public Page<CustomerRelationshipMangement> findAllCrm(RequestDTO CrmRequestDto);
 	
 	public CustomerRelationshipMangement update(CustomerRelationshipMangement crm);
 	

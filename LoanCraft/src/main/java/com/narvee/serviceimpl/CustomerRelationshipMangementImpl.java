@@ -44,9 +44,9 @@ public class CustomerRelationshipMangementImpl implements CustomerRelationshipMa
 	}
 
 	@Override
-	public boolean existsByMoblieNumber(String moblieNumber) {
+	public boolean existsByMoblieNumber(String mobileNumber) {
 
-		return customerRelationshipMangementRepo.existsByMobileNumber(moblieNumber);
+		return customerRelationshipMangementRepo.existsByMobileNumber(mobileNumber);
 	}
 
 	@Override
@@ -57,29 +57,29 @@ public class CustomerRelationshipMangementImpl implements CustomerRelationshipMa
 		String sortOrder = CrmRequestDto.getSortOrder();
 		String sortField = CrmRequestDto.getSortField();
 		String keyword = CrmRequestDto.getKeyword();
-
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-		if (sortField.equalsIgnoreCase("Name")) {
+		
+		if (sortField.equalsIgnoreCase("customerName")) {
 			sortField = "customer_name";
-		} else if (sortField.equalsIgnoreCase("Email")) {
+		} else if (sortField.equalsIgnoreCase("email")) {
 			sortField = "email";
-
+		} else if (sortField.equalsIgnoreCase("mobileNumber")) {
+			sortField = "mobile_number";
 		} else {
-			sortField = "moblie_number";
+			sortField = "crm_id";
 		}
+		
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
-		}
+	}
 
 		Sort sort = Sort.by(sortDirection, sortField);
-		pageable = PageRequest.of(pageNo - 1, pageSize, sort);
-
+	pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+	      
 		if (keyword.equalsIgnoreCase("empty")) {
-
-			return customerRelationshipMangementRepo.findAll(pageable);
+			return customerRelationshipMangementRepo.getcrminfo(pageable);
 		} else {
 			return customerRelationshipMangementRepo.getAllCrmWithSearching(keyword, pageable);
 		}
