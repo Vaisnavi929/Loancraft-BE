@@ -21,7 +21,7 @@ import com.narvee.entity.CustomerCallTracking;
 import com.narvee.request.dto.RequestDTO;
 
 @RestController
-@RequestMapping("/api/cct")
+@RequestMapping("/auth/cct")
 public class CctController {
 	private static final Logger logger = LoggerFactory.getLogger(CctController.class);
 

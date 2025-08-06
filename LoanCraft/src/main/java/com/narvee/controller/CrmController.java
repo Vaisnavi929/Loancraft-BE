@@ -19,7 +19,7 @@ import com.narvee.entity.CustomerRelationshipMangement;
 import com.narvee.request.dto.RequestDTO;
 
 @RestController
-@RequestMapping("/api/crm")
+@RequestMapping("/auth/crm")
 public class CrmController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CrmController.class);
@@ -68,7 +68,7 @@ public class CrmController {
 
 		if (exists) {
 			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed", "Email already exists ", exists),
-					HttpStatus.CONFLICT);
+					HttpStatus.OK);
 		} else {
 			return new ResponseEntity<RestAPIResponse>(
 					new RestAPIResponse("success.", "Email verified successfully  ", exists), HttpStatus.OK);
