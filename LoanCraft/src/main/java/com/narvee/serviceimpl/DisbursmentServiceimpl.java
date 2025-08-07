@@ -118,6 +118,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 			sortField = "account_no";
 		else if (sortField.equalsIgnoreCase("isfc"))
 			sortField = "isfc";
+
 		else if (sortField.equalsIgnoreCase("date"))
 			sortField = "date";
 		else if (sortField.equalsIgnoreCase("disbursedAmount"))
@@ -133,7 +134,7 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		else if (sortField.equalsIgnoreCase("referenceid"))
 			sortField = "referenceid";
 		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
-			sortField = "loan_account_number";
+			sortField = "loanAccountNumber";
 		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
 		else
