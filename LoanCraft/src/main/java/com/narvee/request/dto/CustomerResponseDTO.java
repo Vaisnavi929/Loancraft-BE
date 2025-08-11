@@ -15,5 +15,9 @@ public interface CustomerResponseDTO {
 	public String getUpdateddate();
 	
 	public String getStatus();
+	
+	public String getLoanReaquired();
+	
+	public String getLocation();
 
 }

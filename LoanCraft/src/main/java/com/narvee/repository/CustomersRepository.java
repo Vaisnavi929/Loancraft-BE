@@ -18,7 +18,7 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 
 	Optional<CustomersInfo> findByEmailOrMobileNumber(String email, String mobileNumber);
 
-	@Query(value = "SELECT customer_id,email,account_number,CONCAT(first_name, ' ', last_name) AS full_name,mobile_number,highest_qualification,updateddate FROM lms_customers_info", nativeQuery = true)
+	@Query(value = "SELECT customer_id,email,account_number,CONCAT(first_name, ' ', last_name) AS full_name,mobile_number,highest_qualification,updateddate,laon_required AS loan_reaquired ,location FROM lms_customers_info", nativeQuery = true)
 	Page<CustomerResponseDTO> findAllPreSalesApplicants(Pageable pageable);
 
 	@Query(value = """

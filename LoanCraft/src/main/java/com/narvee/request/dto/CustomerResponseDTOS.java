@@ -14,6 +14,8 @@ public class CustomerResponseDTOS {
 	private String accountNumber;
 	private String fullName;
 	private String mobileNumber;
+	private String loanRequired;
+	private String location;
 
 
 }
