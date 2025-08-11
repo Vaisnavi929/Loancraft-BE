@@ -35,7 +35,8 @@ public class LmsRepayment {
 	private String amountStatus;
 	private Double interest;
 	private Double principalAmount;
-	private Double otherCharges=0.0;
+	private LocalDate lastPaidDate;
+	private Double otherCharges;
 
 	@ManyToOne
 	@JoinColumn(name = "disbursment_id")

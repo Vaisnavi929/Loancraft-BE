@@ -20,7 +20,7 @@ import jakarta.transaction.Transactional;
 
 public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long> {
 
-	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id as referenceId,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id\r\n"
+	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id as referenceId,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id,c.cheque_clearance_date "
 			+ "FROM lms_check_deposit c JOIN lms_disbursment ld\r\n"
 			+ "on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id \r\n"
 			+ "join lms_customers_info ci on ci.customer_id=a.customer_id ", nativeQuery = true)
@@ -28,15 +28,15 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE lms_check_deposit SET status =:status,reason=:reason,updatedby=:userid,updateddate=:updateddate,cheque_return_charges=:charges WHERE id =:id", nativeQuery = true)
+	@Query(value = "UPDATE lms_check_deposit SET status =:status,reason=:reason,updatedby=:userid,updateddate=:updateddate,cheque_return_charges=:charges ,cheque_clearance_date = :chequeClearanceDate   WHERE id =:id", nativeQuery = true)
 	int updateStatus(@Param("id") Long id, @Param("status") String status, String reason, Long userid, Double charges,
-			LocalDateTime updateddate);
+			LocalDateTime updateddate, LocalDate chequeClearanceDate);
 
-	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id AS referenceId ,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id"
-			+ "FROM lms_check_deposit c JOIN lms_disbursment ld on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id"
+	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id AS referenceId ,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id ,c.cheque_clearance_date "
+			+ "FROM lms_check_deposit c JOIN lms_disbursment ld on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id "
 			+ "join lms_customers_info ci on ci.customer_id=a.customer_id WHERE CAST(c.amount AS TEXT) ILIKE CONCAT('%',:keyword, '%') OR CAST(c.posting_date AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR "
 			+ "CONCAT(ci.first_name, ' ', ci.last_name) ILIKE  CONCAT('%', :keyword, '%') OR c.status ILIKE CONCAT('%',:keyword, '%') OR c.cheque_number ILIKE CONCAT('%',:keyword, '%') OR "
-			+ "c.reason ILIKE CONCAT('%',:keyword, '%') OR c.remarks ILIKE CONCAT('%',:keyword, '%') OR a.application_reference_id ILIKE CONCAT('%',:keyword, '%') ", nativeQuery = true)
+			+ "c.reason ILIKE CONCAT('%',:keyword, '%') OR c.remarks ILIKE CONCAT('%',:keyword, '%') OR a.application_reference_id ILIKE CONCAT('%',:keyword, '%') OR CAST(c.cheque_clearance_date AS TEXT) ILIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
 	public Page<CheckDepositResponseDTO> getAllCheckDepositWithKeyword(Pageable pageable,
 			@Param("keyword") String keyword);
 
@@ -47,9 +47,15 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 
 	public List<CheckDeposit> findByStatusAndPostingDate(String status, LocalDate postingDate);
 
-	@Query(value = "SELECT r.repayment_id, TO_CHAR(r.due_date, 'Month YYYY') AS due_month_year "
-			+ "FROM lms_repayment r " + "JOIN lms_disbursment ld ON r.disbursment_id = ld.disbursment_id "
-			+ "WHERE ld.disbursment_id = :disbursmentId", nativeQuery = true)
+	@Query(value = """
+			SELECT r.repayment_id,
+			     TO_CHAR(r.due_date, 'Month YYYY') AS due_month_year
+			     FROM loancraft.lms_repayment r
+			     JOIN loancraft.lms_disbursment ld ON r.disbursment_id = ld.disbursment_id
+			     WHERE ld.disbursment_id =:disbursmentId
+			     AND r.due_date <= CURRENT_DATE
+			     ORDER BY r.due_date ASC
+							""", nativeQuery = true)
 	public List<RepaymentDropdown> getRepaymentMonthAndYearByDisbursmentId(@Param("disbursmentId") Long disbursmentId);
 
 	@Query(value = """
@@ -59,6 +65,8 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 
 	boolean existsByLmsRepaymentRepaymentId(Long repaymentId);
 
-	public CheckDeposit LmsRepaymentRepaymentId(Long lmsRepayment);
+	public List<CheckDeposit> LmsRepaymentRepaymentId(Long lmsRepayment);
+	
+	
 
 }

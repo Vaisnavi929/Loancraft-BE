@@ -22,10 +22,12 @@ public interface CustomerService {
 	CustomersInfo update(CustomerUpdateRequest customerUpdateDto);
 
 	Page<CustomerResponseDTOS> getAllCustomers(SortingDTO sortingDTO);
+	
+	Page<CustomerResponseDTOS> getAllPreSalesCustomers(SortingDTO sortingDTO);
 
 	Long checkCustomerEligibility(String customerId) throws Exception;
 
 	public boolean isEmailDuplicate(String email);
 
-	public List<ApplicationResponseDto> getApplicationsByCustomerId(String customerId,String remarks);
+	public List<ApplicationResponseDto> getApplicationsByCustomerId(String customerId);
 }

@@ -26,6 +26,12 @@ public class RegisterVO {
     @Pattern(regexp = "\\d{10}", message = "Mobile number must be 10 digits")
 	private String mobileNumber;
 
+	private String location;
+	
+	private String Occupation;
+	
+	private String loanRequired; 
+	
 	@Email(message = "Email address is not valid !!")
 	@NotEmpty(message = "Email is required !!")
 	private String email;

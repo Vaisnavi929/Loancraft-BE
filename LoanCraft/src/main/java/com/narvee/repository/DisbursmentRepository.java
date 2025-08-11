@@ -21,8 +21,8 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    d.disb_ref_no,
 			    d.account_no,
 			    la.application_reference_id AS referenceid,
-			    la.is_requested_file_upload,la.is_file_upload,
-				ls.loan_account_number,
+			    ls.loan_account_number AS loanAccountNumber ,
+			    la.is_requested_file_upload,la.is_file_upload,	
 			    d.branch,
 			    d.date,
 			    d.createddate,
@@ -30,6 +30,7 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    d.remarks,
 			    CONCAT(c.first_name, ' ', c.last_name) AS full_name,
 			    d.updateddate as updateddate
+			   
 			FROM
 			    lms_disbursment d
 			JOIN
@@ -48,14 +49,15 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 			    d.account_no,
 			    la.application_reference_id AS referenceid,
 			    la.is_requested_file_upload,la.is_file_upload,
-				ls.loan_account_number,
+			
 			    d.branch,
 			    d.date,
 			    d.createddate,
 			    d.isfc,
 			    d.remarks,
 			    CONCAT(c.first_name, ' ', c.last_name) AS full_name,
-			    d.updateddate as updateddate
+			    d.updateddate as updateddate,
+			    	ls.loan_account_number
 			FROM
 			    lms_disbursment d
 			JOIN

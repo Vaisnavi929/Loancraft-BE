@@ -1,6 +1,8 @@
 
 package com.narvee.controller;
 
+import java.time.LocalDate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +33,8 @@ public class CheckDepositController {
 	@RequestMapping(value = "/saveCheck", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveCheckDeposit(@RequestBody CheckDepositDTO checkDepositDTO) {
 		logger.info("!!! Inside class: CheckDepositController, method: saveCheckDeposit()");
-
-		if (depositService.existsByLmsRepaymentRepaymentId(checkDepositDTO.getRepaymentId())) {
-			return new ResponseEntity<>(
-					new RestAPIResponse("fail", "Cheque already deposited for the selected period."), HttpStatus.OK);
-		} else {
 			return new ResponseEntity<>(new RestAPIResponse("success", "Cheque deposit processed successfully.",
 					depositService.saveDeposit(checkDepositDTO)), HttpStatus.OK);
-		}
 	}
 
 	@RequestMapping(value = "/updateCheck", method = RequestMethod.PUT, produces = "application/json")
@@ -58,13 +54,13 @@ public class CheckDepositController {
 				HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/UpdateStatus/{id}/{status}/{reason}/{userid}", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/UpdateStatus/{id}/{status}/{reason}/{userid}/{chequeClearanceDate}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> UpdateStatus(@PathVariable("id") Long id,
 			@PathVariable("status") String status, @PathVariable("reason") String reason,
-			@PathVariable("userid") Long userid) {
+			@PathVariable("userid") Long userid,@PathVariable("chequeClearanceDate") LocalDate chequeClearanceDate) {
 		logger.info("!!! inside class:CheckDepositController,!! method:UpdateStatus()");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status",
-				depositService.updateStatus(id, status, reason, userid)), HttpStatus.OK);
+				depositService.updateStatus(id, status, reason, chequeClearanceDate,userid)), HttpStatus.OK);
 
 	}
 
@@ -90,6 +86,14 @@ public class CheckDepositController {
 	public ResponseEntity<RestAPIResponse> getRepaymentMonthYear(@PathVariable Long disbursmentId) {
 		logger.info("!!! inside class:CheckDepositController,!! method:getById()");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched ById status",
+				depositService.getRepaymentMonthYear(disbursmentId)), HttpStatus.OK);
+
+	}
+	
+	@RequestMapping(value = "/updateIsApproved/", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateStatusOfRequestedCheck(@PathVariable Long disbursmentId) {
+		logger.info("!!! inside class:CheckDepositController,!! method:updateStatusOfRequestedCheck()");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status",
 				depositService.getRepaymentMonthYear(disbursmentId)), HttpStatus.OK);
 
 	}

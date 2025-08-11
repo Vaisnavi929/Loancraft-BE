@@ -30,7 +30,6 @@ public class ReceiptController {
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "successfully fetched Emi Info", receiptService.getReceiptInfo(dId)),
 				HttpStatus.OK);
-
 	}
 
 	@RequestMapping(value = "/getEmiInfoByReceiptDate/{dId}/{date}", method = RequestMethod.GET, produces = "application/json")

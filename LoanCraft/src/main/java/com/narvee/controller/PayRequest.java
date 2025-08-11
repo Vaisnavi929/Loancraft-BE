@@ -14,15 +14,19 @@ public class PayRequest {
 	private Long did;
 
 	private Double amount;
-	
-	private Double otherCharges;
+
+	private double otherCharges;
 
 	private LocalDate paymentDate;
 
 	private String paymentMode; // e.g., CASH, UPI, BANK_TRANSFER
 
-	private String referenceNumber; // Transaction ID, cheque number, etc.
+	private String transactionId; // Transaction ID, cheque number, etc.
 
 	private String remarks;
+
+	private String description;
+
+	private String otherChargesType;
 
 }

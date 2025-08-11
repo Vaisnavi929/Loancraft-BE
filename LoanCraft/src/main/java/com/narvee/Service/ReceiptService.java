@@ -13,4 +13,5 @@ public interface ReceiptService {
 
 	public ReceiptResponse payLoan(PayRequest payRequest);
 
+
 }

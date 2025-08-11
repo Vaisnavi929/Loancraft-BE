@@ -1,6 +1,7 @@
 package com.narvee.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.narvee.commons.AuditModel;
@@ -13,16 +14,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "lms_repayment_transactions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "repayment")
 @EqualsAndHashCode(callSuper = true)
 public class RepaymentTransactions extends AuditModel {
 	private static final long serialVersionUID = 1L;
@@ -32,24 +36,34 @@ public class RepaymentTransactions extends AuditModel {
 	private Long id;
 
 	@Column(nullable = false)
-	private LocalDate paymentDate;
+	private LocalDateTime paymentDate;
 
 	@Column(nullable = false)
-	private Double amountPaid;
+
+	private Double amountPaid = 0.0;
+
+//	private Double amountDue = 0.0;
 
 	@Column(nullable = false)
-	private Double principalComponent;
+	private Double principalComponent = 0.0;
 
 	@Column(nullable = false)
-	private Double interestComponent;
+	private Double interestComponent = 0.0;
 
 	@Column(nullable = false)
-	private Double penaltyComponent;
+	private Double penaltyComponent = 0.0;
 
-	@Column(nullable = true)
-	private Double remainingBalance;
+//	@Column(nullable = true)
+//	private Double remainingBalance = 0.0;
 
-	private Double otherCharges;
+	private Double otherCharges = 0.0;
+
+	private String otherChargesType;
+
+	@Column(nullable = false)
+	private Double latePenalty = 0.0;
+
+	private Double chequeReturnCharges = 0.0;
 
 	@Column(length = 50)
 	private String paymentMode; // e.g., UPI, NEFT, Cash, etc.
@@ -59,10 +73,36 @@ public class RepaymentTransactions extends AuditModel {
 
 	@Column(length = 255)
 	private String description;
+	
+	private String transactionId;
+	
+	private String txnDescription;
+	
+	private Long penaltyUncoveredDays = 0l;
 
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name = "repayment_id")
 	@JsonBackReference
 	private LmsRepayment repayment;
+	
+	@ManyToOne
+	@JoinColumn(name = "disbursement_id")
+	private Disbursment disbursment;
+	
+	
+
+	@Transient
+	private LocalDate dueDate;
+	
+	@Transient
+	private double dueAmount;
+	
+	
+	
+	
+	
+
+	
+	
 
 }

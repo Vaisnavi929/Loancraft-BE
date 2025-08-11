@@ -40,7 +40,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 			responseDto.setLastName(applicant.getLastName());
 			responseDto.setMobileNumber(applicant.getMobileNumber());
 			responseDto.setEmail(applicant.getEmail());
-			responseDto.setToken(token); // Set the generated token
+			responseDto.setToken(token);
+			responseDto.setLoanRequired(applicant.getLoanRequired());
+			responseDto.setLocation(applicant.getLocation());
+			responseDto.setOccupation(applicant.getOccupation());// Set the generated token
 
 			return responseDto; // Return ResponseDto with applicant details and token
 		} 

@@ -19,12 +19,32 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 
 	Optional<UserInfo> findByName(String name);
 
-	@Query(value = "SELECT r.role_name as designation, u.user_Id, u.email,u.name, u.mobile_number,u.status,date(u.createddate) as createddate,date(u.updateddate) as updateddate,uf.name as addedby  FROM lms_user_info u "
-			+ "left join lms_user_info uf on   u.addedby=uf.user_id "
-			+ "join lms_user_roles  ur on ur.user_id=u.user_Id "
-			+ "join lms_roles r  on r.role_id=ur.role_id", nativeQuery = true)
-	Page<UserResponseDTO> findAllUsers(Pageable pageable);
+//	@Query(value = "SELECT r.role_name as designation, u.user_Id, u.email,u.name, u.mobile_number,u.status,date(u.createddate) as createddate,date(u.updateddate) as updateddate,uf.name as addedby  FROM lms_user_info u "
+//			+ "left join lms_user_info uf on   u.addedby=uf.user_id "
+//			+ "join lms_user_roles  ur on ur.user_id=u.user_Id "
+//			+ "join lms_roles r  on r.role_id=ur.role_id", nativeQuery = true)
+//	Page<UserResponseDTO> findAllUsers(Pageable pageable);
 
+	@Query(value = """
+			SELECT 
+			    r.role_name AS designation, 
+			    u.user_Id, 
+			    u.email,
+			    u.name, 
+			    u.mobile_number,
+			    u.status,
+			    DATE(u.createddate) AS createddate,
+			    DATE(u.updateddate) AS updateddate,
+			    uf.name AS addedby, 
+			    uu.name AS updatedby  
+			FROM lms_user_info u
+			LEFT JOIN lms_user_info uf ON u.addedby = uf.user_id
+			LEFT JOIN lms_user_info uu ON u.updatedby = uu.user_id 
+			JOIN lms_user_roles ur ON ur.user_id = u.user_Id
+			JOIN lms_roles r ON r.role_id = ur.role_id
+			""", nativeQuery = true)
+			Page<UserResponseDTO> findAllUsers(Pageable pageable);
+	
 	@Query(value = """
 				SELECT
 			    r.role_name AS designation,

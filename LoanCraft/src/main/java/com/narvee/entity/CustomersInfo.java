@@ -61,6 +61,15 @@ public class CustomersInfo extends AuditModel {
 
 	@Column(name = "email")
 	private String email;
+	
+	@Column(name="location")
+	private String location;
+	
+	@Column(name="occupation")
+	private String Occupation;
+	
+	@Column(name="laon_required")
+	private String loanRequired;
 
 	@Column(name = "password")
 	@JsonIgnore

@@ -35,6 +35,6 @@ public interface DisbursmentResponseDTO {
 
 	public Boolean getIsFileUpload();
 
-	public String getLoanAccountNumber();
+	public String getloanAccountNumber();
 
 }
