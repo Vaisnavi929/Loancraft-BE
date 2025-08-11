@@ -13,5 +13,7 @@ public interface CustomerResponseDTO {
 	public String getMobileNumber();
 
 	public String getUpdateddate();
+	
+	public String getStatus();
 
 }

@@ -15,4 +15,5 @@ public class CustomerResponseDTOS {
 	private String fullName;
 	private String mobileNumber;
 
+
 }

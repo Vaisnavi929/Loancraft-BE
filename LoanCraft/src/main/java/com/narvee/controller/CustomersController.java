@@ -83,11 +83,11 @@ public class CustomersController {
 		}
 	}
 
-	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json") // --- presales 
+	@RequestMapping(value = "/getAllPreSales", method = RequestMethod.POST, produces = "application/json") // --- presales 
 	public ResponseEntity<RestAPIResponse> getAllApplicantsPreSales(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer pre sales  with sorting: {}", sortingDTO);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
-				customerService.getAllCustomers(sortingDTO)), HttpStatus.OK);
+				customerService.getAllPreSalesCustomers(sortingDTO)), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json")   // --- customers 

@@ -84,17 +84,10 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Page<CustomerResponseDTO> findAllApplicants(Pageable pageable);
 	
 	@Query(value = """
-			SELECT
-		    customer_id,
-		    email,
-		    account_number,
-		    CONCAT(first_name, ' ', last_name) AS full_name,
-		    mobile_number,
-		    highest_qualification,
-		    updateddate
-		FROM
-		    lms_customers_info
-		WHERE
+			SELECT lc.customer_id,lc.email,lc.account_number,  CONCAT(lc.first_name, ' ', lc.last_name) AS full_name,lc.mobile_number,lc.highest_qualification,lc.updateddate,ls.status "
+			FROM loancraft.lms_customers_info lc JOIN loancraft.lms_applications la ON lc.customer_id = la.customer_id JOIN loancraft.lms_loan_saction ls ON la.loan_id = ls.loan_id "
+			WHERE ls.status = 'disbursed'
+		AND
 		    email ILIKE CONCAT('%', :keyword, '%') OR
 		    mobile_number ILIKE CONCAT('%', :keyword, '%') OR
 		    highest_qualification ILIKE CONCAT('%', :keyword, '%') OR

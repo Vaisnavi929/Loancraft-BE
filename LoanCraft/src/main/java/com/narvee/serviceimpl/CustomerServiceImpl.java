@@ -263,7 +263,7 @@ public class CustomerServiceImpl implements CustomerService {
 				customerPage = customerRepository.findAllPreSalesApplicants(pageable);
 			} else {
 				logger.info("Inside ApplicantServiceImpl: getAllApplicants, searching ");
-				customerPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
+				customerPage = customerRepository.findPreSalesApplicantsByKeyword(keyword, pageable);
 			}
 			Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
 				// Encrypt the customerId (convert to String first)
