@@ -148,7 +148,7 @@ public class CustomerServiceImpl implements CustomerService {
 				e.printStackTrace();
 			}
 			return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-					dto.getMobileNumber());
+					dto.getMobileNumber(),dto.getLoanReaquired(),dto.getLocation());
 		});
 
 		return encryptedPage;
@@ -275,7 +275,7 @@ public class CustomerServiceImpl implements CustomerService {
 					e.printStackTrace();
 				}
 				return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-						dto.getMobileNumber());
+						dto.getMobileNumber(),dto.getLoanReaquired(),dto.getLocation());
 			});
 
 			return encryptedPage;
