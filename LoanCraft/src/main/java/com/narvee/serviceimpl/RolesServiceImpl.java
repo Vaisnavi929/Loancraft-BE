@@ -82,17 +82,46 @@ public class RolesServiceImpl implements IRolesService {
 		return iRoleRepo.findById(id).get();
 	}
 
+	
+//	@Override
+//	public boolean updateRole(Roles role) {
+//
+//		iRoleRepo.findRoleByRolName(role.getRoleName().toLowerCase());
+//		
+//		Optional<Roles> roles = iRoleRepo.findByRoleNameAndRoleIdNot(role.getRoleName(), role.getRoleId());
+//		//System.err.println("roles-------------" + roles);
+//		if ((roles == null || !roles.isPresent())) {
+//			iRoleRepo.save(role);
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+	
+	@Override
 	public boolean updateRole(Roles role) {
-
-		iRoleRepo.findRoleByRolName(role.getRoleName().toLowerCase());
-		Optional<Roles> roles = iRoleRepo.findByRoleNameAndRoleIdNot(role.getRoleName(), role.getRoleId());
-		if ((roles == null || !roles.isPresent())) {
-			iRoleRepo.save(role);
-			return true;
-		} else {
-			return false;
+		Optional<Roles> existingRoleOpt = iRoleRepo.findById(role.getRoleId());
+		
+		if (!existingRoleOpt.isPresent()) {
+			return false; // or throw an exception
 		}
+
+		Roles existingRole = existingRoleOpt.get();
+
+		// Check if name is being updated and if it's unique
+		Optional<Roles> duplicateCheck = iRoleRepo.findByRoleNameAndRoleIdNot(role.getRoleName(), role.getRoleId());
+
+		if (duplicateCheck.isPresent()) {
+			return false; // Duplicate name
+		}
+
+		// Update only what needs to be updated, don't touch privileges
+		existingRole.setRoleName(role.getRoleName());
+
+		iRoleRepo.save(existingRole);
+		return true;
 	}
+
 
 	@Override
 	public boolean deleteRole(Long id) {

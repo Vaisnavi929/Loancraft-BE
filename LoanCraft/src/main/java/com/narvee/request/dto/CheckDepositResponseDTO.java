@@ -10,6 +10,8 @@ public interface CheckDepositResponseDTO {
 	public String getChequeNumber();
 
 	public LocalDate getPostingDate();
+	
+	public LocalDate getChequeClearanceDate();
 
 	public Double getAmount();
 

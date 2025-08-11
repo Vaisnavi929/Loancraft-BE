@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class PaymentStatementDTO {
 	private Long repaymentId;
 	private LocalDate dueDate;
+	private LocalDate lastPaidDate;
 	private double dueAmount;
 	private Double amountPaid;
 	private String amountStatus;
@@ -23,6 +24,6 @@ public class PaymentStatementDTO {
 	private double interest;
 	private double principalAmount;
 	private double amountSanctioned;
-	private double otherCharges;
+	private long penaltyUncoveredDays;
 
 }

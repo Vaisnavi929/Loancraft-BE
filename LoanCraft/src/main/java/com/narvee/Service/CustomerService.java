@@ -22,6 +22,8 @@ public interface CustomerService {
 	CustomersInfo update(CustomerUpdateRequest customerUpdateDto);
 
 	Page<CustomerResponseDTOS> getAllCustomers(SortingDTO sortingDTO);
+	
+	Page<CustomerResponseDTOS> getAllPreSalesCustomers(SortingDTO sortingDTO);
 
 	Long checkCustomerEligibility(String customerId) throws Exception;
 

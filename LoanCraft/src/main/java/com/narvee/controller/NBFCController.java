@@ -92,6 +92,23 @@ public class NBFCController {
 		}
 
 	}
+	
+	@GetMapping(value = "/nbfc/DuplicateCheckIdentificationNumber/{corporateIdentificationNo}")
+	public ResponseEntity<RestAPIResponse> DuplicateCheckIdentificationNumber(@PathVariable String corporateIdentificationNo) throws Exception {
+		logger.info("!!! inside class: NBFCController, method: DuplicateCheck");
+		boolean checkDuplicate = nbfcService.NbfcDuplicateCheckCorporateIdentificationNo(corporateIdentificationNo);
+
+		if (checkDuplicate) {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "CorporateIdentificationNo already Exists", checkDuplicate), HttpStatus.OK);
+
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "CorporateIdentificationNo verified successfully", checkDuplicate), HttpStatus.OK);
+
+		}
+
+	}
 
 	@PostMapping(value = "/nbfc/getAllNbfcs")
 	public ResponseEntity<RestAPIResponse> getAllNbfcs(@RequestBody SortingRequestDto dto) throws Exception {

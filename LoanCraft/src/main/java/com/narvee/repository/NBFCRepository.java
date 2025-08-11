@@ -13,6 +13,8 @@ public interface NBFCRepository extends JpaRepository<NBFC, Long> {
 	boolean existsByEmailIgnoreCase(String email);
 
 	boolean existsByNbfcNameIgnoreCase(String nbfcName);
+	
+	boolean existsByCorporateIdentificationNoIgnoreCase(String Number);
 
 
 	@Query(value = "SELECT id,nbfc_name,regional_office,classification,corporate_identification_no,layer,address, email, updateddate FROM  lms_nbfc", nativeQuery = true)

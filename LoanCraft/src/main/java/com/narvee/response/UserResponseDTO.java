@@ -9,8 +9,10 @@ public interface UserResponseDTO {
 	public String getCreateddate();
 	public String getUpdateddate();
 	public String getAddedby();
+	
+	public String getUpdatedby();
+	
 	public String getDesignation();
 	public String getStatus();
-	
 
 }

@@ -110,8 +110,8 @@ public class NBFCServiceImpl implements NBFCService {
 				nbfc.put("id", object[0]);
 				nbfc.put("nbfcName", object[1]);
 				nbfc.put("regionalOffice", object[2]);
-				nbfc.put("corporateIdentificationNo", object[3]);
-				nbfc.put("classification", object[4]);
+				nbfc.put("corporateIdentificationNo", object[4]);
+				nbfc.put("classification", object[3]);
 				nbfc.put("layer", object[5]);
 				nbfc.put("address", object[6]);
 				nbfc.put("email", object[7]);
@@ -144,6 +144,12 @@ public class NBFCServiceImpl implements NBFCService {
 		response.put("isLast", nbfclist.isLast());
 		response.put("content", nbfcs);
 		return response;
+	}
+
+	@Override
+	public boolean NbfcDuplicateCheckCorporateIdentificationNo(String identificationNo) {
+		logger.info("!!! inside class: NBFCServiceImpl, method: NbfcDuplicateCheckCorporateIdentificationNo");
+		return nbfcRepository.existsByCorporateIdentificationNoIgnoreCase(identificationNo);
 	}
 
 }

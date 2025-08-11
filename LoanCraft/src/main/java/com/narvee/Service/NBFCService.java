@@ -19,5 +19,7 @@ public interface NBFCService {
 	public boolean EmailDuplicateCheck(String email);
 
 	public boolean NbfcDuplicateCheck(String nbfc);
+	
+	public boolean NbfcDuplicateCheckCorporateIdentificationNo(String identificationNo);
 
 }
