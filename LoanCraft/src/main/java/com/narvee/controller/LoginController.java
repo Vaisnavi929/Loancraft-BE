@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.IlogoutService;
@@ -213,7 +214,35 @@ public class LoginController {
 
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "Token already blacklisted"),
 				HttpStatus.BAD_REQUEST);
-	}
+	} 
+	
+	
+//	@RequestMapping(value = "/forgotPassword", method = RequestMethod.POST, produces = "application/json")
+//	public ResponseEntity<RestAPIResponse> forgotPassword(@RequestBody ResetPassword user) {
+//		logger.info("!!! inside class: LoginController, !! method: processForgotPassword ");
+//		UserInfo userDetails = repository.findByEmail(user.getEmail());
+//		if (userDetails != null) {
+//			long expirationTime = System.currentTimeMillis() + OTP.OTPEXP;
+//			OTP otp = new OTP();
+//			String genOtp = OTPGenerator.generateRandomPassword(4);
+//			otp.setExpirationTime(expirationTime);
+//			otp.setUserid(userDetails.getUserid());
+//			otp.setOtp(genOtp);
+//			user.setUsername(userDetails.getFullname());
+//			user.setOtp(genOtp);
+//			OTP otpRes = otpRepo.save(otp);
+//			//emailClientService.resetlinkmail(user);
+//			emailLoginService.sendAtsForgotPassword(user);
+//			return new ResponseEntity<>(new RestAPIResponse("success", "OTP sent Successfully", otpRes), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<>(
+//					new RestAPIResponse("failed", "User does not exist. Please check the username and try again."),
+//					HttpStatus.OK);
+//		}
+//
+//	}
+//	
+	
 
 	@GetMapping("/get")
 	public UserInfo test()

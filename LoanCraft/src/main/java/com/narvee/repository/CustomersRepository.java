@@ -19,7 +19,7 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Optional<CustomersInfo> findByEmailOrMobileNumber(String email, String mobileNumber);
 
 	@Query(value = "SELECT customer_id,email,account_number,CONCAT(first_name, ' ', last_name) AS full_name,mobile_number,highest_qualification,updateddate FROM lms_customers_info", nativeQuery = true)
-	Page<CustomerResponseDTO> findAllApplicants(Pageable pageable);
+	Page<CustomerResponseDTO> findAllPreSalesApplicants(Pageable pageable);
 
 	@Query(value = """
 				SELECT
@@ -39,7 +39,7 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 			    account_number ILIKE CONCAT('%', :keyword, '%') OR
 			    CONCAT(first_name, ' ', last_name) ILIKE CONCAT('%', :keyword, '%')
 						""", nativeQuery = true)
-	Page<CustomerResponseDTO> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
+	Page<CustomerResponseDTO> findPreSalesApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 	@Query(value = "SELECT email,first_name,last_name,mobile_number,dob,fathers_or_spouses_name,middle_name,highest_qualification,account_number,adhaar_number FROM lms_customers_info ", nativeQuery = true)
 	Page<SearchingDTO> findAllCustomers(Pageable pageable);
@@ -77,5 +77,30 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
   
 @Query(value ="SELECT sum(c.customer_id) FROM lms_customers_info c ",nativeQuery =true)
 	List<Object[]> findAllCustomersCountList();
+	
+	@Query(value = "SELECT lc.customer_id,lc.email,lc.account_number,  CONCAT(lc.first_name, ' ', lc.last_name) AS full_name,lc.mobile_number,lc.highest_qualification,lc.updateddate,ls.status\r\n"
+			+ "FROM loancraft.lms_customers_info lc JOIN loancraft.lms_applications la ON lc.customer_id = la.customer_id JOIN loancraft.lms_loan_saction ls ON la.loan_id = ls.loan_id\r\n"
+			+ "WHERE ls.status = 'disbursed' ", nativeQuery = true)
+	Page<CustomerResponseDTO> findAllApplicants(Pageable pageable);
+	
+	@Query(value = """
+			SELECT
+		    customer_id,
+		    email,
+		    account_number,
+		    CONCAT(first_name, ' ', last_name) AS full_name,
+		    mobile_number,
+		    highest_qualification,
+		    updateddate
+		FROM
+		    lms_customers_info
+		WHERE
+		    email ILIKE CONCAT('%', :keyword, '%') OR
+		    mobile_number ILIKE CONCAT('%', :keyword, '%') OR
+		    highest_qualification ILIKE CONCAT('%', :keyword, '%') OR
+		    account_number ILIKE CONCAT('%', :keyword, '%') OR
+		    CONCAT(first_name, ' ', last_name) ILIKE CONCAT('%', :keyword, '%')
+					""", nativeQuery = true)
+Page<CustomerResponseDTO> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 }

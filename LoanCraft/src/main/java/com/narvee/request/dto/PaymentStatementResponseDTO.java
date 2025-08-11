@@ -6,6 +6,8 @@ public interface PaymentStatementResponseDTO {
 	public Long getRepaymentId();
 
 	public LocalDate getDueDate();
+	
+	public LocalDate getLastPaidDate();
 
 	public double getDueAmount();
 

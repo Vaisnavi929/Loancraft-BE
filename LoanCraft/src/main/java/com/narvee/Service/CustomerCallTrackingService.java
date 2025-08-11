@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import com.narvee.entity.CustomerCallTracking;
 import com.narvee.request.dto.CctResponsesDTO;
-import com.narvee.request.dto.CrmRquestDto;
 import com.narvee.request.dto.RequestDTO;
 
 public interface CustomerCallTrackingService {

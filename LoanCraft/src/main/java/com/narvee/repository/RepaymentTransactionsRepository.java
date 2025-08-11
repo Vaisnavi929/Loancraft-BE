@@ -11,7 +11,18 @@ import com.narvee.entity.RepaymentTransactions;
 
 public interface RepaymentTransactionsRepository extends JpaRepository<RepaymentTransactions, Long> {
 
-	List<RepaymentTransactions> findByRepaymentRepaymentId(Long repaymentId);
+	public List<RepaymentTransactions> findByRepaymentRepaymentId(Long repaymentId);
+
+	@Query("SELECT rt FROM RepaymentTransactions rt " +
+		       "WHERE rt.repayment.repaymentId = :repaymentId AND rt.paymentDate = " +
+		       "(SELECT MAX(r.paymentDate) FROM RepaymentTransactions r WHERE r.repayment.repaymentId = :repaymentId)")
+		RepaymentTransactions findByRepaymentIdAndMaxPaymentDate(@Param("repaymentId") Long repaymentId);
+
+	
+//	@Query("SELECT c FROM RepaymentTransactions c WHERE c.repayment.repaymentId = :repaymentId AND c.paymentDate = (SELECT MAX(c2.paymentDate) FROM YourEntity c2 WHERE c2.repayment.repaymentId = :repaymentId)")
+//	RepaymentTransactions findLatestByRepaymentId(@Param("repaymentId") Long repaymentId);
+
+
 
 	@Query(value = "SELECT rt.id,rt.interest_component,rt.principal_component FROM lms_repayment_transactions rt", nativeQuery = true)
 	public List<Object[]> findAlltransactionsIdAndInterestandprincipalList();

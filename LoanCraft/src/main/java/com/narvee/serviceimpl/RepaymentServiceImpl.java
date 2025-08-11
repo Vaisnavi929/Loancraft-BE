@@ -199,6 +199,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 		for (PaymentStatementResponseDTO payment : payments) {
 			PaymentStatementDTO statement = new PaymentStatementDTO();
 			statement.setDueDate(payment.getDueDate());
+			statement.setLastPaidDate(payment.getLastPaidDate());
 			statement.setDueAmount(payment.getDueAmount());
 			statement.setAmountPaid(payment.getAmountPaid());
 			statement.setAmountStatus(payment.getAmountStatus());
@@ -209,7 +210,6 @@ public class RepaymentServiceImpl implements RepaymentService {
 			statement.setPrincipalAmount(payment.getPrincipalAmount());
 			statement.setApplicationReferenceId(payment.getApplicationReferenceId());
 			statement.setAmountSanctioned(payment.getAmountSanctioned());
-			statement.setOtherCharges(payment.getOtherCharges());
 			statements.add(statement);
 		}
 

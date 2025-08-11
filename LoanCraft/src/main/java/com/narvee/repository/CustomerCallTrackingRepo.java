@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.narvee.entity.CustomerCallTracking;
 import com.narvee.request.dto.CctResponsesDTO;
-import com.narvee.request.dto.CrmRquestDto;
+
 
 @Repository
 public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTracking, Long> {

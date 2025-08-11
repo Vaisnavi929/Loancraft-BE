@@ -34,7 +34,7 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 	@Query(value = """
 
 				SELECT p.other_charges,p.repayment_id, p.amount_paid,CONCAT(c.first_name, ' ', c.last_name) AS full_name, la.application_reference_id,ls.amount_sanctioned,
-			c.mobile_number, p.amount_status, p.due_amount, p.due_date, p.disbursment_id, p.interest, p.principal_amount
+			c.mobile_number, p.amount_status, p.due_amount, p.due_date, p.disbursment_id, p.interest, p.principal_amount,p.last_paid_date
 					FROM lms_repayment p
 					JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id
 					JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id

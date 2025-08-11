@@ -28,7 +28,7 @@ import com.narvee.request.dto.PaymentStatementResponseDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/payment")
+@RequestMapping("/auth/payment")
 public class RepaymentController {
 
 	

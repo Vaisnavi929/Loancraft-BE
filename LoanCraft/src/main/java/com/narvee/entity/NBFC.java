@@ -29,10 +29,13 @@ public class NBFC extends AuditModel {
 	private String nbfcName;
 	@Column(name = "regionalOffice")
 	private String regionalOffice;
+	
 	@Column(name = "classification")
 	private String classification;
+	
 	@Column(name = "corporateIdentificationNo")
 	private String corporateIdentificationNo;
+	
 	@Column(name = "layer")
 	private String layer;
 	@Column(name = "address")

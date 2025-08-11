@@ -86,7 +86,7 @@ public class CrmController {
 					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success.", "Email verified successfully  ", existsMoblieNum), HttpStatus.OK);
+					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum), HttpStatus.OK);
 		}
 
 	}
@@ -94,27 +94,27 @@ public class CrmController {
 	@PostMapping("/sortingBySearching")
 	public ResponseEntity<RestAPIResponse> getAllCrm(@RequestBody RequestDTO request) {
 		logger.info("!!! inside class:CrmController,!! method:getAllCrm() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("done", "searching successfully ", cRms.findAllCrm(request)),
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "crm details fetched successfully", cRms.findAllCrm(request)),
 				HttpStatus.OK);
 	}
 
 	@PutMapping("/updateCrm")
 	public ResponseEntity<RestAPIResponse>updateByIdCrm(@RequestBody CustomerRelationshipMangement crm){
 		logger.info("!!! inside class:CrmController,!! method:updateByIdCrm() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("done", "updated successfuly",cRms.update(crm)),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated successfuly",cRms.update(crm)),HttpStatus.OK);
 	}
 															
 	@DeleteMapping("/deleteById/{crmId}")
 	public ResponseEntity<RestAPIResponse>deleteByIdcrm(@PathVariable Long crmId ){
 		logger.info("!!! inside class:CrmController,!! method:deleteByIdcrm() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("done", "deleted successfuly",cRms.deleteById(crmId)),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "deleted successfuly",cRms.deleteById(crmId)),HttpStatus.OK);
 	}
 	
 	@GetMapping("/findByCrm/{crmId}")
 	public ResponseEntity<RestAPIResponse>findByCrm(@PathVariable Long crmId){
 		logger.info("!!! inside class:CrmController,!! method:findByCrm()");
 		System.err.println(crmId);
-		return new ResponseEntity<RestAPIResponse> (new RestAPIResponse("fetched", "customer detalis", cRms.getById(crmId)),HttpStatus.OK);
+		return new ResponseEntity<RestAPIResponse> (new RestAPIResponse("success", "customer detalis fetched successfully", cRms.getById(crmId)),HttpStatus.OK);
 		
 	}
 }
