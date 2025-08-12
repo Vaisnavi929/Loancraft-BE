@@ -90,6 +90,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			sortField = "remarks";
 		else if (sortField.equalsIgnoreCase("Status"))
 			sortField = "status";
+		else if (sortField.equalsIgnoreCase("ChequeClearanceDate"))
+			sortField = "cheque_clearance_date";
 		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("referenceId"))
@@ -114,7 +116,7 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	}
 
 	@Override
-	public String updateStatus(Long id, String status, String reason, Long userid) {
+	public String updateStatus(Long id, String status, String reason, LocalDate chequeClearanceDate, Long userid) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :updateStatus() ");
 		LocalDateTime now = LocalDateTime.now();
 		Double chequeReturnCharges = null;
@@ -124,7 +126,7 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			chequeReturnCharges = 0.0;
 		}
 
-		int rows = depositRepository.updateStatus(id, status, reason, userid, chequeReturnCharges, now);
+		int rows = depositRepository.updateStatus(id, status, reason, userid, chequeReturnCharges, now,chequeClearanceDate);
 		if (rows > 0) {
 			return "Update successful";
 		} else {
@@ -192,7 +194,14 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	@Override
 	public boolean existsByLmsRepaymentRepaymentId(Long rid) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method : ExistsByLmsRepaymentRepaymentId() ");
-		return depositRepository.existsByLmsRepaymentRepaymentId(rid);
+		return false; //depositRepository.existsByLmsRepaymentRepaymentId(rid);
+	}
+
+	@Override
+	public boolean updateStausofRequestedCheque(CheckDepositDTO checkDepositDTO) {
+		depositRepository.updateStatusofRequestedCheque(checkDepositDTO.getPostingDate(), checkDepositDTO.getChequeNumber(), checkDepositDTO.getAmount());
+		return true;
+		
 	}
 
 }

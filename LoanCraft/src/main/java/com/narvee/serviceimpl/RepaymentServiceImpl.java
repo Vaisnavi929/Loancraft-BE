@@ -1,6 +1,8 @@
 
 package com.narvee.serviceimpl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.narvee.Service.ReceiptService;
 import com.narvee.Service.RepaymentService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.emi.calculator.EmiCalculatorUtill;
@@ -35,6 +38,7 @@ import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
 import com.narvee.request.dto.RepaymentScheduleRequest;
+import com.narvee.response.ReceiptResponse;
 import com.narvee.util.DateUtil;
 
 import jakarta.transaction.Transactional;
@@ -46,8 +50,12 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 	@Autowired
 	private RepaymentRepository repaymentRepository;
+
 	@Autowired
 	private DisbursmentRepository disbursmentRepository;
+
+	@Autowired
+	private ReceiptService receiptService;
 
 	@Autowired
 	ModelMapper mapper;
@@ -191,6 +199,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 		for (PaymentStatementResponseDTO payment : payments) {
 			PaymentStatementDTO statement = new PaymentStatementDTO();
 			statement.setDueDate(payment.getDueDate());
+			statement.setLastPaidDate(payment.getLastPaidDate());
 			statement.setDueAmount(payment.getDueAmount());
 			statement.setAmountPaid(payment.getAmountPaid());
 			statement.setAmountStatus(payment.getAmountStatus());
@@ -201,7 +210,6 @@ public class RepaymentServiceImpl implements RepaymentService {
 			statement.setPrincipalAmount(payment.getPrincipalAmount());
 			statement.setApplicationReferenceId(payment.getApplicationReferenceId());
 			statement.setAmountSanctioned(payment.getAmountSanctioned());
-			statement.setOtherCharges(payment.getOtherCharges());
 			statements.add(statement);
 		}
 
@@ -271,6 +279,8 @@ public class RepaymentServiceImpl implements RepaymentService {
 		double totalPrincipalPaid = 0.0;
 		double totalInterestDue = 0.0;
 		double totalPrincipalAmountDue = 0.0;
+		double totalPenalty = 0.0;
+		double totalOtherCharges = 0.0;
 
 		for (Object[] objects : reports) {
 			Map<String, Object> memberReport = new LinkedHashMap<>();
@@ -284,10 +294,14 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 			memberReport.put("interest_component", interestComponent);
 			memberReport.put("other_charges", objects[5]);
+			Double otherCharges = objects[5] != null ? Double.parseDouble(objects[5].toString()) : 0.0;
+			totalOtherCharges += otherCharges;
 			memberReport.put("payment_date", objects[6]);
 			memberReport.put("payment_mode", objects[7]);
 			memberReport.put("penalty_component", objects[8]);
 			Double principalComponent = objects[9] != null ? Double.parseDouble(objects[9].toString()) : 0.0;
+			Double penaltyComponent = objects[8] != null ? Double.parseDouble(objects[8].toString()) : 0.0;
+			totalPenalty += penaltyComponent;
 			totalPrincipalPaid += principalComponent;
 			memberReport.put("principal_component", principalComponent);
 			memberReport.put("disbursment_id", objects[10]);
@@ -296,18 +310,21 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 			Double interest = objects[13] != null ? Double.parseDouble(objects[13].toString()) : 0.0;
 			totalInterestDue += interest;
+
 			memberReport.put("interest", interest);
 			Double principalAmount = objects[14] != null ? Double.parseDouble(objects[14].toString()) : 0.0;
 			totalPrincipalAmountDue += principalAmount;
 			memberReport.put("principal_amount", principalAmount);
 			if (objects[0] != null) {
-			memberReports.add(memberReport);
-           }
+				memberReports.add(memberReport);
+			}
 		}
 
 		// Member details map
 		Map<String, Object> memberDetails = new LinkedHashMap<>();
-		List<Object[]> report = repaymentRepository.getMemeberReport(disbursmentId);
+		Map<String, Object> disbursementDetails = new LinkedHashMap<>();
+		Map<String, Object> referencesDetails = new LinkedHashMap<>();
+		List<Object[]> report = repaymentRepository.getMemeberDetails(disbursmentId);
 		for (Object[] objects : report) {
 			memberDetails.put("fullname", objects[0]);
 			memberDetails.put("application_reference_id", objects[1]);
@@ -320,28 +337,70 @@ public class RepaymentServiceImpl implements RepaymentService {
 			memberDetails.put("mobile_number", objects[8]);
 			memberDetails.put("status", objects[9]);
 			memberDetails.put("loan_account_number", objects[10]);
+
+			// Disbursement Details
+
+			disbursementDetails.put("disbursedAmount", objects[11]);
+			disbursementDetails.put("amountSanctioned", objects[12]);
+			disbursementDetails.put("rateOfInterest", objects[13]);
+			disbursementDetails.put("emiAmount", objects[14]);
+			disbursementDetails.put("numberOfEmis", objects[15]);
+			disbursementDetails.put("documentationCharges", objects[16]);
+
+			BigDecimal amountSanctioned = new BigDecimal(String.valueOf(objects[12]));
+			BigDecimal loanProcessingChargesPercentage = new BigDecimal(String.valueOf(objects[17]));
+			BigDecimal processingChargesAmount = BigDecimal.ZERO;
+
+			if (loanProcessingChargesPercentage.compareTo(BigDecimal.ZERO) > 0) {
+				processingChargesAmount = amountSanctioned.multiply(loanProcessingChargesPercentage)
+						.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP); // rounded to 2 decimals
+			}
+
+			disbursementDetails.put("loanProcessingCharges", processingChargesAmount);
+			disbursementDetails.put("disbursedDate", objects[18]);
+			
+		
+			//*************Reference Details***************
+			referencesDetails.put("fullName", objects[19]);
+			referencesDetails.put("knownForYears", objects[20]);
+			referencesDetails.put("mobileNumber", objects[21]);
+			referencesDetails.put("relationship", objects[22]);
+
+
 		}
 
+		ReceiptResponse dueInfo = receiptService.getReceiptInfo(disbursmentId);
+
+		//*************Due Details***************
+		Map<String, Object> dueDetails = new LinkedHashMap<>();
+		dueDetails.put("dueDetails", dueInfo.getEmiDueInfo());
+
+		//*************Summary Details***************
 		Map<String, Object> summaryDetails = new LinkedHashMap<>();
-		
+
 		summaryDetails.put("totalInterestPaid", totalInterestPaid);
 		summaryDetails.put("totalPrincipalPaid", totalPrincipalPaid);
+		summaryDetails.put("totalPenalty", totalPenalty);
+		summaryDetails.put("totalOtherCharges", totalOtherCharges);
 
 		double totalRepaymentAmountPaid = totalInterestPaid + totalPrincipalPaid;
+
 		summaryDetails.put("totalRepaymentAmount", Math.round(totalRepaymentAmountPaid));
 
 		summaryDetails.put("totalInterestDue", Math.round(totalInterestDue));
 		summaryDetails.put("totalPrincipalAmountDue", Math.round(totalPrincipalAmountDue));
-
-		double totalOutstandingAoumnt = totalInterestDue + totalPrincipalAmountDue;
-		summaryDetails.put("totalOutstandingAmount", Math.round(totalOutstandingAoumnt));
+		summaryDetails.put("totalOutstandingAmount", dueInfo.getOutstanding());
 
 		memberReportDTO.setMemberDetails(memberDetails);
 		memberReportDTO.setMemberReports(memberReports);
 		memberReportDTO.setSummaryDetails(summaryDetails);
+		memberReportDTO.setDisbursedDetails(disbursementDetails);
+		memberReportDTO.setDueDetails(dueDetails);
+		memberReportDTO.setReferencesDetails(referencesDetails);
 
 		return memberReportDTO;
-	}   
+	}
+
 
 	public void generateRepayment(Long disbursmentId) {
 		logger.info("!!! inside class :PaymentServiceImpl ,method :generatePayments() ");
@@ -400,7 +459,6 @@ public class RepaymentServiceImpl implements RepaymentService {
 
 		repaymentRepository.saveAll(payments);
 	}
-	
 
 	@Override
 	public void generate() {

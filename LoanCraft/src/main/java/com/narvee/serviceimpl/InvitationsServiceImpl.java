@@ -68,7 +68,7 @@ public class InvitationsServiceImpl implements InvitationsService{
 
         .append("<p style=\"font-size: 14px; color: #777; text-align: left;\">If you did not request this, you can safely ignore this email.</p>")
         .append("<p style=\"font-size: 14px; font-weight: bold; color: #555; text-align: left;\">Best regards,</p>")
-        .append("<p style=\"margin: 0; font-size: 14px; color: #333; text-align: left;\">Narvee Tech Inc</p>")
+        .append("<p style=\"margin: 0; font-size: 14px; color: #333; text-align: left;\">Beacon Holdings</p>")
 
         .append("</td></tr>")
         .append("</table>")

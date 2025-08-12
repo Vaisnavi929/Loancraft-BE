@@ -1,5 +1,7 @@
 package com.narvee.entity;
 
+import java.time.LocalDate;
+
 import com.narvee.commons.AuditModel;
 
 import jakarta.persistence.Entity;
@@ -34,9 +36,15 @@ public class LowCheckDepositApproval extends AuditModel {
 	private Double receivableAmount;
 	private String status;
 	private Double requestedAmount;
+	private LocalDate postedDate;
+	private String chequeNumber;
 
 	@ManyToOne
 	@JoinColumn(name = "repayment_id")
 	private LmsRepayment lmsRepayment;
+	
+	@ManyToOne
+	@JoinColumn(name = "disbursment_id")
+	private Disbursment disbursment;
 
 }

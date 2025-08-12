@@ -9,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -407,7 +406,7 @@ public class DocumentServiceImpl implements DocumentService {
 			dto.setFileType(doc.getFileType());
 			dto.setDocVerified(doc.getDocVerified());
 			dto.setRemarks(doc.getRemarks());
-
+            dto.setStatus(doc.getLoanApplication().getStatus());
 			// Clean the filename (take substring before first underscore and add ".pdf")
 			String original = doc.getFileName();
 			String cleanedFileName = original != null && original.contains("_") ? original.split("_")[0] + ".pdf"

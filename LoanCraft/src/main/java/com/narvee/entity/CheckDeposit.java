@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,6 +33,8 @@ public class CheckDeposit extends AuditModel {
 	private String chequeNumber;
 	@Column(name = "postingDate")
 	private LocalDate postingDate;
+	@Column(name = "chequeClearanceDate")
+	private LocalDate chequeClearanceDate;
 	@Column(name = "amount")
 	private Double amount=0.0;;
 	@Column(name = "reason")
@@ -52,7 +53,7 @@ public class CheckDeposit extends AuditModel {
 	@JoinColumn(name = "disbursment_id")
 	private Disbursment disbursment;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "repayment_id")
 	private LmsRepayment lmsRepayment;
 
