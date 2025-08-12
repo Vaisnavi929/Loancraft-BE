@@ -69,7 +69,7 @@ public class CustomersInfo extends AuditModel {
 	private String Occupation;
 	
 	@Column(name="laon_required")
-	private String loanRequired;
+	private double loanRequired;
 
 	@Column(name = "password")
 	@JsonIgnore

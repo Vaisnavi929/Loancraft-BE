@@ -798,6 +798,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		BigDecimal emiPenalty = BigDecimal.ZERO;
 		BigDecimal chequeReturnCharge = BigDecimal.ZERO;
 		BigDecimal latePenalty = BigDecimal.ZERO;
+		BigDecimal totalEmiAmount = BigDecimal.ZERO;
 
 		List<PaymentStatementDTO> repaymentSchedule = repaymentService.getRepaymentStatement(dId);
 		Date lastPaidDate = transactionsRepository.findLastPaidDateByDisbursmentId(dId);
@@ -903,17 +904,27 @@ public class ReceiptServiceImpl implements ReceiptService {
 				totalPenalty = totalPenalty.add(currentEmiPenalty).add(chequeReturnCharge).add(latePenalty).setScale(2,
 						RoundingMode.HALF_UP);
 
+				 totalEmiAmount =  BigDecimal.valueOf(dueAmount.doubleValue()
+					    + chequeReturnCharge.doubleValue()
+					    + currentEmiPenalty.doubleValue()
+					    + latePenalty.doubleValue()).setScale(2, RoundingMode.HALF_UP);
+
 				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount.doubleValue(),
 						chequeReturnCharge.doubleValue(), currentEmiPenalty.doubleValue(), emiMonth,
-						latePenalty.doubleValue()));
+						latePenalty.doubleValue(),totalEmiAmount.doubleValue()));
 
 			} else if (dueDate.getYear() == now.getYear() && dueDate.getMonthValue() == now.getMonthValue()
 					&& dueAmount.compareTo(BigDecimal.ZERO) != 0) {
 				numberOfEmisDue++;
 				long overdueDays = 0;
 				String emiMonth = dueDate.getMonth().toString() + " " + dueDate.getYear();
+							
+				totalEmiAmount =  BigDecimal.valueOf(dueAmount.doubleValue()
+					    + chequeReturnCharge.doubleValue()
+					    + latePenalty.doubleValue()).setScale(2, RoundingMode.HALF_UP);
+
 				emiDueDetails.add(new EmiDueInfoDTO(emiCounter, dueDate, overdueDays, dueAmount.doubleValue(),
-						chequeReturnCharge.doubleValue(), 0, emiMonth, latePenalty.doubleValue()));
+						chequeReturnCharge.doubleValue(), 0, emiMonth, latePenalty.doubleValue(),totalEmiAmount.doubleValue()));
 			}
 
 		}
