@@ -26,6 +26,7 @@ public class ReceiptResponse {
 	private double totalDue;
 	private double totalPenalty;
 	private Date lastPaidDate;
+	private double total;
 	private List<EmiDueInfoDTO> emiDueInfo;
 
 	
