@@ -68,5 +68,12 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 	public List<CheckDeposit> LmsRepaymentRepaymentId(Long lmsRepayment);
 	
 	
+	@Query(value = "UPDATE loancraft.lms_check_deposit "
+			+ "SET status = 'posted'\r\n"
+			+ "WHERE posting_date = :postedDate"
+			+ "  AND cheque_number = :chequeNum"
+			+ "  AND amount = :amount ", nativeQuery = true)
+	boolean updateStatusofRequestedCheque(@Param("postedDate") LocalDate postedDate , @Param("chequeNum") String chequeNum, @Param("amount") double amount);
+	
 
 }
