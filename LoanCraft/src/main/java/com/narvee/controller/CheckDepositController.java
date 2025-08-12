@@ -36,6 +36,7 @@ public class CheckDepositController {
 			return new ResponseEntity<>(new RestAPIResponse("success", "Cheque deposit processed successfully.",
 					depositService.saveDeposit(checkDepositDTO)), HttpStatus.OK);
 	}
+	
 
 	@RequestMapping(value = "/updateCheck", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateCheckDeposit(@RequestBody CheckDepositDTO checkDepositDTO) {
@@ -96,5 +97,12 @@ public class CheckDepositController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status",
 				depositService.getRepaymentMonthYear(disbursmentId)), HttpStatus.OK);
 
+	}
+	
+	@RequestMapping(value = "/updateStatusOfRequestedCheque/", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> updateStatusOfRequestedCheque(@RequestBody CheckDepositDTO checkDepositDTO) {
+		logger.info("!!! inside class:CheckDepositController,!! method:updateStatusOfRequestedCheck()");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status",
+				depositService.updateStausofRequestedCheque(checkDepositDTO)), HttpStatus.OK);
 	}
 }

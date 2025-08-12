@@ -13,6 +13,7 @@ import com.narvee.request.dto.CheckDepositResponseDTO;
 public interface CheckDepositService {
 
 	public CheckDeposit saveDeposit(CheckDepositDTO checkBounceDTO);
+	
 
 	public CheckDeposit updateDeposit(CheckDepositDTO checkBounceDTO);
 
@@ -28,6 +29,6 @@ public interface CheckDepositService {
 
 	public boolean existsByLmsRepaymentRepaymentId(Long rid);
 	
-	public String updateStausofRequestedCheque(Long rid);
+	public boolean updateStausofRequestedCheque(CheckDepositDTO checkDepositDTO);
 
 }

@@ -247,6 +247,10 @@ public class CustomerServiceImpl implements CustomerService {
 				sortField = "mobile_number";
 			} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
 				sortField = "account_number";
+			} else if (sortField.equalsIgnoreCase("location")) {
+				sortField = "location";
+			} else if (sortField.equalsIgnoreCase("loanRequired")) {
+				sortField = "loan_reaquired";
 			} else {
 				sortField = "updateddate";
 			}
