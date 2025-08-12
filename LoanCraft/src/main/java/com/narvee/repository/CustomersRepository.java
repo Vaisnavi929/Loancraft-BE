@@ -18,29 +18,47 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 
 	Optional<CustomersInfo> findByEmailOrMobileNumber(String email, String mobileNumber);
 
-	@Query(value = "SELECT customer_id,email,account_number,CONCAT(first_name, ' ', last_name) AS full_name,mobile_number,highest_qualification,updateddate,laon_required AS loan_reaquired ,location FROM lms_customers_info", nativeQuery = true)
+	@Query(value = "SELECT \r\n"
+			+ "    lc.customer_id,\r\n"
+			+ "    lc.email,\r\n"
+			+ "    lc.account_number,\r\n"
+			+ "    CONCAT(lc.first_name, ' ', lc.last_name) AS full_name,\r\n"
+			+ "    lc.mobile_number,\r\n"
+			+ "    lc.highest_qualification,\r\n"
+			+ "    lc.updateddate, ls.status\r\n"
+			+ " FROM loancraft.lms_customers_info lc\r\n"
+			+ " LEFT JOIN loancraft.lms_applications la \r\n"
+			+ "    ON lc.customer_id = la.customer_id\r\n"
+			+ " LEFT JOIN loancraft.lms_loan_saction ls\r\n"
+			+ "    ON la.loan_id = ls.loan_id\r\n"
+			+ " WHERE ls.loan_id IS NULL", nativeQuery = true)
 	Page<CustomerResponseDTO> findAllPreSalesApplicants(Pageable pageable);
 
 	@Query(value = """
-				SELECT
-			    customer_id,
-			    email,
-			    account_number,
-			    CONCAT(first_name, ' ', last_name) AS full_name,
-			    mobile_number,
-			    highest_qualification,
-			    updateddate,laon_required AS loan_reaquired ,location 
-			FROM
-			    lms_customers_info
-			WHERE
-			    email ILIKE CONCAT('%', :keyword, '%') OR
-			    mobile_number ILIKE CONCAT('%', :keyword, '%') OR
-			    laon_required ILIKE CONCAT('%', :keyword, '%') OR
-			    location ILIKE CONCAT('%', :keyword, '%') OR
-			    highest_qualification ILIKE CONCAT('%', :keyword, '%') OR
-			    account_number ILIKE CONCAT('%', :keyword, '%') OR
-			    CONCAT(first_name, ' ', last_name) ILIKE CONCAT('%', :keyword, '%')
-						""", nativeQuery = true)
+		    SELECT
+		        lc.customer_id,
+		        lc.email,
+		        lc.account_number,
+		        CONCAT(lc.first_name, ' ', lc.last_name) AS full_name,
+		        lc.mobile_number,
+		        lc.highest_qualification,
+		        lc.updateddate,
+		        ls.status
+		    FROM loancraft.lms_customers_info lc
+		 LEFT   JOIN loancraft.lms_applications la
+		        ON lc.customer_id = la.customer_id
+		  LEFT  JOIN loancraft.lms_loan_saction ls
+		        ON la.loan_id = ls.loan_id
+		   WHERE ls.loan_id IS NULL
+		      AND (
+		            lc.email ILIKE CONCAT('%', :keyword, '%')
+		            OR lc.mobile_number ILIKE CONCAT('%', :keyword, '%')
+		            OR lc.highest_qualification ILIKE CONCAT('%', :keyword, '%')
+		            OR lc.account_number ILIKE CONCAT('%', :keyword, '%')
+		            OR CONCAT(lc.first_name, ' ', lc.last_name) ILIKE CONCAT('%', :keyword, '%')
+		          )
+		    
+		    """, nativeQuery = true)
 	Page<CustomerResponseDTO> findPreSalesApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 	@Query(value = "SELECT email,first_name,last_name,mobile_number,dob,fathers_or_spouses_name,middle_name,highest_qualification,account_number,adhaar_number FROM lms_customers_info ", nativeQuery = true)
