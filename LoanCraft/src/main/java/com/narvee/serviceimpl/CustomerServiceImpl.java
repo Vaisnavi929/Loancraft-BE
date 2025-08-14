@@ -57,12 +57,15 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 		CustomersInfo customer = modelMapper.map(register, CustomersInfo.class);
-		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
+			
+			if (customer.getPassword() == null || customer.getPassword().isEmpty()) {
+			    customer.setPassword("Lms@123$"); // set default password
+			}
 			String encodedPassword = passwordEncoder.encode(customer.getPassword());
 			customer.setPassword(encodedPassword);
 			String accountNumber = accountSequenceService.generateAccountNumber();
 			customer.setAccountNumber(accountNumber);
-		}
+		
 //		CustomersInfo saveCustomers = customerRepository.save(customer);
 
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
