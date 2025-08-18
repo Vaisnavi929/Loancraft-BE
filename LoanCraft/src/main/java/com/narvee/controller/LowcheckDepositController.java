@@ -19,7 +19,9 @@ import com.narvee.request.dto.LowCheckDepositDTO;
 
 @RestController
 @CrossOrigin("*")
+
 @RequestMapping("/auth/LowCheckApproval")
+
 public class LowcheckDepositController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LowcheckDepositController.class);

@@ -20,11 +20,19 @@ import jakarta.transaction.Transactional;
 
 public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long> {
 
+
 	@Query(value = "SELECT c.id,c.amount,c.posting_date,c.createddate,c.updateddate,CONCAT(ci.first_name, ' ', ci.last_name) AS full_name,a.application_reference_id as referenceId,c.status,c.cheque_number,c.reason,c.remarks,ld.disbursment_id,c.cheque_clearance_date "
-			+ "FROM lms_check_deposit c JOIN lms_disbursment ld\r\n"
-			+ "on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id \r\n"
-			+ "join lms_customers_info ci on ci.customer_id=a.customer_id ", nativeQuery = true)
+
+			+ " FROM lms_check_deposit c JOIN lms_disbursment ld\r\n"
+			+ " on ld.disbursment_id=c.disbursment_id join lms_loan_saction s on s.loan_saction_id=ld.loan_saction_id join lms_applications a on a.loan_id=s.loan_id \r\n"
+			+ " join lms_customers_info ci on ci.customer_id=a.customer_id ", nativeQuery = true)
 	public Page<CheckDepositResponseDTO> getAllCheckDepositWithPagination(Pageable pageable);
+	
+  	@Modifying
+	@Transactional
+	@Query(value = "UPDATE lms_check_deposit SET status =:status,reason=:reason,updatedby=:userid,updateddate=:updateddate,cheque_return_charges=:charges WHERE id =:id", nativeQuery = true)
+	int updateStatus(@Param("id") Long id, @Param("status") String status, String reason, Long userid, Double charges,
+			LocalDateTime updateddate);
 
 	@Modifying
 	@Transactional
@@ -67,13 +75,14 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 
 	public List<CheckDeposit> LmsRepaymentRepaymentId(Long lmsRepayment);
 	
-	
+	@Modifying
+	@Transactional
 	@Query(value = "UPDATE loancraft.lms_check_deposit "
-			+ "SET status = 'posted'\r\n"
-			+ "WHERE posting_date = :postedDate"
+			+ " SET status = 'posted'\r\n"
+			+ " WHERE posting_date = :postedDate"
 			+ "  AND cheque_number = :chequeNum"
 			+ "  AND amount = :amount ", nativeQuery = true)
-	boolean updateStatusofRequestedCheque(@Param("postedDate") LocalDate postedDate , @Param("chequeNum") String chequeNum, @Param("amount") double amount);
+	int updateStatusofRequestedCheque(@Param("postedDate") LocalDate postedDate , @Param("chequeNum") String chequeNum, @Param("amount") double amount);
 	
 
 }
