@@ -176,9 +176,11 @@ public class CustomerServiceImpl implements CustomerService {
 			// Fetch the customer by ID or throw an exception if not found
 			CustomersInfo customer = customerRepository.findById(decryptedCustomerId)
 					.orElseThrow(() -> new RuntimeException("Customer not found with ID: " + decryptedCustomerId));
-
+			
+		boolean exitisAdhar =	customerRepository.existsByAdhaarNumber(customerUpdateDto.getAdhaarNumber());
+			
+		if (exitisAdhar) {
 			logger.info("Fetched customer: {}", customer);
-
 			// Retain sensitive fields (e.g., password and account number)
 			String originalPassword = customer.getPassword();
 			String originalAccountNumber = customer.getAccountNumber();
@@ -191,10 +193,12 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setAccountNumber(originalAccountNumber);
 
 			logger.info("Updated customer object: {}", customer);
-
+ 
 			// Save and return the updated customer
 			return customerRepository.save(customer);
-
+		}else {
+			throw new RuntimeException("customer alredy exists AdhaarNumber"+customerUpdateDto.getAdhaarNumber());
+		}
 		} catch (Exception ex) {
 			logger.error("Unexpected error during update: {}", ex.getMessage(), ex);
 			throw new RuntimeException("An unexpected error occurred during customer update: " + ex.getMessage(), ex);
@@ -210,12 +214,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerRepository.checkEligibility(decryptedCustomerId);
 	}
 
-	@Override
-	public boolean isEmailDuplicate(String email) {
-
-		return customerRepository.existsByEmail(email);
-	}
-
+	
 	@Override
 	public List<ApplicationResponseDto> getApplicationsByCustomerId(String encryptedCustomerId) {
 		try {
@@ -229,6 +228,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+
 	public Page<CustomerResponseDTOS> getAllPreSalesCustomers(SortingDTO sortingDTO) {
 		
 			logger.info("Inside ApplicantServiceImpl: getAllApplicants");
@@ -281,5 +281,10 @@ public class CustomerServiceImpl implements CustomerService {
 			return encryptedPage;
 		}
 
+	@Override
+	public boolean isEmailDuplicate(String email) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

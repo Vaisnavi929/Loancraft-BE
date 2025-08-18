@@ -70,7 +70,7 @@ public class CustomersController {
 		logger.info("Fetching customer by encrypted ID: {}", id);
 		// Call service method to fetch the customer by decrypted ID
 		CustomersInfo customer = customerService.getById(id);
-		System.out.println(); 
+		System.out.println();
 
 		if (customer != null) {
 			String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId());
@@ -191,8 +191,25 @@ public class CustomersController {
 
 	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")
 	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId) {
+
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
 				customerService.getApplicationsByCustomerId(customerId)), HttpStatus.OK);
 
 	}
+	
+//	@GetMapping("/dupllicateAdhaarNumber/{adhaarNumber}")
+//	public ResponseEntity<RestAPIResponse>checkduplicateEmail(@PathVariable String adhaarNumber){
+//		logger.info("!!! inside class:CrmController,!! method:duplicateEmail() ");
+//		
+//		boolean existsAdhaarNumber = customerService.existsByadhaarNumber (adhaarNumber);
+//		if (existsAdhaarNumber) {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("failed", "AdhaarNumber already exists ",existsAdhaarNumber ), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("success.", "AdhaarNumber verified successfully  ", existsAdhaarNumber), HttpStatus.OK);
+//		}
+//
+//		
+//	}
 }

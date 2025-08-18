@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,10 +17,11 @@ import com.narvee.Service.LowCheckDepositService;
 import com.narvee.Service.SortingRequestDto;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.request.dto.LowCheckDepositDTO;
+import com.narvee.request.dto.RequestDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/LowCheckApproval")
+@RequestMapping("/api/LowCheckApproval")
 public class LowcheckDepositController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LowcheckDepositController.class);
@@ -71,7 +73,12 @@ public class LowcheckDepositController {
 						checkDepositService.getLowCheckDepositDetails(sortingRequestDto)),
 				HttpStatus.OK);
 	}
-
+//	@PostMapping("/sortingBySearching")
+//	public ResponseEntity<RestAPIResponse> getAllCrm(@RequestBody RequestDTO request) {
+//		logger.info("!!! inside class:CrmController,!! method:getAllCrm() ");
+//		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "crm details fetched successfully", cRms.findAllCrm(request)),
+//				HttpStatus.OK);
+//	}
 
 	@RequestMapping(value = "/updateIsApproved/{id}/{value}/{remarks}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateApprovalStatusAndRemarks(@PathVariable Long id,

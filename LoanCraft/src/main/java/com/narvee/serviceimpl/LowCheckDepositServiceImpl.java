@@ -89,7 +89,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 			sortField = "is_approved";
 		else if (sortField.equalsIgnoreCase("receivableAmount"))
 			sortField = "receivable_amount";
-		else if (sortField.equalsIgnoreCase("createddate"))
+		else if (sortField.equalsIgnoreCase("createdDate"))
 			sortField = "createddate";
 		else
 			sortField = "updateddate";
