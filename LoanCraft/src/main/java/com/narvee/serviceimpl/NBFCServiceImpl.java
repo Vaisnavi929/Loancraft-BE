@@ -116,6 +116,9 @@ public class NBFCServiceImpl implements NBFCService {
 				nbfc.put("address", object[6]);
 				nbfc.put("email", object[7]);
 				nbfc.put("updateddate", object[8]);
+				nbfc.put("products" , object[9]);
+	     		nbfc.put("partners", object[10]);
+	     		nbfc.put("typeOfOrganization", object[11]);
 				nbfcs.add(nbfc);
 
 			}
