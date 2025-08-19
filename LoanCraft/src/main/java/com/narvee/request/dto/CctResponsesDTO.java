@@ -1,16 +1,19 @@
 package com.narvee.request.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface CctResponsesDTO {
 
-	public Long getcrmId();
-	public Long getcCtid();
-	public LocalDateTime getcreateDdate();
-	public LocalDateTime getupdatedDate();
-	public LocalDateTime getendTime();
-	public LocalDateTime getstartTime();
-	public String getduration();
+	public Long getcctId();
+
+	public String getcustomerName();
+
+	public String getagentName();
+
+	public LocalDate getdate();
+
 	public String getfeedBack();
-    public String getstatus();
+
+	public String getstatus();
 }

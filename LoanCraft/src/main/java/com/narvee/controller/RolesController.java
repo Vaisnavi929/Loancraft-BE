@@ -23,7 +23,7 @@ import com.narvee.request.dto.RolesDTO;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/roles")
+@RequestMapping("/api/roles")
 public class RolesController {
 	public static final Logger logger = LoggerFactory.getLogger(RolesController.class);
 

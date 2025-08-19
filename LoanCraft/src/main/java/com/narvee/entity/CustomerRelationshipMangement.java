@@ -1,4 +1,4 @@
-package com.narvee.entity;
+      package com.narvee.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +22,6 @@ public class CustomerRelationshipMangement {
 	private String mobileNumber;
 	private String email;
 	
-	
+	   
 	
 }

@@ -1,5 +1,6 @@
 package com.narvee.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.narvee.commons.AuditModel;
@@ -23,22 +24,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Table(name = "Lms_customer_call_tracking")
-public class CustomerCallTracking extends AuditModel {
+public class CustomerCallTracking  {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long cCtid;
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
-	private String duration;
+	private Long cctId;
+	private String customerName;
+	private String agentName;
+	private LocalDate date;
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;
 	private String status;
-	
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name ="crm_Id" )
-	private CustomerRelationshipMangement customerRelationshipMangement;
-	
+
 }
