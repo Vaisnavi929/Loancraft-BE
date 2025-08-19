@@ -70,7 +70,7 @@ public class CctController {
 
 	}
 
-	@PostMapping("/getcustomerCallTracking")
+	@PostMapping("/getCustomerCallTracking")
 	public ResponseEntity<RestAPIResponse> getAllCctBySorting(@RequestBody RequestDTO request) {
 		logger.info("!!! inside class:CrmController,!! method:getAllCctBySorting() ");
 		return new ResponseEntity<RestAPIResponse>(

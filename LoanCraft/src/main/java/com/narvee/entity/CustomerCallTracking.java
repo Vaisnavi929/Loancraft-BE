@@ -38,5 +38,4 @@ public class CustomerCallTracking {
 	private String status;
 	private Long loanAccountNumber;
 
-
 }
