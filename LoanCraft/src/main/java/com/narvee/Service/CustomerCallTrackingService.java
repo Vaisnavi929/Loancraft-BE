@@ -12,16 +12,14 @@ import com.narvee.request.dto.RequestDTO;
 
 public interface CustomerCallTrackingService {
 
-	public CustomerCallTracking saveCctAll(CustomerCallTracking customerCallTracking);
+	public CustomerCallTracking saveCct(CustomerCallTracking callTracking);
 
-	public List<CrmRquestDto> getCctAll();
-	
-public Page<CustomerCallTracking> findAllCct (RequestDTO CctRequestDto);
-	
 	public CustomerCallTracking updateCct(CustomerCallTracking callTracking);
-	
-	public boolean deleteById(Long cCtid);
-	
-	public Page<CctResponsesDTO>getCctByCrmId(RequestDTO requestDTO);
+
+	public Optional<CustomerCallTracking> getById(Long cCtid);
+
+	public List<CustomerCallTracking> getAll();
+
+	public Page<CctResponsesDTO> getAllCallTracking(RequestDTO requestDTO);
 
 }

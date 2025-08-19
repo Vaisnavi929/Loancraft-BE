@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SortingRequestDto {
 		
-private Integer pageNumber;
-private Integer pageSize;
+private int pageNumber;
+private int pageSize;
 private String sortField;
 private String sortOrder;
 private String keyword;

@@ -39,7 +39,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	public CustomerCallTracking saveCct(CustomerCallTracking callTracking) {
 		logger.info("!!! inside class : CustomerRelationshipMangementImpl,!! method:saveCct()  ");
 		return customerCallTrackingRepo.save(callTracking);
-	}
+	} 
 
 	@Override
 	public CustomerCallTracking updateCct(CustomerCallTracking callTracking) {
@@ -48,9 +48,9 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	}
 
 	@Override
-	public Optional<CustomerCallTracking> getById(Long cCtid) {
+	public Optional<CustomerCallTracking> getById(Long cctId) {
 		logger.info("!!! inside class : CustomerRelationshipMangementImpl,!! method: getById()  ");
-		return customerCallTrackingRepo.findById(cCtid);
+		return customerCallTrackingRepo.findById(cctId);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	}
 
 	@Override
-	public Page<CustomerCallTracking> getAllCallTracking(RequestDTO requestDTO) {
+	public Page<CctResponsesDTO> getAllCallTracking(RequestDTO requestDTO) {
 		logger.info("!!! inside class : CustomerRelationshipMangementImpl,!! method: paginationCct()");
 
 		int pageNo = requestDTO.getPageNumber();
@@ -71,20 +71,18 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 		
 		Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 		
-		if (sortField.equalsIgnoreCase("CREATEDATE")) {
-			sortField = "createddate";
-		} else if (sortField.equalsIgnoreCase("UPDATE")) {
-			sortField = "updateddate";
+		if (sortField.equalsIgnoreCase("cctId")) {
+			sortField = "cct_id";
 		} else if (sortField.equalsIgnoreCase("agentName")) {
 			sortField = "agent_name";
+		} else if (sortField.equalsIgnoreCase("customerName")) {
+			sortField = "customer_name";
 		} else if (sortField.equalsIgnoreCase("feedBACK")) {
 			sortField = "feed_back";
 		} else if (sortField.equalsIgnoreCase("status")) {
 			sortField = "status";
-		} else if (sortField.equalsIgnoreCase("customerName")) {
-			sortField = "customer_name";
-		} else {
-			sortField = "cct_id";
+		}  {
+			sortField = "date";
 		}
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 
@@ -105,35 +103,5 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 		
 	}
 
-	@Override
-	public CustomerCallTracking saveCctAll(CustomerCallTracking customerCallTracking) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<CrmRquestDto> getCctAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Page<CustomerCallTracking> findAllCct(RequestDTO CctRequestDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean deleteById(Long cCtid) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Page<CctResponsesDTO> getCctByCrmId(RequestDTO requestDTO) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+	
 }

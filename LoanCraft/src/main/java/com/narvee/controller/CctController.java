@@ -33,18 +33,18 @@ public class CctController {
 		logger.info("!!! inside class:CctController,!! method:saveCct() ");
 		try {
 			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success.", "Saved successfully.", cCts.saveCctAll(cCt)), HttpStatus.OK);
+					new RestAPIResponse("success.", "Saved successfully.", cCts.saveCct(cCt)), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed.", e.getMessage()), HttpStatus.OK);
 		}
 	}
 
-//	@GetMapping("/getCct")
-//	public ResponseEntity<RestAPIResponse> getAllCct() {
-//		logger.info("!!! inside class:CctController,!! method:getAllCct() ");
-//		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "the list of cct", cCts.getCctAll()),
-//				HttpStatus.OK);
-//	}
+	@GetMapping("/getCct")
+	public ResponseEntity<RestAPIResponse> getAllCct() {
+		logger.info("!!! inside class:CctController,!! method:getAllCct() ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "the list of cct", cCts.getAll()),
+				HttpStatus.OK);
+	}
 //
 //	@PostMapping("/cCtBySearching")
 //	public ResponseEntity<RestAPIResponse> getAllCct(@RequestBody RequestDTO request) {
@@ -59,19 +59,18 @@ public class CctController {
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "updated successfully", cCts.updateCct(callTracking)), HttpStatus.OK);
 	}
-
-	@DeleteMapping("/deleteCct/{cCtid}")
-	public ResponseEntity<RestAPIResponse> deleteById(@PathVariable Long cCtid) {
-		logger.info("!!! inside class:CrmController,!! method:deleteById() ");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "deleted successfully", cCts.deleteById(cCtid)), HttpStatus.OK);
+	@GetMapping("/findByCct/{cctId}")
+	public ResponseEntity<RestAPIResponse>findByCctId(@PathVariable Long cctId){
+		logger.info("!!! inside class:CrmController,!! method:findByCctId()");
+		System.err.println(cctId);
+		return new ResponseEntity<RestAPIResponse> (new RestAPIResponse("success", "customer detalis fetched successfully", cCts.getById(cctId)),HttpStatus.OK);
+		
 	}
-
-	@PostMapping("/getCctByCrmId")
-	public ResponseEntity<RestAPIResponse> getById(@RequestBody RequestDTO request) {
-		logger.info("!!! inside class:CrmController,!! method:getById() ");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "fetched customer call Tracking", cCts.getCctByCrmId(request)), HttpStatus.OK);
+	@PostMapping("/sortingBySearching")
+	public ResponseEntity<RestAPIResponse> getAllCctBySorting(@RequestBody RequestDTO request) {
+		logger.info("!!! inside class:CrmController,!! method:getAllCctBySorting() ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "crm details fetched successfully", cCts.getAllCallTracking(request)),
+				HttpStatus.OK);
 	}
-
+	
 }
