@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Table(name = "Lms_customer_call_tracking")
-public class CustomerCallTracking  {
+public class CustomerCallTracking {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -36,6 +36,7 @@ public class CustomerCallTracking  {
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;
 	private String status;
+	private Long loanAccountNumber;
 
 
 }
