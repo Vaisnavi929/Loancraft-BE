@@ -35,7 +35,6 @@ public class ReferenceInfoController {
 
 	@PutMapping("/update")
 	public ResponseEntity<RestAPIResponse> updateCct(@RequestBody ReferenceInfo info) {
-		
 
 		try {
 			return new ResponseEntity<RestAPIResponse>(
@@ -69,7 +68,6 @@ public class ReferenceInfoController {
 
 	@PostMapping("/getReferenceinfo")
 	public ResponseEntity<RestAPIResponse> getAllCct(@RequestBody RequestDTO request) {
-
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "crm details fetched successfully",
 				referenceService.paginationReferenceInfo(request)), HttpStatus.OK);
 	}
