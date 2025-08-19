@@ -57,12 +57,15 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 		CustomersInfo customer = modelMapper.map(register, CustomersInfo.class);
-		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
+			
+			if (customer.getPassword() == null || customer.getPassword().isEmpty()) {
+			    customer.setPassword("Lms@123$"); // set default password
+			}
 			String encodedPassword = passwordEncoder.encode(customer.getPassword());
 			customer.setPassword(encodedPassword);
 			String accountNumber = accountSequenceService.generateAccountNumber();
 			customer.setAccountNumber(accountNumber);
-		}
+		
 //		CustomersInfo saveCustomers = customerRepository.save(customer);
 
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
@@ -148,7 +151,7 @@ public class CustomerServiceImpl implements CustomerService {
 				e.printStackTrace();
 			}
 			return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-					dto.getMobileNumber());
+					dto.getMobileNumber(),dto.getLoanReaquired(),dto.getLocation());
 		});
 
 		return encryptedPage;
@@ -247,6 +250,10 @@ public class CustomerServiceImpl implements CustomerService {
 				sortField = "mobile_number";
 			} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
 				sortField = "account_number";
+			} else if (sortField.equalsIgnoreCase("location")) {
+				sortField = "location";
+			} else if (sortField.equalsIgnoreCase("loanRequired")) {
+				sortField = "loan_reaquired";
 			} else {
 				sortField = "updateddate";
 			}
@@ -263,7 +270,7 @@ public class CustomerServiceImpl implements CustomerService {
 				customerPage = customerRepository.findAllPreSalesApplicants(pageable);
 			} else {
 				logger.info("Inside ApplicantServiceImpl: getAllApplicants, searching ");
-				customerPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
+				customerPage = customerRepository.findPreSalesApplicantsByKeyword(keyword, pageable);
 			}
 			Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
 				// Encrypt the customerId (convert to String first)
@@ -275,7 +282,7 @@ public class CustomerServiceImpl implements CustomerService {
 					e.printStackTrace();
 				}
 				return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-						dto.getMobileNumber());
+						dto.getMobileNumber(),dto.getLoanReaquired(),dto.getLocation());
 			});
 
 			return encryptedPage;

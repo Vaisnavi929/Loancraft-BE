@@ -18,4 +18,5 @@ public class EmiDueInfoDTO {
 	private double penalty;
 	private String emiMonth;
 	private double latePenalty;
+	private double total;
 }

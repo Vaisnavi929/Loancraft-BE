@@ -42,7 +42,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		lowCheckDepositApproval.setLmsRepayment(lmsRepayment);
 		return approvalRespository.save(lowCheckDepositApproval);
 	}
-
+	
 	@Override
 	public LowCheckDepositApproval updateCheckDepositApproval(LowCheckDepositDTO LowCheckDepositDTO) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:updateCheckDepositApproval() ");
@@ -52,7 +52,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		lowCheckDepositApproval.setLmsRepayment(lmsRepayment);
 		return approvalRespository.save(lowCheckDepositApproval);
 	}
-
+	
 	@Override
 	public LowCheckDepositApproval getById(Long id) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:getById() ");
