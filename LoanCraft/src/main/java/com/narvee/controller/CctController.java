@@ -59,18 +59,23 @@ public class CctController {
 		return new ResponseEntity<RestAPIResponse>(
 				new RestAPIResponse("success", "updated successfully", cCts.updateCct(callTracking)), HttpStatus.OK);
 	}
+
 	@GetMapping("/findByCct/{cctId}")
-	public ResponseEntity<RestAPIResponse>findByCctId(@PathVariable Long cctId){
+	public ResponseEntity<RestAPIResponse> findByCctId(@PathVariable Long cctId) {
 		logger.info("!!! inside class:CrmController,!! method:findByCctId()");
 		System.err.println(cctId);
-		return new ResponseEntity<RestAPIResponse> (new RestAPIResponse("success", "customer detalis fetched successfully", cCts.getById(cctId)),HttpStatus.OK);
-		
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "customer detalis fetched successfully", cCts.getById(cctId)),
+				HttpStatus.OK);
+
 	}
-	@PostMapping("/sortingBySearching")
+
+	@PostMapping("/getCustomerCallTracking")
 	public ResponseEntity<RestAPIResponse> getAllCctBySorting(@RequestBody RequestDTO request) {
 		logger.info("!!! inside class:CrmController,!! method:getAllCctBySorting() ");
-		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "crm details fetched successfully", cCts.getAllCallTracking(request)),
+		return new ResponseEntity<RestAPIResponse>(
+				new RestAPIResponse("success", "crm details fetched successfully", cCts.getAllCallTracking(request)),
 				HttpStatus.OK);
 	}
-	
+
 }

@@ -81,7 +81,10 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 			sortField = "feed_back";
 		} else if (sortField.equalsIgnoreCase("status")) {
 			sortField = "status";
-		}  {
+		} else if (sortField.equalsIgnoreCase("LoanAccountNumber")) {
+			sortField = "loan_account_number";
+		} 
+		else{
 			sortField = "date";
 		}
 		Sort.Direction sortDirection = Sort.Direction.ASC;

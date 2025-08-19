@@ -16,4 +16,7 @@ public interface CctResponsesDTO {
 	public String getfeedBack();
 
 	public String getstatus();
+
+	public Long getloanAccountNumber();
+
 }

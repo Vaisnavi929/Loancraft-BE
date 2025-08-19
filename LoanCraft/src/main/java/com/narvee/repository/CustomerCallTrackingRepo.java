@@ -14,19 +14,20 @@ import com.narvee.request.dto.CctResponsesDTO;
 @Repository
 public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTracking, Long> {
 
-	@Query(value = "select cct_id,agent_name,customer_name,date,feed_back,status\r\n"
+	@Query(value = "SELECT cct_id,agent_name,customer_name,loan_account_number,date,feed_back,status\r\n"
 			+ "from  loancraft.lms_customer_call_tracking"
 			+ "", nativeQuery = true)
 	Page<CctResponsesDTO> getcctinfo(Pageable pageable);
 
-	@Query(value = "SELECT  select cct_id,agent_name,customer_name,date,feed_back,status\r\n"
-			+ "from  loancraft.lms_customer_call_tracking n "
-			+ " WHERE LOWER(cct_id) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-			+ " OR LOWER(agent_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-			+ " OR LOWER(customer_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-			+ " OR LOWER(date) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-			+ "OR LOWER(feed_back) LIKE LOWER(CONCAT('%', :keyword, '%'))"
-			+ "OR LOWER(status) LIKE LOWER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
+	@Query(value = "SELECT  cct_id,agent_name,customer_name,loan_account_number,date,feed_back,status\r\n"
+			+ " from  loancraft.lms_customer_call_tracking n "
+			+ "WHERE CAST(cct_id AS TEXT) LIKE CONCAT('%', :keyword, '%')\r\n"
+			+ "   OR LOWER(agent_name) LIKE LOWER(CONCAT('%', :keyword, '%'))\r\n"
+			+ "   OR LOWER(customer_name) LIKE LOWER(CONCAT('%', :keyword, '%'))\r\n"
+			+ "   OR CAST(date AS TEXT) LIKE CONCAT('%', :keyword, '%')\r\n"
+			+ "   OR LOWER(feed_back) LIKE LOWER(CONCAT('%', :keyword, '%'))\r\n"
+			+ "   OR CAST(loan_account_number AS TEXT) LIKE CONCAT('%', :keyword, '%')\r\n"
+			+ "   OR LOWER(status) LIKE LOWER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
 	Page<CctResponsesDTO> getAllCctWithSearching(String keyword, Pageable pageable);
 
 //	@Query(value = "SELECT crm_id,c_ctid,createddate,updateddate,end_time,feed_back,start_time,status,duration,date FROM  lms_customer_call_tracking WHERE crm_id = :crmId "
