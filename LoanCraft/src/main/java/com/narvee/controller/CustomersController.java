@@ -83,14 +83,15 @@ public class CustomersController {
 		}
 	}
 
-	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json") // --- presales 
+	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json") // --- presales
 	public ResponseEntity<RestAPIResponse> getAllApplicantsPreSales(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer pre sales  with sorting: {}", sortingDTO);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
 				customerService.getAllCustomers(sortingDTO)), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json")   // --- customers 
+
+	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json") // ---
+																												// customers
 	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer with sorting: {}", sortingDTO);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
@@ -196,7 +197,7 @@ public class CustomersController {
 				customerService.getApplicationsByCustomerId(customerId)), HttpStatus.OK);
 
 	}
-	
+
 //	@GetMapping("/dupllicateAdhaarNumber/{adhaarNumber}")
 //	public ResponseEntity<RestAPIResponse>checkduplicateEmail(@PathVariable String adhaarNumber){
 //		logger.info("!!! inside class:CrmController,!! method:duplicateEmail() ");
@@ -212,4 +213,21 @@ public class CustomersController {
 //
 //		
 //	}
+
+	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
+	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
+		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
+
+		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
+
+		if (existsMoblieNum) {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
+					HttpStatus.OK);
+		}
+
+	}
 }

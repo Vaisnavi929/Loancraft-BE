@@ -1,5 +1,6 @@
 package com.narvee.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 
 @Table(name = "LmsCustomers_info")
 @EqualsAndHashCode(callSuper = true)
-public class CustomersInfo extends AuditModel {
+public class CustomersInfo extends AuditModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id

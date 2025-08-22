@@ -1,4 +1,4 @@
-package com.narvee.repository;
+ package com.narvee.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.narvee.entity.Reference;
 import com.narvee.entity.ReferenceInfo;
-import com.narvee.request.dto.CctResponsesDTO;
 import com.narvee.request.dto.ReferenceRequestDto;
 import com.narvee.response.ReferenceResponseDTO;
 

@@ -13,7 +13,7 @@ import com.narvee.request.dto.RequestDTO;
 
 public interface ReferenceService {
 
-	public ReferenceInfo saveRi(ReferenceRequestDto referenceRequestDto);
+	public Object saveRi(ReferenceRequestDto referenceRequestDto);
 	
 	public ReferenceInfo updateRi(ReferenceInfo referenceInfo);
 	

@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.CustomerCallTrackingService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.CustomerCallTracking;
 import com.narvee.request.dto.RequestDTO;
+import com.narvee.request.dto.callRequestDTO;
 
 @RestController
 @RequestMapping("/auth/cct")
@@ -28,16 +30,11 @@ public class CctController {
 	@Autowired
 	private CustomerCallTrackingService cCts;
 
-	@PostMapping("/saveCct")
-	public ResponseEntity<RestAPIResponse> saveCct(@RequestBody CustomerCallTracking cCt) {
-		logger.info("!!! inside class:CctController,!! method:saveCct() ");
-		try {
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success.", "Saved successfully.", cCts.saveCct(cCt)), HttpStatus.OK);
-		} catch (RuntimeException e) {
-			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed.", e.getMessage()), HttpStatus.OK);
-		}
-	}
+	@PostMapping("/save")
+    public ResponseEntity<RestAPIResponse> saveCall(@RequestBody callRequestDTO dto) {
+    
+        return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "....", cCts.saveCct(dto)),HttpStatus.OK);
+    }
 
 	@GetMapping("/getCct")
 	public ResponseEntity<RestAPIResponse> getAllCct() {
@@ -54,10 +51,8 @@ public class CctController {
 //	}
 
 	@PutMapping("/updateCct")
-	public ResponseEntity<RestAPIResponse> updateCct(@RequestBody CustomerCallTracking callTracking) {
-		logger.info("!!! inside class:CrmController,!! method:updateCct() ");
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "updated successfully", cCts.updateCct(callTracking)), HttpStatus.OK);
+	  public ResponseEntity<RestAPIResponse> updatecct(@RequestBody callRequestDTO dto) {
+        return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "updated successfuly", cCts.updateCct(dto)),HttpStatus.OK);
 	}
 
 	@GetMapping("/findByCct/{cctId}")
@@ -74,7 +69,7 @@ public class CctController {
 	public ResponseEntity<RestAPIResponse> getAllCctBySorting(@RequestBody RequestDTO request) {
 		logger.info("!!! inside class:CrmController,!! method:getAllCctBySorting() ");
 		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "crm details fetched successfully", cCts.getAllCallTracking(request)),
+				new RestAPIResponse("success", "cct details fetched successfully", cCts.getAllCallTracking(request)),
 				HttpStatus.OK);
 	}
 

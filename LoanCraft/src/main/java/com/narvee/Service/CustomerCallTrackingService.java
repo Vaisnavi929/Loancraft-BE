@@ -6,20 +6,20 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 
 import com.narvee.entity.CustomerCallTracking;
-import com.narvee.request.dto.CctResponsesDTO;
-import com.narvee.request.dto.CrmRquestDto;
 import com.narvee.request.dto.RequestDTO;
+import com.narvee.request.dto.callRequestDTO;
+import com.narvee.vo.CctResponseDTO;
 
 public interface CustomerCallTrackingService {
 
-	public CustomerCallTracking saveCct(CustomerCallTracking callTracking);
+	public Object saveCct(callRequestDTO callRequestDTO);
 
-	public CustomerCallTracking updateCct(CustomerCallTracking callTracking);
+	public Object updateCct(callRequestDTO callRequestDTO);
 
 	public Optional<CustomerCallTracking> getById(Long cCtid);
 
 	public List<CustomerCallTracking> getAll();
 
-	public Page<CctResponsesDTO> getAllCallTracking(RequestDTO requestDTO);
+	public Page<CctResponseDTO> getAllCallTracking(RequestDTO requestDTO);
 
 }
