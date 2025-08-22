@@ -71,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
 
 		CustomersInfo savedCustomer = customerRepository.save(customer);
-         
+
 		logger.info("Successfully saved customer with ID: {}", savedCustomer.getCustomerId());
 		return savedCustomer;
 	}
@@ -126,7 +126,7 @@ public class CustomerServiceImpl implements CustomerService {
 		} else {
 			sortField = "updateddate";
 		}
-
+		
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;

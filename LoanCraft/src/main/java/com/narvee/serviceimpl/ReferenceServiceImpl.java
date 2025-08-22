@@ -35,26 +35,26 @@ private CustomerCallTrackingRepo callTrackingRepo;
 
 	
 	@Override
-	public ReferenceInfo saveRi(ReferenceRequestDto referenceRequestDto) {
-		logger.info("!!! inside class :ReferenceServiceImpl , !! method :saveRi() ");
-		
-		CustomerCallTracking call = callTrackingRepo.findById(referenceRequestDto.getCctId()).orElseThrow(() -> new RuntimeException("customerCallTracing not"));
-		
-		ReferenceInfo reference = new ReferenceInfo();
-        reference.setReferenceName(referenceRequestDto.getReferenceName());
-        reference.setMobileNumber(referenceRequestDto.getMobileNumber());
-        reference.setReferenceFeedBack(referenceRequestDto.getReferenceFeedBack());
-        reference.setReferenceStatus(referenceRequestDto.getReferenceStatus());	
-        reference.setCustomerCallTracking(call);
-		return 	referenceRepository.save(reference);
+	public Object saveRi(ReferenceRequestDto referenceRequestDto) {
+//		logger.info("!!! inside class :ReferenceServiceImpl , !! method :saveRi() ")
+//		
+//		CustomerCallTracking call = callTrackingRepo.g(referenceRequestDto.getReferenceStatus()).orElseThrow(() -> new RuntimeException("customerCallTracing not"));
+//		
+//		ReferenceInfo reference = new ReferenceInfo();
+//        reference.setReferenceName(referenceRequestDto.getReferenceName());
+//        reference.setMobileNumber(referenceRequestDto.getMobileNumber());
+//        reference.setReferenceFeedBack(referenceRequestDto.getReferenceFeedBack());
+//        reference.setReferenceStatus(referenceRequestDto.getReferenceStatus());	
+//        reference.setCustomerCallTracking(call);
+		return 	referenceRepository.save(null);
 	}
 
 	@Override
 	public ReferenceInfo updateRi(ReferenceInfo referenceInfo) {
 		
-		CustomerCallTracking callTracking=callTrackingRepo.findById(referenceInfo.getCustomerCallTracking().getCctId()).get();
-		referenceInfo.setCustomerCallTracking(callTracking);
-		
+//		CustomerCallTracking callTracking=callTrackingRepo.findById(referenceInfo.getCustomerCallTracking().getCctId()).get();
+//		referenceInfo.setCustomerCallTracking(callTracking);
+//		
 		return referenceRepository.save(referenceInfo);
 	}
 

@@ -3,22 +3,22 @@ package com.narvee.response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface ReferenceResponseDTO {
+public class ReferenceResponseDTO {
 
-	public Long getcctId();
+	public Long getcctId;
 
-	public Long getreferenceId();
+	public Long getreferenceId;
 
-	public LocalDateTime getcreateDdate();
+	public LocalDateTime getcreateDdate;
 
-	public LocalDateTime getupdatedDate();
+	public LocalDateTime getupdatedDate;
 
-	public String getreferenceName();
+	public String getreferenceName;
 
-	public String getmobileNumber();
+	public String getmobileNumber;
 
-	public String getreferenceFeedBack();
+	public String getreferenceFeedBack;
 
-	public String getreferenceStatus();
+	public String getreferenceStatus;
 
 }
