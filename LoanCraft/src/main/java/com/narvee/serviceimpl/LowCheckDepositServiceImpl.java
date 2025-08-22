@@ -34,7 +34,9 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	@Override
 	public LowCheckDepositApproval saveCheckDepositApproval(LowCheckDepositDTO LowCheckDepositDTO) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:saveCheckDepositApproval() ");
+		
 		LowCheckDepositApproval lowCheckDepositApproval = mapper.map(LowCheckDepositDTO, LowCheckDepositApproval.class);
+		
 		lowCheckDepositApproval.setId(null);
 		lowCheckDepositApproval.setStatus("Requested");
 		LmsRepayment lmsRepayment = new LmsRepayment();

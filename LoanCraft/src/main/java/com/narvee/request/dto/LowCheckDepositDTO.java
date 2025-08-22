@@ -17,7 +17,7 @@ public class LowCheckDepositDTO {
 	private Long repaymentId;
 	private Double receivableAmount;
 	private Double requestedAmount;
-	private LocalDate postingDate;
+	private LocalDate postedDate;
 	private String chequeNumber;
 	
 }
