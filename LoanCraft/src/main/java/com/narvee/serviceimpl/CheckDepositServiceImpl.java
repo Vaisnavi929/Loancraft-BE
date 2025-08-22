@@ -1,4 +1,3 @@
-
 package com.narvee.serviceimpl;
 
 import java.time.LocalDate;
@@ -198,9 +197,10 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	}
 
 	@Override
-	public String updateStausofRequestedCheque(Long rid) {
-	
-		return null;
+	public boolean updateStausofRequestedCheque(CheckDepositDTO checkDepositDTO) {
+		depositRepository.updateStatusofRequestedCheque(checkDepositDTO.getPostingDate(), checkDepositDTO.getChequeNumber(), checkDepositDTO.getAmount());
+		return true;
+		
 	}
 
 }

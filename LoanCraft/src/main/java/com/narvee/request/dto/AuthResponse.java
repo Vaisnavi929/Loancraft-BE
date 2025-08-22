@@ -13,6 +13,6 @@ public class AuthResponse {
 	private String token;
 	private String occupation;
 	private String location;
-	private String loanRequired;
+	private double loanRequired;
 
 }

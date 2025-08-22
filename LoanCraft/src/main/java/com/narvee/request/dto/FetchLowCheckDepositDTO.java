@@ -1,5 +1,7 @@
 package com.narvee.request.dto;
 
+import java.time.LocalDate;
+
 public interface FetchLowCheckDepositDTO {
 
 	public Long getId();
@@ -25,5 +27,11 @@ public interface FetchLowCheckDepositDTO {
 	public String getUpdateddate();
 	
 	public String getStatus();
-
+	
+	public String getChequeNumber();
+	
+	public LocalDate getPostedDate();
+	
+	public Long getRepaymentId();
+    
 }

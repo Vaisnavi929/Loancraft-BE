@@ -38,9 +38,19 @@ public class NBFC extends AuditModel {
 	
 	@Column(name = "layer")
 	private String layer;
+	
 	@Column(name = "address")
 	private String address;
+	
 	@Column(name = "email")
 	private String email;
 
+	@Column(name = "products")
+	private String products;
+	
+	@Column(name = "partners")
+	private String partners;
+	
+	@Column(name = "typeOfOrganization")
+	private String typeOfOrganization;
 }
