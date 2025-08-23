@@ -59,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
 		CustomersInfo customer = modelMapper.map(register, CustomersInfo.class);
 			
 			if (customer.getPassword() == null || customer.getPassword().isEmpty()) {
-			    customer.setPassword("Lms@123$"); // set default password
+			    customer.setPassword("Lms@123$"); 
 			}
 			String encodedPassword = passwordEncoder.encode(customer.getPassword());
 			customer.setPassword(encodedPassword);
@@ -96,7 +96,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customer.getCurrentAddress() == null) {
 			CurrentAddress currentAddress = new CurrentAddress();
 			customer.setCurrentAddress(currentAddress);
-			States states = new States();
+			States states = new States(); 
 			currentAddress.setState(states);
 
 		}
