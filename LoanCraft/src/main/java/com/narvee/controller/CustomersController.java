@@ -70,7 +70,7 @@ public class CustomersController {
 		logger.info("Fetching customer by encrypted ID: {}", id);
 		// Call service method to fetch the customer by decrypted ID
 		CustomersInfo customer = customerService.getById(id);
-		System.out.println(); 
+		System.out.println();
 
 		if (customer != null) {
 			String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId());
@@ -84,13 +84,15 @@ public class CustomersController {
 	}
 
 	@RequestMapping(value = "/getAllPreSales", method = RequestMethod.POST, produces = "application/json") // --- presales 
+
 	public ResponseEntity<RestAPIResponse> getAllApplicantsPreSales(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer pre sales  with sorting: {}", sortingDTO);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
 				customerService.getAllPreSalesCustomers(sortingDTO)), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json")   // --- customers 
+
+	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json") // ---
+																												// customers
 	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer with sorting: {}", sortingDTO);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
@@ -191,8 +193,42 @@ public class CustomersController {
 
 	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")
 	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId) {
+
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
 				customerService.getApplicationsByCustomerId(customerId)), HttpStatus.OK);
+
+	}
+
+//	@GetMapping("/dupllicateAdhaarNumber/{adhaarNumber}")
+//	public ResponseEntity<RestAPIResponse>checkduplicateEmail(@PathVariable String adhaarNumber){
+//		logger.info("!!! inside class:CrmController,!! method:duplicateEmail() ");
+//		
+//		boolean existsAdhaarNumber = customerService.existsByadhaarNumber (adhaarNumber);
+//		if (existsAdhaarNumber) {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("failed", "AdhaarNumber already exists ",existsAdhaarNumber ), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("success.", "AdhaarNumber verified successfully  ", existsAdhaarNumber), HttpStatus.OK);
+//		}
+//
+//		
+//	}
+
+	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
+	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
+		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
+
+		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
+
+		if (existsMoblieNum) {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
+					HttpStatus.OK);
+		}
 
 	}
 }

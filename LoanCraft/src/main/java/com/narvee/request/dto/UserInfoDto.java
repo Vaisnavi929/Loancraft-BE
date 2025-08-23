@@ -18,7 +18,7 @@ public class UserInfoDto {
 	@Size(min = 4, message = "Name must be min of 4 characters !!")
 	private String name;
 
-	@Email(message = "Email address is not valid !!")
+	@Email(message = "Email address is not valid !!") 
 	@NotEmpty(message = "Email is required !!")
 	private String email;
 
@@ -26,16 +26,9 @@ public class UserInfoDto {
 //	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
 	
 	private String password;
-	
 	private Long roleId;
-	
-	
 	private String mobileNumber;
-	
-	
-	
 	private Long addedBy;
-	
 	private Long updatedBy;
 
 	

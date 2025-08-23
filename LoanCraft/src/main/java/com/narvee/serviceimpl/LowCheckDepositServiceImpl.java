@@ -34,7 +34,9 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 	@Override
 	public LowCheckDepositApproval saveCheckDepositApproval(LowCheckDepositDTO LowCheckDepositDTO) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:saveCheckDepositApproval() ");
+		
 		LowCheckDepositApproval lowCheckDepositApproval = mapper.map(LowCheckDepositDTO, LowCheckDepositApproval.class);
+		
 		lowCheckDepositApproval.setId(null);
 		lowCheckDepositApproval.setStatus("Requested");
 		LmsRepayment lmsRepayment = new LmsRepayment();
@@ -42,7 +44,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		lowCheckDepositApproval.setLmsRepayment(lmsRepayment);
 		return approvalRespository.save(lowCheckDepositApproval);
 	}
-
+	
 	@Override
 	public LowCheckDepositApproval updateCheckDepositApproval(LowCheckDepositDTO LowCheckDepositDTO) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:updateCheckDepositApproval() ");
@@ -52,7 +54,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		lowCheckDepositApproval.setLmsRepayment(lmsRepayment);
 		return approvalRespository.save(lowCheckDepositApproval);
 	}
-
+	
 	@Override
 	public LowCheckDepositApproval getById(Long id) {
 		logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! method:getById() ");
@@ -89,7 +91,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 			sortField = "is_approved";
 		else if (sortField.equalsIgnoreCase("receivableAmount"))
 			sortField = "receivable_amount";
-		else if (sortField.equalsIgnoreCase("createddate"))
+		else if (sortField.equalsIgnoreCase("createdDate"))
 			sortField = "createddate";
 		else
 			sortField = "updateddate";

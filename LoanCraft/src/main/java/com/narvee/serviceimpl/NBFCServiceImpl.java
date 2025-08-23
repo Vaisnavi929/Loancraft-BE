@@ -102,8 +102,11 @@ public class NBFCServiceImpl implements NBFCService {
 		Map<String, Object> response = new LinkedHashMap<String, Object>();
 
 		Page<Object[]> nbfclist = null;
+		
 		if (keyword.equalsIgnoreCase("empty")) {
 			nbfclist = nbfcRepository.getAllNBFC(pageable);
+			
+			
 			for (Object[] object : nbfclist) {
 				logger.info("Inside NBFCServiceImpl: getAllNBFC ,Empty ");
 				Map<String, Object> nbfc = new LinkedHashMap<String, Object>();
@@ -116,6 +119,9 @@ public class NBFCServiceImpl implements NBFCService {
 				nbfc.put("address", object[6]);
 				nbfc.put("email", object[7]);
 				nbfc.put("updateddate", object[8]);
+				nbfc.put("products" , object[9]);
+	     		nbfc.put("partners", object[10]);
+	     		nbfc.put("typeOfOrganization", object[11]);
 				nbfcs.add(nbfc);
 
 			}

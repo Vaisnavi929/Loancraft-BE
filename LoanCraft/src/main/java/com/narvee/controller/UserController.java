@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/auth/users")
+@RequestMapping("/api/users")
 public class UserController {
 
 	public static final Logger logger = LoggerFactory.getLogger(UserController.class);

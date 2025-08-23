@@ -33,7 +33,6 @@ public class NBFCController {
 		nbfcService.save(nbfc);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "NBFC saved successfully"),
 				HttpStatus.OK);
-
 	}
 
 	@PutMapping(value = "/update")

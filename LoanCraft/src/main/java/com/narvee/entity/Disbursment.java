@@ -1,4 +1,4 @@
-package com.narvee.entity;
+ package com.narvee.entity;
 
 import java.time.LocalDate;
 

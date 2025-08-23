@@ -39,13 +39,11 @@ public class CustomerRelationshipMangementImpl implements CustomerRelationshipMa
 
 	@Override
 	public boolean existsByEmail(String email) {
-
 		return customerRelationshipMangementRepo.existsByEmailIgnoreCase(email);
 	}
 
 	@Override
 	public boolean existsByMoblieNumber(String mobileNumber) {
-
 		return customerRelationshipMangementRepo.existsByMobileNumber(mobileNumber);
 	}
 
@@ -61,12 +59,15 @@ public class CustomerRelationshipMangementImpl implements CustomerRelationshipMa
 		
 		if (sortField.equalsIgnoreCase("customerName")) {
 			sortField = "customer_name";
-		} else if (sortField.equalsIgnoreCase("email")) {
-			sortField = "email";
-		} else if (sortField.equalsIgnoreCase("mobileNumber")) {
-			sortField = "mobile_number";
+		} else if (sortField.equalsIgnoreCase("agentName")) {
+			sortField = "agent_name";
+		} else if (sortField.equalsIgnoreCase("feedBack")) {
+			sortField = "feed_back";
+		} else if (sortField.equalsIgnoreCase("status")) {
+			sortField = "status";
+			
 		} else {
-			sortField = "crm_id";
+			sortField = "cct_id";
 		}
 		
 		Sort.Direction sortDirection = Sort.Direction.ASC;
