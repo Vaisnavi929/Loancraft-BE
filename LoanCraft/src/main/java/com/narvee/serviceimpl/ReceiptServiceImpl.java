@@ -941,7 +941,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		receipetResponse.setTotalDue(roundToNearestRupee(totalDue.add(totalPenalty)));
 		receipetResponse.setEmiDueAmount(roundToNearestRupee(totalDue));
 		receipetResponse.setLastPaidDate(lastPaidDate);
-		receipetResponse.setTotal(roundToNearestRupee(totalDue.add(principal).add(totalPenalty).add(totalInterest))); 
+		
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() END");
 		return receipetResponse;
 	}

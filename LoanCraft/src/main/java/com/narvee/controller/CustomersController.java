@@ -56,11 +56,11 @@ public class CustomersController {
 
 		} catch (IllegalArgumentException e) {
 			logger.warn("Validation error: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			return ResponseEntity.status(HttpStatus.OK)
 					.body(new RestAPIResponse("fail", "Validation error", e.getMessage()));
 		} catch (Exception e) {
 			logger.error("Error saving customer: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			return ResponseEntity.status(HttpStatus.OK)
 					.body(new RestAPIResponse("fail", "Error saving customer Please try again later", e.getMessage()));
 		}
 	}
@@ -183,12 +183,12 @@ public class CustomersController {
 		boolean isDuplicate = customerService.isEmailDuplicate(email);
 
 		if (isDuplicate) {
-			new RestAPIResponse("fail", "Email already exists", true);
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("fail", "Email already exists", isDuplicate), HttpStatus.OK);
 		} else {
-			new RestAPIResponse("success", "Email is available", false);
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "Email is available", isDuplicate), HttpStatus.OK);
 		}
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
 	}
 
 	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")

@@ -42,6 +42,7 @@ public interface LowCheckDepositApprovalRespository extends JpaRepository<LowChe
 	public Page<FetchLowCheckDepositDTO> fetchLowCheckDepositDetails(Pageable pageable,
 			@Param("keyword") String keyword);
 
+
 //	@Query(value = "SELECT cd.status,cd.requested_amount,cd.receivable_amount,u.name AS approved_by_name,cd.id,cd.remarks,ru.name AS requested_by_name,cd.is_approved,"
 //			+ "CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.loan_id , cd.repayment_id , cd.cheque_number , cd.posted_date \r\n"
 //			+ "FROM loancraft.lms_low_check_deposit_approval cd \r\n"
@@ -53,6 +54,7 @@ public interface LowCheckDepositApprovalRespository extends JpaRepository<LowChe
 //			+ "join loancraft.lms_customers_info c on c.customer_id=a.customer_id \r\n"
 //			+ "JOIN  loancraft.lms_user_info ru ON ru.user_id = cd.request_by_id ", nativeQuery = true)
 //	public Page<FetchLowCheckDepositDTO> fetchLowCheckDepositDetails(Pageable pageable);
+
 
 	@Query(value = "SELECT cd.status, cd.requested_amount, cd.receivable_amount, " +
             "u.name AS approved_by_name, cd.id, cd.remarks, " +
