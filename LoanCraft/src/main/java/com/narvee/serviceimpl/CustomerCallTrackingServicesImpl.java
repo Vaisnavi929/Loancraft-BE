@@ -206,15 +206,19 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
                 map.put(cctId, parent);
             }
 
-            // Add child
+            // Add child        
             ReferenceDTO ref = new ReferenceDTO();
-            ref.setReferenceId(((Number) row[6]).longValue());
-            ref.setReferenceName((String) row[7]);
-            ref.setMobileNumber((String) row[8]);
-            ref.setReferenceFeedBack((String) row[9]);
-            ref.setReferenceStatus((String) row[10]);
 
-            parent.getReferences().add(ref);
+         ref.setReferenceId(row[6] != null ? ((Number) row[6]).longValue() : null);
+         ref.setReferenceName((String) row[7]);
+         ref.setMobileNumber((String) row[8]);
+         ref.setReferenceFeedBack((String) row[9]);
+         ref.setReferenceStatus((String) row[10]);
+
+         if (row[6] != null || row[7] != null || row[8] != null || row[9] != null || row[10] != null) {
+             parent.getReferences().add(ref);
+         }
+
         }
 
         List<CctResponseDTO> finalList = new ArrayList<>(map.values());

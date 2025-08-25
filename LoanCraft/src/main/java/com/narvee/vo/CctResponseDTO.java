@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class CctResponseDTO {
     private Long cctId;
     private String customerName;
+    private LocalDate date;
     private String agentName;
     private String feedBack;
     private Long loanAccountNumber;

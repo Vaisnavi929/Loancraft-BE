@@ -18,7 +18,7 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 			+ "    ct.feed_back, ct.loan_account_number,   ct.status, "
 			+ "    cr.reference_id,   cr.mobile_number,  cr.reference_feed_back, "
 			+ "    cr.reference_name,   cr.reference_status FROM lms_customer_call_tracking ct  "
-			+ " JOIN lms_reference_info cr   ON ct.cct_id = cr.cct_id ", nativeQuery = true)
+			+ " LEFT JOIN lms_reference_info cr   ON ct.cct_id = cr.cct_id ", nativeQuery = true)
 	Page<Object[]> getcctinfo(Pageable pageable);
 
 	@Query(value = """
@@ -34,11 +34,11 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 			       cr.reference_name AS referenceName,
 			       cr.reference_status AS referenceStatus
 			FROM lms_customer_call_tracking ct
-			JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
+		LEFt JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
 			""", countQuery = """
 			SELECT COUNT(DISTINCT ct.cct_id)
 			FROM lms_customer_call_tracking ct
-			JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
+			LEFT JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
 			""", nativeQuery = true)
 	Page<Object[]> findAllWithReferences(Pageable pageable);
 
