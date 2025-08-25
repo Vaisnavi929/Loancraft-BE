@@ -782,6 +782,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		return null;
 
 	}
+	//---------------------------------------------------------------------------------
 
 	@Override
 	public ReceiptResponse getReceiptInfo(Long dId) {
@@ -945,7 +946,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 		logger.info("!!! inside class:ReceiptServiceImpl, method: getReceiptInfo() END");
 		return receipetResponse;
 	}
-
+//-------------------------------------------------------------------------------
 	/// With date
 	@Override
 	public ReceiptResponse getReceiptInfoByReceiptDate(Long dId, LocalDate date) {
