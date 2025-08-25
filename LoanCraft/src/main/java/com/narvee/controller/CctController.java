@@ -29,7 +29,7 @@ public class CctController {
 	private CustomerCallTrackingService cCts;
 
 	@PostMapping("/saveCct")
-	public ResponseEntity<RestAPIResponse> saveCct(@RequestBody CustomerCallTracking cCt) {
+	public ResponseEntity<RestAPIResponse> saveCct      (@RequestBody CustomerCallTracking cCt) {
 		logger.info("!!! inside class:CctController,!! method:saveCct() ");
 		try {
 			return new ResponseEntity<RestAPIResponse>(
