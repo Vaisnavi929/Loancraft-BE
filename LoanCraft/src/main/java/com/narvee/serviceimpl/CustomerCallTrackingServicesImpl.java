@@ -48,7 +48,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	    
 	    call.setCustomerName(callRequestDTO.getCustomerName());
 	    call.setAgentName(callRequestDTO.getAgentName());
-	    call.setDate(LocalDate.now());
+	    call.setDate(callRequestDTO.getDate());
 	    call.setLoanAccountNumber(callRequestDTO.getLoanAccountNumber());
 	    call.setStatus(callRequestDTO.getStatus());
         call.setFeedBack(callRequestDTO.getFeedBack());
