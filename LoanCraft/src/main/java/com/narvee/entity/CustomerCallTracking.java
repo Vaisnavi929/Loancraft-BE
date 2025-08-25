@@ -42,7 +42,7 @@ public class CustomerCallTracking {
 	@Column(columnDefinition = "TEXT")
 	private String feedBack;
 	private String status;
-	private Long loanAccountNumber;
+	private String loanAccountNumber;
 
 	@OneToMany(mappedBy = "customerCall", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("cct-referenceInfo")

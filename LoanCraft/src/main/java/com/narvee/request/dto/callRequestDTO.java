@@ -3,7 +3,6 @@ package com.narvee.request.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.narvee.entity.ReferenceInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,9 +19,10 @@ public class callRequestDTO {
 	    private LocalDate date;
 	    private String status;   // "ANSWERED" or "NOT_ANSWERED"
 	    private String feedBack;
-		private Long loanAccountNumber;
+		private String loanAccountNumber;
 		
 	  private List<ReferenceRequestDto> referenceInfoDto;
+
 	
 	
 }
