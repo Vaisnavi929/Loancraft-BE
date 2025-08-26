@@ -18,8 +18,8 @@ import com.narvee.entity.CustomerCallTracking;
 public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTracking, Long> {
 	@Query(value = "SELECT  ct.cct_id, ct.customer_name,  ct.agent_name,  "
 			+ "    ct.feed_back, ct.loan_account_number,ct.date,   ct.status, "
-			+ "    cr.reference_id,   cr.mobile_number,  cr.reference_feed_back, "
-			+ "    cr.reference_name,   cr.reference_status FROM lms_customer_call_tracking ct  "
+			+ "    cr.reference_id, cr.reference_name,   cr.mobile_number,  cr.reference_feed_back, "
+			+ "       cr.reference_status FROM lms_customer_call_tracking ct  "
 			+ " LEFT JOIN lms_reference_info cr   ON ct.cct_id = cr.cct_id ", nativeQuery = true)
 	Page<Object[]> getcctinfo(Pageable pageable);
 
@@ -31,10 +31,11 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 				       ct.loan_account_number AS loanAccountNumber,
 				       ct.date ,
 				       ct.status AS status,
+				       
 				       cr.reference_id AS referenceId,
+				        cr.reference_name AS referenceName,
 				       cr.mobile_number AS mobileNumber,
 				       cr.reference_feed_back AS referenceFeedBack,
-				       cr.reference_name AS referenceName,
 				       cr.reference_status AS referenceStatus
 				FROM lms_customer_call_tracking ct
 			LEFT JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
@@ -45,12 +46,20 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 			""", nativeQuery = true)
 	Page<Object[]> findAllWithReferences(Pageable pageable);
 
-	@Query(value = "SELECT ct.cct_id, ct.customer_name, ct.agent_name, "
-			+ "ct.feed_back, ct.loan_account_number, ct.date, ct.status, "
-			+ " cr.reference_id, cr.mobile_number, cr.reference_feed_back, "
-			+ "cr.reference_name, cr.reference_status "
-			+ "FROM lms_customer_call_tracking ct "
-			+ "LEFT JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id "
+	@Query(value = "SELECT ct.cct_id AS cctId,\r\n"
+			+ "				       ct.customer_name AS customerName,"
+			+ "				       ct.agent_name AS agentName,"
+			+ "				       ct.feed_back AS feedBack,"
+			+ "				       ct.loan_account_number AS loanAccountNumber,"
+			+ "				       ct.date ,"
+			+ "				       ct.status AS status,"
+			
+			+ "				       cr.reference_id AS referenceId,"
+			+ "				        cr.reference_name AS referenceName,"
+			+ "				       cr.mobile_number AS mobileNumber,"
+			+ "				       cr.reference_feed_back AS referenceFeedBack,"
+			+ "				       cr.reference_status AS referenceStatus "
+			+ "FROM lms_customer_call_tracking ct " + "LEFT JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id "
 			+ "WHERE CAST(ct.cct_id AS TEXT) LIKE CONCAT('%', :keyword, '%') "
 			+ "OR LOWER(ct.agent_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
 			+ "OR LOWER(ct.customer_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
