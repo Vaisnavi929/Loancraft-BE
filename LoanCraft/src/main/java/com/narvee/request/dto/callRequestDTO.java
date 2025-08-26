@@ -24,5 +24,4 @@ public class callRequestDTO {
 	  private List<ReferenceRequestDto> referenceInfoDto;
 
 	
-	
 }

@@ -200,7 +200,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
                 parent.setCustomerName((String) row[1]);
                 parent.setAgentName((String) row[2]);
                 parent.setFeedBack((String) row[3]);
-                parent.setLoanAccountNumber(((Number) row[4]).longValue());
+                parent.setLoanAccountNumber((String)row[4]);
                 parent.setStatus((String) row[5]);
                 parent.setReferences(new ArrayList<>());
                 map.put(cctId, parent);
