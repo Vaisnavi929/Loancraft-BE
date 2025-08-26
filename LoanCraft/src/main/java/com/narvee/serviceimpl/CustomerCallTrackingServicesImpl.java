@@ -56,7 +56,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	    if ("ANSWERED".equalsIgnoreCase(callRequestDTO.getStatus())) {      
 	        return customerCallTrackingRepo.save(call);
 
-	    } else if ("NOT_ANSWERED".equalsIgnoreCase(callRequestDTO.getStatus())) {
+	    } else if ("NOT ANSWERED".equalsIgnoreCase(callRequestDTO.getStatus())) {
 	        List<ReferenceInfo> refs = new ArrayList<>();
 
 	        for (ReferenceRequestDto refDto : callRequestDTO.getReferenceInfoDto()) {
@@ -186,11 +186,12 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	    
 	    
 	     
-	 // Map of parentId -> DTO
+		 // Map of parentId -> DTO
         Map<Long, CctResponseDTO> map = new LinkedHashMap<>();
 
         for (Object[] row : pageResult.getContent()) {
-            Long cctId = ((Number) row[0]).longValue();
+        	 Long cctId = Long.valueOf(row[0].toString());
+//            Long cctId = ((Long) row[0]).longValue();
 
             // Create parent if not exists
             CctResponseDTO parent = map.get(cctId);
@@ -201,7 +202,12 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
                 parent.setAgentName((String) row[2]);
                 parent.setFeedBack((String) row[3]);
                 parent.setLoanAccountNumber((String)row[4]);
-                parent.setStatus((String) row[5]);
+          //      parent.setDate((LocalDate)row[5]);  
+                if (row[5] instanceof java.sql.Date) {
+                    parent.setDate(((java.sql.Date) row[5]).toLocalDate());
+                }
+
+                parent.setStatus((String) row[6]);            
                 parent.setReferences(new ArrayList<>());
                 map.put(cctId, parent);
             }
@@ -209,13 +215,13 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
             // Add child        
             ReferenceDTO ref = new ReferenceDTO();
 
-         ref.setReferenceId(row[6] != null ? ((Number) row[6]).longValue() : null);
-         ref.setReferenceName((String) row[7]);
-         ref.setMobileNumber((String) row[8]);
-         ref.setReferenceFeedBack((String) row[9]);
-         ref.setReferenceStatus((String) row[10]);
+         ref.setReferenceId(row[7] != null ? ((Number) row[7]).longValue() : null);
+         ref.setReferenceName((String) row[8]);
+         ref.setMobileNumber((String) row[9]);
+         ref.setReferenceFeedBack((String) row[10]);
+         ref.setReferenceStatus((String) row[11]);
 
-         if (row[6] != null || row[7] != null || row[8] != null || row[9] != null || row[10] != null) {
+         if (row[7] != null || row[8] != null || row[9] != null || row[10] != null || row[11] != null) {
              parent.getReferences().add(ref);
          }
 

@@ -1,24 +1,20 @@
 package com.narvee.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.builder.ToStringExclude;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.narvee.commons.AuditModel;
-import com.narvee.request.dto.ReferenceRequestDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,7 +27,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "Lms_customer_call_tracking")
 public class CustomerCallTracking {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,8 +41,7 @@ public class CustomerCallTracking {
 
 	@OneToMany(mappedBy = "customerCall", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("cct-referenceInfo")
-	//@ToStringExclude
-	 private List<ReferenceInfo> references = new ArrayList<>();
-	
-	
+	// @ToStringExclude
+	private List<ReferenceInfo> references = new ArrayList<>();
+
 }
