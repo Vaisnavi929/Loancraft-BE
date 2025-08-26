@@ -18,7 +18,7 @@ public class CctResponseDTO {
     private LocalDate date;
     private String agentName;
     private String feedBack;
-    private Long loanAccountNumber;
+    private String loanAccountNumber;
     private String status;
     private List<ReferenceDTO> references = new ArrayList<>();
 }

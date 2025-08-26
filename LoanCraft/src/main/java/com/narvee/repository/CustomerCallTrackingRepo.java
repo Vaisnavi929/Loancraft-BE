@@ -34,7 +34,7 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 			       cr.reference_name AS referenceName,
 			       cr.reference_status AS referenceStatus
 			FROM lms_customer_call_tracking ct
-		LEFt JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
+		LEFT JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id
 			""", countQuery = """
 			SELECT COUNT(DISTINCT ct.cct_id)
 			FROM lms_customer_call_tracking ct
@@ -47,7 +47,7 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
             + "       cr.reference_id, cr.mobile_number, cr.reference_feed_back, "
             + "       cr.reference_name, cr.reference_status "
             + "FROM lms_customer_call_tracking ct "
-            + "JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id "
+            + " LEFT JOIN lms_reference_info cr ON ct.cct_id = cr.cct_id "
             + "WHERE CAST(ct.cct_id AS TEXT) LIKE CONCAT('%', :keyword, '%') "
             + "   OR LOWER(ct.agent_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
             + "   OR LOWER(ct.customer_name) LIKE LOWER(CONCAT('%', :keyword, '%')) "
