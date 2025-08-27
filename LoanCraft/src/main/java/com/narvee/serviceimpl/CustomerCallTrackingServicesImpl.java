@@ -88,7 +88,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	    // 2. Update simple fields
 	    existing.setCustomerName(callRequestDTO.getCustomerName());
 	    existing.setAgentName(callRequestDTO.getAgentName());
-	    existing.setDate(LocalDate.now());
+	    existing.setDate(callRequestDTO.getDate());
 	    existing.setLoanAccountNumber(callRequestDTO.getLoanAccountNumber());
 	    existing.setStatus(callRequestDTO.getStatus());
 	    existing.setFeedBack(callRequestDTO.getFeedBack());
