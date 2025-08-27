@@ -16,7 +16,7 @@ import com.narvee.entity.CustomerCallTracking;
 @Repository
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
 public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTracking, Long> {
-	@Query(value = "SELECT  ct.cct_id, ct.customer_name,  ct.agent_name,  "
+	@Query(value = "SELECT  ct.cct_id,ct.createddate,ct.updateddate, ct.customer_name,  ct.agent_name,  "
 			+ "    ct.feed_back, ct.loan_account_number,ct.date,   ct.status, "
 			+ "    cr.reference_id, cr.reference_name,   cr.mobile_number,  cr.reference_feed_back, "
 			+ "       cr.reference_status FROM lms_customer_call_tracking ct  "
@@ -25,6 +25,8 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 
 	@Query(value = """
 				SELECT ct.cct_id AS cctId,
+				       ct.createddate AS createddate,
+				       ct.updateddate AS updateddate,
 				       ct.customer_name AS customerName,
 				       ct.agent_name AS agentName,
 				       ct.feed_back AS feedBack,
@@ -47,6 +49,8 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 	Page<Object[]> findAllWithReferences(Pageable pageable);
 
 	@Query(value = "SELECT ct.cct_id AS cctId,\r\n"
+			+"                     ct.createddate AS createddate, "
+			+"                     ct.updatddate AS updateddate,"
 			+ "				       ct.customer_name AS customerName,"
 			+ "				       ct.agent_name AS agentName,"
 			+ "				       ct.feed_back AS feedBack,"

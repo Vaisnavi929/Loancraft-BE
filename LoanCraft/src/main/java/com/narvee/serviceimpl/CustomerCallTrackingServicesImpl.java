@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.naming.java.javaURLContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	    // 2. Update simple fields
 	    existing.setCustomerName(callRequestDTO.getCustomerName());
 	    existing.setAgentName(callRequestDTO.getAgentName());
-	    existing.setDate(LocalDate.now());
+	    existing.setDate(callRequestDTO.getDate());
 	    existing.setLoanAccountNumber(callRequestDTO.getLoanAccountNumber());
 	    existing.setStatus(callRequestDTO.getStatus());
 	    existing.setFeedBack(callRequestDTO.getFeedBack());
@@ -185,6 +186,8 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	    }
 	    
 	    
+	    System.err.println(pageResult);
+	    
 	     
 		 // Map of parentId -> DTO
         Map<Long, CctResponseDTO> map = new LinkedHashMap<>();
@@ -198,30 +201,46 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
             if (parent == null) {
                 parent = new CctResponseDTO();
                 parent.setCctId(cctId);
-                parent.setCustomerName((String) row[1]);
-                parent.setAgentName((String) row[2]);
-                parent.setFeedBack((String) row[3]);
-                parent.setLoanAccountNumber((String)row[4]);
-          //      parent.setDate((LocalDate)row[5]);  
-                if (row[5] instanceof java.sql.Date) {
-                    parent.setDate(((java.sql.Date) row[5]).toLocalDate());
+                
+                if (row[1] != null) {
+                    if (row[1] instanceof java.sql.Timestamp) {
+                        parent.setCreateddate(((java.sql.Timestamp) row[1]).toLocalDateTime().toLocalDate());
+                    } else if (row[1] instanceof java.sql.Date) {
+                        parent.setCreateddate(((java.sql.Date) row[1]).toLocalDate());
+                    }
                 }
 
-                parent.setStatus((String) row[6]);            
+                if (row[2] != null) {
+                    if (row[2] instanceof java.sql.Timestamp) {
+                        parent.setUpdateddate(((java.sql.Timestamp) row[2]).toLocalDateTime().toLocalDate());
+                    } else if (row[2] instanceof java.sql.Date) {
+                        parent.setUpdateddate(((java.sql.Date) row[2]).toLocalDate());
+                    }
+                }
+
+     
+                parent.setCustomerName((String) row[3]);
+                parent.setAgentName((String) row[4]);
+                parent.setFeedBack((String) row[5]);
+                parent.setLoanAccountNumber((String)row[6]);
+                if (row[7] instanceof java.sql.Date) {
+                    parent.setDate(((java.sql.Date) row[7]).toLocalDate());
+                }
+                parent.setStatus((String) row[8]);            
                 parent.setReferences(new ArrayList<>());
                 map.put(cctId, parent);
             }
-
+System.err.println(map);
             // Add child        
             ReferenceDTO ref = new ReferenceDTO();
 
-         ref.setReferenceId(row[7] != null ? ((Number) row[7]).longValue() : null);
-         ref.setReferenceName((String) row[8]);
-         ref.setMobileNumber((String) row[9]);
-         ref.setReferenceFeedBack((String) row[10]);
-         ref.setReferenceStatus((String) row[11]);
+         ref.setReferenceId(row[9] != null ? ((Number) row[9]).longValue() : null);
+         ref.setReferenceName((String) row[10]);
+         ref.setMobileNumber((String) row[11]);
+         ref.setReferenceFeedBack((String) row[12]);
+         ref.setReferenceStatus((String) row[13]);
 
-         if (row[7] != null || row[8] != null || row[9] != null || row[10] != null || row[11] != null) {
+         if (row[9] != null || row[10] != null || row[11] != null || row[12] != null || row[13] != null) {
              parent.getReferences().add(ref);
          }
 
