@@ -98,7 +98,7 @@ public class CustomerCallTrackingServicesImpl implements CustomerCallTrackingSer
 	        // if answered → clear old references
 	        existing.getReferences().clear();
 	    } 
-	    else if ("NOT_ANSWERED".equalsIgnoreCase(callRequestDTO.getStatus())) {
+	    else if ("NOT ANSWERED".equalsIgnoreCase(callRequestDTO.getStatus())) {
 	        existing.getReferences().clear(); // clear old references
 
 	        if (callRequestDTO.getReferenceInfoDto() != null) {
