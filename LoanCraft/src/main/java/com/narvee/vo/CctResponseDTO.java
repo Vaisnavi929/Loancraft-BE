@@ -1,5 +1,6 @@
 package com.narvee.vo;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CctResponseDTO {
     private Long cctId;
+    private LocalDate createddate;
+    private LocalDate updateddate;
     private String customerName;
+    private LocalDate date;
     private String agentName;
     private String feedBack;
-    private Long loanAccountNumber;
+    private String loanAccountNumber;
     private String status;
+    
     private List<ReferenceDTO> references = new ArrayList<>();
 }
 
