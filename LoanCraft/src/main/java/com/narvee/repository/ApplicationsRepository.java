@@ -76,7 +76,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 	@Query("SELECT la.applicationReferenceId AS applicationReferenceId, " + "la.loanId AS loanid, "
 
 			+ "c.mobileNumber AS mobileNumber, CONCAT(c.firstName, ' ', c.lastName) AS fullName,c.email AS email "
-			+ "FROM Applications la " + "JOIN la.customers c " + "WHERE la.status <> 'Applied' "
+			+ "FROM Applications la " + "JOIN la.customers c " + "WHERE la.status = 'Approved' "
 			+ "ORDER BY la.applicationReferenceId DESC")
 	public List<DisbursmentIdDTO> getReviewedAppDropDown();
 

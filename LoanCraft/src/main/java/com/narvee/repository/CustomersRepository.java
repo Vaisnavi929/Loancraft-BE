@@ -19,37 +19,44 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Optional<CustomersInfo> findByEmailOrMobileNumber(String email, String mobileNumber);
 
 	@Query(value = "SELECT DISTINCT "
-			+ "    lc.customer_id,\r\n"
-			+ "    lc.email,\r\n"
-			+ "    lc.account_number,\r\n"
-			+ "    CONCAT(lc.first_name, ' ', lc.last_name) AS full_name,\r\n"
-			+ "    lc.mobile_number,\r\n"
-			+ "    lc.highest_qualification,\r\n"
-			+ "    lc.updateddate, ls.status\r\n"
-			+ " FROM loancraft.lms_customers_info lc\r\n"
-			+ " LEFT JOIN loancraft.lms_applications la \r\n"
-			+ "    ON lc.customer_id = la.customer_id\r\n"
-			+ " LEFT JOIN loancraft.lms_loan_saction ls\r\n"
-			+ "    ON la.loan_id = ls.loan_id\r\n"
-			+ " WHERE ls.loan_id IS NULL", nativeQuery = true)
+			+ "			   lc.customer_id, "
+			+ "			    lc.email, "
+			+ "		    lc.account_number, "
+			+ "			    CONCAT(lc.first_name, ' ', lc.last_name) AS full_name, "
+			+ "			   lc.mobile_number, "
+			+ "			   lc.highest_qualification, "
+			+ "			   lc.updateddate, "
+			+ "			     lc.location,  "
+			+ "		lc.laon_required  "
+			+ "		 FROM loancraft.lms_customers_info lc   "
+
+			+ "		 WHERE NOT EXISTS( "
+			+ "     SELECT 1 "
+			+ "    FROM loancraft.lms_applications la "
+			+ "    JOIN loancraft.lms_loan_saction  ls   ON la.loan_id = ls.loan_id "
+			+ "    WHERE la.customer_id = lc.customer_id "
+			+ "      AND ls.status = 'disbursed')", nativeQuery = true)
 	Page<CustomerResponseDTO> findAllPreSalesApplicants(Pageable pageable);
 
 	@Query(value = """
-		    SELECT DISTINCT
-		        lc.customer_id,
-		        lc.email,
-		        lc.account_number,
-		        CONCAT(lc.first_name, ' ', lc.last_name) AS full_name,
-		        lc.mobile_number,
-		        lc.highest_qualification,
-		        lc.updateddate,
-		        ls.status
-		    FROM loancraft.lms_customers_info lc
-		 LEFT   JOIN loancraft.lms_applications la
-		        ON lc.customer_id = la.customer_id
-		  LEFT  JOIN loancraft.lms_loan_saction ls
-		        ON la.loan_id = ls.loan_id
-		   WHERE ls.loan_id IS NULL
+		    SELECT DISTINCT 
+					   lc.customer_id, 
+					    lc.email, 
+				    lc.account_number, 
+						    CONCAT(lc.first_name, ' ', lc.last_name) AS full_name, 
+					   lc.mobile_number, 
+					   lc.highest_qualification, 
+				   lc.updateddate, 
+						     lc.location,  
+					lc.laon_required  
+				 FROM loancraft.lms_customers_info lc   
+
+			 WHERE NOT EXISTS( 
+			     SELECT 1 
+			    FROM loancraft.lms_applications la 
+			    JOIN loancraft.lms_loan_saction  ls   ON la.loan_id = ls.loan_id 
+			    WHERE la.customer_id = lc.customer_id 
+			      AND ls.status = 'disbursed')
 		      AND (
 		            lc.email ILIKE CONCAT('%', :keyword, '%')
 		            OR lc.mobile_number ILIKE CONCAT('%', :keyword, '%')
@@ -90,6 +97,8 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Long checkEligibility(@Param("customerId") Long customerId);
 
 	public boolean existsByEmail(String email);
+	
+	public boolean existsByAdhaarNumber(String adhaarNumber);
 
 	@Query(value = "SELECT a.updateddate as updateddate,a.loan_id,a.is_requested_file_upload,a.is_file_upload,a.application_reference_id AS referenceId,  a.createddate, c.first_name, c.last_name,c.email,a.status,a.remarks,c.mobile_number,\n"
 			+ "	a.repayment_mode,a.loan_amount FROM lms_applications a JOIN lms_customers_info c ON a.customer_id = c.customer_id WHERE c.customer_id = :customerId", nativeQuery = true)

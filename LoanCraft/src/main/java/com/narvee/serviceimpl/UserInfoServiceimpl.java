@@ -48,6 +48,12 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		if (userRepo.findByEmail(userInfodto.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
 		}
+		if (!userRepo.findByMobileNumber(userInfodto.getMobileNumber()).isEmpty()) {
+			throw new IllegalArgumentException("Mobile Number Alredy exists..!");
+		}
+
+		
+
 		Roles uRole = iRolesRepository.findById(userInfodto.getRoleId()).get();
 		Set<Roles> lRoles = new HashSet<>();
 		lRoles.add(uRole);
@@ -67,7 +73,7 @@ public class UserInfoServiceimpl implements IUserInfoService {
 //			logger.error("Error encrypting user ID: {}", e.getMessage(), e);
 //			throw new RuntimeException("Failed to encrypt user ID", e);
 //		}
-
+		
 		return responseDto;
 	}
 
@@ -121,6 +127,8 @@ public class UserInfoServiceimpl implements IUserInfoService {
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("status"))
 			sortField = "status";
+		else if (sortField.equalsIgnoreCase("addedBy"))
+			sortField = "addedby";
 		else
 			sortField = "updateddate";
 
@@ -146,7 +154,7 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	@Override
 	public UserInfoDto updateUser(UserInfoDto userUpdateDto) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
-		
+
 		Roles uRole = iRolesRepository.findById(userUpdateDto.getRoleId()).get();
 		Set<Roles> lRoles = new HashSet<>();
 		lRoles.add(uRole);

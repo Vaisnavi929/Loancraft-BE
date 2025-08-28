@@ -1,4 +1,5 @@
 
+
 package com.narvee.controller;
 
 import java.time.LocalDate;
@@ -99,7 +100,7 @@ public class CheckDepositController {
 
 	}
 	
-	@RequestMapping(value = "/updateStatusOfRequestedCheque/", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/updateStatusOfRequestedCheque", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateStatusOfRequestedCheque(@RequestBody CheckDepositDTO checkDepositDTO) {
 		logger.info("!!! inside class:CheckDepositController,!! method:updateStatusOfRequestedCheck()");
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully Updated status",

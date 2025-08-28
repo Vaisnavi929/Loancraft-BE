@@ -1,5 +1,4 @@
 package com.narvee.controller;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,9 @@ import com.narvee.request.dto.LowCheckDepositDTO;
 
 @RestController
 @CrossOrigin("*")
+
 @RequestMapping("/auth/LowCheckApproval")
+
 public class LowcheckDepositController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LowcheckDepositController.class);
@@ -72,7 +73,7 @@ public class LowcheckDepositController {
 				HttpStatus.OK);
 	}
 
-
+	
 	@RequestMapping(value = "/updateIsApproved/{id}/{value}/{remarks}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> updateApprovalStatusAndRemarks(@PathVariable Long id,
 			@PathVariable Boolean value, @PathVariable String remarks) {
@@ -83,3 +84,4 @@ public class LowcheckDepositController {
 	}
 
 }
+

@@ -35,6 +35,7 @@ import com.narvee.Service.VerificationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Applications;
 import com.narvee.entity.Document;
+import com.narvee.entity.Verification;
 import com.narvee.repository.ApplicationsRepository;
 import com.narvee.repository.DocumentRepository;
 import com.narvee.util.EncryptionUtil;
@@ -309,7 +310,8 @@ public class DocumentController {
 			// Fetch loan application
 			Applications loanApp = applicationsRepository.findById(loanId)
 					.orElseThrow(() -> new RuntimeException("Loan not found"));
-
+			
+			Verification verificationId = verificationService.getById(loanId);
 			boolean anyFileUploaded = false;
 
 			for (MultipartFile file : files) {
@@ -341,7 +343,9 @@ public class DocumentController {
 				doc.setFileName(storedFilename);
 				doc.setFileType("Physical Doc"); // explicitly mark as physical document
 				doc.setLoanApplication(loanApp);
+				doc.setVerification(verificationId);
 				documentRepository.save(doc);
+				
 
 				result.append("Uploaded: ").append(storedFilename).append("\n");
 				anyFileUploaded = true;
