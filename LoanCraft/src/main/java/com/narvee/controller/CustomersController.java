@@ -215,20 +215,20 @@ public class CustomersController {
 //		
 //	}
 
-	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
-	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
-		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
-
-		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
-
-		if (existsMoblieNum) {
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
-					HttpStatus.OK);
-		}
-
-	}
+//	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
+//	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
+//		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
+//
+//		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
+//
+//		if (existsMoblieNum) {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
+//					HttpStatus.OK);
+//		}
+//
+//	}
 }

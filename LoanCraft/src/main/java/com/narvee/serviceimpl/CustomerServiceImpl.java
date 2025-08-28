@@ -151,7 +151,7 @@ public class CustomerServiceImpl implements CustomerService {
 				e.printStackTrace();
 			}
 			return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-					dto.getMobileNumber(),dto.getLoanReaquired(),dto.getLocation());
+					dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation());
 		});
 
 		return encryptedPage;
@@ -182,22 +182,16 @@ public class CustomerServiceImpl implements CustomerService {
 			
 		boolean exitisAdhar =	customerRepository.existsByAdhaarNumber(customerUpdateDto.getAdhaarNumber());
 			
-		if (exitisAdhar) {
+		if (!exitisAdhar || customerUpdateDto.getAdhaarNumber().equalsIgnoreCase(customer.getAdhaarNumber())) {
 			logger.info("Fetched customer: {}", customer);
 			// Retain sensitive fields (e.g., password and account number)
 			String originalPassword = customer.getPassword();
 			String originalAccountNumber = customer.getAccountNumber();
-
-			// Map updated fields from DTO to the customer entity
 			modelMapper.map(customerUpdateDto, customer);
-
-			// Restore sensitive fields to prevent overwriting them
 			customer.setPassword(originalPassword);
 			customer.setAccountNumber(originalAccountNumber);
 
 			logger.info("Updated customer object: {}", customer);
- 
-			// Save and return the updated customer
 			return customerRepository.save(customer);
 		}else {
 			throw new RuntimeException("customer alredy exists AdhaarNumber"+customerUpdateDto.getAdhaarNumber());
@@ -253,7 +247,7 @@ public class CustomerServiceImpl implements CustomerService {
 			} else if (sortField.equalsIgnoreCase("location")) {
 				sortField = "location";
 			} else if (sortField.equalsIgnoreCase("loanRequired")) {
-				sortField = "loan_reaquired";
+				sortField = "laon_required";
 			} else {
 				sortField = "updateddate";
 			}
@@ -273,25 +267,22 @@ public class CustomerServiceImpl implements CustomerService {
 				customerPage = customerRepository.findPreSalesApplicantsByKeyword(keyword, pageable);
 			}
 			Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
-				// Encrypt the customerId (convert to String first)
 				String encryptedId = null;
 				try {
 					encryptedId = EncryptionUtil.encrypt(dto.getCustomerId());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-						dto.getMobileNumber(),dto.getLoanReaquired(),dto.getLocation());
+						dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation());
 			});
 
 			return encryptedPage;
 		}
 
 	@Override
-	public boolean isEmailDuplicate(String email) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isEmailDuplicate(String email) {	
+		return customerRepository.existsByEmail(email);
 	}
 
 }
