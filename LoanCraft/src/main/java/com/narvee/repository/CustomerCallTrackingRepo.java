@@ -50,7 +50,7 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 
 	@Query(value = "SELECT ct.cct_id AS cctId,\r\n"
 			+"                     ct.createddate AS createddate, "
-			+"                     ct.updatddate AS updateddate,"
+			+"                     ct.updateddate AS updateddate,"
 			+ "				       ct.customer_name AS customerName,"
 			+ "				       ct.agent_name AS agentName,"
 			+ "				       ct.feed_back AS feedBack,"
