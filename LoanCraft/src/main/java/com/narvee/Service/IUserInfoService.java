@@ -21,5 +21,9 @@ public interface IUserInfoService {
 	public UserInfo UserById(Long id) throws Exception;
 
 	UserInfoDto updateUser(UserInfoDto userUpdateDto);
+	
+	boolean DuplicateCheckEmail (String email);
+	
+	public boolean DuplicateCheckMobileNum(String num);
 
 }

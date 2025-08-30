@@ -16,12 +16,11 @@ public interface NBFCRepository extends JpaRepository<NBFC, Long> {
 	
 	boolean existsByCorporateIdentificationNoIgnoreCase(String Number);
 
-
-	@Query(value = "SELECT id,nbfc_name,regional_office,classification,corporate_identification_no,layer,address, email, updateddate FROM  lms_nbfc", nativeQuery = true)
+	@Query(value = "SELECT id,nbfc_name,regional_office,classification,corporate_identification_no,layer,address, email, updateddate , products , partners , type_of_organization   FROM  lms_nbfc", nativeQuery = true)
 	public Page<Object[]> getAllNBFC(Pageable pageable);
 
 	@Query(value = """
-			SELECT id,nbfc_name,regional_office,classification,corporate_identification_no,layer,address, email, updateddate FROM  lms_nbfc
+			SELECT id,nbfc_name,regional_office,classification,corporate_identification_no,layer,address, email, updateddate, products, partners, type_of_organization FROM  lms_nbfc
 			WHERE nbfc_name ILIKE CONCAT('%', :keyword, '%')
 			   OR regional_office ILIKE CONCAT('%', :keyword, '%')
 			   OR classification ILIKE CONCAT('%', :keyword, '%')

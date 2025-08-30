@@ -13,5 +13,13 @@ public interface CustomerResponseDTO {
 	public String getMobileNumber();
 
 	public String getUpdateddate();
+	
+	public String getStatus();
+	
+	public String getOccupation();
+	
+	public String getLaonRequired();
+	
+	public String getLocation();
 
 }

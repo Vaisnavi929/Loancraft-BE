@@ -28,6 +28,8 @@ public interface CustomerService {
 	Long checkCustomerEligibility(String customerId) throws Exception;
 
 	public boolean isEmailDuplicate(String email);
+	
+	public boolean isMobileNumDuplicate(String mobileNum);
 
 	public List<ApplicationResponseDto> getApplicationsByCustomerId(String customerId);
 }

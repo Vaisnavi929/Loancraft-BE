@@ -56,11 +56,11 @@ public class CustomersController {
 
 		} catch (IllegalArgumentException e) {
 			logger.warn("Validation error: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			return ResponseEntity.status(HttpStatus.OK)
 					.body(new RestAPIResponse("fail", "Validation error", e.getMessage()));
 		} catch (Exception e) {
 			logger.error("Error saving customer: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			return ResponseEntity.status(HttpStatus.OK)
 					.body(new RestAPIResponse("fail", "Error saving customer Please try again later", e.getMessage()));
 		}
 	}
@@ -83,11 +83,12 @@ public class CustomersController {
 		}
 	}
 
-	@RequestMapping(value = "/getAll", method = RequestMethod.POST, produces = "application/json") // --- presales
+	@RequestMapping(value = "/getAllPreSales", method = RequestMethod.POST, produces = "application/json") // --- presales 
+
 	public ResponseEntity<RestAPIResponse> getAllApplicantsPreSales(@RequestBody SortingDTO sortingDTO) {
 		logger.info("Fetching all customer pre sales  with sorting: {}", sortingDTO);
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
-				customerService.getAllCustomers(sortingDTO)), HttpStatus.OK);
+				customerService.getAllPreSalesCustomers(sortingDTO)), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json") // ---
@@ -179,17 +180,31 @@ public class CustomersController {
 
 	@GetMapping("/check-email/{email}")
 	public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
+		logger.info("!!! inside class: CustomersController,!! method: checkDuplicateEmail() ");
 		boolean isDuplicate = customerService.isEmailDuplicate(email);
 
 		if (isDuplicate) {
-			new RestAPIResponse("fail", "Email already exists", true);
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("fail", "Email already exists", isDuplicate), HttpStatus.OK);
 		} else {
-			new RestAPIResponse("success", "Email is available", false);
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "Email is available", isDuplicate), HttpStatus.OK);
 		}
-		return new ResponseEntity<RestAPIResponse>(
-				new RestAPIResponse("success", "successfully duplicate check email", isDuplicate), HttpStatus.OK);
 	}
 
+	@GetMapping("/check-mobileNum/{mobileNum}")
+	public ResponseEntity<RestAPIResponse> checkDuplicateMobileNum(@PathVariable String mobileNum) {
+		logger.info("!!! inside class: CustomersController,!! method: checkDuplicateMobileNum() ");
+		boolean isDuplicate = customerService.isMobileNumDuplicate(mobileNum);
+
+		if (isDuplicate) {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("fail", "mobile number already exists", isDuplicate), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "mobile number is available", isDuplicate), HttpStatus.OK);
+		}
+	}
 	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")
 	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId) {
 
@@ -214,20 +229,5 @@ public class CustomersController {
 //		
 //	}
 
-	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
-	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
-		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
 
-		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
-
-		if (existsMoblieNum) {
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
-					HttpStatus.OK);
-		}
-
-	}
 }

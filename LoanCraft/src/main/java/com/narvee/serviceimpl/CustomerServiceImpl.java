@@ -57,12 +57,15 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new IllegalArgumentException("Email already exists!");
 		}
 		CustomersInfo customer = modelMapper.map(register, CustomersInfo.class);
-		if (customer.getPassword() != null && !customer.getPassword().isEmpty()) {
+			
+			if (customer.getPassword() == null || customer.getPassword().isEmpty()) {
+			    customer.setPassword("Lms@123$"); 
+			}
 			String encodedPassword = passwordEncoder.encode(customer.getPassword());
 			customer.setPassword(encodedPassword);
 			String accountNumber = accountSequenceService.generateAccountNumber();
 			customer.setAccountNumber(accountNumber);
-		}
+		
 //		CustomersInfo saveCustomers = customerRepository.save(customer);
 
 		customer.setAccountNumber(accountSequenceService.generateAccountNumber());
@@ -93,7 +96,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customer.getCurrentAddress() == null) {
 			CurrentAddress currentAddress = new CurrentAddress();
 			customer.setCurrentAddress(currentAddress);
-			States states = new States();
+			States states = new States(); 
 			currentAddress.setState(states);
 
 		}
@@ -148,7 +151,7 @@ public class CustomerServiceImpl implements CustomerService {
 				e.printStackTrace();
 			}
 			return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-					dto.getMobileNumber());
+					dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation(),dto.getOccupation());
 		});
 
 		return encryptedPage;
@@ -179,22 +182,16 @@ public class CustomerServiceImpl implements CustomerService {
 			
 		boolean exitisAdhar =	customerRepository.existsByAdhaarNumber(customerUpdateDto.getAdhaarNumber());
 			
-		if (exitisAdhar) {
+		if (!exitisAdhar || customerUpdateDto.getAdhaarNumber().equalsIgnoreCase(customer.getAdhaarNumber())) {
 			logger.info("Fetched customer: {}", customer);
 			// Retain sensitive fields (e.g., password and account number)
 			String originalPassword = customer.getPassword();
 			String originalAccountNumber = customer.getAccountNumber();
-
-			// Map updated fields from DTO to the customer entity
 			modelMapper.map(customerUpdateDto, customer);
-
-			// Restore sensitive fields to prevent overwriting them
 			customer.setPassword(originalPassword);
 			customer.setAccountNumber(originalAccountNumber);
 
 			logger.info("Updated customer object: {}", customer);
- 
-			// Save and return the updated customer
 			return customerRepository.save(customer);
 		}else {
 			throw new RuntimeException("customer alredy exists AdhaarNumber"+customerUpdateDto.getAdhaarNumber());
@@ -247,6 +244,10 @@ public class CustomerServiceImpl implements CustomerService {
 				sortField = "mobile_number";
 			} else if (sortField.equalsIgnoreCase("AccountNnumber")) {
 				sortField = "account_number";
+			} else if (sortField.equalsIgnoreCase("location")) {
+				sortField = "location";
+			} else if (sortField.equalsIgnoreCase("loanRequired")) {
+				sortField = "laon_required";
 			} else {
 				sortField = "updateddate";
 			}
@@ -263,28 +264,30 @@ public class CustomerServiceImpl implements CustomerService {
 				customerPage = customerRepository.findAllPreSalesApplicants(pageable);
 			} else {
 				logger.info("Inside ApplicantServiceImpl: getAllApplicants, searching ");
-				customerPage = customerRepository.findApplicantsByKeyword(keyword, pageable);
+				customerPage = customerRepository.findPreSalesApplicantsByKeyword(keyword, pageable);
 			}
 			Page<CustomerResponseDTOS> encryptedPage = customerPage.map(dto -> {
-				// Encrypt the customerId (convert to String first)
 				String encryptedId = null;
 				try {
 					encryptedId = EncryptionUtil.encrypt(dto.getCustomerId());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-						dto.getMobileNumber());
+						dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation(),dto.getOccupation());
 			});
 
 			return encryptedPage;
 		}
 
 	@Override
-	public boolean isEmailDuplicate(String email) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isEmailDuplicate(String email) {	
+		return customerRepository.existsByEmail(email);
+	}
+
+	@Override
+	public boolean isMobileNumDuplicate(String mobileNum) {
+		return customerRepository.existsByMobileNumber(mobileNum);
 	}
 
 }

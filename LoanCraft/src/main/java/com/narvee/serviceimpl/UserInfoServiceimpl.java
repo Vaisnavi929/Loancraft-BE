@@ -45,14 +45,12 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	public UserInfoDto saveUser(UserInfoDto userInfodto) {
 		logger.info("!!! inside class : UserInfoServiceimpl, !! method : saveUser");
 
-		if (userRepo.findByEmail(userInfodto.getEmail()).isPresent()) {
-			throw new IllegalArgumentException("Email already exists!");
-		}
-		if (!userRepo.findByMobileNumber(userInfodto.getMobileNumber()).isEmpty()) {
-			throw new IllegalArgumentException("Mobile Number Alredy exists..!");
-		}
-
-		
+//		if (userRepo.findByEmail(userInfodto.getEmail()).isPresent()) {
+//			throw new IllegalArgumentException("Email already exists!");
+//		}
+//		if (!userRepo.findByMobileNumber(userInfodto.getMobileNumber()).isEmpty()) {
+//			throw new IllegalArgumentException("Mobile Number Alredy exists..!");
+//		}
 
 		Roles uRole = iRolesRepository.findById(userInfodto.getRoleId()).get();
 		Set<Roles> lRoles = new HashSet<>();
@@ -159,8 +157,14 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		Set<Roles> lRoles = new HashSet<>();
 		lRoles.add(uRole);
 		UserInfo usersInfo = modelMapper.map(userUpdateDto, UserInfo.class);
+		if (userUpdateDto.getEmail() != null && !userUpdateDto.getEmail().equalsIgnoreCase(usersInfo.getEmail())) {
+	        if (userRepo.findByEmail(userUpdateDto.getEmail()).isPresent()) {
+	            throw new RuntimeException("Email already in use: " + userUpdateDto.getEmail());
+	        }
+	    }
 		usersInfo.setRoles(lRoles);
 		userRepo.save(usersInfo);
+		
 		return userUpdateDto;
 	}
 
@@ -177,4 +181,19 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		return false;
 	}
 
+	@Override
+	public boolean DuplicateCheckEmail(String email) {
+		if (userRepo.findByEmail(email).isPresent()) {
+		return true;
+	    }
+		return false;
+	}
+	
+	@Override
+	public boolean DuplicateCheckMobileNum(String num) {
+		if (userRepo.findByMobileNumber(num).isPresent()) {
+		return true;
+	    }
+		return false;
+	}
 }

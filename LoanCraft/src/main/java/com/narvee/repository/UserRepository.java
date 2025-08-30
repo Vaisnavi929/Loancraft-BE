@@ -17,7 +17,9 @@ import com.narvee.response.UserResponseDTO;
 public interface UserRepository extends JpaRepository<UserInfo, Long> {
 
 	Optional<UserInfo> findByEmail(String email);
-	List<UserInfo> findByMobileNumber(String mobileNumber);
+	
+	Optional<UserInfo> findByMobileNumber(String mobileNumber);
+	
 	Optional<UserInfo> findByName(String name);
 
 //	@Query(value = "SELECT r.role_name as designation, u.user_Id, u.email,u.name, u.mobile_number,u.status,date(u.createddate) as createddate,date(u.updateddate) as updateddate,uf.name as addedby  FROM lms_user_info u "

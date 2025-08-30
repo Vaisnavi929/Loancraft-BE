@@ -117,6 +117,7 @@ public class RolesServiceImpl implements IRolesService {
 
 		// Update only what needs to be updated, don't touch privileges
 		existingRole.setRoleName(role.getRoleName());
+		existingRole.setDescription(role.getDescription());
 
 		iRoleRepo.save(existingRole);
 		return true;

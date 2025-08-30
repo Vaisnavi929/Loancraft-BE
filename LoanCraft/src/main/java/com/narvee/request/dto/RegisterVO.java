@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 public class RegisterVO {
 
 	@NotEmpty
-	@Size(min = 4, message = "FirstName must be min of 4 characters !!")
+	@Size(min = 1, message = "FirstName must be min of 1 characters !!")
 	private String firstName;
 
 	@NotEmpty
-	@Size(min = 4, message = "FirstName must be min of 4 characters !!")
+	@Size(min = 1, message = "FirstName must be min of 1 characters !!")
 	private String lastName;
 
 
@@ -36,7 +36,7 @@ public class RegisterVO {
 	@NotEmpty(message = "Email is required !!")
 	private String email;
 
-	@NotEmpty
+	
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
 	private String password;
 	

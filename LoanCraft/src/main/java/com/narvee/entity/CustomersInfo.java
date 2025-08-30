@@ -36,8 +36,8 @@ public class CustomersInfo extends AuditModel implements Serializable {
 	@Column(name = "firstName")
 	private String firstName;
 
-	@Column(name = "middle_name")
-	private String middleName;
+//	@Column(name = "middle_name")
+//	private String middleName;
 
 	@Column(name = "last_name")
 	private String lastName;
@@ -70,7 +70,7 @@ public class CustomersInfo extends AuditModel implements Serializable {
 	private String Occupation;
 	
 	@Column(name="laon_required")
-	private String loanRequired;
+	private double loanRequired;
 
 	@Column(name = "password")
 	@JsonIgnore
