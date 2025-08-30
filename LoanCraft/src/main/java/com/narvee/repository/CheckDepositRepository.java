@@ -78,11 +78,12 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 	@Modifying
 	@Transactional
 	@Query(value = "UPDATE loancraft.lms_check_deposit "
-			+ " SET status = 'posted'\r\n"
+			+ " SET status = :status "
 			+ " WHERE posting_date = :postedDate"
 			+ "  AND cheque_number = :chequeNum"
 			+ "  AND amount = :amount ", nativeQuery = true)
-	int updateStatusofRequestedCheque(@Param("postedDate") LocalDate postedDate , @Param("chequeNum") String chequeNum, @Param("amount") double amount);
+	int updateStatusofRequestedCheque(@Param("postedDate") 
+	LocalDate postedDate , @Param("chequeNum") String chequeNum, @Param("amount") double amount,@Param("status") String status);
 	
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narvee.Service.IUserInfoService;
@@ -107,11 +108,15 @@ public class UserController {
 		try {
 			UserInfoDto updatedUser = iUserInfoService.updateUser(userUpdateDto);
 			return ResponseEntity.ok(new RestAPIResponse("success", "User updated successfully", updatedUser));
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			logger.error("Error updating user with ID: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new RestAPIResponse("fail", "Error updating user", e.getMessage()));
-		}
+					.body(new RestAPIResponse("fail", e.getMessage()));
+	} catch (Exception ex) {
+		logger.error("Error updating user with ID: {}", ex.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new RestAPIResponse("fail", "Error updating user", ex.getMessage()));
+	}
 	}
 
 	// Delete User
@@ -155,4 +160,31 @@ public class UserController {
 		return new ResponseEntity<String>("Welcome to employee Profile", HttpStatus.OK);
 	}
 
+	
+	@RequestMapping(value = "/duplicateCheckEmail/{email}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> duplicateCheckEmail( @PathVariable String email) {
+		logger.info("!!! inside class : UserController, !! method : duplicateCheckEmail");
+		
+			boolean isExits = iUserInfoService.DuplicateCheckEmail(email);
+			if(isExits) {
+			return ResponseEntity.ok(new RestAPIResponse("fail", "Email is already Existed", isExits));
+			}else {			
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestAPIResponse("success", "Email is available"));
+			}
+		}
+	
+	@RequestMapping(value = "/duplicateChecMobileNum/{num}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<RestAPIResponse> duplicateCheckNum( @PathVariable String num) {
+		logger.info("!!! inside class : UserController, !! method : duplicateCheck Mobile Num");
+		
+			boolean isExits = iUserInfoService.DuplicateCheckMobileNum(num);
+			if(isExits) {
+			return ResponseEntity.ok(new RestAPIResponse("fail", "Mobile Number is already Existed", isExits));
+			}else {			
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestAPIResponse("success", "Mobile Number is available",isExits));
+			}
+		}
+	
 }

@@ -198,7 +198,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 
 	@Override
 	public boolean updateStausofRequestedCheque(CheckDepositDTO checkDepositDTO) {
-		depositRepository.updateStatusofRequestedCheque(checkDepositDTO.getPostingDate(), checkDepositDTO.getChequeNumber(), checkDepositDTO.getAmount());
+		depositRepository.updateStatusofRequestedCheque(checkDepositDTO.getPostingDate(), 
+				checkDepositDTO.getChequeNumber(), checkDepositDTO.getAmount(),checkDepositDTO.getStatus());
 		return true;
 		
 	}

@@ -151,7 +151,7 @@ public class CustomerServiceImpl implements CustomerService {
 				e.printStackTrace();
 			}
 			return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-					dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation());
+					dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation(),dto.getOccupation());
 		});
 
 		return encryptedPage;
@@ -274,7 +274,7 @@ public class CustomerServiceImpl implements CustomerService {
 					e.printStackTrace();
 				}
 				return new CustomerResponseDTOS(encryptedId, dto.getEmail(), dto.getAccountNumber(), dto.getFullName(),
-						dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation());
+						dto.getMobileNumber(),dto.getLaonRequired(),dto.getLocation(),dto.getOccupation());
 			});
 
 			return encryptedPage;
@@ -283,6 +283,11 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public boolean isEmailDuplicate(String email) {	
 		return customerRepository.existsByEmail(email);
+	}
+
+	@Override
+	public boolean isMobileNumDuplicate(String mobileNum) {
+		return customerRepository.existsByMobileNumber(mobileNum);
 	}
 
 }

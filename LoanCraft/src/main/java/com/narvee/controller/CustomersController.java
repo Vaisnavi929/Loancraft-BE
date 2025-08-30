@@ -180,6 +180,7 @@ public class CustomersController {
 
 	@GetMapping("/check-email/{email}")
 	public ResponseEntity<RestAPIResponse> checkDuplicateEmail(@PathVariable String email) {
+		logger.info("!!! inside class: CustomersController,!! method: checkDuplicateEmail() ");
 		boolean isDuplicate = customerService.isEmailDuplicate(email);
 
 		if (isDuplicate) {
@@ -191,6 +192,19 @@ public class CustomersController {
 		}
 	}
 
+	@GetMapping("/check-mobileNum/{mobileNum}")
+	public ResponseEntity<RestAPIResponse> checkDuplicateMobileNum(@PathVariable String mobileNum) {
+		logger.info("!!! inside class: CustomersController,!! method: checkDuplicateMobileNum() ");
+		boolean isDuplicate = customerService.isMobileNumDuplicate(mobileNum);
+
+		if (isDuplicate) {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("fail", "mobile number already exists", isDuplicate), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<RestAPIResponse>(
+					new RestAPIResponse("success", "mobile number is available", isDuplicate), HttpStatus.OK);
+		}
+	}
 	@GetMapping("/getApplicationsForLoggedInCustomer/{customerId}")
 	public ResponseEntity<RestAPIResponse> getApplicationsForLoggedInCustomer(@PathVariable String customerId) {
 
@@ -215,20 +229,5 @@ public class CustomersController {
 //		
 //	}
 
-//	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
-//	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
-//		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
-//
-//		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
-//
-//		if (existsMoblieNum) {
-//			return new ResponseEntity<RestAPIResponse>(
-//					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
-//		} else {
-//			return new ResponseEntity<RestAPIResponse>(
-//					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
-//					HttpStatus.OK);
-//		}
-//
-//	}
+
 }

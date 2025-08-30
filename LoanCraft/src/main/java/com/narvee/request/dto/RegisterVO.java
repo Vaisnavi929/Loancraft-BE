@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 public class RegisterVO {
 
 	@NotEmpty
-	@Size(min = 4, message = "FirstName must be min of 4 characters !!")
+	@Size(min = 1, message = "FirstName must be min of 1 characters !!")
 	private String firstName;
 
 	@NotEmpty
-	@Size(min = 4, message = "FirstName must be min of 4 characters !!")
+	@Size(min = 1, message = "FirstName must be min of 1 characters !!")
 	private String lastName;
 
 

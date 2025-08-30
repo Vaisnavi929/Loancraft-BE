@@ -16,6 +16,8 @@ public interface CustomerResponseDTO {
 	
 	public String getStatus();
 	
+	public String getOccupation();
+	
 	public String getLaonRequired();
 	
 	public String getLocation();

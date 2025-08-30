@@ -26,7 +26,8 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 			+ "			   lc.mobile_number, "
 			+ "			   lc.highest_qualification, "
 			+ "			   lc.updateddate, "
-			+ "			     lc.location,  "
+			+ "			     lc.location,"
+			+ "          lc.occupation ,  "
 			+ "		lc.laon_required  "
 			+ "		 FROM loancraft.lms_customers_info lc   "
 
@@ -48,6 +49,7 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 					   lc.highest_qualification, 
 				   lc.updateddate, 
 						     lc.location,  
+						      lc.occupation,
 					lc.laon_required  
 				 FROM loancraft.lms_customers_info lc   
 
@@ -57,13 +59,15 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 			    JOIN loancraft.lms_loan_saction  ls   ON la.loan_id = ls.loan_id 
 			    WHERE la.customer_id = lc.customer_id 
 			      AND ls.status = 'disbursed')
-		      AND (
-		            lc.email ILIKE CONCAT('%', :keyword, '%')
-		            OR lc.mobile_number ILIKE CONCAT('%', :keyword, '%')
-		            OR lc.highest_qualification ILIKE CONCAT('%', :keyword, '%')
-		            OR lc.account_number ILIKE CONCAT('%', :keyword, '%')
-		            OR CONCAT(lc.first_name, ' ', lc.last_name) ILIKE CONCAT('%', :keyword, '%')
-		          )
+		     AND (
+    lc.email ILIKE CONCAT('%', :keyword, '%')           
+    OR CAST(lc.mobile_number AS TEXT) ILIKE CONCAT('%', :keyword, '%')             
+    OR CAST(lc.laon_required AS TEXT) ILIKE CONCAT('%', :keyword, '%')           
+    OR CAST(lc.account_number AS TEXT) ILIKE CONCAT('%', :keyword, '%')
+     OR CAST(lc.occupation AS TEXT) ILIKE CONCAT('%', :keyword, '%')            
+    OR lc.location ILIKE CONCAT('%', :keyword, '%')           
+    OR CONCAT(lc.first_name, ' ', lc.last_name) ILIKE CONCAT('%', :keyword, '%')         
+)
 		    
 		    """, nativeQuery = true)
 	Page<CustomerResponseDTO> findPreSalesApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
@@ -97,6 +101,8 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Long checkEligibility(@Param("customerId") Long customerId);
 
 	public boolean existsByEmail(String email);
+	
+	public boolean existsByMobileNumber(String mobileNum);
 	
 	public boolean existsByAdhaarNumber(String adhaarNumber);
 
