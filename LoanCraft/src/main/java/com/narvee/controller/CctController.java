@@ -30,15 +30,28 @@ public class CctController {
 	@Autowired
 	private CustomerCallTrackingService cCts;
 
-	@PostMapping("/saveCct")
-	public ResponseEntity<RestAPIResponse> saveCct (@RequestBody callRequestDTO cCt) {
-		logger.info("!!! inside class:CctController,!! method:saveCct() ");
-		try {
-			return new ResponseEntity<RestAPIResponse>(
-					new RestAPIResponse("success.", "Saved successfully.", cCts.saveCct(cCt)), HttpStatus.OK);
-		} catch (RuntimeException e) {
-			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed.", e.getMessage()), HttpStatus.OK);
-		}
+	@PostMapping("/save")
+	public ResponseEntity<RestAPIResponse> saveCall(@RequestBody callRequestDTO dto) {
+	    try {
+	        return new ResponseEntity<>(
+	                new RestAPIResponse("success", "Saved successfully", cCts.saveCct(dto)),
+	                HttpStatus.OK
+	        );
+	    } catch (Exception e) {
+	
+	        return new ResponseEntity<>(
+	                new RestAPIResponse("faile", "Something went wrong while saving ", null),
+	                HttpStatus.OK
+	        );
+	    }
+	}
+
+
+	@GetMapping("/getCct")
+	public ResponseEntity<RestAPIResponse> getAllCct() {
+		logger.info("!!! inside class:CctController,!! method:getAllCct() ");
+		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "the list of cct", cCts.getAll()),
+				HttpStatus.OK);
 	}
 //
 //	@PostMapping("/cCtBySearching")
