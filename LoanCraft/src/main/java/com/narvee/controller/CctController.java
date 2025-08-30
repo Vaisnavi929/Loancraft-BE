@@ -38,11 +38,10 @@ public class CctController {
 	                HttpStatus.OK
 	        );
 	    } catch (Exception e) {
-	        // You can log the error for debugging
-	        e.printStackTrace();  // Better to use logger instead of printStackTrace
+	
 	        return new ResponseEntity<>(
-	                new RestAPIResponse("error", "Something went wrong while saving: " + e.getMessage(), null),
-	                HttpStatus.INTERNAL_SERVER_ERROR
+	                new RestAPIResponse("faile", "Something went wrong while saving ", null),
+	                HttpStatus.OK
 	        );
 	    }
 	}
