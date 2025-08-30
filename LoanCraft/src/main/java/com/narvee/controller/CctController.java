@@ -31,10 +31,22 @@ public class CctController {
 	private CustomerCallTrackingService cCts;
 
 	@PostMapping("/save")
-    public ResponseEntity<RestAPIResponse> saveCall(@RequestBody callRequestDTO dto) {
-    
-        return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "....", cCts.saveCct(dto)),HttpStatus.OK);
-    }
+	public ResponseEntity<RestAPIResponse> saveCall(@RequestBody callRequestDTO dto) {
+	    try {
+	        return new ResponseEntity<>(
+	                new RestAPIResponse("success", "Saved successfully", cCts.saveCct(dto)),
+	                HttpStatus.OK
+	        );
+	    } catch (Exception e) {
+	        // You can log the error for debugging
+	        e.printStackTrace();  // Better to use logger instead of printStackTrace
+	        return new ResponseEntity<>(
+	                new RestAPIResponse("error", "Something went wrong while saving: " + e.getMessage(), null),
+	                HttpStatus.INTERNAL_SERVER_ERROR
+	        );
+	    }
+	}
+
 
 	@GetMapping("/getCct")
 	public ResponseEntity<RestAPIResponse> getAllCct() {
