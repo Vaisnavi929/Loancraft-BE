@@ -53,13 +53,13 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 //  public List<PaymentStatementResponseDTO> getMonthlyDueList();
 
 	@Query(value = "SELECT "
-			+ "p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date ,la.application_reference_id as applicationReferenceId "
+			+ "p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date ,la.application_reference_id AS application_reference_id  "
 			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id \r\n"
 			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE \r\n"
 			+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE)", nativeQuery = true)
 	public Page<PaymentStatementResponseDTO> getMonthlyDueList(Pageable pageable);
 
-	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status,la.application_reference_id, ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date\r\n"
+	@Query(value = "SELECT p.repayment_id,CONCAT(c.first_name, ' ', c.last_name) AS full_name,p.amount_paid, c.mobile_number as mobilenumber,p.amount_status , ls.loan_account_number AS loanAccountNumber, p.due_amount,p.due_date ,la.application_reference_id AS application_reference_id "
 			+ "FROM lms_repayment p JOIN lms_disbursment d ON d.disbursment_id = p.disbursment_id JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id \r\n"
 			+ "JOIN lms_applications la ON ls.loan_id = la.loan_id JOIN lms_customers_info c ON c.customer_id = la.customer_id WHERE \r\n"
 			+ "EXTRACT(YEAR FROM p.due_date) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM p.due_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND \r\n"
@@ -67,6 +67,7 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 			+ " OR c.mobile_number ILIKE '%' || :keyword || '%'\r\n"
 			+ " OR CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%'\r\n"
 			+ " OR ls.loan_account_number ILIKE '%' || :keyword || '%'\r\n"
+			+ " OR la.application_reference_id ILIKE '%' || :keyword || '%'\r\n"
 			+ " OR p.amount_status ILIKE '%' || :keyword || '%'\r\n"
 			+ " OR p.due_amount::text ILIKE '%' || :keyword || '%'\r\n"
 			+ " OR p.due_date::text ILIKE '%' || :keyword || '%')", nativeQuery = true)

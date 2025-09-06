@@ -20,5 +20,6 @@ public class CheckDepositDTO {
 	    private String status ="Posted";
 	    private Long disbursmentId;
 		private Long repaymentId;
+		private Long ApprovedBy;
 
 }

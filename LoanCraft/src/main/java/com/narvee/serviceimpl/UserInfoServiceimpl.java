@@ -167,6 +167,44 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		
 		return userUpdateDto;
 	}
+	
+//	@Override
+//	public UserInfoDto updateUser(UserInfoDto userUpdateDto) {
+//	    logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
+//
+//	    // Fetch the existing user
+//	    UserInfo existingUser = userRepo.findById(userUpdateDto.getUserId())
+//	            .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userUpdateDto.getUserId()));
+//
+//	    userRepo.findByEmail(userUpdateDto.getEmail()).ifPresent(userWithEmail -> {
+//	        if (!userWithEmail.getUserId().equals(userUpdateDto.getUserId())) {
+//	            throw new IllegalArgumentException("Email already exists! Please use another email.");
+//	        }
+//	    });
+//
+//	    if (!userRepo.findByMobileNumber(userUpdateDto.getMobileNumber()).isEmpty()) {
+//	        boolean mobileExists = userRepo.findByMobileNumber(userUpdateDto.getMobileNumber())
+//	                .stream()
+//	                .anyMatch(userWithMobile -> !userWithMobile.getUserId().equals(userUpdateDto.getUserId()));
+//	        if (mobileExists) {
+//	            throw new IllegalArgumentException("Mobile Number already exists! Please use another number.");
+//	        }
+//	    }
+//
+//	    Roles uRole = iRolesRepository.findById(userUpdateDto.getRoleId())
+//	            .orElseThrow(() -> new IllegalArgumentException("Invalid Role ID: " + userUpdateDto.getRoleId()));
+//	    Set<Roles> lRoles = new HashSet<>();
+//	    lRoles.add(uRole);
+//
+//	    existingUser.setName(userUpdateDto.getName());
+//	    existingUser.setEmail(userUpdateDto.getEmail());
+//	    existingUser.setMobileNumber(userUpdateDto.getMobileNumber());
+//
+//	    existingUser.setRoles(lRoles);
+//
+//	    UserInfo updatedUser = userRepo.save(existingUser);
+//	    return modelMapper.map(updatedUser, UserInfoDto.class);
+//	}
 
 	@Override
 	public boolean deleteUserById(Long userId) {

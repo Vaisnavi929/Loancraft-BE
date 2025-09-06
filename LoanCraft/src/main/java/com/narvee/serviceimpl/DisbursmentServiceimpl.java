@@ -132,11 +132,11 @@ public class DisbursmentServiceimpl implements DisbursmentService {
 		else if (sortField.equalsIgnoreCase("firstName"))
 			sortField = "full_name";
 		else if (sortField.equalsIgnoreCase("referenceid"))
-			sortField = "referenceid";
-		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
-			sortField = "loanAccountNumber";
+			sortField = "referenceid";	
 		else if (sortField.equalsIgnoreCase("createddate"))
 			sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
+			sortField = "loan_account_number";
 		else
 			sortField = "updateddate";
 

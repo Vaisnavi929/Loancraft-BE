@@ -35,6 +35,7 @@ public interface CheckDepositResponseDTO {
 
 	public String getReferenceId();
 
+	public String getLoanAccountNumber();
 
 
 

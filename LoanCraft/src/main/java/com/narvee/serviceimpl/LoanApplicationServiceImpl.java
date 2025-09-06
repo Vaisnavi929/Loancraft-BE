@@ -180,6 +180,8 @@ public class LoanApplicationServiceImpl implements ApplicationsService {
 		Integer pageSize = sortingRequestDto.getPageSize();
 		if (sortField.equalsIgnoreCase("firstName"))
 			sortField = "full_name";
+		else if (sortField.equalsIgnoreCase("referenceid"))
+			sortField = "referenceId";
 		else if (sortField.equalsIgnoreCase("email"))
 			sortField = "email";
 		else if (sortField.equalsIgnoreCase("mobileNumber"))

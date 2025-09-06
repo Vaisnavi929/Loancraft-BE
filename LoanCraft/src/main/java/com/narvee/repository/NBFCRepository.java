@@ -28,6 +28,10 @@ public interface NBFCRepository extends JpaRepository<NBFC, Long> {
 			   OR layer ILIKE CONCAT('%', :keyword, '%')
 			   OR address ILIKE CONCAT('%', :keyword, '%')
 			   OR email ILIKE CONCAT('%', :keyword, '%')
+			   OR products ILIKE CONCAT('%', :keyword, '%')
+			   OR partners ILIKE CONCAT('%', :keyword, '%')
+			   OR type_of_organization ILIKE CONCAT('%', :keyword, '%')
+			   OR CAST(updateddate::date AS TEXT) ILIKE CONCAT('%', :keyword, '%')
 			""", nativeQuery = true)
 	Page<Object[]> searchNBFC(@Param("keyword") String keyword, Pageable pageable);
 

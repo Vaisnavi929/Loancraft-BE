@@ -48,8 +48,8 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			        OR s.interest_type  ILIKE '%' || :keyword || '%'
 			        OR CONCAT(c.first_name, ' ', c.last_name) ILIKE '%' || :keyword || '%'
 			        OR c.mobile_number ILIKE '%' || :keyword || '%'
-			        OR s.loan_saction_id::text ILIKE '%' || :keyword || '%'
-			        OR s.amount_sanctioned::text ILIKE '%' || :keyword || '%'
+			      
+			        
 			        OR s.number_of_emis::text ILIKE '%' || :keyword || '%'
 			        OR s.rate_of_interest::text ILIKE '%' || :keyword || '%'
 			        OR s.repayment_mode ILIKE '%' || :keyword || '%'
@@ -57,8 +57,9 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			        OR s.payment_freqmuency ILIKE '%' || :keyword || '%'
 			        OR s.status ILIKE '%' || :keyword || '%'
 			        OR s.loan_account_number ILIKE '%' || :keyword || '%'
-			        OR TO_CHAR(s.updateddate, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
-			        OR TO_CHAR(s.createddate, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
+			        OR CAST(s.updateddate::date AS TEXT) ILIKE CONCAT('%', :keyword, '%') 
+			        OR CAST(s.createddate::date AS TEXT) ILIKE CONCAT('%', :keyword, '%') 
+			      
 			        OR TO_CHAR(s.emi_start_date, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
 			        OR TO_CHAR(s.emi_end_date, 'YYYY-MM-DD') ILIKE '%' || :keyword || '%'
 			    )

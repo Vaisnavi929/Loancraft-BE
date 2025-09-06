@@ -311,7 +311,7 @@ public class DocumentController {
 			Applications loanApp = applicationsRepository.findById(loanId)
 					.orElseThrow(() -> new RuntimeException("Loan not found"));
 			
-			Verification verificationId = verificationService.getById(loanId);
+//			Verification verificationId = verificationService.getById(loanId);
 			boolean anyFileUploaded = false;
 
 			for (MultipartFile file : files) {
@@ -343,7 +343,7 @@ public class DocumentController {
 				doc.setFileName(storedFilename);
 				doc.setFileType("Physical Doc"); // explicitly mark as physical document
 				doc.setLoanApplication(loanApp);
-				doc.setVerification(verificationId);
+				//doc.setVerification(verificationId);
 				documentRepository.save(doc);
 				
 

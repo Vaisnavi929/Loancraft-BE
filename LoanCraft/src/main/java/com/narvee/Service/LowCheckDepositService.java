@@ -20,5 +20,5 @@ public interface LowCheckDepositService {
 
 	public Page<FetchLowCheckDepositDTO> getLowCheckDepositDetails(SortingRequestDto sortingRequestDto);
 
-	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks);
+	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks,Long ApprovedBy);
 }

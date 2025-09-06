@@ -59,19 +59,23 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 			    DATE(u.createddate) AS createddate,
 			    DATE(u.updateddate) AS updateddate,
 			    uf.name AS addedby,
-			    r.role_name AS designation
+			    r.role_name AS designation,
+			    uu.name AS updatedby  
 			FROM lms_user_info u
 			LEFT JOIN lms_user_info uf ON u.addedby = uf.user_id
+			LEFT JOIN lms_user_info uu ON u.updatedby = uu.user_id 
 			JOIN lms_user_roles ur ON ur.user_id = u.user_id
 			JOIN lms_roles r ON r.role_id = ur.role_id
 			WHERE
 			    u.email ILIKE CONCAT('%', :keyword, '%') OR
+			    uf.name ILIKE CONCAT('%', :keyword, '%') OR
+			    uu.name ILIKE CONCAT('%', :keyword, '%') OR
 			    u.name ILIKE CONCAT('%', :keyword, '%') OR
 			    u.mobile_number ILIKE CONCAT('%', :keyword, '%') OR
-			    CAST(u.createddate AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR
+			    CAST(u.createddate::date AS TEXT) ILIKE CONCAT('%', :keyword, '%') OR
 			    r.role_name ILIKE CONCAT('%', :keyword, '%') OR
 			    u.status ILIKE CONCAT(:keyword, '%') OR
-			    CAST(u.updateddate AS TEXT) ILIKE CONCAT('%', :keyword, '%') """, nativeQuery = true)
+			    CAST(u.updateddate ::date AS TEXT) ILIKE CONCAT('%', :keyword, '%') """, nativeQuery = true)
 	Page<UserResponseDTO> findUsersByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 }

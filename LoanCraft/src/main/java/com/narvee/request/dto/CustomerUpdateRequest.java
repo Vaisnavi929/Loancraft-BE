@@ -19,13 +19,13 @@ public class CustomerUpdateRequest {
 	private String customerId;
 
 	@NotEmpty
-	@Size(min = 2, message = "FirstName must be min of 2 characters !!")
+	@Size(min = 1, message = "FirstName must be min of 1 characters !!")
 	private String firstName;
 
 	private String middleName;
 	
 	@NotEmpty
-	@Size(min = 4, message = "LastName must be min of 4 characters !!")
+	@Size(min = 1, message = "LastName must be min of 1 characters !!")
 	private String lastName;
 
 

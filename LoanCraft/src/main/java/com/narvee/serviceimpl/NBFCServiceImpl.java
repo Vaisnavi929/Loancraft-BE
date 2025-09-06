@@ -78,7 +78,7 @@ public class NBFCServiceImpl implements NBFCService {
 			sortField = "regional_office";
 		} else if (sortField.equalsIgnoreCase("classification")) {
 			sortField = "classification";
-		} else if (sortField.equalsIgnoreCase("corporateIdentificationNo")) {
+		} else if (sortField.equalsIgnoreCase("corporateIdentificationNumber")) {
 			sortField = "corporate_identification_no";
 		} else if (sortField.equalsIgnoreCase("layer")) {
 			sortField = "layer";
@@ -86,6 +86,12 @@ public class NBFCServiceImpl implements NBFCService {
 			sortField = "address";
 		} else if (sortField.equalsIgnoreCase("email")) {
 			sortField = "email";
+		} else if (sortField.equalsIgnoreCase("products")) {
+			sortField = "products";
+		} else if (sortField.equalsIgnoreCase("typeOfOrganization")) {
+			sortField = "type_of_organization";
+		} else if (sortField.equalsIgnoreCase("partners")) {
+			sortField = "partners";
 		} else {
 			sortField = "updateddate";
 		}
@@ -113,8 +119,8 @@ public class NBFCServiceImpl implements NBFCService {
 				nbfc.put("id", object[0]);
 				nbfc.put("nbfcName", object[1]);
 				nbfc.put("regionalOffice", object[2]);
-				nbfc.put("corporateIdentificationNo", object[4]);
 				nbfc.put("classification", object[3]);
+				nbfc.put("corporateIdentificationNo", object[4]);
 				nbfc.put("layer", object[5]);
 				nbfc.put("address", object[6]);
 				nbfc.put("email", object[7]);
@@ -134,12 +140,15 @@ public class NBFCServiceImpl implements NBFCService {
 				nbfc.put("id", object[0]);
 				nbfc.put("nbfcName", object[1]);
 				nbfc.put("regionalOffice", object[2]);
-				nbfc.put("corporateIdentificationNo", object[3]);
-				nbfc.put("classification", object[4]);
+				nbfc.put("classification", object[3]);
+				nbfc.put("corporateIdentificationNo", object[4]);
 				nbfc.put("layer", object[5]);
 				nbfc.put("address", object[6]);
 				nbfc.put("email", object[7]);
 				nbfc.put("updateddate", object[8]);
+				nbfc.put("products" , object[9]);
+	     		nbfc.put("partners", object[10]);
+	     		nbfc.put("typeOfOrganization", object[11]);
 				nbfcs.add(nbfc);
 			}
 		}

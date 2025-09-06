@@ -49,7 +49,7 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "    AND a.status NOT IN ('Approved', 'sanctioned', 'rejected')", nativeQuery = true)
 	public Page<ApplicationDTO> getAllLoanApplicationWithKeyword(Pageable pageable, @Param("keyword") String keyword);
 
-	@Query(value = "SELECT a.loan_id,a.is_requested_file_upload,a.is_file_upload,application_reference_id as referenceId,CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.updateddate,a.createddate,c.email,"
+	@Query(value = "SELECT a.loan_id,a.is_requested_file_upload,a.is_file_upload,application_reference_id as referenceId,CONCAT(c.first_name, ' ', c.last_name) AS full_name,a.updateddate,DATE(a.createddate) as createddate,c.email,"
 			+ "a.status,a.remarks, c.mobile_number,a.repayment_mode as repaymentmode,a.loan_amount as loanamount ,COALESCE(v.physical_location_verified, false) AS physicalVerification\r\n"
 			+ "FROM lms_customers_info c join lms_applications a on a.customer_id=c.customer_id  LEFT JOIN   lms_verification v ON v.loan_id = a.loan_id "
 			+ "WHERE a.status =:status", nativeQuery = true)
@@ -67,9 +67,9 @@ public interface ApplicationsRepository extends JpaRepository<Applications, Long
 			+ "    c.email ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    CAST(a.createddate AS TEXT) ILIKE '%' || :keyword || '%' OR\r\n"
 			+ "    a.status ILIKE '%' || :keyword || '%' OR\r\n"
-			+ "    c.mobile_number ILIKE '%' || :keyword || '%' OR\r\n"
-			+ "    a.application_reference_id ILIKE '%' || :keyword || '%' OR "
-			+ "    a.remarks ILIKE '%' || :keyword || '%'\r\n" + ")AND a.status = :status\r\n", nativeQuery = true)
+			+ "    c.mobile_number ILIKE '%' || :keyword || '%' OR  "
+			+ "    a.application_reference_id ILIKE '%' || :keyword || '%' ) "
+			+ " AND a.status = :status\r\n", nativeQuery = true)
 	public Page<ApplicationDTO> getallApplicationListWithKewordApproved(Pageable pageable,
 			@Param("keyword") String keyword, @Param("status") String status);
 

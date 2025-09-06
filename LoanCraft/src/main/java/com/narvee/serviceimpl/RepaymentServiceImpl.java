@@ -239,7 +239,7 @@ public class RepaymentServiceImpl implements RepaymentService {
 		else if (sortField.equalsIgnoreCase("fullName"))
 			sortField = "full_name";
 		else if(sortField.equalsIgnoreCase("applicationReferenceId"))
-			sortField = "applicationReferenceId";
+			sortField = "application_reference_id";
 		else if (sortField.equalsIgnoreCase("loanAccountNumber"))
 			sortField = "loanAccountNumber";
 		Sort.Direction sortDirection = Sort.Direction.ASC;

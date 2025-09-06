@@ -1,6 +1,6 @@
 package com.narvee.request.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public interface ApplicationDTO {
 
@@ -14,9 +14,9 @@ public interface ApplicationDTO {
 
 	public String getMobileNumber();
 
-	public LocalDateTime getCreateddate();
+	public LocalDate getCreateddate();
 
-	public LocalDateTime getUpdateddate();
+	public LocalDate getUpdateddate();
 
 	public String getRepaymentmode();
 

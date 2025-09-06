@@ -93,26 +93,29 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 			sortField = "receivable_amount";
 		else if (sortField.equalsIgnoreCase("createdDate"))
 			sortField = "createddate";
+		else if (sortField.equalsIgnoreCase("chequeNumber"))
+			sortField = "cheque_number";
 		else
 			sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
 		if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
 			sortDirection = Sort.Direction.DESC;
 		}
-
 		Sort sort = Sort.by(sortDirection, sortField);
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+		
 		if (keyword.equalsIgnoreCase("empty")) {
+			logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! If condition with empty Keyword");
 			return approvalRespository.fetchLowCheckDepositDetails(pageable);
-
 		} else {
+			logger.info("!!! inside class:LowCheckDepositServiceImpl ,!! else condition with Keyword");
 			return approvalRespository.fetchLowCheckDepositDetailsWithKeyword(pageable, keyword);
 
 		}
 	}
 
 	@Override
-	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks) {
+	public String updateApprovalStatusAndRemarks(Long id, Boolean value, String remarks,Long ApprovedBy) {
 		logger.info("!!! inside class:CheckDepositServiceImpl, method:updateApprovalStatusAndRemarks()");
 		String status = null;
 		if (value) {
@@ -120,7 +123,7 @@ public class LowCheckDepositServiceImpl implements LowCheckDepositService {
 		} else {
 			status = "Rejected";
 		}
-		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks, status);
+		int rows = approvalRespository.updateIsApprovedAndRemarks(id, value, remarks, status,ApprovedBy);
 		return rows > 0 ? "Update successful" : "No record found to update";
 	}
 

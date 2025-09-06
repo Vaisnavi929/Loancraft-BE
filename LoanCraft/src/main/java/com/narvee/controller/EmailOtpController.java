@@ -68,11 +68,11 @@ public class EmailOtpController {
 				return new ResponseEntity<>(new RestAPIResponse("Success", "OTP is valid."), HttpStatus.OK);
 			} else {
 				logger.warn("Invalid OTP: {}", otp);
-				return new ResponseEntity<>(new RestAPIResponse("Failed", "Invalid OTP."), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(new RestAPIResponse("Failed", "Invalid OTP."), HttpStatus.OK);
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error("OTP verification failed: {}", e.getMessage());
-			return new ResponseEntity<>(new RestAPIResponse("Failed", e.getMessage()), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new RestAPIResponse("Failed", e.getMessage()), HttpStatus.OK);
 		}
 	}
 

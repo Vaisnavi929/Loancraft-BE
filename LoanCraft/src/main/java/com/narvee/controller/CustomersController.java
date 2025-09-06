@@ -52,7 +52,7 @@ public class CustomersController {
 			logger.info("customer saved and authenticated successfully: {}", register.getEmail());
 
 			return ResponseEntity
-					.ok(new RestAPIResponse("success", "Customer saved and authenticated successfully", authenticate));
+					.ok(new RestAPIResponse("success", "Customer Added successfully", authenticate));
 
 		} catch (IllegalArgumentException e) {
 			logger.warn("Validation error: {}", e.getMessage());
@@ -61,7 +61,7 @@ public class CustomersController {
 		} catch (Exception e) {
 			logger.error("Error saving customer: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new RestAPIResponse("fail", "Error saving customer Please try again later", e.getMessage()));
+					.body(new RestAPIResponse("fail", "Failed to add customer ", e.getMessage()));
 		}
 	}
 
@@ -70,8 +70,6 @@ public class CustomersController {
 		logger.info("Fetching customer by encrypted ID: {}", id);
 		// Call service method to fetch the customer by decrypted ID
 		CustomersInfo customer = customerService.getById(id);
-		System.out.println();
-
 		if (customer != null) {
 			String encryptedCustomerId = EncryptionUtil.encrypt(customer.getCustomerId());
 			CustomerUpdateResponse responseData = modelMapper.map(customer, CustomerUpdateResponse.class);
@@ -145,12 +143,12 @@ public class CustomersController {
 
 		} catch (RuntimeException e) {
 			logger.error("Error updating customer: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new RestAPIResponse("fail", "Error updating customer", e.getMessage()));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new RestAPIResponse("fail",e.getMessage()));
 		} catch (Exception e) {
 			logger.error("Unexpected error during update: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-					new RestAPIResponse("fail", "Unexpected error occurred during customer update", e.getMessage()));
+					new RestAPIResponse("fail", e.getMessage()));
 		}
 	}
 

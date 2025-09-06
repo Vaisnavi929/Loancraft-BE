@@ -70,7 +70,7 @@ public class CustomersInfo extends AuditModel implements Serializable {
 	private String Occupation;
 	
 	@Column(name="laon_required")
-	private double loanRequired;
+	private Double loanRequired;
 
 	@Column(name = "password")
 	@JsonIgnore

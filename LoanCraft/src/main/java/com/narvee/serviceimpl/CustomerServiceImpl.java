@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomersInfo save(RegisterVO register) {
 		logger.info("!!! inside class: CustomerServiceImpl, method: save()");
 		Optional<CustomersInfo> existingApplicant = customerRepository.findByEmailOrMobileNumber(register.getEmail(),
-				register.getEmail());
+				register.getMobileNumber());
 
 		if (existingApplicant.isPresent()) {
 			throw new IllegalArgumentException("Email already exists!");
@@ -90,6 +90,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setPermanentAddress(permanentAddress);
 			States states = new States();
 			permanentAddress.setState(states);
+			permanentAddress.setLocation(customer.getLocation());
 
 		}
 
@@ -98,7 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setCurrentAddress(currentAddress);
 			States states = new States(); 
 			currentAddress.setState(states);
-
+			currentAddress.setLocation(customer.getLocation());
 		}
 
 		return customer;
@@ -194,11 +195,11 @@ public class CustomerServiceImpl implements CustomerService {
 			logger.info("Updated customer object: {}", customer);
 			return customerRepository.save(customer);
 		}else {
-			throw new RuntimeException("customer alredy exists AdhaarNumber"+customerUpdateDto.getAdhaarNumber());
+			throw new RuntimeException("This adhar number is already existed");
 		}
 		} catch (Exception ex) {
 			logger.error("Unexpected error during update: {}", ex.getMessage(), ex);
-			throw new RuntimeException("An unexpected error occurred during customer update: " + ex.getMessage(), ex);
+			throw new RuntimeException(  ex.getMessage());
 		}
 	}
 

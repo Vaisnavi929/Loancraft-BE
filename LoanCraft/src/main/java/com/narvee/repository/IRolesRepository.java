@@ -41,7 +41,7 @@ public interface IRolesRepository extends JpaRepository<Roles, Serializable> {
 			+ "LEFT JOIN lms_user_info ufu ON ufu.user_id = r.updatedby\r\n"
 			+ "WHERE \r\n"
 			+ "    r.role_Name ILIKE '%' || :keyword || '%'\r\n"
-			+ "    OR r.createddate::TEXT ILIKE '%' || :keyword || '%'\r\n"
+			+ "    OR  CAST(r.createddate::date AS TEXT) ILIKE CONCAT('%', :keyword, '%') "
 			+ "    OR r.description ILIKE '%' || :keyword || '%'\r\n"
 			+ "    OR uf.name ILIKE '%' || :keyword || '%'\r\n"
 			+ "    OR ufu.name ILIKE '%' || :keyword || '%' "

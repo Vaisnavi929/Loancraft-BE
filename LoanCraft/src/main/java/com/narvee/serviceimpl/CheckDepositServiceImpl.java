@@ -85,7 +85,7 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			sortField = "cheque_number";
 		else if (sortField.equalsIgnoreCase("Reason"))
 			sortField = "reason";
-		else if (sortField.equalsIgnoreCase("Remarks"))
+		else if (sortField.equalsIgnoreCase("remarks"))
 			sortField = "remarks";
 		else if (sortField.equalsIgnoreCase("Status"))
 			sortField = "status";
@@ -95,6 +95,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			sortField = "createddate";
 		else if (sortField.equalsIgnoreCase("referenceId"))
 			sortField = "referenceId";
+		else if (sortField.equalsIgnoreCase("firstName"))
+			sortField = "full_name";
 		else
 			sortField = "updateddate";
 		Sort.Direction sortDirection = Sort.Direction.ASC;
