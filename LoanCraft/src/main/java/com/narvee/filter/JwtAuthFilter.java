@@ -46,12 +46,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		String requestURI = request.getRequestURI();
 
-		// Define API paths that do not require authentication
-		Set<String> allowedPaths = Set.of("/api/app/get", "/api/app/save", "/auth/customer/register",
-				"/auth/emp/register", "/api/Emp/login", "/api/Cust/login", "/api/auth/logout", "/api/forgot-password",
-				"/swagger-ui/index.html", "/api/ucrf/convertUrcfFormat", "/auth/customer/save",
-				"/auth/customer/check-email");
 
+        Set<String> allowedPaths = Set.of("/api/app/get", "/api/app/save", "/auth/customer/register",
+                "/auth/customer/forgot-password",
+                "/auth/customer/verify-otp",
+                "/auth/customer/reset-password",
+
+                "/auth/emp/register", "/api/Emp/login", "/api/Cust/login", "/api/auth/logout",
+                "/swagger-ui/index.html", "/api/ucrf/convertUrcfFormat", "/auth/customer/save",
+                "/auth/customer/check-email", "/api/auth/otp-login", "/api/auth/send-otp");
 		List<String> allowedPrefixPaths = List.of("/auth/customer/check-email", "/auth/otp/send-otp",
 				"/auth/otp/verify-otp" // Add trailing slash for prefix match
 		);

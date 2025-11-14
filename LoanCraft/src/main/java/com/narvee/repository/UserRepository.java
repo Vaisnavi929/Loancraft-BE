@@ -22,12 +22,6 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 	
 	Optional<UserInfo> findByName(String name);
 
-//	@Query(value = "SELECT r.role_name as designation, u.user_Id, u.email,u.name, u.mobile_number,u.status,date(u.createddate) as createddate,date(u.updateddate) as updateddate,uf.name as addedby  FROM lms_user_info u "
-//			+ "left join lms_user_info uf on   u.addedby=uf.user_id "
-//			+ "join lms_user_roles  ur on ur.user_id=u.user_Id "
-//			+ "join lms_roles r  on r.role_id=ur.role_id", nativeQuery = true)
-//	Page<UserResponseDTO> findAllUsers(Pageable pageable);
-
 	@Query(value = """
 			SELECT 
 			    r.role_name AS designation, 

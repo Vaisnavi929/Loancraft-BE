@@ -24,4 +24,6 @@ public class OtpVerification {
     private String otp;
     private Long applicantId;
     private LocalDateTime expiryTime;
+    
+    private String applicantEmail;
 }

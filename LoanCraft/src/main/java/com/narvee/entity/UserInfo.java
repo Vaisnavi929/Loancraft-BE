@@ -1,5 +1,6 @@
 package com.narvee.entity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,6 +57,20 @@ public class UserInfo extends AuditModel {
 	@Column(name = "updatedby")
 	private Long updatedBy;
 
+	 @Column(name = "last_login")
+	    private LocalDateTime lastLogin;
+
+
+	    @Column(name = "last_logout")
+	    private LocalDateTime lastLogout;
+
+
+	    @Column(name = "resettoken")
+	    private String resetToken;
+
+	    @Column(name = "tokenexpiry")
+	    private LocalDateTime tokenExpiry;
+	    
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "lms_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Roles> roles = new HashSet<>();

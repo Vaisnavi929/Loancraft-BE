@@ -73,21 +73,5 @@ public interface CustomerCallTrackingRepo extends JpaRepository<CustomerCallTrac
 			+ "OR LOWER(ct.status) LIKE LOWER(CONCAT('%', :keyword, '%'))", nativeQuery = true)
 	Page<Object[]> getAllCctWithSearching(@Param("keyword") String keyword, Pageable pageable);
 
-//	@Query(value = "SELECT crm_id,c_ctid,createddate,updateddate,end_time,feed_back,start_time,status,duration,date FROM  lms_customer_call_tracking WHERE crm_id = :crmId "
-//			+ "", nativeQuery = true)
-//	Page<CctResponsesDTO> getAllCctByCrmId(Long crmId, Pageable pageable);
-//
-//	@Query(value = """
-//		    SELECT * FROM loancraft.lms_customer_call_tracking
-//		    WHERE crm_id = :crmId
-//		      AND (
-//		        CAST(start_time AS TEXT) ILIKE %:keyword% OR
-//		        CAST(end_time AS TEXT) ILIKE %:keyword% OR
-//		        CAST(duration AS TEXT) ILIKE %:keyword% OR
-//		        CAST(date AS TEXT) ILIKE %:keyword% OR
-//		        LOWER(feed_back) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-//		        LOWER(status) LIKE LOWER(CONCAT('%', :keyword, '%'))
-//		      )""", nativeQuery = true)
-//	Page<CctResponsesDTO> getAllCctByCrmIdWithSearching(String keyword, Pageable pageable, Long crmId);
 
 }

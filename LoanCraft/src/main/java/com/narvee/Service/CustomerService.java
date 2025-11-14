@@ -32,4 +32,13 @@ public interface CustomerService {
 	public boolean isMobileNumDuplicate(String mobileNum);
 
 	public List<ApplicationResponseDto> getApplicationsByCustomerId(String customerId);
-}
+
+//new added
+	    boolean generateOtpForPasswordReset(String email);           // generate and send OTP
+
+	    boolean verifyOtp(String email, String otp);                // check OTP + expiry
+
+	    boolean updatePasswordAfterOtp(String email, String newPassword);
+
+		String getExistingPasswordByEmail(String email);
+	}

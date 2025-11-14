@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,10 +20,15 @@ import com.narvee.Service.CustomerService;
 import com.narvee.Service.IAuthenticationService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.CustomersInfo;
+import com.narvee.exception.CustomAuthenticationException;
+
 import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.CustomerUpdateResponse;
+import com.narvee.request.dto.ForgotPasswordRequest;
 import com.narvee.request.dto.RegisterVO;
+import com.narvee.request.dto.ResetPasswordByOtpRequest;
 import com.narvee.request.dto.SortingDTO;
+import com.narvee.request.dto.VerifyOtpRequest;
 import com.narvee.util.EncryptionUtil;
 
 import jakarta.validation.Valid;
@@ -41,7 +48,9 @@ public class CustomersController {
 
 	@Autowired
 	private IAuthenticationService authenticationService;
-
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	@RequestMapping(value = "/save", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> saveCustomers(@Valid @RequestBody RegisterVO register) {
 		logger.info("Saving customer: {}", register.getEmail());
@@ -227,5 +236,107 @@ public class CustomersController {
 //		
 //	}
 
+//	@GetMapping("/dupllicateAdhaarNumber/{adhaarNumber}")
+//	public ResponseEntity<RestAPIResponse>checkduplicateEmail(@PathVariable String adhaarNumber){
+//		logger.info("!!! inside class:CrmController,!! method:duplicateEmail() ");
+//		
+//		boolean existsAdhaarNumber = customerService.existsByadhaarNumber (adhaarNumber);
+//		if (existsAdhaarNumber) {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("failed", "AdhaarNumber already exists ",existsAdhaarNumber ), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("success.", "AdhaarNumber verified successfully  ", existsAdhaarNumber), HttpStatus.OK);
+//		}
+//
+//		
+//	}
+
+
+//	@GetMapping("/duplicateCheckMobleNumber/{mobileNumber}")
+//	public ResponseEntity<RestAPIResponse> checkDuplicateMoblieNumber(@PathVariable String mobileNumber) {
+//		logger.info("!!! inside class:CustomersController,!! method:checkDuplicateMoblieNumber() ");
+//
+//		boolean existsMoblieNum = customerService.isMobileNumber(mobileNumber);
+//
+//		if (existsMoblieNum) {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("failed", "MoblieNumber already exists ", existsMoblieNum), HttpStatus.OK);
+//		} else {
+//			return new ResponseEntity<RestAPIResponse>(
+//					new RestAPIResponse("success.", "MoblieNumber verified successfully  ", existsMoblieNum),
+//					HttpStatus.OK);
+//		}
+
+//	}
+    
+	// 1) Request OTP
+	@PostMapping("/forgot-password")
+	public ResponseEntity<RestAPIResponse> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+	    String email = request.getEmail();
+	    logger.info("forgot-password requested for email: {}", email);
+
+	    try {
+	        boolean sent = customerService.generateOtpForPasswordReset(email);
+	        if (sent) {
+	            return ResponseEntity.ok(new RestAPIResponse("success", "OTP sent to email", null));
+	        }
+	    } catch (CustomAuthenticationException ex) {
+	        return ResponseEntity.ok(new RestAPIResponse("fail", ex.getMessage(), null));
+	    }
+
+	    return ResponseEntity.ok(new RestAPIResponse("fail", "Customer not found or OTP sending failed", null));
+	}
+
+
+    // 2) Verify OTP
+	// 2) Verify OTP
+	@PostMapping("/verify-otp")
+	public ResponseEntity<RestAPIResponse> verifyOtp(@RequestBody VerifyOtpRequest request) {
+	    logger.info("verify-otp called for email: {}", request.getEmail());
+
+	    try {
+	        boolean ok = customerService.verifyOtp(request.getEmail(), request.getOtp());
+	        if (ok) {
+	            return ResponseEntity.ok(
+	                new RestAPIResponse("success", "OTP verified. Proceed to reset password.", null)
+	            );
+	        }
+	        // fallback if not verified
+	        return ResponseEntity.ok(new RestAPIResponse("fail", "Invalid or expired OTP", null));
+	    } catch (CustomAuthenticationException ex) {
+	        // always return 200 OK with fail response
+	        return ResponseEntity.ok(new RestAPIResponse("fail", ex.getMessage(), null));
+	    }
+	}
+
+	// 3) Reset password (by OTP) 
+	@PostMapping("/reset-password")
+	public ResponseEntity<RestAPIResponse> resetPasswordByOtp(@RequestBody ResetPasswordByOtpRequest request) {
+	    logger.info("reset-password (by OTP) requested for email: {}", request.getEmail());
+
+	    if (request.getNewPassword() == null) {
+	        return ResponseEntity.ok(new RestAPIResponse("fail", "Passwords cannot be empty", null));
+	    }
+
+	    try {
+	        // ✅ Check if new password is already used
+	        String existingPassword = customerService.getExistingPasswordByEmail(request.getEmail()); 
+	        if (existingPassword != null && passwordEncoder.matches(request.getNewPassword(), existingPassword)) {
+	            return ResponseEntity.ok(new RestAPIResponse("fail", "Password already used. Please choose a different password.", null));
+	        }
+
+	        // ✅ Update password after OTP validation
+	        boolean updated = customerService.updatePasswordAfterOtp(request.getEmail(), request.getNewPassword());
+	        if (updated) {
+	            return ResponseEntity.ok(
+	                new RestAPIResponse("success", "Password reset successfully. Please login.", null)
+	            );
+	        }
+	        return ResponseEntity.ok(new RestAPIResponse("fail", "OTP invalid/expired or user not found", null));
+	    } catch (CustomAuthenticationException ex) {
+	        return ResponseEntity.ok(new RestAPIResponse("fail", ex.getMessage(), null));
+	    }
+	}
 
 }

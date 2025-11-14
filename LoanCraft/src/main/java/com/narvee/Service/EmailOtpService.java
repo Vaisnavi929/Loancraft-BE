@@ -12,4 +12,9 @@ public interface EmailOtpService {
 	
 	 public void sendLoanApplicationNotification( String applicationReferenceId, String status, String firstName, String lastName, String email);
 	
+
+	    //new added
+//	    public void sendLoanAppicationNotification(String applicationReferenceId,String status, String firstName, String lastName, String email);
+	    boolean verifyOtpForEmail(String email, String otp);
+
 }

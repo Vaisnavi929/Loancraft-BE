@@ -29,5 +29,3 @@ public interface CustomerRelationshipMangementRepo extends JpaRepository<Custome
 	
 
 }
-//"SELECT crm_id, customer_name,\r\n"
-//+ "email,moblie_number  FROM loancraft.lms_crm"

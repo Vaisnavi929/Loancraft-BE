@@ -35,13 +35,21 @@ public class SecurityConfig {
 
 	public static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
+//	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
+//			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
+//			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
+//			"/api/test/**", "/authenticate", "/api/auth/welcome", "/auth/users/register", "/api/auth/generateToken",
+//			"/api/auth/login", "/api/auth/logout", "/api/excel/upload", "/api/app/save", "/api/app/get",
+//			"/api/app/save", "/api/**", "/auth/customer/check-email/{email}", "/auth/otp/send-otp",
+//			"/auth/otp/verify-otp/{otp}", "/auth/customer/save" };
+//	
 	private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
 			"/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
 			"/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/auth/**",
 			"/api/test/**", "/authenticate", "/api/auth/welcome", "/auth/users/register", "/api/auth/generateToken",
 			"/api/auth/login", "/api/auth/logout", "/api/excel/upload", "/api/app/save", "/api/app/get",
 			"/api/app/save", "/api/**", "/auth/customer/check-email/{email}", "/auth/otp/send-otp",
-			"/auth/otp/verify-otp/{otp}", "/auth/customer/save" };
+			"/auth/otp/verify-otp/{otp}", "/auth/customer/save" , "/api/auth/otp-login", "/api/auth/send-otp"};
 
 	@Autowired
 	private JwtAuthFilter authFilter;
@@ -81,6 +89,36 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+    
+//  @Bean
+//  public CorsWebFilter corsWebFilter() {
+//    CorsConfiguration config = new CorsConfiguration();
+// config.setAllowCredentials(true);
+// config.setAllowedOriginPatterns(Arrays.asList(
+// "http://localhost:4200",
+//"http://76.234.146.243",
+//"http://10.10.0.200"
+//));
+//config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+//config.setAllowedHeaders(Arrays.asList("*"));
+////
+//UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//source.registerCorsConfiguration("/**", config);
+//return new CorsWebFilter(source);
+//}
+
+	//need to added new one 
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins( "http://10.10.0.200") // Angular app
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*");
+//            }
+//        };
+//    }
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {

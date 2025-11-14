@@ -4,12 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.narvee.entity.Reference;
 import com.narvee.entity.ReferenceInfo;
-import com.narvee.request.dto.ReferenceRequestDto;
 import com.narvee.response.ReferenceResponseDTO;
+
+
+
 
 @Repository
 public interface ReferenceRepository extends JpaRepository<ReferenceInfo, Long> {
@@ -37,17 +39,25 @@ public interface ReferenceRepository extends JpaRepository<ReferenceInfo, Long> 
 			+ "", nativeQuery = true)
 	Page<ReferenceResponseDTO> getAllCctBycctId(Long cctId, Pageable pageable);
 
+   
 	@Query(value = """
-			SELECT * FROM loancraft.lms_reference_info
-			WHERE cct_id = :cctId
-			  AND (
-			    CAST (updateddate AS TEXT) LIKE CONCAT('%',:keyword, '%')"
-			 CAST (createddate AS TEXT) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-			    LOWER (mobile_number ) ILIKE %:keyword% OR
-			    LOWER (reference_name AS TEXT) ILIKE %:keyword% OR
-			    LOWER (reference_feed_back) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-			    LOWER (reference_status) LIKE LOWER(CONCAT('%', :keyword, '%'))
-			  )""", nativeQuery = true)
-	Page<ReferenceResponseDTO> getAllRiBycctIdWithSearching(String keyword, Pageable pageable, Long cctId);                 
+		    SELECT *
+		    FROM loancraft.lms_reference_info
+		    WHERE cct_id = :cctId
+		      AND (
+		        CAST(updateddate AS TEXT) ILIKE CONCAT('%', :keyword, '%')
+		        OR CAST(createddate AS TEXT) ILIKE CONCAT('%', :keyword, '%')
+		        OR mobile_number ILIKE CONCAT('%', :keyword, '%')
+		        OR CAST(reference_name AS TEXT) ILIKE CONCAT('%', :keyword, '%')
+		        OR reference_feed_back ILIKE CONCAT('%', :keyword, '%')
+		        OR reference_status ILIKE CONCAT('%', :keyword, '%')
+		      )
+		    """, nativeQuery = true)
+		Page<ReferenceResponseDTO> getAllRiBycctIdWithSearching(
+		    @Param("keyword") String keyword,
+		    Pageable pageable,
+		    @Param("cctId") Long cctId
+		);
+
 
 }

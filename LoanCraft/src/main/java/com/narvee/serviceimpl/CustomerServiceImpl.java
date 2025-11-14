@@ -1,5 +1,6 @@
 package com.narvee.serviceimpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +17,12 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.AccountSequenceService;
 import com.narvee.Service.CustomerService;
+import com.narvee.Service.EmailService;
 import com.narvee.entity.CurrentAddress;
 import com.narvee.entity.CustomersInfo;
 import com.narvee.entity.PermanentAddress;
 import com.narvee.entity.States;
+import com.narvee.exception.CustomAuthenticationException;
 import com.narvee.repository.CustomersRepository;
 import com.narvee.request.dto.ApplicationResponseDto;
 import com.narvee.request.dto.CustomerResponseDTO;
@@ -28,6 +31,7 @@ import com.narvee.request.dto.CustomerUpdateRequest;
 import com.narvee.request.dto.RegisterVO;
 import com.narvee.request.dto.SortingDTO;
 import com.narvee.util.EncryptionUtil;
+import com.narvee.util.OTPGenerator;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -290,5 +294,63 @@ public class CustomerServiceImpl implements CustomerService {
 	public boolean isMobileNumDuplicate(String mobileNum) {
 		return customerRepository.existsByMobileNumber(mobileNum);
 	}
+//new added
+	
+	@Override
+    public boolean generateOtpForPasswordReset(String email) {
+        logger.info("Generating OTP for email: {}", email);
+        CustomersInfo customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.error("Email not found: {}", email);
+                    return new CustomAuthenticationException("Email not registered");
+                });
+        
+
+        String otp = OTPGenerator.generateRandomPassword(6); 
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(10);
+
+    
+        EmailService.sendOtpEmail(email, otp);
+
+
+        logger.info("OTP generated and sent successfully for email: {}", email);
+        return true;
+    }
+
+    @Override
+    public boolean verifyOtp(String email, String otp) {
+        logger.info("Verifying OTP for email: {}", email);
+        CustomersInfo customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.error("Email not found for OTP verification: {}", email);
+                    return new CustomAuthenticationException("Email not registered");
+                });
+        return true;
+    }
+
+    @Override
+   
+        
+        public boolean updatePasswordAfterOtp(String email, String newPassword) {
+            CustomersInfo customer = customerRepository.findByEmail(email)
+                    .orElseThrow(() -> new CustomAuthenticationException("User not found"));
+
+            // Check if new password is same as old one
+            if (passwordEncoder.matches(newPassword, customer.getPassword())) {
+                throw new CustomAuthenticationException("Password already used. Please choose a different password.");
+            }
+
+            // Encode and update password
+            customer.setPassword(passwordEncoder.encode(newPassword));
+            customerRepository.save(customer);
+            return true;
+        }
+
+        public String getExistingPasswordByEmail(String email) {
+            return customerRepository.findByEmail(email)
+                    .map(CustomersInfo::getPassword)
+                    .orElse(null);
+        }
+    
 
 }

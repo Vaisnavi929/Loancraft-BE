@@ -53,4 +53,21 @@ public class NBFC extends AuditModel {
 	
 	@Column(name = "typeOfOrganization")
 	private String typeOfOrganization;
+	
+    @Override
+    public String toString() {
+        return "NBFC{" +
+                "id=" + id +
+                ", nbfcName='" + nbfcName + '\'' +
+                ", regionalOffice='" + regionalOffice + '\'' +
+                ", classification='" + classification + '\'' +
+                ", corporateIdentificationNo='" + corporateIdentificationNo + '\'' +
+                ", layer='" + layer + '\'' +
+                ", address='" + address + '\'' +
+                ", email='" + email + '\'' +
+                ", products='" + products + '\'' +
+                ", partners='" + partners + '\'' +
+                ", typeOfOrganization='" + typeOfOrganization + '\'' +
+                "} " + super.toString();
+    }
 }
