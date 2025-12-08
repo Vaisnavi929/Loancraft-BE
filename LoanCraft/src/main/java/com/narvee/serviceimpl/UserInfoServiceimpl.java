@@ -1,5 +1,6 @@
 package com.narvee.serviceimpl;
 
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,12 @@ import com.narvee.request.dto.UserInfoDto;
 import com.narvee.response.UserResponseDTO;
 import com.narvee.util.EncryptionUtil;
 
+import org.springframework.data.domain.PageImpl;
+import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Service
 public class UserInfoServiceimpl implements IUserInfoService {
 
@@ -45,12 +52,12 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	public UserInfoDto saveUser(UserInfoDto userInfodto) {
 		logger.info("!!! inside class : UserInfoServiceimpl, !! method : saveUser");
 
-//		if (userRepo.findByEmail(userInfodto.getEmail()).isPresent()) {
-//			throw new IllegalArgumentException("Email already exists!");
-//		}
-//		if (!userRepo.findByMobileNumber(userInfodto.getMobileNumber()).isEmpty()) {
-//			throw new IllegalArgumentException("Mobile Number Alredy exists..!");
-//		}
+		if (userRepo.findByEmail(userInfodto.getEmail()).isPresent()) {
+			throw new IllegalArgumentException("Email already exists!");
+		}
+		if (!userRepo.findByMobileNumber(userInfodto.getMobileNumber()).isEmpty()) {
+			throw new IllegalArgumentException("Mobile Number Alredy exists..!");
+		}
 
 		Roles uRole = iRolesRepository.findById(userInfodto.getRoleId()).get();
 		Set<Roles> lRoles = new HashSet<>();
@@ -72,7 +79,8 @@ public class UserInfoServiceimpl implements IUserInfoService {
 //			throw new RuntimeException("Failed to encrypt user ID", e);
 //		}
 		
-		return responseDto;
+		//return responseDto;
+		return modelMapper.map(savedUser, UserInfoDto.class);
 	}
 
 	@Override
@@ -102,7 +110,116 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		}
 		return user;
 	}
+	// Abhinay Added
+	@Override
+	public Page<UserResponseDTO> getAllUser(SortingDTO sortingDTO) {
+	    logger.info("!!! inside class: UserInfoServiceImpl, method: getAllUser");
 
+	    String sortField   = sortingDTO.getSortField();
+	    String sortOrder   = sortingDTO.getSortOrder();
+	    String keyword     = sortingDTO.getKeyword();
+	    Integer pageNumber = sortingDTO.getPageNumber();
+	    Integer pageSize   = sortingDTO.getPageSize();
+
+	    int page = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1;
+	    int size = (pageSize == null || pageSize < 1) ? 10 : pageSize;
+
+	    String sortFieldNormalized = (sortField == null) ? "" : sortField.trim().toLowerCase();
+
+	    // We still build Pageable, but sort in Java later
+	    Pageable pageable = PageRequest.of(page, size);
+
+	    boolean noFilter = (keyword == null
+	            || keyword.trim().isEmpty()
+	            || keyword.equalsIgnoreCase("empty"));
+
+	    Page<UserResponseDTO> userInfoPage;
+
+	    if (noFilter) {
+	        logger.info("!!! inside class: UserInfoServiceImpl, method: all (no filter)");
+	        userInfoPage = userRepo.findAllUsers(pageable);
+	    } else {
+	        logger.info("!!! inside class: UserInfoServiceImpl, method: filter, keyword: {}", keyword);
+	        userInfoPage = userRepo.findUsersByKeyword(keyword.trim(), pageable);
+	    }
+
+	    // 🔥 Manual sorting in Java based on sortField + sortOrder
+	    List<UserResponseDTO> content = new ArrayList<>(userInfoPage.getContent());
+
+	    Comparator<UserResponseDTO> comparator = null;
+
+	    switch (sortFieldNormalized) {
+	        case "name":
+	            comparator = Comparator.comparing(
+	                    dto -> nullSafeString(dto.getName()),
+	                    String.CASE_INSENSITIVE_ORDER
+	            );
+	            break;
+
+	        case "email":
+	            comparator = Comparator.comparing(
+	                    dto -> nullSafeString(dto.getEmail()),
+	                    String.CASE_INSENSITIVE_ORDER
+	            );
+	            break;
+
+	        case "mobile_number":
+	        case "mobilenumber":
+	            comparator = Comparator.comparing(
+	                    dto -> nullSafeString(dto.getMobile_number()),
+	                    String.CASE_INSENSITIVE_ORDER
+	            );
+	            break;
+
+	        case "updatedby":
+	        case "updateby":
+	            // 👇 THIS is what you want
+	            comparator = Comparator.comparing(
+	                    dto -> nullSafeString(dto.getUpdatedby()),
+	                    String.CASE_INSENSITIVE_ORDER
+	            );
+	            break;
+
+	        case "updateddate":
+	            comparator = Comparator.comparing(
+	                    UserResponseDTO::getUpdateddate,
+	                    Comparator.nullsLast(Comparator.naturalOrder())
+	            );
+	            break;
+
+	        case "createddate":
+	            comparator = Comparator.comparing(
+	                    UserResponseDTO::getCreateddate,
+	                    Comparator.nullsLast(Comparator.naturalOrder())
+	            );
+	            break;
+
+	        default:
+	            // default to updateddate
+	            comparator = Comparator.comparing(
+	                    UserResponseDTO::getUpdateddate,
+	                    Comparator.nullsLast(Comparator.naturalOrder())
+	            );
+	            break;
+	    }
+
+	    if (comparator != null) {
+	        if ("desc".equalsIgnoreCase(sortOrder)) {
+	            comparator = comparator.reversed();
+	        }
+	        content.sort(comparator);
+	    }
+
+	    // 🔁 Wrap sorted list into new Page object
+	    return new PageImpl<>(content, pageable, userInfoPage.getTotalElements());
+	}
+
+	private String nullSafeString(String value) {
+	    return value == null ? "" : value.trim();
+	}
+	// Abhinay Added
+
+	/*
 	@Override
 	public Page<UserResponseDTO> getAllUser(SortingDTO sortingDTO) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: getAllUser");
@@ -148,8 +265,50 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		}
 		return userInfo;
 	}
-
+	*/
+	
 	@Override
+	public UserInfoDto updateUser(UserInfoDto userUpdateDto) {
+	    logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
+
+	    // 1️⃣ Fetch existing user
+	    UserInfo existingUser = userRepo.findById(userUpdateDto.getUserId())
+	            .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userUpdateDto.getUserId()));
+
+	    // 2️⃣ Email duplicate check (other users only)
+	    if (userUpdateDto.getEmail() != null &&
+	        userRepo.existsByEmailAndUserIdNot(userUpdateDto.getEmail(), userUpdateDto.getUserId())) {
+	        throw new RuntimeException("Email already in use: " + userUpdateDto.getEmail());
+	    }
+
+	    // 3️⃣ Mobile duplicate check (other users only)
+	    if (userUpdateDto.getMobileNumber() != null &&
+	        userRepo.existsByMobileNumberAndUserIdNot(userUpdateDto.getMobileNumber(), userUpdateDto.getUserId())) {
+	        throw new RuntimeException("Mobile Number already in use: " + userUpdateDto.getMobileNumber());
+	    }
+
+	    // 4️⃣ Role mapping
+	    Roles uRole = iRolesRepository.findById(userUpdateDto.getRoleId())
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid Role ID: " + userUpdateDto.getRoleId()));
+	    Set<Roles> lRoles = new HashSet<>();
+	    lRoles.add(uRole);
+
+	    // 5️⃣ Update fields
+	    existingUser.setName(userUpdateDto.getName());
+	    existingUser.setEmail(userUpdateDto.getEmail());
+	    existingUser.setMobileNumber(userUpdateDto.getMobileNumber());
+	    existingUser.setRoles(lRoles);
+
+	    // 👇 If you added location
+	    existingUser.setLocation(userUpdateDto.getLocation());
+
+	    UserInfo updatedUser = userRepo.save(existingUser);
+
+	    return modelMapper.map(updatedUser, UserInfoDto.class);
+	}
+
+
+	/*@Override
 	public UserInfoDto updateUser(UserInfoDto userUpdateDto) {
 		logger.info("!!! inside class: UserInfoServiceImpl, method: updateUser");
 
@@ -166,7 +325,7 @@ public class UserInfoServiceimpl implements IUserInfoService {
 		userRepo.save(usersInfo);
 		
 		return userUpdateDto;
-	}
+	}*/
 	
 //	@Override
 //	public UserInfoDto updateUser(UserInfoDto userUpdateDto) {

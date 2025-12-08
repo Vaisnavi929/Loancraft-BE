@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narvee.Service.IRolesService;
 import com.narvee.commons.RestAPIResponse;
 import com.narvee.entity.Roles;
+import com.narvee.exception.RoleAssignedException;
 import com.narvee.request.dto.RequestDTO;
 import com.narvee.request.dto.RolesDTO;
 
@@ -38,7 +39,7 @@ public class RolesController {
 			return new ResponseEntity<>(new RestAPIResponse("success", "Role Saved", "Success"), HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(new RestAPIResponse("Fail", "Role Already Exist", "Data not Saved"),
-					HttpStatus.OK);
+					HttpStatus.CONFLICT);
 		}
 	}
 
@@ -64,13 +65,24 @@ public class RolesController {
 
 	@RequestMapping(value = "/updaterole", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<RestAPIResponse> UpdateRoles(@RequestBody Roles roles) {
+		try {
 		boolean flg = Service.updateRole(roles);
 		if (flg) {
 			return new ResponseEntity<>(new RestAPIResponse("success", "Role Updated", "Updated"), HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<>(new RestAPIResponse("Fail", "Role Already Exist", "Data not Saved"),
-					HttpStatus.OK);
+					HttpStatus.CONFLICT);
 		}
+		}
+		//abhinay added
+		catch (RoleAssignedException ex) {
+	        return new ResponseEntity<>(
+	            new RestAPIResponse("fail", ex.getMessage(), ""), 
+	            HttpStatus.CONFLICT
+	        );
+	    }
+		//----------
+
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")

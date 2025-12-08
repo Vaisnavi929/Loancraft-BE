@@ -14,5 +14,5 @@ public class AuthResponse {
 	private String occupation;
 	private String location;
 	private double loanRequired;
-
+		
 }

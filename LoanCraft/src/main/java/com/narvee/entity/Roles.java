@@ -48,10 +48,10 @@ public class Roles extends AuditModel {
 
 	@Column(name = "addedby")
 	private Long addedBy;
-
+	
 	@Column(name = "updatedby")
-	private Long updatedBy;;
-
+	private Long updatedBy;
+	
 	
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)

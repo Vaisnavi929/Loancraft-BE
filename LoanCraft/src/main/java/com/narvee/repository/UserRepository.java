@@ -21,7 +21,14 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 	Optional<UserInfo> findByMobileNumber(String mobileNumber);
 	
 	Optional<UserInfo> findByName(String name);
-
+	
+	//Abhinay Added
+	List<UserInfo> findByStatusIgnoreCase(String status);
+	
+	boolean existsByEmailAndUserIdNot(String email, Long userId);
+	boolean existsByMobileNumberAndUserIdNot(String mobileNumber, Long userId);
+	boolean existsByRoles_RoleId(Long roleId);
+//---
 	@Query(value = """
 			SELECT 
 			    r.role_name AS designation, 
@@ -29,6 +36,7 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 			    u.email,
 			    u.name, 
 			    u.mobile_number,
+			    u.location,
 			    u.status,
 			    DATE(u.createddate) AS createddate,
 			    DATE(u.updateddate) AS updateddate,

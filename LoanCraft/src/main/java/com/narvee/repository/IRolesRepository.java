@@ -13,12 +13,18 @@ import org.springframework.data.repository.query.Param;
 
 import com.narvee.entity.Roles;
 import com.narvee.request.dto.RolesDTO;
-@EnableJpaRepositories
+//@EnableJpaRepositories
 public interface IRolesRepository extends JpaRepository<Roles, Serializable> {
 
 	@Query(value = "select role_name from lms_roles WHERE role_name=:roleName", nativeQuery = true)
 	public List<String> findRoleByRolName(@Param("roleName") String roleName);
-
+	
+	//--Newly Added
+	boolean existsByRoleNameIgnoreCase(String roleName);
+	
+	
+	 public Optional<Roles> findByRoleNameIgnoreCaseAndRoleIdNot(String rolename, Long id);
+	//--
 	public Optional<Roles> findByRoleNameAndRoleIdNot(String rolename, Long id);
 
 	public Optional<Roles> findByRoleNameIgnoreCase(String rolename);

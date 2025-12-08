@@ -69,8 +69,10 @@ public class CustomersInfo extends AuditModel implements Serializable {
 	@Column(name="occupation")
 	private String Occupation;
 	
+	//bhargav
 	@Column(name="laon_required")
 	private Double loanRequired;
+	//bhargav
 
 	@Column(name = "password")
 	@JsonIgnore

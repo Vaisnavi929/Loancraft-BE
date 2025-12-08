@@ -18,6 +18,8 @@ import com.narvee.request.dto.ApplicantDto;
 import com.narvee.request.dto.MailBody;
 import com.narvee.util.OTPGenerator;
 
+import com.narvee.exception.UserNotRegisteredException;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -36,7 +38,7 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 	@Autowired
    private UserRepository userRepository;
 
-
+/*
 	//Bhargav	
 		@Override
 		public String sendOtp(ApplicantDto applicant) throws MessagingException {
@@ -109,9 +111,90 @@ public class EmailOtpServiceImpl implements EmailOtpService {
 
 		return "OTP sent successfully."+ applicant.getEmail();
 		}
-	//Bhargav
-
 		
+*/
+	
+	
+	//Abhinay Added
+	
+	@Override
+	public String sendOtp(ApplicantDto applicant) throws MessagingException {
+
+	    // 1️ Basic check
+	    if (applicant.getEmail() == null || applicant.getEmail().trim().isEmpty()) {
+	        throw new IllegalArgumentException("Email is required");
+	    }
+
+	    String email = applicant.getEmail().trim();
+
+	    // 2️ Check in DB: is this user registered?
+	    Optional<UserInfo> existingUserOpt = userRepository.findByEmail(email);
+
+	    if (existingUserOpt.isEmpty()) {
+	        // ❌ Not registered → DO NOT send OTP
+	        throw new UserNotRegisteredException("User is not registered with this email");
+	    }
+
+	    // 3️ User exists → get name and set into applicant
+	    UserInfo user = existingUserOpt.get();
+	    String fullName = user.getName() != null ? user.getName().trim() : "User";
+	    String[] nameParts = fullName.split(" ", 2);
+
+	    applicant.setFirstName(nameParts[0]);
+	    applicant.setLastName(nameParts.length > 1 ? nameParts[1] : "");
+
+	    // 4️ Generate OTP
+	    String token = OTPGenerator.generateRandomPassword(6);
+
+	    // 5️ Save OTP details
+	    OtpVerification otp = new OtpVerification();
+	    otp.setOtp(token);
+	    otp.setApplicantEmail(email);
+	    otp.setExpiryTime(LocalDateTime.now().plusMinutes(2));
+	    otpRepository.save(otp);
+
+	    // 6️ Build email body (same as your code)
+	    StringBuilder emailContent = new StringBuilder();
+	    emailContent.append("<!DOCTYPE html>")
+	            .append("<html lang=\"en\">")
+	            .append("<head>")
+	            .append("<meta charset=\"UTF-8\">")
+	            .append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
+	            .append("<title>Login Verification Code</title>")
+	            .append("<style>")
+	            .append("body {margin:0; padding:0; background-color:#f4f4f4; font-family: Arial, sans-serif;}")
+	            .append("table {width:100%; max-width:600px; margin:20px auto; border:1px solid #e0e0e0; background:#ffffff; padding:20px;}")
+	            .append(".header {background-color:#1976d2; color:#ffffff; font-size:20px; padding:15px; text-align:center; font-weight:bold;}")
+	            .append(".company {font-size:16px; font-weight:bold; color:#333; margin-top:20px; text-align:center;}")
+	            .append("p {font-size:14px; color:#333; text-align:left; line-height:1.5; margin:10px 0;}")
+	            .append(".otp-code {font-size:24px; font-weight:bold; color:#1976d2; margin:20px 0; text-align:center;}")
+	            .append(".footer {font-size:12px; color:#888; text-align:center; margin-top:20px;}")
+	            .append("</style>")
+	            .append("</head>")
+	            .append("<body>")
+	            .append("<table>")
+	            .append("<tr><td>")
+	            .append("<div class=\"header\">Verify Your Login</div>")
+	            .append("<div class=\"company\">Beacon Holdings Limited</div>")
+	            .append("<p>Hello <strong>").append(applicant.getFirstName()).append(" ").append(applicant.getLastName())
+	            .append("</strong>,</p>")
+	            .append("<p>Thank you for choosing Beacon Holdings Limited.Use the following OTP to complete your Sign-In:</p>")
+	            .append("<div class=\"otp-code\">").append(token).append("</div>")
+	            .append("<p>The OTP is valid for 2 minutes.Please do not share this code with anyone.</p>")
+	            .append("<p>Best Regards,<br/><strong>Beacon Holdings Limited</strong></p>")
+	            .append("</td></tr>")
+	            .append("</table>")
+	            .append("</body>")
+	            .append("</html>");
+
+	    MailBody mailBody = new MailBody(email, "Login Verification code ", emailContent.toString());
+	    sendEmail(mailBody);
+
+	    return "OTP sent successfully." + email;
+	}
+	//Abhinay Added
+
+	//Bhargav
 		@Override
 		public boolean verifyOtpForEmail(String email, String otp) {
 		    // Get the latest OTP for this email

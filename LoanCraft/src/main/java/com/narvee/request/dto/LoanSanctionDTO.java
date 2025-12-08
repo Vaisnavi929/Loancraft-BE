@@ -28,6 +28,10 @@ public class LoanSanctionDTO {
 	private String paymentFreqmuency;
 	private Double loanProcessingCharges;
 	private Double documentationCharges;
+	
+//	//Abhinay
+//	@Pattern(regexp = "^[A-Z0-9]+$", message = "Only capital letters and digits allowed")
+//	@Size(min = 8, max = 16, message = "Length must be between 8 and 16")
 	private String loanAccountNumber;
 	private Double originationFee;
 	private Double returnOriginationfee;

@@ -15,6 +15,6 @@ public interface OtpRepository extends JpaRepository<OtpVerification, Long> {
 	// Get latest OTP for an email
     Optional<OtpVerification> findTopByApplicantEmailOrderByExpiryTimeDesc(String email);
     
-  //  Optional<OtpVerification> findByemail(String otp);
+  
 
 }

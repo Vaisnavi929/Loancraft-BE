@@ -58,7 +58,9 @@ public class LoanApplicationDto {
 
 	@NotBlank(message = "Customer ID cannot be blank")
 	private String customerId;
-	
+	//Abhinay
+	@NotBlank(message = "Remarks cannot be empty or just spaces")
+	//Abhinay
 	private String remarks;
 
 	@NotNull(message = "Reference set is required")

@@ -43,7 +43,12 @@ public class UserInfo extends AuditModel {
 	private String email;
 	
 	@Column(name = "mobileNumber")
+	
 	private String mobileNumber;
+	//abhinay
+	@Column(name = "location")
+	private String location;
+	//abhinay
 	
 	@Column(name = "password")
 	private String password;

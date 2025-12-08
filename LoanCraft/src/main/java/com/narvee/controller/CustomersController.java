@@ -90,6 +90,7 @@ public class CustomersController {
 		}
 	}
 
+//Bhargav
 	@RequestMapping(value = "/getAllPreSales", method = RequestMethod.POST, produces = "application/json") // --- presales 
 
 	public ResponseEntity<RestAPIResponse> getAllApplicantsPreSales(@RequestBody SortingDTO sortingDTO) {
@@ -97,7 +98,8 @@ public class CustomersController {
 		return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("success", "successfully fetched all details",
 				customerService.getAllPreSalesCustomers(sortingDTO)), HttpStatus.OK);
 	}
-
+//Bhargav
+	
 	@RequestMapping(value = "/getAllApplicants", method = RequestMethod.POST, produces = "application/json") // ---
 																												// customers
 	public ResponseEntity<RestAPIResponse> getAllApplicants(@RequestBody SortingDTO sortingDTO) {

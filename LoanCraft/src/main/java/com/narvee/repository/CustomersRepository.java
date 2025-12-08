@@ -16,6 +16,7 @@ import com.narvee.request.dto.SearchingDTO;
 
 public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> {
 
+//bhargav
 	Optional<CustomersInfo> findByEmailOrMobileNumber(String email, String mobileNumber);
 
 	@Query(value = "SELECT DISTINCT "
@@ -71,7 +72,8 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 		    
 		    """, nativeQuery = true)
 	Page<CustomerResponseDTO> findPreSalesApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
-
+//bhargav
+	
 	@Query(value = "SELECT email,first_name,last_name,mobile_number,dob,fathers_or_spouses_name,middle_name,highest_qualification,account_number,adhaar_number FROM lms_customers_info ", nativeQuery = true)
 	Page<SearchingDTO> findAllCustomers(Pageable pageable);
 
@@ -147,4 +149,6 @@ public interface CustomersRepository extends JpaRepository<CustomersInfo, Long> 
 	Page<CustomerResponseDTO> findApplicantsByKeyword(@Param("keyword") String keyword, Pageable pageable);
 //new added 
 	  Optional<CustomersInfo> findByEmail(String email);
+	  Optional<CustomersInfo> findByAccountNumber(String accountNumber);
+
 }

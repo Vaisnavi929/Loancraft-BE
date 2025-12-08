@@ -23,13 +23,14 @@ public class UserInfoDto {
 	private String email;
 
 	@NotEmpty
-//	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$", message = "Password at least 6 characters long and include a letter, a digit, and a special character")
-	
 	private String password;
 	private Long roleId;
 	private String mobileNumber;
 	private Long addedBy;
 	private Long updatedBy;
+	//abhinay
+	private String location;
+	//abhinay
 
 	
 

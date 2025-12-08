@@ -47,6 +47,9 @@ import com.narvee.response.Response;
 import com.narvee.serviceimpl.AuthenticationServiceImpl;
 import com.narvee.util.JwtUtil;
 
+import com.narvee.exception.UserNotRegisteredException;
+
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/auth/")
@@ -257,7 +260,7 @@ public class LoginController {
 	response.setFullname(user.getName());
 
 
-	/// ✅ Extract roles
+	/// 4. Extract roles
 	Set<String> roles = user.getRoles().stream()
 	.map(r -> r.getRoleName())
 	.collect(Collectors.toSet());
@@ -299,6 +302,23 @@ public class LoginController {
 			return new ResponseEntity<RestAPIResponse>(new RestAPIResponse("failed", "Token already blacklisted"),
 					HttpStatus.BAD_REQUEST);
 		}
+		
+		//-------Abhinay Added ----
+		
+		try {
+	        String username = jwtUtil.extractUsername(jwtToken); // method usually exists in JwtUtil
+	        Optional<UserInfo> optUser = repository.findByEmail(username);
+	        if (optUser.isPresent()) {
+	            UserInfo user = optUser.get();
+	            user.setLastLogout(LocalDateTime.now());
+	            repository.save(user);
+	        }
+	    } catch (Exception e) {
+	        logger.error("Failed to update lastLogout: {}", e.getMessage());
+	        // don’t fail logout just because of this
+	    }
+		
+		//------ Till here ------
 
 		logger.info("Logout successful for token: {}", jwtToken);
 
@@ -341,10 +361,20 @@ public class LoginController {
 	                new RestAPIResponse("success", result),
 	                HttpStatus.OK
 	        );
+	        // ---Abhinay Added---------
+	    }catch (UserNotRegisteredException e) {
+	        	return new ResponseEntity<RestAPIResponse>(
+	        	        new RestAPIResponse("failed", e.getMessage()),
+	        	        HttpStatus.NOT_FOUND
+	        	);
+
+	         //---Till here-------
 	    } catch (Exception e) {
 	        return new ResponseEntity<>(
 	                new RestAPIResponse("failed", "Error sending OTP: " + e.getMessage()),
-	                HttpStatus.valueOf("Invalid OTP. Please try again.")
+	                //HttpStatus.valueOf("Invalid OTP. Please try again.")
+	                HttpStatus.INTERNAL_SERVER_ERROR
+	                
 	        );
 	    }
 	}

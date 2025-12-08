@@ -14,16 +14,113 @@ import org.springframework.stereotype.Service;
 
 import com.narvee.Service.IRolesService;
 import com.narvee.entity.Roles;
+import com.narvee.exception.RoleAssignedException;
 import com.narvee.repository.IRolesRepository;
+import com.narvee.repository.UserRepository;
 import com.narvee.request.dto.RequestDTO;
 import com.narvee.request.dto.RolesDTO;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RolesServiceImpl implements IRolesService {
 	public static final Logger logger = LoggerFactory.getLogger(RolesServiceImpl.class);
 	@Autowired
 	private IRolesRepository iRoleRepo;
+	
+	@Autowired
+	private UserRepository userRepo;
+	
+	@PersistenceContext
+    private EntityManager entityManager;
 
+	
+	
+	//------Abhinay Added
+	
+	@Transactional
+    @Override
+    public boolean saveRole(Roles role) {
+        logger.info("!!! inside class: RolesServiceImpl, method: saveRole");
+
+        String incoming = role.getRoleName() == null ? "" : role.getRoleName().trim();
+
+        if (incoming.isEmpty()) {
+            return false; // or throw a validation exception
+        }
+
+        // Use case-insensitive exists check
+        if (iRoleRepo.existsByRoleNameIgnoreCase(incoming)) {
+            return false;
+        }
+
+        // normalize to chosen format (optional). I recommend storing as-is or trimmed.
+        role.setRoleName(incoming);
+
+        try {
+            iRoleRepo.save(role);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            // Race condition — someone inserted same role concurrently
+            logger.error("DataIntegrityViolation while saving role: " + incoming, ex);
+            return false;
+        }
+//        Long loggedInUserId = role.getAddedBy();  // or supply from controller
+//
+//        role.setCreateddate(LocalDateTime.now());
+//        role.setAddedBy(loggedInUserId);
+//
+//        // also set updated fields on first creation
+//        role.setUpdatedBy(loggedInUserId);
+//        role.setUpdatedDate(LocalDateTime.now());
+//
+//        iRoleRepo.save(role);
+//        return true;
+    }
+
+    @Transactional
+    @Override
+    public boolean updateRole(Roles role) {
+        Optional<Roles> existingRoleOpt = iRoleRepo.findById(role.getRoleId());
+
+        if (!existingRoleOpt.isPresent()) {
+            return false; // or throw ResourceNotFoundException
+        }
+
+        String incoming = role.getRoleName() == null ? "" : role.getRoleName().trim();
+        if (incoming.isEmpty()) {
+            return false; // invalid name
+        }
+
+        // Check if some other role (different id) already uses this name (case-insensitive)
+        Optional<Roles> duplicate = iRoleRepo.findByRoleNameIgnoreCaseAndRoleIdNot(incoming, role.getRoleId());
+        if (duplicate.isPresent()) {
+            return false; // duplicate name exists
+        }
+
+        Roles existingRole = existingRoleOpt.get();
+        existingRole.setRoleName(incoming);
+        existingRole.setDescription(role.getDescription());
+        
+        existingRole.setUpdatedBy(role.getUpdatedBy()); 
+        //existingRole.setUpdatedDate(LocalDateTime.now());
+
+        try {
+            iRoleRepo.save(existingRole);
+            return true;
+        } catch (DataIntegrityViolationException ex) {
+            logger.error("DataIntegrityViolation while updating role: " + incoming, ex);
+            return false;
+        }
+    }
+    //-----------------
+	
+    /*
 	@Override
 	public boolean saveRole(Roles role) {
 		logger.info("!!! inside class: RolesServiceImpl, method: saveRole");
@@ -36,6 +133,8 @@ public class RolesServiceImpl implements IRolesService {
 		}
 	}
 
+	*/
+	
 	@Override
 	public Page<RolesDTO> getAllRoles(RequestDTO request) {
 		logger.info("!!! inside class: RolesServiceImpl, method: getAllRoles");
@@ -98,42 +197,70 @@ public class RolesServiceImpl implements IRolesService {
 //		}
 //	}
 	
+//	@Override
+//	public boolean updateRole(Roles role) {
+//		Optional<Roles> existingRoleOpt = iRoleRepo.findById(role.getRoleId());
+//		
+//		if (!existingRoleOpt.isPresent()) {
+//			return false; // or throw an exception
+//		}
+//
+//		Roles existingRole = existingRoleOpt.get();
+//
+//		// Check if name is being updated and if it's unique
+//		Optional<Roles> duplicateCheck = iRoleRepo.findByRoleNameAndRoleIdNot(role.getRoleName(), role.getRoleId());
+//
+//		if (duplicateCheck.isPresent()) {
+//			return false; // Duplicate name
+//		}
+//
+//		// Update only what needs to be updated, don't touch privileges
+//		existingRole.setRoleName(role.getRoleName());
+//		existingRole.setDescription(role.getDescription());
+//
+//		iRoleRepo.save(existingRole);
+//		return true;
+//	}
+	
+	//abhinay added
+	
 	@Override
-	public boolean updateRole(Roles role) {
-		Optional<Roles> existingRoleOpt = iRoleRepo.findById(role.getRoleId());
-		
-		if (!existingRoleOpt.isPresent()) {
-			return false; // or throw an exception
-		}
-
-		Roles existingRole = existingRoleOpt.get();
-
-		// Check if name is being updated and if it's unique
-		Optional<Roles> duplicateCheck = iRoleRepo.findByRoleNameAndRoleIdNot(role.getRoleName(), role.getRoleId());
-
-		if (duplicateCheck.isPresent()) {
-			return false; // Duplicate name
-		}
-
-		// Update only what needs to be updated, don't touch privileges
-		existingRole.setRoleName(role.getRoleName());
-		existingRole.setDescription(role.getDescription());
-
-		iRoleRepo.save(existingRole);
-		return true;
-	}
-
-
-	@Override
+	@Transactional
 	public boolean deleteRole(Long id) {
-		Roles role = iRoleRepo.findById(id).get();
-		if (!(role == null)) {
-			iRoleRepo.deleteById(id);
-			return true;
-		} else {
-			return false;
-		}
+	    if (id == null) {
+	        return false;
+	    }
+
+	    Optional<Roles> opt = iRoleRepo.findById(id);
+	    if (!opt.isPresent()) {
+	        return false; 
+	    }
+
+	    // Check if any user has this role (many-to-many: users.roles)
+	    boolean assigned = userRepo.existsByRoles_RoleId(id);
+	    if (assigned) {
+	        // preferred: throw so controller/global handler can produce 409 CONFLICT + message
+	        throw new RoleAssignedException("Role name is assigned to user(s) so can't be deleted");
+	        // If you prefer boolean-only flow, use: return false;
+	    }
+
+	    // safe to delete
+	    iRoleRepo.deleteById(id);
+	    return true;
 	}
+	
+	
+//	@Override
+//	public boolean deleteRole(Long id) {
+//		Roles role = iRoleRepo.findById(id).get();	
+//		if (!(role == null)) {
+//			iRoleRepo.deleteById(id);
+//			return true;
+//		} else {
+//			return false;
+//		}
+//		
+//	}
 
 	@Override
 	public List<Roles> getAllRoles() {
