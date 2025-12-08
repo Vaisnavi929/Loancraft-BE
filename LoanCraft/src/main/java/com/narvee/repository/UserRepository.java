@@ -57,6 +57,7 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 			    u.email,
 			    u.name,
 			    u.mobile_number,
+			    u.location,
 			    u.status,
 			    DATE(u.createddate) AS createddate,
 			    DATE(u.updateddate) AS updateddate,
@@ -69,7 +70,8 @@ public interface UserRepository extends JpaRepository<UserInfo, Long> {
 			JOIN lms_user_roles ur ON ur.user_id = u.user_id
 			JOIN lms_roles r ON r.role_id = ur.role_id
 			WHERE
-			    u.email ILIKE CONCAT('%', :keyword, '%') OR
+			    u.email ILIKE 
+			    CONCAT('%', :keyword, '%') OR
 			    uf.name ILIKE CONCAT('%', :keyword, '%') OR
 			    uu.name ILIKE CONCAT('%', :keyword, '%') OR
 			    u.name ILIKE CONCAT('%', :keyword, '%') OR

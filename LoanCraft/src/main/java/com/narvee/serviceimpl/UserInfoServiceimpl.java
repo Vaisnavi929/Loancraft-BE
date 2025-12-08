@@ -186,7 +186,13 @@ public class UserInfoServiceimpl implements IUserInfoService {
 	                    Comparator.nullsLast(Comparator.naturalOrder())
 	            );
 	            break;
-
+	      //bhargav      
+	        case "location":
+	            comparator = Comparator.comparing(
+	                    UserResponseDTO::getUpdateddate,
+	                    Comparator.nullsLast(Comparator.naturalOrder())
+	            );
+          //bhargav
 	        case "createddate":
 	            comparator = Comparator.comparing(
 	                    UserResponseDTO::getCreateddate,
