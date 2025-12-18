@@ -1,4 +1,3 @@
-
 package com.narvee.entity;
 
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ public class Verification {
 	private List<Document> physicalLocationDocument = new ArrayList<>();
 
 	@OneToOne
+	
 	@JoinColumn(name = "loanId")
 	private Applications applications;	
 

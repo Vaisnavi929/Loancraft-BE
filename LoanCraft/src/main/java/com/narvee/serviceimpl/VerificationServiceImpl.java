@@ -161,8 +161,8 @@ public class VerificationServiceImpl implements VerificationService {
 		    if (!filteredDocs.isEmpty()) {
 		        allVerified = filteredDocs.stream()
 		            .allMatch(doc -> Boolean.TRUE.equals(doc.getDocVerified())); // null is treated as false
-		    }
-		}
+ }
+	}
 
 		
 		VerificationDTO dto = verificationRepository.getAllVericationDetailsByLoanid(loanId);

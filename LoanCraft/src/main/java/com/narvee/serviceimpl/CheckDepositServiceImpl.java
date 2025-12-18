@@ -127,7 +127,8 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 			chequeReturnCharges = 0.0;
 		}
 
-		int rows = depositRepository.updateStatus(id, status, reason, userid, chequeReturnCharges, now,chequeClearanceDate);
+		int rows = depositRepository.updateStatus(id, status, reason, userid, chequeReturnCharges, now,
+				chequeClearanceDate);
 		if (rows > 0) {
 			return "Update successful";
 		} else {
@@ -157,53 +158,52 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 
 	@Override
 	public List<Map<String, Object>> getRepaymentMonthYear(Long disbursmentId) {
-	    logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
+		logger.info("!!! inside class:CheckDepositServiceImpl,!! method :getRepaymentMonthYear() ");
 
-	    List<RepaymentDropdown> repaymentList = depositRepository.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
-	    List<Map<String, Object>> responseList = new ArrayList<>();
+		List<RepaymentDropdown> repaymentList = depositRepository
+				.getRepaymentMonthAndYearByDisbursmentId(disbursmentId);
+		List<Map<String, Object>> responseList = new ArrayList<>();
 
-	    for (RepaymentDropdown repaymentDropdown : repaymentList) {
-	        // Build individual repayment info
-	        Map<String, Object> repaymentMap = new LinkedHashMap<>();
-	        repaymentMap.put("repaymentId", repaymentDropdown.getRepaymentId());
-	        repaymentMap.put("dueMonthYear", repaymentDropdown.getDueMonthYear());
+		for (RepaymentDropdown repaymentDropdown : repaymentList) {
+			// Build individual repayment info
+			Map<String, Object> repaymentMap = new LinkedHashMap<>();
+			repaymentMap.put("repaymentId", repaymentDropdown.getRepaymentId());
+			repaymentMap.put("dueMonthYear", repaymentDropdown.getDueMonthYear());
 
-	        // Get requests for this repayment
-	        List<Object[]> requests = depositRepository.getlowDepositRequests(repaymentDropdown.getRepaymentId());
-	        List<Map<String, Object>> requestList = new ArrayList<>();
+			// Get requests for this repayment
+			List<Object[]> requests = depositRepository.getlowDepositRequests(repaymentDropdown.getRepaymentId());
+			List<Map<String, Object>> requestList = new ArrayList<>();
 
-	        for (Object[] req : requests) {
-	            Map<String, Object> requestMap = new HashMap<>();
-	            requestMap.put("repaymentId", req[0]);
-	            requestMap.put("requstedAmount", req[1]);
-	            requestMap.put("isApproved", req[2]);
-	            requestList.add(requestMap);
-	        }
+			for (Object[] req : requests) {
+				Map<String, Object> requestMap = new HashMap<>();
+				requestMap.put("repaymentId", req[0]);
+				requestMap.put("requstedAmount", req[1]);
+				requestMap.put("isApproved", req[2]);
+				requestList.add(requestMap);
+			}
 
-	        // Add requests to the repayment object
-	        repaymentMap.put("requests", requestList);
+			// Add requests to the repayment object
+			repaymentMap.put("requests", requestList);
 
-	        // Add to final list
-	        responseList.add(repaymentMap);
-	    }
+			// Add to final list
+			responseList.add(repaymentMap);
+		}
 
-	    return responseList;
+		return responseList;
 	}
-
-
 
 	@Override
 	public boolean existsByLmsRepaymentRepaymentId(Long rid) {
 		logger.info("!!! inside class:CheckDepositServiceImpl,!! method : ExistsByLmsRepaymentRepaymentId() ");
-		return false; //depositRepository.existsByLmsRepaymentRepaymentId(rid);
+		return false; // depositRepository.existsByLmsRepaymentRepaymentId(rid);
 	}
 
 	@Override
 	public boolean updateStausofRequestedCheque(CheckDepositDTO checkDepositDTO) {
-		depositRepository.updateStatusofRequestedCheque(checkDepositDTO.getPostingDate(), 
-				checkDepositDTO.getChequeNumber(), checkDepositDTO.getAmount(),checkDepositDTO.getStatus());
+		depositRepository.updateStatusofRequestedCheque(checkDepositDTO.getPostingDate(),
+				checkDepositDTO.getChequeNumber(), checkDepositDTO.getAmount(), checkDepositDTO.getStatus());
 		return true;
-		
+
 	}
 
 }

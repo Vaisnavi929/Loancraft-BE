@@ -15,14 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "account_sequence")
 public class AccountSequence {
-	
-	    @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Long id;
 
-	    private String year;
-	    
-	    private int lastSequence;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
+	private String year;
+
+	private int lastSequence;
 
 }

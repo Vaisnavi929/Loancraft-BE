@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 //Request to initiate password reset
 public class ForgotPasswordRequest {
-    @JsonAlias({"email", "Email"})
-    private String email;
+	@JsonAlias({ "email", "Email" })
+	private String email;
 }

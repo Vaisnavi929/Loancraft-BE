@@ -26,7 +26,4 @@ public class ExistingLoanDetails {
 	private Long monthlyInstallment;
 	private Double currentOutstanding;
 	private Long balanceTenure;
-	
-	
-
 }

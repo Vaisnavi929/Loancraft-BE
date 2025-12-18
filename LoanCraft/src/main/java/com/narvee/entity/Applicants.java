@@ -12,22 +12,22 @@ import lombok.NoArgsConstructor;
 @Table(name = "lms_applicants")
 public class Applicants {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long applicantId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long applicantId;
 
-    @Column(name = "first_name")
-    private String firstName;
+	@Column(name = "first_name")
+	private String firstName;
 
-    @Column(name = "last_name")
-    private String lastName;
+	@Column(name = "last_name")
+	private String lastName;
 
-    @Column(name = "mobile_no")
-    private String mobileNo;
+	@Column(name = "mobile_no")
+	private String mobileNo;
 
-    @Column(name = "email")
-    private String email;
+	@Column(name = "email")
+	private String email;
 
-    @Column(name = "password")
-    private String password;
+	@Column(name = "password")
+	private String password;
 }

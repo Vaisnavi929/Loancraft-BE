@@ -36,7 +36,7 @@ public class CheckDeposit extends AuditModel {
 	@Column(name = "chequeClearanceDate")
 	private LocalDate chequeClearanceDate;
 	@Column(name = "amount")
-	private Double amount=0.0;;
+	private Double amount = 0.0;;
 	@Column(name = "reason")
 	private String reason;
 	@Column(nullable = true, name = "chequeReturnCharges")
