@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.itextpdf.io.exceptions.IOException;
 import com.narvee.entity.CheckDeposit;
 import com.narvee.request.dto.CheckDepositDTO;
 import com.narvee.request.dto.CheckDepositResponseDTO;
+import com.narvee.request.dto.SkippedChequeResponseDTO;
 
 public interface CheckDepositService {
 
@@ -30,5 +33,10 @@ public interface CheckDepositService {
 	public boolean existsByLmsRepaymentRepaymentId(Long rid);
 	
 	public boolean updateStausofRequestedCheque(CheckDepositDTO checkDepositDTO);
+	
+	//Added by Abhinay
+	public List<SkippedChequeResponseDTO> saveCheckDepositExcel(MultipartFile file);
+
+	//---------------
 
 }

@@ -1,5 +1,8 @@
 package com.narvee.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -84,5 +87,9 @@ Page<FetchLowCheckDepositDTO> fetchLowCheckDepositDetails(Pageable pageable);
 	int updateRemarks(@Param("id") Long id, @Param("value") String value);
 
 	public LowCheckDepositApproval findByLmsRepaymentRepaymentId(Long repaymentId);
+	
+	//----Abhinay
+	List<LowCheckDepositApproval> findByChequeNumberAndDisbursment_DisbursmentId(String chequeNumber, Long disbursmentId);
+
 
 }

@@ -4,6 +4,7 @@ package com.narvee.repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -131,5 +132,21 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 	            + "  AND cheque_number = :chequeNum"
 	            + "  AND amount = :amount ", nativeQuery = true)
 	    boolean updateStatusofRequestedCheque(@Param("postedDate") LocalDate postedDate, @Param("chequeNum") String chequeNum, @Param("amount") double amount);
+	   
+	   
+	// ---Abhinay
+	   List<CheckDeposit> findByChequeNumberAndDisbursment_DisbursmentId(String chequeNumber, Long disbursmentId);
+	   
+	   List<CheckDeposit> findByChequeNumber(String chequeNumber);
+	   
+	   @Query("""
+		        SELECT cd
+		        FROM CheckDeposit cd
+		        WHERE cd.disbursment.disbursmentId = :disbId
+		        AND LOWER(cd.status) = 'rejected'
+		    """)
+		    List<CheckDeposit> findRejectedByDisbursment(@Param("disbId") Long disbId);
+
+
 
 }

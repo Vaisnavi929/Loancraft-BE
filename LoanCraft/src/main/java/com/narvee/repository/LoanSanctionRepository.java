@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.Optional;
 
 import com.narvee.entity.LoanSanction;
 import com.narvee.request.dto.LoanSanctionDTOS;
@@ -65,5 +66,9 @@ public interface LoanSanctionRepository extends JpaRepository<LoanSanction, Long
 			    )
 						""", nativeQuery = true)
 	public Page<LoanSanctionDTOS> getAllLoansactionWithSearching(Pageable pageable, @Param("keyword") String keyword);
+	
+	
+	//Abhinay
+	Optional<LoanSanction> findByLoanAccountNumber(String loanAccountNumber);
 
 }
