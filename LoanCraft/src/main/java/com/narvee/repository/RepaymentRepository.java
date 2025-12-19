@@ -3,6 +3,7 @@ package com.narvee.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.narvee.entity.Disbursment;
 import com.narvee.entity.LmsRepayment;
 import com.narvee.request.dto.PaymentResponseDTO;
 import com.narvee.request.dto.PaymentStatementResponseDTO;
@@ -176,5 +178,14 @@ public interface RepaymentRepository extends JpaRepository<LmsRepayment, Long> {
 			  d.disbursment_id = :disbursmentId
 									""", nativeQuery = true)
 	public List<Object[]> getMemeberDetails(@Param("disbursmentId") Long disbursmentId);
-
+	
+    //abhinay
+	Optional<LmsRepayment> findTopByDisbursmentOrderByDueDateDesc(Disbursment disbursment);
+	
+	
+	Optional<LmsRepayment> findFirstByDisbursmentAndDueDateBetween( Disbursment disbursment, LocalDate startDate,LocalDate endDate);
+	
+	Optional<LmsRepayment>
+    findFirstByDisbursment_DisbursmentIdAndDueAmountGreaterThanOrderByDueDateAsc(
+            Long disbursmentId, Double dueAmount);
 }
