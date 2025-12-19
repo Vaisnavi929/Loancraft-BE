@@ -1,6 +1,7 @@
 package com.narvee.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.narvee.entity.Disbursment;
 import com.narvee.request.dto.DisbursmentIdDTO;
 import com.narvee.request.dto.DisbursmentResponseDTO;
+
 
 public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> {
 
@@ -99,4 +101,13 @@ public interface DisbursmentRepository extends JpaRepository<Disbursment, Long> 
 
 	@Query(value ="SELECT d.disbursment_id,d.disbursed_amount FROM lms_disbursment d",nativeQuery =true)
 	List<Object[]> findAllDisbursedIdAndAmounts();
+	
+//	//Abhinay
+	@Query(value = """
+		    SELECT d.* FROM lms_disbursment d
+		    JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id
+		    WHERE ls.loan_account_number = :loanAccountNumber
+		    """, nativeQuery = true)
+	List<Disbursment> findByLoanAccountNumber(@Param("loanAccountNumber") String loanAccountNumber);
+
 }
