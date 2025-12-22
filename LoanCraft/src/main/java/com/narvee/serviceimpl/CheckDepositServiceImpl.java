@@ -8,10 +8,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -260,11 +262,18 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	@Override
 	@Transactional
 	public List<SkippedChequeResponseDTO> saveCheckDepositExcel(MultipartFile file) {
+
 	    logger.info("!!! saveCheckDepositExcel started");
+
 	    List<SkippedChequeResponseDTO> skippedCheques = new ArrayList<>();
+
 	    if (file == null || file.isEmpty()) {
 	        return skippedCheques;
 	    }
+
+	    // ✅ Track cleared cheques in THIS Excel only
+	    Set<String> clearedInExcel = new HashSet<>();
+
 	    // ================= FETCH UPLOADER =================
 	    Long uploaderId = null;
 	    try {
@@ -278,13 +287,19 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	    } catch (Exception ex) {
 	        logger.debug("Security not available: {}", ex.getMessage());
 	    }
+
 	    try (InputStream is = file.getInputStream();
 	         Workbook workbook = WorkbookFactory.create(is)) {
+
 	        Sheet sheet = workbook.getSheetAt(0);
+
 	        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+
 	            Row row = sheet.getRow(i);
 	            if (row == null) continue;
-	            int slNo = i; // SL.NO exactly as Excel
+
+	            int slNo = i; // Excel SL.NO
+
 	            String loanAccountNo = getStringCell(row.getCell(1));
 	            String chequeNumberRaw = getStringCell(row.getCell(2));
 	            LocalDate postingDate = getLocalDateCell(row.getCell(3));
@@ -292,73 +307,60 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	            Double amount = getDoubleCell(row.getCell(5));
 	            String status = getStringCell(row.getCell(6));
 	            String reason = getStringCell(row.getCell(7));
-	            if (loanAccountNo == null || chequeNumberRaw == null
-	                    || postingDate == null || status == null) {
+
+	            if (loanAccountNo == null || chequeNumberRaw == null || postingDate == null || status == null) {
 	                continue;
 	            }
+
 	            String chequeNumber = formatChequeNumber(chequeNumberRaw);
-//	            Disbursment disbursment = disbursmentRepository
-//	                    .findByLoanAccountNumber(loanAccountNo.trim())
-//	                    .orElse(null);
-//	            if (disbursment == null) continue;
+
 	            List<Disbursment> disbursments =
 	                    disbursmentRepository.findByLoanAccountNumber(loanAccountNo.trim());
 
 	            if (disbursments == null || disbursments.isEmpty()) {
-	                continue; // no disbursement found → skip row
+	                continue;
 	            }
 
-	            // pick latest disbursement (safe LMS rule)
-	            Disbursment disbursment =
-	                    disbursments.stream()
-	                            .max(Comparator.comparing(Disbursment::getDisbursmentId))
-	                            .orElse(null);
+	            // pick latest disbursement safely
+	            Disbursment disbursment = disbursments.stream()
+	                    .max(Comparator.comparing(Disbursment::getDisbursmentId))
+	                    .orElse(null);
 
-	            // ================= EXISTING CHEQUES =================
-	            List<CheckDeposit> existingDeposits =
-	                    depositRepository.findByChequeNumberAndDisbursment_DisbursmentId(
-	                            chequeNumber,
-	                            disbursment.getDisbursmentId()
-	                    );
-	            boolean hasClearedAlready = existingDeposits.stream()
+	            if (disbursment == null) {
+	                continue;
+	            }
+
+
+	            String key = disbursment.getDisbursmentId() + "_" + chequeNumber;
+
+	            // DB cleared (previous uploads)
+	            boolean clearedInDB = depositRepository
+	                    .findByChequeNumberAndDisbursment_DisbursmentId(
+	                            chequeNumber, disbursment.getDisbursmentId())
+	                    .stream()
 	                    .anyMatch(cd -> "Cleared".equalsIgnoreCase(cd.getStatus()));
 
-	            // ================= SKIP RULES (BEFORE SAVE) =================
-	            // ❌ Rejected after cleared
-	            if (hasClearedAlready && "Rejected".equalsIgnoreCase(status)) {
-	                saveSkipped(
-	                        slNo, loanAccountNo, chequeNumber,
-	                        postingDate, clearanceDate,
-	                        amount, status, reason,
-	                        "Rejected after cheque was cleared",
-	                        skippedCheques
-	                );
-	                continue;
-	            }
-	            // ❌ Duplicate cleared
-	            if (hasClearedAlready && "Cleared".equalsIgnoreCase(status)) {
-	                saveSkipped(
-	                        slNo, loanAccountNo, chequeNumber,
-	                        postingDate, clearanceDate,
-	                        amount, status, reason,
-	                        "Duplicate cleared cheque",
-	                        skippedCheques
-	                );
-	                continue;
-	            }
-	            // ================= EMI MAPPING =================
-	            LocalDate emiDate = "Rejected".equalsIgnoreCase(status)
-	                    ? postingDate
-	                    : (clearanceDate != null ? clearanceDate : postingDate);
+	            boolean clearedEarlier = clearedInDB || clearedInExcel.contains(key);
 
-	            LmsRepayment repayment = repaymentRepository
-	                    .findFirstByDisbursmentAndDueDateBetween(
-	                            disbursment,
-	                            emiDate.withDayOfMonth(1),
-	                            emiDate.withDayOfMonth(emiDate.lengthOfMonth())
-	                    )
-	                    .orElse(null);
-	            // ================= SAVE CHECK DEPOSIT =================
+	            // ================= RESPONSE LOGIC =================
+	            if (clearedEarlier) {
+
+	                String skipReason;
+	                if (clearedInDB) {
+	                    skipReason = "Duplicate cheque";
+	                } else {
+	                    skipReason = "Rejected after cheque was cleared";
+	                }
+
+	                saveSkipped(slNo, loanAccountNo, chequeNumber, postingDate,
+	                        clearanceDate, amount, status, reason,
+	                        skipReason, skippedCheques);
+
+	                // ❌ DO NOT PROCESS AGAIN
+	                continue;
+	            }
+
+	            // ================= SAVE CHEQUE =================
 	            CheckDeposit deposit = new CheckDeposit();
 	            deposit.setChequeNumber(chequeNumber);
 	            deposit.setPostingDate(postingDate);
@@ -367,20 +369,37 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	            deposit.setReason(reason);
 	            deposit.setStatus(status);
 	            deposit.setDisbursment(disbursment);
-	            deposit.setLmsRepayment(repayment);
-	            CheckDeposit saved = depositRepository.save(deposit);
+
+	            CheckDeposit savedDeposit = depositRepository.save(deposit);
 	            depositRepository.flush();
-	            // ================= ₹500 BOUNCE =================
+
+	            // ================= EMI =================
+	            LocalDate emiDate = "Rejected".equalsIgnoreCase(status)
+	                    ? postingDate
+	                    : (clearanceDate != null ? clearanceDate : postingDate);
+
+	            LmsRepayment repayment = repaymentRepository
+	                    .findFirstByDisbursmentAndDueDateBetween(
+	                            disbursment,
+	                            emiDate.withDayOfMonth(1),
+	                            emiDate.withDayOfMonth(emiDate.lengthOfMonth()))
+	                    .orElse(null);
+
+	            savedDeposit.setLmsRepayment(repayment);
+	            depositRepository.save(savedDeposit);
+
+	            // ================= BOUNCE (FIXED) =================
 	            if ("Rejected".equalsIgnoreCase(status)) {
 	                updateStatus(
-	                        saved.getId(),
+	                        savedDeposit.getId(),
 	                        "Rejected",
 	                        reason,
 	                        clearanceDate,
 	                        uploaderId
 	                );
 	            }
-	            // ================= LOW CHEQUE APPROVAL =================
+
+	            // ================= LOW CHEQUE =================
 	            LowCheckDepositApproval low = new LowCheckDepositApproval();
 	            low.setChequeNumber(chequeNumber);
 	            low.setPostedDate(postingDate);
@@ -390,24 +409,32 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 	            low.setRemarks("Excel Upload");
 	            low.setDisbursment(disbursment);
 	            low.setLmsRepayment(repayment);
+
 	            if ("Cleared".equalsIgnoreCase(status) && repayment != null && amount != null) {
 	                low.setReceivableAmount(Math.min(amount, repayment.getDueAmount()));
+	                clearedInExcel.add(key); // ✅ mark cleared AFTER save
 	            } else {
 	                low.setReceivableAmount(0.0);
 	            }
+
 	            if (uploaderId != null) {
 	                low.setRequestById(uploaderId);
 	                low.setApprovedById(uploaderId);
 	            }
+
 	            lowCheckDepositApprovalRespository.save(low);
 	        }
+
 	    } catch (Exception e) {
 	        logger.error("Excel processing failed", e);
 	        throw new RuntimeException("Failed to process uploaded Excel", e);
 	    }
+
 	    logger.info("Skipped cheque count = {}", skippedCheques.size());
 	    return skippedCheques;
 	}
+
+
     // ---------------- Helper methods ----------------
 
     private String getStringCell(Cell cell) {
@@ -442,7 +469,7 @@ public class CheckDepositServiceImpl implements CheckDepositService {
         }
         return null;
     }
-    
+
     private LocalDate getLocalDateCell(Cell cell) {
         if (cell == null) return null;
         try {
@@ -458,7 +485,7 @@ public class CheckDepositServiceImpl implements CheckDepositService {
             return null;
         }
     }
-    
+
     private Double getDoubleCell(Cell cell) {
         if (cell == null) return null;
         try {
@@ -487,10 +514,19 @@ public class CheckDepositServiceImpl implements CheckDepositService {
         return chequeNo;
     }
     
-    private void saveSkipped(int slNo,String loanAccountNo,String chequeNumber,LocalDate postingDate,LocalDate clearanceDate,Double amount,String status,String reason,String skipReason,List<SkippedChequeResponseDTO> responseList) {
+    private void saveSkipped(
+            int slNo,
+            String loanAccountNo,
+            String chequeNumber,
+            LocalDate postingDate,
+            LocalDate clearanceDate,
+            Double amount,
+            String status,
+            String reason,
+            String skipReason,
+            List<SkippedChequeResponseDTO> responseList) {
 
-        // ---------- SAVE IN DB ----------
-    	SkippedCheckDeposit entity = new SkippedCheckDeposit();
+        SkippedCheckDeposit entity = new SkippedCheckDeposit();
         entity.setRowNo(slNo+1);
         entity.setLoanAccountNumber(loanAccountNo);
         entity.setChequeNumber(chequeNumber);
@@ -500,8 +536,10 @@ public class CheckDepositServiceImpl implements CheckDepositService {
         entity.setStatus(status);
         entity.setReason(reason);
         entity.setSkipReason(skipReason);
+
         skippedCheckDepositRepository.save(entity);
-        // ---------- ADD TO RESPONSE ----------
+        skippedCheckDepositRepository.flush();
+
         SkippedChequeResponseDTO dto = new SkippedChequeResponseDTO();
         dto.setRowNo(slNo+1);
         dto.setLoanAccountNumber(loanAccountNo);
@@ -515,5 +553,5 @@ public class CheckDepositServiceImpl implements CheckDepositService {
 
         responseList.add(dto);
     }
-
+    
 }
