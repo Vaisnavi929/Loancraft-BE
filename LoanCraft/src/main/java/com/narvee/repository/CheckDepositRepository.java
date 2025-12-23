@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -137,6 +138,8 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 	// ---Abhinay
 	   List<CheckDeposit> findByChequeNumberAndDisbursment_DisbursmentId(String chequeNumber, Long disbursmentId);
 	   
+	   boolean existsByChequeNumberAndDisbursment_DisbursmentId(String chequeNumber,Long disbursmentId);
+	   
 	   List<CheckDeposit> findByChequeNumber(String chequeNumber);
 	   
 	   @Query("""
@@ -146,7 +149,21 @@ public interface CheckDepositRepository extends JpaRepository<CheckDeposit, Long
 		        AND LOWER(cd.status) = 'rejected'
 		    """)
 		    List<CheckDeposit> findRejectedByDisbursment(@Param("disbId") Long disbId);
-
+	   
+	   @Query(value = """
+			    SELECT CONCAT(
+			        cd.disbursment_id,
+			        '_',
+			        LPAD(cd.cheque_number, 6, '0')
+			    )
+			    FROM lms_check_deposit cd
+			    JOIN lms_disbursment d ON cd.disbursment_id = d.disbursment_id
+			    JOIN lms_loan_saction ls ON d.loan_saction_id = ls.loan_saction_id
+			    WHERE ls.loan_account_number = :loanAccountNumber
+			""", nativeQuery = true)
+			Set<String> findChequeKeysByLoanAccountNumber(
+			        @Param("loanAccountNumber") String loanAccountNumber
+			);
 
 
 }

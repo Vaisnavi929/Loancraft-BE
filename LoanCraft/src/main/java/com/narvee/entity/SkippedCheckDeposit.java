@@ -28,7 +28,7 @@ public class SkippedCheckDeposit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "row_no",unique =true)
+    @Column(name = "row_no")
     private Integer rowNo;
     
     @Column(name = "loan_account_number")
